@@ -3,11 +3,11 @@
 on:
   workflow_call:
     inputs:
-      pr_branch_ref:
+      concurrency_group:
         type: string
         required: true
-      run_jobs:
-        type: boolean
+      pr_branch_ref:
+        type: string
         required: true
       job_name_suffix:
         type: string
@@ -27,7 +27,6 @@ env:
 
 jobs:
   build:
-    if: ${{ inputs.run_jobs }}
     name: Build${{ inputs.job_name_suffix }}
     runs-on: ${{ inputs.runs_on }}
     outputs:
@@ -51,7 +50,7 @@ jobs:
           REF: ${{ github.ref }}
           EVENT_NAME: ${{ github.event_name }}
           RUN_ID: ${{ github.run_id }}
-          CONCURRENCY_GROUP: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ (github.event_name == 'push' && contains(fromJSON('["refs/heads/master", "refs/heads/staging"]'), github.ref) && github.run_id) || '' }}
+          CONCURRENCY_GROUP: ${{ inputs.concurrency_group }}
         shell: bash # there is no script body, so this is safe to "run" outside landrun.
         run: |
           # We just populate the env vars for this step to make them viewable in the logs
@@ -592,7 +591,6 @@ jobs:
 
   post_steps:
     name: Post-Build Step${{ inputs.job_name_suffix }}
-    if: ${{ inputs.run_jobs }}
     needs: [build]
     runs-on: ubuntu-latest # Note these steps run on disposable GitHub runners, so no landrun sandboxing is needed.
     steps:
@@ -672,7 +670,6 @@ jobs:
       # Instead we run it in a cron job on master: see `daily.yml`.
   style_lint:
     name: Lint style${{ inputs.job_name_suffix }}
-    if: ${{ inputs.run_jobs }}
     runs-on: ubuntu-latest
     steps:
       - uses: leanprover-community/lint-style-action@a7e7428fa44f9635d6eb8e01919d16fd498d387a # 2025-08-18
@@ -683,7 +680,6 @@ jobs:
 
   final:
     name: Post-CI job${{ inputs.job_name_suffix }}
-    if: ${{ inputs.run_jobs }}
     needs: [style_lint, build, post_steps]
     runs-on: ubuntu-latest
     steps:
