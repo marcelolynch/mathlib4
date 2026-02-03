@@ -9,7 +9,7 @@ on:
       - 'staging*.tmp'
       - 'nolints'
     paths-ignore:
-      # pull_request_target uses the workflow from the base branch:
+      # pull_request_target uses the workflow from the target branch:
       # PR changes under this directory won't affect this run, so
       # running it is just wasteful
       - '.github/workflows/**'
