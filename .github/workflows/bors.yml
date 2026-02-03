@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - staging
+      - trying
 
 concurrency:
   # label each workflow run; only the latest with each label will run
