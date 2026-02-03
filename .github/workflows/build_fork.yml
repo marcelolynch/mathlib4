@@ -24,7 +24,7 @@ permissions:
 
 jobs:
   build:
-    name: build (forks)
+    name: ci (fork)
     if: ${{ github.event.pull_request.head.repo.fork && github.repository != 'leanprover-community/mathlib4-nightly-testing' }}
     uses: ./.github/workflows/build_template.yml
     with:
