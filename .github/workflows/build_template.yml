@@ -612,11 +612,11 @@ jobs:
           # ./.lake/build/bin/cache put!
           # do not try to upload files just downloaded
 
-          lake env
           echo "Uploading cache to Azure..."
           MATHLIB_CACHE_USE_CLOUDFLARE=0 lake env "$CACHE_BIN" --repo=${{ github.event.pull_request.head.repo.full_name || github.repository }} put-unpacked
         env:
           MATHLIB_CACHE_SAS_RAW: ${{ secrets.MATHLIB_CACHE_SAS }}
+          RUST_BACKTRACE: 1
 
       - name: Upload Archive and Counterexamples cache to Azure
         if: ${{ needs.build.outputs.archive-outcome == 'success' && needs.build.outputs.counterexamples-outcome == 'success' }}
