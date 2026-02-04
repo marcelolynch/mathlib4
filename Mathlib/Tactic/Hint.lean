@@ -44,6 +44,9 @@ initialize hintExtension :
 def addHint (prio : Nat) (stx : TSyntax `tactic) : CoreM Unit := do
   modifyEnv fun env => hintExtension.addEntry env (prio, stx)
 
+/-- Just a string. -/
+def dummyString : String := "Hello!"
+
 /-- Return the list of registered hint tactics. -/
 def getHints : CoreM (List (Nat × TSyntax `tactic)) :=
   return hintExtension.getState (← getEnv)

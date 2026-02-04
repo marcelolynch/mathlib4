@@ -436,16 +436,16 @@ jobs:
           name: cache-staging
           path: cache-staging/
 
-      - name: upload artifact containing contents of pr-branch
-        # TODO: We should probably only upload the artifacts needed by the cache
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        with:
-          name: mathlib4_artifact
-          include-hidden-files: true
-          # we exclude .git since there may be secrets in there
-          path: |
-            pr-branch/
-            !pr-branch/.git/
+      # - name: upload artifact containing contents of pr-branch
+      #   # TODO: We should probably only upload the artifacts needed by the cache
+      #   uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      #   with:
+      #     name: mathlib4_artifact
+      #     include-hidden-files: true
+      #     # we exclude .git since there may be secrets in there
+      #     path: |
+      #       pr-branch/
+      #       !pr-branch/.git/
 
       - name: Check if building Archive or Counterexamples failed
         if: steps.archive.outcome == 'failure' || steps.counterexamples.outcome == 'failure'
@@ -605,7 +605,7 @@ jobs:
       - name: Checkout master branch
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          ref: ${{ github.repository == 'leanprover-community/mathlib4-nightly-testing' && 'nightly-testing' || 'master' }}
+          ref: ci-dev/marcelo/2026/01/PushCacheSeparateJob #${{ github.repository == 'leanprover-community/mathlib4-nightly-testing' && 'nightly-testing' || 'master' }}
           fetch-depth: 1
 
       - name: Configure Lean
@@ -639,7 +639,7 @@ jobs:
           export MATHLIB_CACHE_SAS="${MATHLIB_CACHE_SAS_RAW%"${MATHLIB_CACHE_SAS_RAW##*[![:space:]]}"}"
 
           echo "Uploading cache to Azure..."
-          MATHLIB_CACHE_USE_CLOUDFLARE=0 lake env "$CACHE_BIN" --staging-dir="cache-staging" --repo=${{ github.event.pull_request.head.repo.full_name || github.repository }} put-staged
+          MATHLIB_CACHE_USE_CLOUDFLARE=0 lake env "$CACHE_BIN" --staging-dir="cache-staging" --repo=ci-dev/${{ github.event.pull_request.head.repo.full_name || github.repository }} put-staged
         env:
           MATHLIB_CACHE_SAS_RAW: ${{ secrets.MATHLIB_CACHE_SAS }}
 
