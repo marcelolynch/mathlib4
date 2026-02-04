@@ -90,7 +90,7 @@ jobs:
           # Recall that on the `leanprover-community/mathlib4-nightly-testing` repository,
           # we don't maintain a `master` branch at all.
           # For PRs and pushes to this repository, we will use `nightly-testing` instead.
-          ref: ${{ github.repository == 'leanprover-community/mathlib4-nightly-testing' && 'nightly-testing' || 'master' }}
+          ref: ci-dev/marcelo/2026/01/PushCacheSeparateJob #${{ github.repository == 'leanprover-community/mathlib4-nightly-testing' && 'nightly-testing' || 'master' }}
           path: master-branch
 
       # Checkout the PR branch into a subdirectory
@@ -401,6 +401,41 @@ jobs:
           ../master-branch/scripts/lake-build-with-retry.sh Counterexamples
           # results of build at pr-branch/.lake/build_summary_Counterexamples.json
 
+      - name: prepare cache staging directory
+        if: ${{ steps.build.outcome == 'success' }}
+        shell: bash
+        run: |
+          rm -rf cache-staging
+          mkdir -p cache-staging
+
+      - name: stage Mathlib cache files
+        if: ${{ steps.build.outcome == 'success' }}
+        shell: bash
+        run: |
+          cd pr-branch
+          lake env ../master-branch/.lake/build/bin/cache --staging-dir="../cache-staging" stage-unpacked
+
+      - name: stage Archive cache files
+        if: ${{ steps.archive.outcome == 'success' }}
+        shell: bash
+        run: |
+          cd pr-branch
+          lake env ../master-branch/.lake/build/bin/cache --staging-dir="../cache-staging" stage-unpacked Archive.lean
+
+      - name: stage Counterexamples cache files
+        if: ${{ steps.counterexamples.outcome == 'success' }}
+        shell: bash
+        run: |
+          cd pr-branch
+          lake env ../master-branch/.lake/build/bin/cache --staging-dir="../cache-staging" stage-unpacked Counterexamples.lean
+
+      - name: upload cache staging artifact
+        if: ${{ steps.build.outcome == 'success' }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: cache-staging
+          path: cache-staging/
+
       - name: upload artifact containing contents of pr-branch
         # TODO: We should probably only upload the artifacts needed by the cache
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
@@ -591,45 +626,20 @@ jobs:
           fi
           echo "CACHE_BIN=$CACHE_BIN" >> "$GITHUB_ENV"
 
-      - name: Download mathlib4 artifact
+      - name: Download cache staging artifact
         uses: actions/download-artifact@v4
         with:
-          name: mathlib4_artifact
-          path: pr-artifact
+          name: cache-staging
+          path: cache-staging
 
-      - name: Upload cache to Azure
+      - name: Upload staged cache to Azure
         shell: bash
         run: |
-          cd pr-artifact
-          ls
-
           # Trim trailing whitespace from secrets to prevent issues with accidentally added spaces
           export MATHLIB_CACHE_SAS="${MATHLIB_CACHE_SAS_RAW%"${MATHLIB_CACHE_SAS_RAW##*[![:space:]]}"}"
-
-          # TODO: this is not doing anything currently, and needs to be integrated with put-unpacked
-          # ./.lake/build/bin/cache commit || true
-          # run this in CI if it gets an incorrect lake hash for existing cache files somehow
-          # ./.lake/build/bin/cache put!
-          # do not try to upload files just downloaded
 
           echo "Uploading cache to Azure..."
-          MATHLIB_CACHE_USE_CLOUDFLARE=0 lake env "$CACHE_BIN" --repo=${{ github.event.pull_request.head.repo.full_name || github.repository }} put-unpacked
-        env:
-          MATHLIB_CACHE_SAS_RAW: ${{ secrets.MATHLIB_CACHE_SAS }}
-          RUST_BACKTRACE: 1
-
-      - name: Upload Archive and Counterexamples cache to Azure
-        if: ${{ needs.build.outputs.archive-outcome == 'success' && needs.build.outputs.counterexamples-outcome == 'success' }}
-        shell: bash
-        run: |
-          cd pr-artifact/pr-branch
-
-          # Trim trailing whitespace from secrets to prevent issues with accidentally added spaces
-          export MATHLIB_CACHE_SAS="${MATHLIB_CACHE_SAS_RAW%"${MATHLIB_CACHE_SAS_RAW##*[![:space:]]}"}"
-
-          echo "Uploading Archive and Counterexamples cache to Azure..."
-          MATHLIB_CACHE_USE_CLOUDFLARE=0 lake env "$CACHE_BIN" --repo=${{ github.event.pull_request.head.repo.full_name || github.repository }} put-unpacked Archive.lean
-          MATHLIB_CACHE_USE_CLOUDFLARE=0 lake env "$CACHE_BIN" --repo=${{ github.event.pull_request.head.repo.full_name || github.repository }} put-unpacked Counterexamples.lean
+          MATHLIB_CACHE_USE_CLOUDFLARE=0 lake env "$CACHE_BIN" --staging-dir="cache-staging" --repo=${{ github.event.pull_request.head.repo.full_name || github.repository }} put-staged
         env:
           MATHLIB_CACHE_SAS_RAW: ${{ secrets.MATHLIB_CACHE_SAS }}
 
