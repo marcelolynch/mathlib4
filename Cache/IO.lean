@@ -383,9 +383,11 @@ def packCache (hashMap : ModuleHashMap) (overwrite verbose unpackedOnly : Bool)
     return zip
 
 /-- Gets the set of all cached files -/
-def getLocalCacheSet : IO <| Std.TreeSet String compare := do
-  let paths ← getFilesWithExtension CACHEDIR "ltar"
-  return .ofList (paths.toList.map (·.withoutParent CACHEDIR |>.toString)) _
+def getLocalSet (root : FilePath) : IO <| Std.TreeSet String compare := do
+  let paths ← getFilesWithExtension root "ltar"
+  return .ofList (paths.toList.map (·.withoutParent root |>.toString)) _
+
+def getLocalCacheSet : IO <| Std.TreeSet String compare := getLocalSet CACHEDIR
 
 def isFromMathlib (mod : Name) : Bool :=
   mod.getRoot == `Mathlib

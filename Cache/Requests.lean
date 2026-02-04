@@ -517,21 +517,21 @@ initialize UPLOAD_URL : String ← do
   return url?.getD defaultUrl
 
 /-- Formats the config file for `curl`, containing the list of files to be uploaded -/
-def mkPutConfigContent (repo : String) (fileNames : Array String) (token : String) : IO String := do
+def mkPutConfigContent (repo : String) (files : Array FilePath) (token : String) : IO String := do
   let token := if useCloudflareCache then "" else s!"?{token}" -- the Cloudflare cache doesn't pass the token here
-  let l ← fileNames.toList.mapM fun fileName : String => do
-    pure s!"-T {(IO.CACHEDIR / fileName).toString}\nurl = {mkFileURL repo UPLOAD_URL fileName}{token}"
+  let l ← files.toList.mapM fun file : FilePath => do
+    pure s!"-T {file.toString}\nurl = {mkFileURL repo UPLOAD_URL file.fileName.get!}{token}"
   return "\n".intercalate l
 
-/-- Calls `curl` to send a set of cached files to the server -/
-def putFiles
-  (repo : String) (fileNames : Array String)
+/-- Calls `curl` to send a set of files to the server -/
+def putFilesAbsolute
+  (repo : String) (files : Array FilePath)
   (overwrite : Bool) (token : String) : IO Unit := do
   -- TODO: reimplement using HEAD requests?
   let _ := overwrite
-  let size := fileNames.size
+  let size := files.size
   if size > 0 then
-    IO.FS.writeFile IO.CURLCFG (← mkPutConfigContent repo fileNames token)
+    IO.FS.writeFile IO.CURLCFG (← mkPutConfigContent repo files token)
     IO.println s!"Attempting to upload {size} file(s) to {repo} cache"
     let args := if useCloudflareCache then
       -- TODO: reimplement using HEAD requests?
@@ -548,6 +548,14 @@ def putFiles
     discard <| monitorCurl args size "Uploaded" "speed_upload"
     IO.FS.removeFile IO.CURLCFG
   else IO.println "No files to upload"
+
+/-- Calls `curl` to send a set of cached files to the server -/
+def putFiles
+  (repo : String) (fileNames : Array String)
+  (overwrite : Bool) (token : String) : IO Unit := do
+  -- TODO: reimplement using HEAD requests?
+  let files : Array FilePath := fileNames.map (fun (f : String) => (IO.CACHEDIR / f))
+  putFilesAbsolute repo files overwrite token
 end Put
 
 section Stage

@@ -89,8 +89,8 @@ def main (args : List String) : IO Unit := do
   let args := args.filter (!·.startsWith "--")
 
   -- parse relevant options, ignore the rest
-  let repo? ← parseNamedOpt "repo"  options
-  let out? ←  parseNamedOpt "out"   options
+  let repo?        ←  parseNamedOpt "repo"  options
+  let stagingDir? ←  parseNamedOpt "staging-dir"   options
 
   let mut roots : Std.HashMap Lean.Name FilePath ← parseArgs args
   if roots.isEmpty then do
@@ -115,6 +115,14 @@ def main (args : List String) : IO Unit := do
     putFiles repo (← pack overwrite (verbose := true) unpackedOnly) overwrite (← getToken)
   let stage outDir := do
     stageFiles outDir (← pack (verbose := true) (unpackedOnly := true))
+  let putStaged (stagingDir : FilePath) := do
+    let repo := repo?.getD MATHLIBREPO
+    if !(←stagingDir.isDir) then IO.println "--staging-dir must be a directory" return
+    else
+      IO.println "--staging-dir is a directory"
+      let fileSet ← getFilesWithExtension stagingDir "ltar"
+      putFilesAbsolute repo fileSet (overwrite := false) (← getToken)
+
   match args with
   | "get"  :: args => get args
   | "get!" :: args => get args (force := true)
@@ -130,8 +138,10 @@ def main (args : List String) : IO Unit := do
   | "put" :: _ => put
   | "put!" :: _ => put (overwrite := true)
   | "put-unpacked" :: _ => put (unpackedOnly := true)
-  | "stage-unpacked" :: _ => if (out?.isNone) then IO.println "stage-unpacked requires --out=" return else
-    stage out?.get!
+  | "stage-unpacked" :: _ => if (stagingDir?.isNone) then IO.println "stage-unpacked requires --staging-dir=" return else
+    stage stagingDir?.get!
+  | "put-staged" :: _ => if (stagingDir?.isNone) then IO.println "put-staged requires --staging-dir=" return else
+    putStaged stagingDir?.get!
   | ["commit"] =>
     if !(← isGitStatusClean) then IO.println "Please commit your changes first" return else
     commit hashMap false (← getToken)
