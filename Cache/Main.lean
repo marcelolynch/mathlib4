@@ -11,16 +11,17 @@ Usage: cache [OPTIONS] [COMMAND]
 
 Commands:
   # No privilege required
-  get  [ARGS]   Download linked files missing on the local cache and decompress
-  get! [ARGS]   Download all linked files and decompress
-  get- [ARGS]   Download linked files missing to the local cache, but do not decompress
-  pack          Compress non-compressed build files into the local cache
-  pack!         Compress build files into the local cache (no skipping)
-  unpack        Decompress linked already downloaded files
-  unpack!       Decompress linked already downloaded files (no skipping)
-  clean         Delete non-linked files
-  clean!        Delete everything on the local cache
-  lookup [ARGS] Show information about cache files for the given Lean files
+  get  [ARGS]    Download linked files missing on the local cache and decompress
+  get! [ARGS]    Download all linked files and decompress
+  get- [ARGS]    Download linked files missing to the local cache, but do not decompress
+  pack           Compress non-compressed build files into the local cache
+  pack!          Compress build files into the local cache (no skipping)
+  unpack         Decompress linked already downloaded files
+  unpack!        Decompress linked already downloaded files (no skipping)
+  clean          Delete non-linked files
+  clean!         Deleteput-unpacked everything on the local cache
+  lookup [ARGS]  Show information about cache files for the given Lean files
+  stage-unpacked Move files not already 'pack'ed to an output directory; intended for CI use
 
   # Privilege required
   put          Run 'pack' then upload linked files missing on the server
@@ -31,6 +32,7 @@ Commands:
 
 Options:
   --repo=OWNER/REPO  Override the repository to fetch/push cache from
+  --out=<output-directory> Required for 'stage-unpacked': staging directory. Will be created if it does not exist.
 
 * Linked files refer to local cache files with corresponding Lean sources
 * Commands ending with '!' should be used manually, when hot-fixes are needed
@@ -65,17 +67,15 @@ def curlArgs : List String :=
 
 /-- Commands which (potentially) call `leantar` for compressing or decompressing files -/
 def leanTarArgs : List String :=
-  ["get", "get!", "put", "put!", "put-unpacked", "pack", "pack!", "unpack", "lookup"]
+  ["get", "get!", "put", "put!", "put-unpacked", "pack", "pack!", "unpack", "lookup", "stage-unpacked"]
 
-/-- Parses an optional `--repo` option. -/
-def parseRepo (args : List String) : IO (Option String × List String) := do
-  if let arg :: args := args then
-    if arg.startsWith "--" then
-      if let some repo := arg.dropPrefix? "--repo=" then
-        return (some repo.toString, args)
-      else
-        throw <| IO.userError s!"unknown option: {arg}"
-  return (none, args)
+/-- Parses an optional `--foo=bar` option. -/
+def parseNamedOpt (opt : String) (args : List String) : IO (Option String) := do
+  let pref := s!"--{opt}="
+  if let some a := args.findRev? (fun a => a.startsWith pref) then
+    let val := a.drop pref.length
+    return some val.toString
+  return none
 
 open Cache IO Hashing Requests System in
 def main (args : List String) : IO Unit := do
@@ -84,7 +84,14 @@ def main (args : List String) : IO Unit := do
     Process.exit 0
   CacheM.run do
 
-  let (repo?, args) ← parseRepo args
+  -- split args and named options
+  let options := args.filter (·.startsWith "--")
+  let args := args.filter (!·.startsWith "--")
+
+  -- parse relevant options, ignore the rest
+  let repo? ← parseNamedOpt "repo"  options
+  let out? ←  parseNamedOpt "out"   options
+
   let mut roots : Std.HashMap Lean.Name FilePath ← parseArgs args
   if roots.isEmpty then do
     -- No arguments means to start from `Mathlib.lean`
@@ -106,6 +113,8 @@ def main (args : List String) : IO Unit := do
   let put (overwrite unpackedOnly := false) := do
     let repo := repo?.getD MATHLIBREPO
     putFiles repo (← pack overwrite (verbose := true) unpackedOnly) overwrite (← getToken)
+  let stage outDir := do
+    stageFiles outDir (← pack (verbose := true) (unpackedOnly := true))
   match args with
   | "get"  :: args => get args
   | "get!" :: args => get args (force := true)
@@ -121,6 +130,8 @@ def main (args : List String) : IO Unit := do
   | "put" :: _ => put
   | "put!" :: _ => put (overwrite := true)
   | "put-unpacked" :: _ => put (unpackedOnly := true)
+  | "stage-unpacked" :: _ => if (out?.isNone) then IO.println "stage-unpacked requires --out=" return else
+    stage out?.get!
   | ["commit"] =>
     if !(← isGitStatusClean) then IO.println "Please commit your changes first" return else
     commit hashMap false (← getToken)

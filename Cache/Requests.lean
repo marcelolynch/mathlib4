@@ -548,8 +548,22 @@ def putFiles
     discard <| monitorCurl args size "Uploaded" "speed_upload"
     IO.FS.removeFile IO.CURLCFG
   else IO.println "No files to upload"
-
 end Put
+
+section Stage
+/-- Moves cached files to a directory, intended for 'staging' -/
+def stageFiles
+  (destinationPath : String) (fileNames : Array String)
+  : IO Unit := do
+  let size := fileNames.size
+  if size > 0 then
+    IO.FS.createDirAll destinationPath
+    let paths := fileNames.map (fun (f : String) => s!"{(IO.CACHEDIR / f)}")
+    let args := paths ++ #[destinationPath]
+    IO.println s!"Moving to {size} file(s) to {destinationPath}"
+    discard <| IO.runCmd "cp" args
+  else IO.println "No files to stage"
+end Stage
 
 section Commit
 
