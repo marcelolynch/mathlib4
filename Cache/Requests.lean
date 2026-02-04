@@ -559,6 +559,8 @@ def putFiles
 end Put
 
 section Stage
+def copyCmd : String := if System.Platform.isWindows then "COPY" else "cp"
+
 /-- Moves cached files to a directory, intended for 'staging' -/
 def stageFiles
   (destinationPath : String) (fileNames : Array String)
@@ -569,8 +571,32 @@ def stageFiles
     let paths := fileNames.map (fun (f : String) => s!"{(IO.CACHEDIR / f)}")
     let args := paths ++ #[destinationPath]
     IO.println s!"Moving to {size} file(s) to {destinationPath}"
-    discard <| IO.runCmd "cp" args
+    discard <| IO.runCmd copyCmd args
   else IO.println "No files to stage"
+
+/-- Copies staged files into the local cache directory. -/
+def unstageFiles (stagingDir : FilePath) (overwrite : Bool) : IO Unit := do
+  if !(← stagingDir.isDir) then
+    IO.println "--staging-dir must be a directory"
+    return
+  let files ← IO.getFilesWithExtension stagingDir "ltar"
+  let enumerationSize := files.size
+  IO.println s!"{enumerationSize} files found in staging directory"
+  let files ← if overwrite then pure files else
+    files.filterM fun file => do
+      let dest := IO.CACHEDIR / file.fileName.get!
+      return !(← dest.pathExists)
+  let size := files.size
+  if !overwrite then
+    IO.println s!"{enumerationSize -  size} files will be skipped because they exist in the cache"
+
+  if size > 0 then
+    IO.FS.createDirAll IO.CACHEDIR
+    let args := files.map (·.toString) ++ #[IO.CACHEDIR.toString]
+    IO.println s!"Placing {size} file(s) from {stagingDir} into {IO.CACHEDIR}"
+    discard <| IO.runCmd copyCmd args
+  else
+    IO.println "No files to unstage"
 end Stage
 
 section Commit

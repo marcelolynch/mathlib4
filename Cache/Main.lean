@@ -18,6 +18,8 @@ Commands:
   pack!          Compress build files into the local cache (no skipping)
   unpack         Decompress linked already downloaded files
   unpack!        Decompress linked already downloaded files (no skipping)
+  unstage        Copy *.ltar files from the staging directory to the local cache
+  unstage!       Copy *.ltar files from the staging directory to the local cache (overwrite existing files)
   clean          Delete non-linked files
   clean!         Deleteput-unpacked everything on the local cache
   lookup [ARGS]  Show information about cache files for the given Lean files
@@ -32,7 +34,7 @@ Commands:
 
 Options:
   --repo=OWNER/REPO  Override the repository to fetch/push cache from
-  --out=<output-directory> Required for 'stage-unpacked': staging directory. Will be created if it does not exist.
+  --staging-dir=<output-directory> Required for 'stage-unpacked' and 'unstage': staging directory.
 
 * Linked files refer to local cache files with corresponding Lean sources
 * Commands ending with '!' should be used manually, when hot-fixes are needed
@@ -115,6 +117,9 @@ def main (args : List String) : IO Unit := do
     putFiles repo (← pack overwrite (verbose := true) unpackedOnly) overwrite (← getToken)
   let stage outDir := do
     stageFiles outDir (← pack (verbose := true) (unpackedOnly := true))
+  let unstage (overwrite := false) := do
+    if stagingDir?.isNone then IO.println "unstage requires --staging-dir=" return else
+      unstageFiles stagingDir?.get! overwrite
   let putStaged (stagingDir : FilePath) := do
     let repo := repo?.getD MATHLIBREPO
     if !(←stagingDir.isDir) then IO.println "--staging-dir must be a directory" return
@@ -130,6 +135,8 @@ def main (args : List String) : IO Unit := do
   | ["pack!"] => discard <| pack (overwrite := true)
   | ["unpack"] => unpackCache hashMap false
   | ["unpack!"] => unpackCache hashMap true
+  | ["unstage"] => unstage
+  | ["unstage!"] => unstage (overwrite := true)
   | ["clean"] =>
     cleanCache <| hashMap.fold (fun acc _ hash => acc.insert <| CACHEDIR / hash.asLTar) .empty
   | ["clean!"] => cleanCache
