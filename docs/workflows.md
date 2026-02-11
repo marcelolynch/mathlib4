@@ -10,6 +10,8 @@
 
 ### Trigger type glossary
 
+This is an overview of the most important triggers used by Mathlib CI. For a complete listing, please [see the GitHub actions documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows).
+
 - `pull_request`: runs on PR activity using the PR branch workflow file.
 - `pull_request_target`: runs on PR activity using the base branch workflow file (safer access to repository secrets/write operations when guarded correctly).
 - `merge_group`: runs for GitHub merge queue batches.
