@@ -32,9 +32,10 @@ jobs:
         auto-config: false
         use-github-cache: false
         use-mathlib-cache: false
+        lake-package-directory: tools # Building here
     - name: Build autolabel from master
+      working-directory: tools
       run: |
-        cd tools
         lake build autolabel
     - name: Checkout branch to label
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -43,8 +44,8 @@ jobs:
         fetch-depth: 0
         path: pr-branch
     - name: Run autolabel
+      working-directory: pr-branch
       run: |
-        cd pr-branch
         labels="$("${GITHUB_WORKSPACE}/tools/.lake/build/bin/autolabel")"
         printf '%s\n' "${labels}"
         # extract
