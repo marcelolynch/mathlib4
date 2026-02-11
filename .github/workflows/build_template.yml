@@ -169,7 +169,7 @@ jobs:
           echo "LEAN_SRC_PATH=$LEAN_SRC_PATH" >> "$GITHUB_ENV"
 
       - name: build tools-branch tools
-        shell: bash # We're only building the `tools` branch version of the tools, so don't need to run inside landrun.
+        shell: bash # We're only building a trusted branch with the tools, so no need to run inside landrun.
         run: |
           cd tools-branch
           lake build cache check-yaml graph
