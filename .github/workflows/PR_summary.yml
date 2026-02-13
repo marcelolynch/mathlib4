@@ -221,7 +221,7 @@ jobs:
         if [ -n "${workflowFilesChanged}" ]
         then
           # Format each changed workflow path as a Markdown bullet: "- `path`"
-          workflowFilesChangedMarkdown="$(sed 's|^|- `|; s|$|`|' <<< "${workflowFilesChanged}")"
+          workflowFilesChangedMarkdown="$(sed "s|^|- \`|; s|\$|\`|" <<< "${workflowFilesChanged}")"
           workflowDocsReminder="$(printf "### Workflow documentation reminder\nThis PR modifies files under \`.github/workflows/\`.\nPlease update \`docs/workflows.md\` if the workflow inventory, triggers, or behavior changed.\n\nModified workflow files:\n%s\n" "${workflowFilesChangedMarkdown}")"
         else
           workflowDocsReminder=""
