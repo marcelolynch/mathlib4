@@ -18,24 +18,27 @@ Commands:
   pack!          Compress build files into the local cache (no skipping)
   unpack         Decompress linked already downloaded files
   unpack!        Decompress linked already downloaded files (no skipping)
-  unstage        Copy *.ltar files from the staging directory to the local cache
-  unstage!       Copy *.ltar files from the staging directory to the local cache (overwrite existing files)
   clean          Delete non-linked files
-  clean!         Deleteput-unpacked everything on the local cache
+  clean!         Delete everything on the local cache
   lookup [ARGS]  Show information about cache files for the given Lean files
-  stage         Move files not already 'pack'ed to an output directory; intended for CI use
-  stage!        Move all linked cache files to an output directory; intended for CI use
 
   # Privilege required
   put          Run 'pack' then upload linked files missing on the server
   put!         Run 'pack' then upload all linked files
-  put-unpacked 'put' only files not already 'pack'ed; intended for CI use
   commit       Write a commit on the server
   commit!      Overwrite a commit on the server
 
+  # Intended for CI use
+  unstage      Copy *.ltar files from the staging directory to the local cache
+  unstage!     Copy *.ltar files from the staging directory to the local cache (overwrite existing files)
+  stage        Move files not already 'pack'ed to an output directory
+  stage!       Move all linked cache files to an output directory
+  put-staged   Upload *.ltar files from the staging directory (privilege required)
+  put-unpacked Run 'put' only for files not already 'pack'ed (privilege required)
+
 Options:
   --repo=OWNER/REPO  Override the repository to fetch/push cache from
-  --staging-dir=<output-directory> Required for 'stage', 'stage!' and 'unstage': staging directory.
+  --staging-dir=<output-directory> Required for 'stage', 'stage!', 'unstage' and 'put-staged': staging directory.
 
 * Linked files refer to local cache files with corresponding Lean sources
 * Commands ending with '!' should be used manually, when hot-fixes are needed
@@ -66,7 +69,7 @@ See Cache/README.md for more details.
 
 /-- Commands which (potentially) call `curl` for downloading files -/
 def curlArgs : List String :=
-  ["get", "get!", "get-", "put", "put!", "put-unpacked", "commit", "commit!"]
+  ["get", "get!", "get-", "put", "put!", "put-unpacked", "put-staged", "commit", "commit!"]
 
 /-- Commands which (potentially) call `leantar` for compressing or decompressing files -/
 def leanTarArgs : List String :=
@@ -91,8 +94,8 @@ def main (args : List String) : IO Unit := do
   let (options, args) := args.partition (·.startsWith "--")
 
   -- parse relevant options, ignore the rest
-  let repo?        ←  parseNamedOpt "repo"  options
-  let stagingDir? ←  parseNamedOpt "staging-dir"   options
+  let repo? ← parseNamedOpt "repo" options
+  let stagingDir? ← parseNamedOpt "staging-dir" options
 
   let mut roots : Std.HashMap Lean.Name FilePath ← parseArgs args
   if roots.isEmpty then do

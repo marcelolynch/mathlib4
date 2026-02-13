@@ -559,6 +559,7 @@ def putFiles
 end Put
 
 section Stage
+
 def copyCmd : String := if System.Platform.isWindows then "COPY" else "cp"
 
 /-- Copies cached files to a directory, intended for 'staging' -/
