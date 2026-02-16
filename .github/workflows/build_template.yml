@@ -745,7 +745,8 @@ jobs:
 
   final:
     name: Post-CI job
-    if: ${{ inputs.run_post_ci }}
+    # ensure that this runs iff direct dependencies succeeded even if transitive dependencies  were skipped
+    if: ${{ always() && inputs.run_post_ci && needs.style_lint.result == 'success' && needs.build.result == 'success' && needs.post_steps.result == 'success' }}
     needs: [style_lint, build, post_steps]
     runs-on: ubuntu-latest
     steps:
