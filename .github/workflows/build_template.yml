@@ -400,7 +400,7 @@ jobs:
           # results of build at pr-branch/.lake/build_summary_Counterexamples.json
 
       - name: stage Mathlib cache files
-        if: ${{ always() && steps.build.outcome == 'success' || steps.build.outcome == 'failure' }}
+        if: ${{ always() && (steps.build.outcome == 'success' || steps.build.outcome == 'failure' || steps.build.outcome == 'cancelled') }}
         shell: bash
         run: |
           rm -rf cache-staging
@@ -424,7 +424,7 @@ jobs:
 
       - name: check cache staging contents
         id: cache_staging_check
-        if: ${{ always() && (steps.build.outcome == 'success' || steps.build.outcome == 'failure') }}
+        if: ${{ always() && (steps.build.outcome == 'success' || steps.build.outcome == 'failure' || steps.build.outcome == 'cancelled') }}
         shell: bash
         run: |
           if find cache-staging -type f -name '*.ltar' -print -quit | grep -q .; then
@@ -434,7 +434,7 @@ jobs:
           fi
 
       - name: upload cache staging artifact
-        if: ${{ steps.cache_staging_check.outputs.has_files == 'true' }}
+        if: ${{ always() && steps.cache_staging_check.outputs.has_files == 'true' }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: cache-staging
