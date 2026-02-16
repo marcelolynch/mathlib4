@@ -655,6 +655,7 @@ jobs:
   post_steps:
     name: Post-Build Step
     needs: [build, upload_cache]
+    if: ${{ always() && needs.build.result == 'success' && (needs.upload_cache.result == 'success' || needs.upload_cache.result == 'skipped') }}
     runs-on: ubuntu-latest # Note these steps run on disposable GitHub runners, so no landrun sandboxing is needed.
     steps:
 
