@@ -244,8 +244,6 @@ jobs:
           fi
 
       - name: validate ProofWidgets source repository
-        # Only enforce this on the main mathlib4 repository, not on nightly-testing
-        if: github.repository == 'leanprover-community/mathlib4'
         shell: bash
         run: |
           cd pr-branch
