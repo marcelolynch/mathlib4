@@ -61,6 +61,7 @@ When arguments are provided, only the specified files and their transitive impor
 | Option              | Description                                                                                |
 |---------------------|--------------------------------------------------------------------------------------------|
 | `--repo=OWNER/REPO` | Override the repository to fetch cache from (e.g., `--repo=leanprover-community/mathlib4`) |
+| `--skip-proofwidgets` | Skip fetching/building `proofwidgets:release` assets during cache download commands     |
 
 ## Environment Variables
 
