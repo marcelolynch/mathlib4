@@ -1,0 +1,155 @@
+Critical path
+  time [s]          [cum]          drv
+----------  ----  -------  ------  --------------------------------------------------------------
+       0.5  0.1%      0.5    0.1%  Mathlib.Tactic.Linter.DirectoryDependency
+       0.4  0.1%      0.9    0.1%  Mathlib.Tactic.Linter.Header
+       1.0  0.1%      1.9    0.2%  Mathlib.Tactic.MinImports
+       1.1  0.1%      3.0    0.4%  Mathlib.Tactic.ExtractGoal
+       1.6  0.2%      4.6    0.6%  Mathlib.Tactic.TacticAnalysis.Declarations
+       0.5  0.1%      5.1    0.7%  Mathlib.Init
+       1.0  0.1%      6.1    0.8%  Mathlib.Data.String.Defs
+       1.4  0.2%      7.5    1.0%  Mathlib.Tactic.Translate.GuessName
+       4.5  0.6%     12.0    1.6%  Mathlib.Tactic.Translate.Core
+       0.6  0.1%     12.6    1.7%  Mathlib.Tactic.Translate.TagUnfoldBoundary
+       0.6  0.1%     13.2    1.8%  Mathlib.Tactic.Translate.ToDual
+       0.5  0.1%     13.6    1.8%  Mathlib.Tactic.ToDual
+       0.9  0.1%     14.6    1.9%  Mathlib.Data.Set.Defs
+       1.1  0.1%     15.7    2.1%  Mathlib.Order.Defs.Unbundled
+       1.8  0.2%     17.5    2.3%  Mathlib.Logic.Function.Basic
+       1.4  0.2%     18.9    2.5%  Mathlib.Logic.Unique
+       1.3  0.2%     20.2    2.7%  Mathlib.Data.FunLike.Basic
+       0.7  0.1%     20.8    2.8%  Mathlib.Data.FunLike.Embedding
+       0.9  0.1%     21.7    2.9%  Mathlib.Data.FunLike.Equiv
+       1.9  0.3%     23.6    3.1%  Mathlib.Logic.Equiv.Defs
+       2.3  0.3%     25.9    3.4%  Mathlib.Order.OrderDual
+       2.7  0.4%     28.6    3.8%  Mathlib.Order.RelClasses
+       3.2  0.4%     31.8    4.2%  Mathlib.Order.Monotone.Basic
+       4.7  0.6%     36.5    4.9%  Mathlib.Order.Lattice
+       2.4  0.3%     38.9    5.2%  Mathlib.Order.BoundedOrder.Lattice
+       2.9  0.4%     41.8    5.6%  Mathlib.Order.Disjoint
+       2.3  0.3%     44.1    5.9%  Mathlib.Order.PropInstances
+       4.2  0.6%     48.3    6.4%  Mathlib.Order.Heyting.Basic
+       2.2  0.3%     50.5    6.7%  Mathlib.Order.BooleanAlgebra.Defs
+       3.9  0.5%     54.4    7.2%  Mathlib.Order.BooleanAlgebra.Basic
+       3.3  0.4%     57.7    7.7%  Mathlib.Order.SymmDiff
+       2.1  0.3%     59.8    8.0%  Mathlib.Data.Set.SymmDiff
+       4.2  0.6%     64.0    8.5%  Mathlib.Data.Set.Image
+       4.1  0.5%     68.1    9.1%  Mathlib.Data.Set.Prod
+       3.9  0.5%     72.0    9.6%  Mathlib.Data.Set.Function
+       3.9  0.5%     75.9   10.1%  Mathlib.Logic.Equiv.Set
+       3.7  0.5%     79.6   10.6%  Mathlib.Order.Hom.Set
+       4.0  0.5%     83.6   11.1%  Mathlib.Order.CompleteLattice.Basic
+       3.5  0.5%     87.1   11.6%  Mathlib.Order.GaloisConnection.Basic
+       4.6  0.6%     91.7   12.2%  Mathlib.Order.CompleteBooleanAlgebra
+       2.5  0.3%     94.2   12.5%  Mathlib.Data.Set.BooleanAlgebra
+       5.1  0.7%     99.3   13.2%  Mathlib.Data.Set.Lattice
+       4.3  0.6%    103.6   13.8%  Mathlib.Data.Set.Lattice.Image
+       3.8  0.5%    107.4   14.3%  Mathlib.Order.Filter.Map
+       3.2  0.4%    110.6   14.7%  Mathlib.Order.Filter.Tendsto
+       4.5  0.6%    115.1   15.3%  Mathlib.Order.Filter.Prod
+       2.8  0.4%    117.9   15.7%  Mathlib.Order.Filter.Lift
+       3.3  0.4%    121.2   16.1%  Mathlib.Topology.Closure
+       3.3  0.4%    124.5   16.6%  Mathlib.Topology.Neighborhoods
+       3.0  0.4%    127.5   17.0%  Mathlib.Topology.ClusterPt
+       2.9  0.4%    130.4   17.4%  Mathlib.Topology.Continuous
+       3.9  0.5%    134.3   17.9%  Mathlib.Topology.Order
+       3.6  0.5%    137.9   18.4%  Mathlib.Topology.Maps.Basic
+       3.6  0.5%    141.5   18.8%  Mathlib.Topology.Homeomorph.Defs
+       4.4  0.6%    145.9   19.4%  Mathlib.Topology.Constructions.SumProd
+       4.6  0.6%    150.5   20.0%  Mathlib.Topology.Constructions
+       3.8  0.5%    154.3   20.5%  Mathlib.Topology.NhdsWithin
+       3.3  0.4%    157.6   21.0%  Mathlib.Topology.ContinuousOn
+       5.6  0.7%    163.2   21.7%  Mathlib.Topology.Compactness.Compact
+       2.0  0.3%    165.2   22.0%  Mathlib.Topology.Compactness.LocallyCompact
+       3.6  0.5%    168.8   22.5%  Mathlib.Topology.Separation.Basic
+       3.3  0.4%    172.1   22.9%  Mathlib.Topology.DiscreteSubset
+       3.2  0.4%    175.3   23.3%  Mathlib.Topology.Irreducible
+       2.8  0.4%    178.1   23.7%  Mathlib.Topology.Separation.Hausdorff
+       4.2  0.6%    182.3   24.3%  Mathlib.Topology.Order.OrderClosed
+       3.4  0.5%    185.7   24.7%  Mathlib.Topology.Connected.Basic
+       4.0  0.5%    189.7   25.3%  Mathlib.Topology.Connected.Clopen
+       3.5  0.5%    193.2   25.7%  Mathlib.Topology.Separation.Regular
+       3.2  0.4%    196.4   26.2%  Mathlib.Topology.DenseEmbedding
+       4.3  0.6%    200.7   26.7%  Mathlib.Topology.Homeomorph.Lemmas
+       3.1  0.4%    203.8   27.1%  Mathlib.Topology.Algebra.Constructions
+       6.8  0.9%    210.6   28.0%  Mathlib.Topology.Algebra.ConstMulAction
+       4.3  0.6%    214.9   28.6%  Mathlib.Topology.Algebra.MulAction
+       5.8  0.8%    220.7   29.4%  Mathlib.Topology.Algebra.Monoid
+       8.2  1.1%    228.9   30.5%  Mathlib.Topology.Algebra.Group.Basic
+       3.0  0.4%    231.9   30.9%  Mathlib.Topology.Algebra.Group.GroupTopology
+       5.2  0.7%    237.1   31.6%  Mathlib.Topology.Algebra.Ring.Basic
+       3.8  0.5%    240.9   32.1%  Mathlib.Topology.Algebra.Module.Basic
+      16.0  2.1%    256.9   34.2%  Mathlib.Topology.Algebra.Module.LinearMap
+       4.9  0.7%    261.8   34.9%  Mathlib.Topology.Algebra.SeparationQuotient.Basic
+       4.8  0.6%    266.6   35.5%  Mathlib.Topology.MetricSpace.Algebra
+       5.4  0.7%    272.0   36.2%  Mathlib.Analysis.Normed.Group.Uniform
+       5.4  0.7%    277.4   36.9%  Mathlib.Analysis.Normed.Ring.Lemmas
+       4.7  0.6%    282.1   37.6%  Mathlib.Analysis.Normed.Field.Lemmas
+       6.5  0.9%    288.6   38.4%  Mathlib.Analysis.Normed.Module.Basic
+       5.1  0.7%    293.7   39.1%  Mathlib.Analysis.LocallyConvex.Basic
+      17.0  2.3%    310.7   41.4%  Mathlib.Analysis.Seminorm
+       5.1  0.7%    315.8   42.1%  Mathlib.Analysis.LocallyConvex.Bounded
+       3.6  0.5%    319.4   42.5%  Mathlib.Topology.Algebra.Module.UniformConvergence
+       9.6  1.3%    329.0   43.8%  Mathlib.Topology.Algebra.Module.Spaces.UniformConvergenceCLM
+      15.0  2.0%    344.0   45.8%  Mathlib.Topology.Algebra.Module.Spaces.ContinuousLinearMap
+      10.0  1.3%    354.0   47.1%  Mathlib.Analysis.Normed.Operator.Basic
+      17.0  2.3%    371.0   49.4%  Mathlib.Analysis.Normed.Operator.Bilinear
+      26.0  3.5%    397.0   52.9%  Mathlib.Analysis.Normed.Module.Multilinear.Basic
+      17.0  2.3%    414.0   55.1%  Mathlib.Analysis.Normed.Module.Multilinear.Curry
+       9.0  1.2%    423.0   56.3%  Mathlib.Analysis.Calculus.FormalMultilinearSeries
+      11.0  1.5%    434.0   57.8%  Mathlib.Analysis.Analytic.ConvergenceRadius
+      22.0  2.9%    456.0   60.7%  Mathlib.Analysis.Analytic.Basic
+       8.4  1.1%    464.4   61.8%  Mathlib.Analysis.Analytic.ChangeOrigin
+      12.0  1.6%    476.4   63.4%  Mathlib.Analysis.Analytic.CPolynomialDef
+      14.0  1.9%    490.4   65.3%  Mathlib.Analysis.Analytic.Composition
+      26.0  3.5%    516.4   68.8%  Mathlib.Analysis.Analytic.Constructions
+      13.0  1.7%    529.4   70.5%  Mathlib.Analysis.Analytic.CPolynomial
+      18.0  2.4%    547.4   72.9%  Mathlib.Analysis.Calculus.FDeriv.Analytic
+      20.0  2.7%    567.4   75.6%  Mathlib.Analysis.Calculus.ContDiff.Defs
+      14.0  1.9%    581.4   77.4%  Mathlib.Analysis.Calculus.ContDiff.Basic
+       8.2  1.1%    589.6   78.5%  Mathlib.Analysis.Calculus.ContDiff.Comp
+      18.0  2.4%    607.6   80.9%  Mathlib.Analysis.Calculus.ContDiff.Operations
+       7.8  1.0%    615.4   82.0%  Mathlib.Geometry.Manifold.IsManifold.Basic
+       4.7  0.6%    620.1   82.6%  Mathlib.Geometry.Manifold.IsManifold.ExtChartAt
+       4.8  0.6%    624.9   83.2%  Mathlib.Geometry.Manifold.ContMDiff.Defs
+       4.1  0.5%    629.0   83.8%  Mathlib.Geometry.Manifold.ContMDiff.Basic
+       4.8  0.6%    633.8   84.4%  Mathlib.Geometry.Manifold.ContMDiff.Constructions
+      11.0  1.5%    644.8   85.9%  Mathlib.Geometry.Manifold.ContMDiff.NormedSpace
+       3.9  0.5%    648.7   86.4%  Mathlib.Geometry.Manifold.ContMDiffMap
+       5.1  0.7%    653.8   87.1%  Mathlib.Geometry.Manifold.Algebra.Monoid
+       2.3  0.3%    656.1   87.4%  Mathlib.Geometry.Manifold.Algebra.LieGroup
+       4.3  0.6%    660.4   87.9%  Mathlib.Geometry.Manifold.VectorBundle.SmoothSection
+       9.3  1.2%    669.7   89.2%  Mathlib.Geometry.Manifold.PartitionOfUnity
+       3.0  0.4%    672.7   89.6%  Mathlib.Geometry.Manifold.SmoothApprox
+       3.0  0.4%    675.7   90.0%  Mathlib.Analysis.Normed.Lp.SmoothApprox
+      32.0  4.3%    707.7   94.2%  Mathlib.Analysis.Distribution.SchwartzSpace.Basic
+       5.9  0.8%    713.6   95.0%  Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+       5.5  0.7%    719.1   95.8%  Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
+       1.0  0.1%    720.1   95.9%  Mathlib.Analysis.Fourier.PoissonSummation
+       1.4  0.2%    721.5   96.1%  Mathlib.Analysis.SpecialFunctions.Gaussian.PoissonSummation
+       1.9  0.3%    723.4   96.3%  Mathlib.NumberTheory.ModularForms.JacobiTheta.TwoVariable
+       1.9  0.3%    725.3   96.6%  Mathlib.NumberTheory.ModularForms.JacobiTheta.Bounds
+       2.5  0.3%    727.8   96.9%  Mathlib.NumberTheory.LSeries.HurwitzZetaEven
+       1.4  0.2%    729.2   97.1%  Mathlib.NumberTheory.LSeries.HurwitzZeta
+       1.4  0.2%    730.6   97.3%  Mathlib.NumberTheory.LSeries.RiemannZeta
+       2.3  0.3%    732.9   97.6%  Mathlib.NumberTheory.LSeries.Dirichlet
+       5.3  0.7%    738.2   98.3%  Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
+       2.4  0.3%    740.6   98.6%  Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.Summable
+       2.1  0.3%    742.7   98.9%  Mathlib.NumberTheory.ModularForms.DedekindEta
+       2.2  0.3%    744.9   99.2%  Mathlib.NumberTheory.ModularForms.Discriminant
+       3.4  0.5%    748.3   99.7%  Mathlib.NumberTheory.ModularForms.DimensionFormulas.LevelOne
+       2.6  0.3%    750.9  100.0%  Mathlib
+
+Simulated build times by processor count up optimal power of two
+  #CPUs      time [s]    CPU% [avg]
+-------  ------------  ------------
+      1  33075.265000          100%
+      2  16542.857000          200%
+      4   8280.619000          399%
+      8   4157.854000          795%
+     16   2128.301000         1554%
+     32   1189.345000         2781%
+     64    837.552000         3949%
+    128    752.006000         4398%
+    256    750.906000         4405%
+
