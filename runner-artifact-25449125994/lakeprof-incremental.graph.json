@@ -1,0 +1,1 @@
+{"directed": true, "multigraph": false, "graph": {"rankdir": "BT"}, "nodes": [{"drv_name": "Mathlib.Order.Lattice", "kind": null, "start": 1.221, "stop": 3.721, "time": 2.5, "id": "Mathlib.Order.Lattice"}], "edges": []}

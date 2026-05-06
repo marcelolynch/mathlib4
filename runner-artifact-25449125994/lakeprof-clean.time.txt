@@ -1,0 +1,26 @@
+	Command being timed: "/home/lean/.lakeprof-venv/bin/python /home/lean/.lakeprof-venv/lakeprof.py record -o /home/lean/actions-runner/_work/mathlib4/mathlib4/artifact/lakeprof-clean.log -- lake build Mathlib"
+	User time (seconds): 23178.82
+	System time (seconds): 4961.44
+	Percent of CPU this job got: 1150%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 40:45.04
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3061932
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 32
+	Minor (reclaiming a frame) page faults: 376540770
+	Voluntary context switches: 48567145
+	Involuntary context switches: 31672922
+	Swaps: 0
+	File system inputs: 152
+	File system outputs: 21260640
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+start_utc: 2026-05-06T16:55:31Z
+end_utc: 2026-05-06T17:36:16Z
+build_ok: 1

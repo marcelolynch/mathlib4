@@ -1,0 +1,7 @@
+{
+  "nodes": 8355,
+  "edges": 34114,
+  "total_work_s": 27963.894,
+  "critical_path_s": 740.821,
+  "log_input": "/home/lean/actions-runner/_work/mathlib4/mathlib4/artifact/lakeprof-clean.log"
+}

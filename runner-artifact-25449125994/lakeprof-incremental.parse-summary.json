@@ -1,0 +1,7 @@
+{
+  "nodes": 1,
+  "edges": 0,
+  "total_work_s": 2.5,
+  "critical_path_s": 2.5,
+  "log_input": "/home/lean/actions-runner/_work/mathlib4/mathlib4/artifact/lakeprof-incremental.log"
+}

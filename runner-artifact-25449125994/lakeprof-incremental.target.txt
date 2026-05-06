@@ -1,0 +1,3 @@
+target: Mathlib/Order/Lattice.lean
+before_sha: e519b1a52a66d51372c4eae09f4e908dc0cb87aa6d732ec7b83526200efeb22e
+after_sha:  769e11c43cc1011543d273018fd36cc82a76b460df3e4d55e48bc24d2763c88b

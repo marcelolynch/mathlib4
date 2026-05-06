@@ -3,6 +3,11 @@
 Saves SVGs to /Users/chelo/lakeprof-experiments/reports/figs-scheduler/.
 
 Run from /Users/chelo/mathlib4-lakeprof.
+
+If RUNNER=1 in the environment, sources data from runner-clean.graph.json +
+runner_cache_hit_sweep.json (recorded on the Xeon Gold 6248R pr runner) and
+writes to figs-scheduler-runner/ instead. Otherwise uses the local
+Apple-Silicon trace.
 """
 import json
 import os
@@ -18,9 +23,15 @@ import matplotlib.ticker as mticker
 import numpy as np
 
 sys.path.insert(0, ".")
-from scheduler_sim import simulate, wall_clock
+from scheduler_sim import simulate, wall_clock, load_graph_json
 
-OUT = "/Users/chelo/lakeprof-experiments/reports/figs-scheduler"
+RUNNER = os.environ.get("RUNNER") == "1"
+OUT = ("/Users/chelo/lakeprof-experiments/reports/figs-scheduler-runner"
+       if RUNNER else
+       "/Users/chelo/lakeprof-experiments/reports/figs-scheduler")
+SUBTITLE = ("runner trace — Xeon Gold 6248R, 12 cores, KVM"
+            if RUNNER else
+            "local 18-core Apple-Silicon trace")
 os.makedirs(OUT, exist_ok=True)
 
 plt.rcParams.update({
@@ -51,8 +62,11 @@ PALETTE = {
 # Load data
 # --------------------------------------------------------------------------- #
 
-with open("mathlib-clean.log") as f:
-    g = lakeprof.parse(f)
+if RUNNER:
+    g = load_graph_json("runner-clean.graph.json")
+else:
+    with open("mathlib-clean.log") as f:
+        g = lakeprof.parse(f)
 for u, _, d in g.edges(data=True):
     d["time"] = g.nodes[u]["time"]
 total_work = sum(d["time"] for _, d in g.nodes(data=True))
@@ -70,7 +84,8 @@ for pol in ("fifo", "hlfet", "lpt", "random"):
 print(f"clean-build wall-clocks: {walls}")
 print(f"  total_work={total_work:.0f}s, CP={cp_clean:.0f}s, LB={LB_clean:.1f}s")
 
-with open("scheduler_cache_hit_sweep.json") as f:
+sweep_path = "runner_cache_hit_sweep.json" if RUNNER else "scheduler_cache_hit_sweep.json"
+with open(sweep_path) as f:
     sweep = json.load(f)
 rows = sweep["rows"]
 print(f"sweep rows: {len(rows)}")
@@ -92,7 +107,7 @@ ax.axhline(cp_clean, color=PALETTE["cp"], lw=1.6, ls=":", zorder=2,
 ax.set_xticks(xs)
 ax.set_xticklabels([p.upper() if p == "fifo" else p for p in order])
 ax.set_ylabel("simulated wall-clock at p=12 (s)")
-ax.set_title("Clean-build wall-clock: any oracle scheduler is at or above the dashed line")
+ax.set_title(f"Clean-build wall-clock: any oracle scheduler is at or above the dashed line\n({SUBTITLE})", fontsize=11)
 for x, y, p in zip(xs, ys, order):
     over = (y - LB_clean) / y * 100
     ax.annotate(f"{y:.0f}s\n+{over:.2f}% over LB",
@@ -121,7 +136,7 @@ ax.axvline(5, color="#888", lw=1, ls="--", zorder=1)
 ax.text(5.1, 0.03, "5% decision-rule\nthreshold", fontsize=9, color="#555")
 ax.set_xlabel("gap-over-LB at p=12 (%)")
 ax.set_ylabel("CDF (cumulative fraction of commits)")
-ax.set_title(f"Per-commit oracle-headroom ceiling across {n} commits — most are zero")
+ax.set_title(f"Per-commit oracle-headroom ceiling across {n} commits — most are zero\n({SUBTITLE})", fontsize=11)
 ax.set_xlim(-0.5, 28)
 ax.set_ylim(0, 1.005)
 ax.legend(loc="lower right")
@@ -146,7 +161,7 @@ for regime in ("cp-bound", "work-bound"):
 ax.set_xscale("log")
 ax.set_xlabel("blast size (modules invalidated by commit, log scale)")
 ax.set_ylabel("HLFET gap-over-LB (%)")
-ax.set_title("HLFET headroom vs blast size — outliers are CP-bound Analysis/MeasureTheory refactors")
+ax.set_title(f"HLFET headroom vs blast size — outliers are CP-bound Analysis/MeasureTheory refactors\n({SUBTITLE})", fontsize=11)
 ax.axhline(5, color="#888", lw=1, ls="--", zorder=0)
 ax.text(1.05, 5.4, "5% threshold", fontsize=9, color="#555")
 ax.legend(loc="upper left", title="dot size ∝ √(FIFO wall-clock)")
@@ -174,7 +189,7 @@ ax.plot([0, mx], [0, mx], color="#444", lw=1, ls="--", zorder=1,
         label="rebuild_CP = rebuild_work/p")
 ax.set_xlabel("rebuild_work / p (s)")
 ax.set_ylabel("rebuild_CP (s)")
-ax.set_title("Where each commit lives — above the diagonal = CP-bound (scheduler can't help)")
+ax.set_title(f"Where each commit lives — above the diagonal = CP-bound (scheduler can't help)\n({SUBTITLE})", fontsize=11)
 ax.set_aspect("equal")
 ax.set_xlim(0, mx * 1.05)
 ax.set_ylim(0, mx * 1.05)
@@ -196,7 +211,7 @@ ax.hist(fifo_wo, bins=bins, color=PALETTE["fifo"], alpha=0.65, label="FIFO", zor
 ax.hist(hl_wo,   bins=bins, color=PALETTE["hlfet"], alpha=0.85, label="HLFET", zorder=3)
 ax.set_xlabel("gap-over-LB (%) — work-bound commits only")
 ax.set_ylabel("# commits")
-ax.set_title(f"Where smarter scheduling could help: {len(wo)} work-bound commits")
+ax.set_title(f"Where smarter scheduling could help: {len(wo)} work-bound commits\n({SUBTITLE})", fontsize=11)
 ax.legend()
 plt.savefig(f"{OUT}/05-hist-workbound.svg")
 plt.close(fig)

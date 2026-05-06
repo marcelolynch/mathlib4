@@ -1,0 +1,17 @@
+# lakeprof_capture metadata
+commit: 679046f288d911877dc971ae8cfa9c7f16111915
+branch: refs/heads/ci-dev/lakeprof-capture
+ref: 679046f288d911877dc971ae8cfa9c7f16111915
+runner_name: hoskinson9-20260506164317
+runner_os: Linux
+runner_arch: X64
+nproc: 12
+cpu_model: Intel(R) Xeon(R) Gold 6248R CPU @ 3.00GHz
+memory_kb: 31769064
+kernel: Linux 6.11.0-26-generic x86_64
+lean_toolchain: leanprover/lean4:v4.30.0-rc2
+lake_version: 
+date_utc: 2026-05-06T16:55:31Z
+record_incremental: true
+incremental_target: Mathlib/Order/Lattice.lean
+concurrency_note: Lake 5.0 has no -j flag; build runs at runner default (LEAN_NUM_THREADS unset → hardware concurrency)
