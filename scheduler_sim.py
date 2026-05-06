@@ -233,10 +233,18 @@ def main() -> int:
     g = _load_graph(args.input)
     cum = sum(d["time"] for _, d in g.nodes(data=True))
 
-    cp = networkx.dag_longest_path_length(g, weight="time")
+    # CP via node-sum along longest path. dag_longest_path_length(weight="time")
+    # excludes the path's terminal node because lakeprof sets edge weight =
+    # time(source); on the clean graph the discrepancy is ~0.5 s but on small
+    # blast subgraphs it can be the dominant term.
+    cp_path = networkx.dag_longest_path(g, weight="time")
+    cp = sum(g.nodes[u]["time"] for u in cp_path)
+    lb = max(cp, cum / args.nproc)  # makespan lower bound for ANY scheduler
     if not args.json:
         print(f"graph: {g.number_of_nodes()} nodes, {g.number_of_edges()} edges, "
               f"total work {cum:.0f} s, CP {cp:.0f} s")
+        print(f"makespan lower bound at p={args.nproc}: "
+              f"max(CP, work/p) = max({cp:.0f}, {cum/args.nproc:.0f}) = {lb:.1f} s")
 
     rows: List[Tuple[str, float]] = []
     for policy in [p.strip() for p in args.policies.split(",") if p.strip()]:
@@ -257,16 +265,30 @@ def main() -> int:
             "edges": g.number_of_edges(),
             "total_work_s": cum,
             "critical_path_s": cp,
-            "policies": [{"policy": p, "wall_s": w} for p, w in rows],
+            "lower_bound_s": lb,
+            "policies": [
+                {
+                    "policy": p,
+                    "wall_s": w,
+                    "gap_over_lb": (w - lb) / w,
+                }
+                for p, w in rows
+            ],
             "gap_fifo_minus_hlfet_over_fifo": gap,
         }
         print(json.dumps(out, indent=2))
     else:
         print(f"\nlist-schedule wall-clock at p={args.nproc}")
         for p, w in rows:
-            print(f"  {p:<8} {w:8.1f} s    util={cum / w / args.nproc:.1%}")
+            over_lb = (w - lb) / w
+            print(f"  {p:<8} {w:8.1f} s    util={cum / w / args.nproc:.1%}    "
+                  f"gap-over-LB={over_lb:+.2%}")
         if gap is not None:
             print(f"\ngap (FIFO - HLFET) / FIFO = {gap:.2%}")
+        # The "gap-over-LB" column above is the maximum win an oracle scheduler
+        # could buy over that policy. It's an upper bound; the actual oracle
+        # makespan may exceed LB. So a 0.10 % HLFET gap-over-LB means the
+        # oracle path is hard-capped at 0.10 % wins for this graph at this p.
 
     if args.divergence:
         a, b = args.divergence
