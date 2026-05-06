@@ -208,9 +208,33 @@ def _load_graph(log_path: str) -> networkx.DiGraph:
     return g
 
 
+def load_graph_json(path: str) -> networkx.DiGraph:
+    """Load a graph serialized via networkx.node_link_data.
+
+    Used to re-do analysis off-runner against a runner-recorded trace without
+    needing a same-SHA mathlib4 checkout (which `lakeprof.parse` requires for
+    `lake query`). The parse step is done on the runner via
+    `parse_log.py` in the lakeprof_capture workflow.
+    """
+    with open(path) as f:
+        data = json.load(f)
+    # node_link_data was emitted with `edges="edges"` for forward-compat with
+    # networkx; load with the same kwarg.
+    g = networkx.node_link_graph(data, edges="edges")
+    # ensure edge["time"] is populated even if the producer skipped it
+    for u, _, d in g.edges(data=True):
+        if "time" not in d:
+            d["time"] = g.nodes[u]["time"]
+    return g
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("-i", "--input", default="mathlib-clean.log")
+    ap.add_argument("-i", "--input", default="mathlib-clean.log",
+                    help="lakeprof log path (parsed via lakeprof.parse, needs lake)")
+    ap.add_argument("--graph-json", default=None,
+                    help="alternative input: pre-parsed networkx graph JSON "
+                         "from the lakeprof_capture workflow. Bypasses --input.")
     ap.add_argument("-p", "--nproc", type=int, default=12)
     ap.add_argument(
         "--policies",
@@ -230,7 +254,12 @@ def main() -> int:
     ap.add_argument("--json", action="store_true", help="machine-readable output")
     args = ap.parse_args()
 
-    g = _load_graph(args.input)
+    if args.graph_json:
+        g = load_graph_json(args.graph_json)
+        source_label = args.graph_json
+    else:
+        g = _load_graph(args.input)
+        source_label = args.input
     cum = sum(d["time"] for _, d in g.nodes(data=True))
 
     # CP via node-sum along longest path. dag_longest_path_length(weight="time")
@@ -260,7 +289,7 @@ def main() -> int:
     if args.json:
         out = {
             "nproc": args.nproc,
-            "input": args.input,
+            "input": source_label,
             "nodes": g.number_of_nodes(),
             "edges": g.number_of_edges(),
             "total_work_s": cum,

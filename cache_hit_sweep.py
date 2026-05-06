@@ -37,7 +37,7 @@ sys.path.insert(0, "/Users/chelo/lakeprof")
 import lakeprof  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(__file__))
-from scheduler_sim import simulate, wall_clock  # noqa: E402
+from scheduler_sim import simulate, wall_clock, load_graph_json  # noqa: E402
 
 
 # --------------------------------------------------------------------------- #
@@ -96,7 +96,10 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("-n", "--commits", type=int, default=200)
     ap.add_argument("-p", "--nproc", type=int, default=12)
-    ap.add_argument("-i", "--input", default="mathlib-clean.log")
+    ap.add_argument("-i", "--input", default="mathlib-clean.log",
+                    help="lakeprof log to parse (requires `lake query` in cwd)")
+    ap.add_argument("--graph-json", default=None,
+                    help="alternative input: pre-parsed graph JSON from lakeprof_capture")
     ap.add_argument("--repo", default=".")
     ap.add_argument("--out", default=None,
                     help="optional JSON path for per-commit rows")
@@ -109,12 +112,16 @@ def main() -> int:
                     help="skip commits whose blast has < this many modules")
     args = ap.parse_args()
 
-    print(f"loading {args.input}...", file=sys.stderr)
+    src = args.graph_json or args.input
+    print(f"loading {src}...", file=sys.stderr)
     t0 = time.monotonic()
-    with open(args.input) as f:
-        g = lakeprof.parse(f)
-    for u, _, d in g.edges(data=True):
-        d["time"] = g.nodes[u]["time"]
+    if args.graph_json:
+        g = load_graph_json(args.graph_json)
+    else:
+        with open(args.input) as f:
+            g = lakeprof.parse(f)
+        for u, _, d in g.edges(data=True):
+            d["time"] = g.nodes[u]["time"]
     print(f"  graph: {g.number_of_nodes()} nodes, {g.number_of_edges()} edges "
           f"({time.monotonic()-t0:.1f}s)", file=sys.stderr)
 
