@@ -49,7 +49,7 @@ instance : SetLike (Compacts α) α where
 instance : PartialOrder (Compacts α) := .ofSetLike (Compacts α) α
 
 /-- See Note [custom simps projection]. -/
-def Simps.coe (s : Compacts α) : Set α := s
+private def Simps.coe (s : Compacts α) : Set α := s
 
 initialize_simps_projections Compacts (carrier → coe, as_prefix coe)
 
@@ -299,7 +299,7 @@ instance : SetLike (NonemptyCompacts α) α where
 instance : PartialOrder (NonemptyCompacts α) := .ofSetLike (NonemptyCompacts α) α
 
 /-- See Note [custom simps projection]. -/
-def Simps.coe (s : NonemptyCompacts α) : Set α := s
+private def Simps.coe (s : NonemptyCompacts α) : Set α := s
 
 initialize_simps_projections NonemptyCompacts (carrier → coe, as_prefix coe, as_prefix toCompacts)
 
@@ -543,7 +543,7 @@ instance : SetLike (PositiveCompacts α) α where
 instance : PartialOrder (PositiveCompacts α) := .ofSetLike (PositiveCompacts α) α
 
 /-- See Note [custom simps projection]. -/
-def Simps.coe (s : PositiveCompacts α) : Set α := s
+private def Simps.coe (s : PositiveCompacts α) : Set α := s
 
 initialize_simps_projections PositiveCompacts (carrier → coe, as_prefix coe, as_prefix toCompacts)
 
@@ -557,7 +557,7 @@ protected theorem nonempty (s : PositiveCompacts α) : (s : Set α).Nonempty :=
   s.interior_nonempty.mono interior_subset
 
 /-- Reinterpret a positive compact as a nonempty compact. -/
-def toNonemptyCompacts (s : PositiveCompacts α) : NonemptyCompacts α :=
+private def toNonemptyCompacts (s : PositiveCompacts α) : NonemptyCompacts α :=
   ⟨s.toCompacts, s.nonempty⟩
 
 @[ext]
@@ -680,7 +680,7 @@ instance : SetLike (CompactOpens α) α where
 instance : PartialOrder (CompactOpens α) := .ofSetLike (CompactOpens α) α
 
 /-- See Note [custom simps projection]. -/
-def Simps.coe (s : CompactOpens α) : Set α := s
+private def Simps.coe (s : CompactOpens α) : Set α := s
 
 initialize_simps_projections CompactOpens (carrier → coe, as_prefix coe, as_prefix toCompacts)
 
