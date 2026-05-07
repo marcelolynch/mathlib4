@@ -598,7 +598,7 @@ lemma sup_spanningCoe (H H' : Subgraph G) :
 
 /-- The bottom of the `Subgraph G` lattice is isomorphic to the empty graph on the empty
 vertex type. -/
-def botIso : (⊥ : Subgraph G).coe ≃g emptyGraph Empty where
+private def botIso : (⊥ : Subgraph G).coe ≃g emptyGraph Empty where
   toFun v := v.property.elim
   invFun v := v.elim
   left_inv := fun ⟨_, h⟩ ↦ h.elim
