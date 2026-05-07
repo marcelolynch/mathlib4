@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mathlib4 build-time analysis — final findings</title>
+<style>
+:root {
+  --fg: #1f2328; --bg: #ffffff; --muted: #57606a; --border: #d0d7de;
+  --link: #0969da; --code-bg: #f6f8fa; --accent: #cf222e;
+  --max-width: 760px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fg: #e6edf3; --bg: #0d1117; --muted: #8b949e; --border: #30363d;
+    --link: #2f81f7; --code-bg: #161b22; --accent: #f85149;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-size: 16px; line-height: 1.6; color: var(--fg); background: var(--bg);
+  padding: 2rem 1rem 4rem;
+}
+main { max-width: var(--max-width); margin: 0 auto; }
+h1, h2, h3, h4 { line-height: 1.25; margin-top: 2.2rem; margin-bottom: 0.8rem; }
+h1 { font-size: 2rem; padding-bottom: .3em; border-bottom: 1px solid var(--border); }
+h2 { font-size: 1.5rem; padding-bottom: .3em; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.2rem; }
+h4 { font-size: 1.05rem; color: var(--muted); }
+p { margin: 0.8rem 0; }
+blockquote {
+  margin: 1rem 0; padding: 0.6rem 1rem; border-left: 4px solid var(--border);
+  color: var(--muted); background: var(--code-bg); border-radius: 4px;
+}
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+ul, ol { padding-left: 1.5rem; }
+li { margin: 0.2rem 0; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; padding: 0.15em 0.35em; background: var(--code-bg); border-radius: 4px;
+}
+pre {
+  background: var(--code-bg); border-radius: 6px; padding: 1rem; overflow-x: auto;
+  font-size: 0.875rem; line-height: 1.45;
+}
+pre code { padding: 0; background: transparent; font-size: inherit; }
+table {
+  border-collapse: collapse; margin: 1rem 0; font-size: 0.92rem;
+  display: block; overflow-x: auto; max-width: 100%;
+}
+table thead { background: var(--code-bg); }
+th, td { border: 1px solid var(--border); padding: 0.4rem 0.7rem; text-align: left; }
+th { font-weight: 600; }
+tbody tr:nth-child(even) { background: rgba(0,0,0,0.02); }
+@media (prefers-color-scheme: dark) {
+  tbody tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+}
+hr { border: 0; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+.figure {
+  margin: 1.5rem 0; padding: 1rem; border: 1px solid var(--border); border-radius: 6px;
+  background: var(--bg);
+}
+.figure svg { width: 100%; height: auto; max-width: 100%; display: block; }
+.figcaption {
+  color: var(--muted); font-size: 0.85rem; text-align: center;
+  margin-bottom: 0.75rem; font-style: italic;
+}
+</style>
+</head>
+<body>
+<main>
+<h1 id="mathlib4-build-time-analysis-final-findings-report">mathlib4 build-time analysis — final findings report</h1>
+<p>Comprehensive analysis of mathlib4's build graph, parallelism limits, incremental rebuild costs, and federation viability. Based on a clean recorded build of mathlib4 @ <code>36a97460</code> (2026-05-04, 18-core Apple Silicon, 32m46s wall-clock, 8,393 jobs) and the last 1,500–2,000 commits of git history. All numerics traceable to scripts in this directory.</p>
+<p>This document complements the phase-by-phase technical breakdown in <a href="lakeprof-analysis.md"><code>lakeprof-analysis.md</code></a>.</p>
+<hr />
+<h2 id="top-line-conclusions">Top-line conclusions</h2>
+<ol>
+<li>
+<p><strong>The clean-build wall-clock floor is 750 s</strong> (12 m 31 s) under any number of cores. <strong>62 % of that floor lives inside <code>Mathlib.Analysis</code></strong> alone. Speedup ceiling vs single-CPU: 44×. Practical knee at ~96–112 cores; true saturation at 192.</p>
+</li>
+<li>
+<p><strong>mathlib has no layered architecture</strong> — at the namespace level, <strong>96 % of modules participate in one giant strongly-connected component</strong> of 27 namespaces. The intuition that <code>Algebra → Analysis → NumberTheory</code> is a DAG is empirically false. Even at 4-level (directory) granularity, 57 % of modules remain in one SCC.</p>
+</li>
+<li>
+<p><strong>Pure sharding cannot help.</strong> Two-phase (foundation → downstream) builds are 15–35 % <em>slower</em> than monolithic. Naive namespace-level federation under content hashing is <em>strictly worse</em> than today's file-level cache (98 % vs 6 % median module blast).</p>
+</li>
+<li>
+<p><strong>The dominant lever is cache semantics, not infrastructure.</strong> Only 1.3 % of mathlib's 33,651 imports are private. The theoretical lower bound under maximal <code>private import</code> adoption shrinks the rebuild critical path from 734 s to <strong>68 s</strong> — a 91 % reduction. This is the largest single available improvement, and most of it is achievable today without upstream changes.</p>
+</li>
+<li>
+<p><strong>The foundation churns hardest.</strong> <code>Mathlib.Algebra</code> is in 19 % of all commits with avg blast radius 52 % of the graph. The median commit invalidates 36 % of the critical path. The "stable foundation, churning leaves" intuition is the opposite of reality.</p>
+</li>
+</ol>
+<hr />
+<h2 id="1-clean-build-parallelism-limits">1. Clean-build parallelism limits</h2>
+<h3 id="baseline">Baseline</h3>
+<ul>
+<li>Total work (1-CPU sim): 33,075 s ≈ 9 h 11 m</li>
+<li>Critical-path floor (∞ cores): <strong>750 s</strong></li>
+<li>Speedup ceiling: 44× (= 33,075 / 750)</li>
+<li>Recorded 18-core wall-clock: 1,966 s = ~16.8× = 38 % of theoretical max</li>
+</ul>
+<h3 id="where-the-ceiling-is-set">Where the ceiling is set</h3>
+<p>The 113-module critical path runs:
+<code>Set → Order → Topology → Algebra → Analysis (Seminorm/Operator/Multilinear) → Analytic → ContDiff → Manifold → SchwartzSpace → Fourier → ModularForms</code></p>
+<p>Heaviest CP nodes (Analysis-dominated):
+| s | module |
+|---:|---|
+| 32.0 | <code>Mathlib.Analysis.Distribution.SchwartzSpace.Basic</code> |
+| 26.0 | <code>Mathlib.Analysis.Normed.Module.Multilinear.Basic</code> |
+| 26.0 | <code>Mathlib.Analysis.Analytic.Constructions</code> |
+| 22.0 | <code>Mathlib.Analysis.Analytic.Basic</code> |
+| 20.0 | <code>Mathlib.Analysis.Calculus.ContDiff.Defs</code> |</p>
+<h3 id="parallelism-profile">Parallelism profile</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">concurrent jobs</th>
+<th style="text-align: right;">wall-clock share</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">&lt;16</td>
+<td style="text-align: right;">11 %</td>
+</tr>
+<tr>
+<td style="text-align: center;">16–31</td>
+<td style="text-align: right;"><strong>31 %</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;">32–63</td>
+<td style="text-align: right;">35 %</td>
+</tr>
+<tr>
+<td style="text-align: center;">64–95</td>
+<td style="text-align: right;">17 %</td>
+</tr>
+<tr>
+<td style="text-align: center;">≥96</td>
+<td style="text-align: right;">6 %</td>
+</tr>
+</tbody>
+</table>
+<p><strong>42 % of the wall-clock floor has fewer than 32 tasks running.</strong> This is why the speedup curve flattens hard. Adding cores past ~32 helps less than commonly assumed — most of the build is structurally narrow.</p>
+<h3 id="bottleneck-what-if-zero-out-top-k-cp-modules">Bottleneck what-if (zero out top-K CP modules)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">K</th>
+<th style="text-align: right;">new floor</th>
+<th style="text-align: right;">gain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">736 s</td>
+<td style="text-align: right;">14 s</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">665 s</td>
+<td style="text-align: right;">86 s</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">665 s</td>
+<td style="text-align: right;"><strong>0 (plateau)</strong></td>
+</tr>
+<tr>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">652 s</td>
+<td style="text-align: right;">&lt;1 s/module</td>
+</tr>
+<tr>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">628 s</td>
+<td style="text-align: right;">&lt;1 s/module</td>
+</tr>
+</tbody>
+</table>
+<p>Diminishing returns hit at K=5; alternative chains then dominate. <strong>Splitting at most 5 specific Analysis modules is worth ~85 s of CP</strong>; further splits are wasted unless coordinated across multiple parallel chains.</p>
+<h3 id="linear-core-sweep">Linear core sweep</h3>
+<p>True saturation point is <strong>192 cores</strong> (not 128 as the doubling sweep suggested). Practical knee at 96–112 cores — beyond that you pay for cores that sit idle waiting on the critical path.</p>
+<hr />
+<h2 id="2-incremental-build-reality">2. Incremental-build reality</h2>
+<h3 id="per-commit-blast-radius-content-hash-invalidation-last-1871-commits">Per-commit blast radius (content-hash invalidation, last 1,871 commits)</h3>
+<table>
+<thead>
+<tr>
+<th>quantile</th>
+<th style="text-align: right;">edited mods</th>
+<th style="text-align: right;">invalidated mods</th>
+<th style="text-align: right;">rebuild CP</th>
+<th style="text-align: right;">% of full CP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>p25</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">34 s</td>
+<td style="text-align: right;">4.6 %</td>
+</tr>
+<tr>
+<td><strong>p50</strong></td>
+<td style="text-align: right;"><strong>2</strong></td>
+<td style="text-align: right;"><strong>507</strong></td>
+<td style="text-align: right;"><strong>269 s</strong></td>
+<td style="text-align: right;"><strong>35.9 %</strong></td>
+</tr>
+<tr>
+<td>p75</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2,604</td>
+<td style="text-align: right;">520 s</td>
+<td style="text-align: right;">69.3 %</td>
+</tr>
+<tr>
+<td>p90</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">6,460</td>
+<td style="text-align: right;">667 s</td>
+<td style="text-align: right;">88.9 %</td>
+</tr>
+<tr>
+<td>p95</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">7,363</td>
+<td style="text-align: right;">725 s</td>
+<td style="text-align: right;">96.7 %</td>
+</tr>
+</tbody>
+</table>
+<p>Only the bottom 25 % of commits are leaf-like. The median commit kills ~12 minutes of cache-able critical path; the 90th percentile commit is ~89 % of a clean rebuild.</p>
+<h3 id="where-churn-lands">Where churn lands</h3>
+<table>
+<thead>
+<tr>
+<th>namespace</th>
+<th style="text-align: right;">% of commits</th>
+<th style="text-align: right;">avg blast (% of graph)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Mathlib.Algebra</code></td>
+<td style="text-align: right;"><strong>19 %</strong></td>
+<td style="text-align: right;">52 %</td>
+</tr>
+<tr>
+<td><code>Mathlib.Analysis</code></td>
+<td style="text-align: right;">15 %</td>
+<td style="text-align: right;">6 %</td>
+</tr>
+<tr>
+<td><code>Mathlib.RingTheory</code></td>
+<td style="text-align: right;">14 %</td>
+<td style="text-align: right;">18 %</td>
+</tr>
+<tr>
+<td><code>Mathlib.Topology</code></td>
+<td style="text-align: right;">14 %</td>
+<td style="text-align: right;">19 %</td>
+</tr>
+<tr>
+<td><code>Mathlib.CategoryTheory</code></td>
+<td style="text-align: right;">11 %</td>
+<td style="text-align: right;">11 %</td>
+</tr>
+<tr>
+<td><strong><code>Mathlib.Order</code></strong></td>
+<td style="text-align: right;">10 %</td>
+<td style="text-align: right;"><strong>66 %</strong></td>
+</tr>
+<tr>
+<td><code>Mathlib.Data</code></td>
+<td style="text-align: right;">10 %</td>
+<td style="text-align: right;">45 %</td>
+</tr>
+<tr>
+<td><strong><code>Mathlib.Tactic</code></strong></td>
+<td style="text-align: right;">8 %</td>
+<td style="text-align: right;"><strong>58 %</strong></td>
+</tr>
+<tr>
+<td>Mathlib.NumberTheory</td>
+<td style="text-align: right;">10 %</td>
+<td style="text-align: right;">1 %</td>
+</tr>
+<tr>
+<td>Mathlib.AlgebraicGeometry</td>
+<td style="text-align: right;">3 %</td>
+<td style="text-align: right;">0.5 %</td>
+</tr>
+</tbody>
+</table>
+<p>The most-edited namespaces are also the highest-blast — exactly the opposite of the "stable foundation" pattern. The true low-blast namespaces (NumberTheory, AlgebraicGeometry, Probability, AlgebraicTopology) have 1–6 % blast but only collectively account for ~15 % of edits.</p>
+<h3 id="top-30-leverage-modules-edits-blast-cp">Top-30 leverage modules (edits × blast CP)</h3>
+<p>All 30 fall into the same lever class: <strong>hot edits + huge blast radius</strong>. Zero are split candidates. Sample (top 10):</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">rank</th>
+<th style="text-align: right;">edits</th>
+<th style="text-align: right;">blast CP</th>
+<th>module</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">384 s</td>
+<td><code>Mathlib.SetTheory.Cardinal.Cofinality</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">739 s</td>
+<td><code>Mathlib.Tactic.Translate.Core</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">410 s</td>
+<td><code>Mathlib.SetTheory.Ordinal.Basic</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">405 s</td>
+<td><code>Mathlib.SetTheory.Ordinal.Arithmetic</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">738 s</td>
+<td><code>Mathlib.Tactic.Translate.ToDual</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">735 s</td>
+<td><code>Mathlib.Logic.Basic</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">714 s</td>
+<td><code>Mathlib.Order.Lattice</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">698 s</td>
+<td><code>Mathlib.Data.List.Basic</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">614 s</td>
+<td><code>Mathlib.Order.Cover</code></td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">401 s</td>
+<td><code>Mathlib.SetTheory.Ordinal.Family</code></td>
+</tr>
+</tbody>
+</table>
+<p>Pareto: top 528 modules = 50 % of total observed rebuild cost; top 1,423 = 80 %; top 2,421 = 95 %. Cost is <strong>diffuse</strong>, but the <em>fix type</em> is uniform — one mechanism (<code>private import</code> / API hashing) addresses the entire top end.</p>
+<hr />
+<h2 id="3-module-system-delta-private-import-headroom">3. Module-system delta (private-import headroom)</h2>
+<h3 id="current-state-of-mathlibs-import-declarations">Current state of mathlib's import declarations</h3>
+<table>
+<thead>
+<tr>
+<th>import kind</th>
+<th style="text-align: right;">count</th>
+<th style="text-align: right;">share</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>public (<code>isExported: true</code>)</td>
+<td style="text-align: right;">33,002</td>
+<td style="text-align: right;"><strong>98.1 %</strong></td>
+</tr>
+<tr>
+<td>private (<code>isExported: false</code>)</td>
+<td style="text-align: right;">451</td>
+<td style="text-align: right;">1.3 %</td>
+</tr>
+<tr>
+<td>meta</td>
+<td style="text-align: right;">198</td>
+<td style="text-align: right;">0.6 %</td>
+</tr>
+<tr>
+<td>importAll</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0.0 %</td>
+</tr>
+</tbody>
+</table>
+<p>Only 1.3 % of imports are private. On the critical path, <strong>96 % of edges are public</strong> (132 of 137).</p>
+<h3 id="theoretical-lower-bound">Theoretical lower bound</h3>
+<p>Replacing every public import with <code>private import</code> and recomputing the rebuild-aware CP:</p>
+<table>
+<thead>
+<tr>
+<th>metric</th>
+<th style="text-align: right;">value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>current rebuild CP (<code>-r</code>)</td>
+<td style="text-align: right;">734–738 s</td>
+</tr>
+<tr>
+<td>maximal-private rebuild CP</td>
+<td style="text-align: right;"><strong>68 s</strong></td>
+</tr>
+<tr>
+<td>theoretical headroom</td>
+<td style="text-align: right;"><strong>−666 s (−91 %)</strong></td>
+</tr>
+</tbody>
+</table>
+<p>This is an unreachable upper bound (many imports must be public for instance resolution, syntax, reducible defs, etc.) — but it bounds what private-import adoption alone could buy. Capturing 10–20 % of the headroom translates to 60–130 s of CP, which compounds across every commit.</p>
+<p><strong>329 mechanically-identifiable conversion candidates exist among the top 30 CP modules alone</strong> — these are public imports from non-CP modules into CP modules, where conversion would shrink rebuild blast without affecting the standard CP.</p>
+<hr />
+<h2 id="4-federation-viability-the-cycle-problem">4. Federation viability (the cycle problem)</h2>
+<h3 id="the-killer-finding-namespace-cycles">The killer finding: namespace cycles</h3>
+<p>Of mathlib's 34 top-level namespaces:</p>
+<ul>
+<li><strong>One giant SCC contains 27 namespaces = 7,836 modules = 96 % of mathlib</strong></li>
+<li>Only AlgebraicGeometry, Condensed, InformationTheory, Testing, Deprecated sit outside the giant SCC (170 modules = 2 % of the codebase)</li>
+<li>96 bidirectional namespace pairs (17 % of all possible 561 pairs)</li>
+<li>Even at 3-level (<code>Mathlib.X.Y</code>) granularity: largest SCC = 88 % of modules</li>
+<li>At 4-level (directory level): largest SCC = 57 % of modules</li>
+</ul>
+<p><strong>The conventional intuition that mathlib is layered (<code>Foundation → Algebra → Analysis → Leaves</code>) is empirically false.</strong> The "leaves" — <code>NumberTheory</code>, <code>Probability</code>, <code>AlgebraicTopology</code>, <code>Geometry</code>, <code>RepresentationTheory</code>, <code>MeasureTheory</code>, <code>ModelTheory</code>, <code>Dynamics</code> — are all <em>inside</em> the giant SCC.</p>
+<h3 id="misnamed-namespaces">Misnamed namespaces</h3>
+<p>What % of each namespace's modules contribute wrong-direction (cycle-creating) imports under a layered ordering:</p>
+<table>
+<thead>
+<tr>
+<th>namespace</th>
+<th style="text-align: right;">% of own modules contributing cycles</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Mathlib.Logic</code></td>
+<td style="text-align: right;"><strong>70 %</strong></td>
+</tr>
+<tr>
+<td><code>Mathlib.Control</code></td>
+<td style="text-align: right;">56 %</td>
+</tr>
+<tr>
+<td><code>Mathlib.Order</code></td>
+<td style="text-align: right;">54 %</td>
+</tr>
+<tr>
+<td><code>Mathlib.SetTheory</code></td>
+<td style="text-align: right;">48 %</td>
+</tr>
+<tr>
+<td><code>Mathlib.Combinatorics</code></td>
+<td style="text-align: right;">42 %</td>
+</tr>
+<tr>
+<td><code>Mathlib.Data</code></td>
+<td style="text-align: right;">39 %</td>
+</tr>
+<tr>
+<td><code>Mathlib.Tactic</code></td>
+<td style="text-align: right;">36 %</td>
+</tr>
+<tr>
+<td><code>Mathlib.Algebra</code></td>
+<td style="text-align: right;">29 %</td>
+</tr>
+<tr>
+<td>Mathlib.RingTheory</td>
+<td style="text-align: right;">27 %</td>
+</tr>
+<tr>
+<td>Mathlib.Topology</td>
+<td style="text-align: right;">10 %</td>
+</tr>
+<tr>
+<td>Mathlib.Analysis</td>
+<td style="text-align: right;">10 %</td>
+</tr>
+<tr>
+<td>Mathlib.NumberTheory</td>
+<td style="text-align: right;">0 %</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>Mathlib.Logic</code>, <code>Mathlib.Order</code>, <code>Mathlib.Control</code>, <code>Mathlib.SetTheory</code> are application layers wearing foundation names.</strong> 50–70 % of their modules import "downstream" content. The truly low-cycle namespaces (NumberTheory, MeasureTheory, Topology, Analysis) sit <em>higher</em> in the stack, not lower.</p>
+<h3 id="no-surgical-fix-exists">No surgical fix exists</h3>
+<p>Surgical removal of the top-K wrong-direction importers:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">top-K removed</th>
+<th style="text-align: right;">biggest namespace SCC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">27</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">26</td>
+</tr>
+<tr>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">26</td>
+</tr>
+<tr>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">26</td>
+</tr>
+<tr>
+<td style="text-align: right;">500</td>
+<td style="text-align: right;"><strong>26</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Removing the worst 500 cycle-makers shrinks the SCC by <strong>exactly one</strong> namespace. The cycles are diffuse, not concentrated. There is no small set of "bad files" to refactor.</p>
+<h3 id="total-feedback-arc-set">Total feedback arc set</h3>
+<p>To break all 96 bidirectional namespace pairs (assuming we cut the smaller direction of each): <strong>1,957 edges</strong> = 11 % of cross-namespace edges. That's a substantial structural refactor — relocating ~1,957 specific imports.</p>
+<h3 id="federation-without-api-hashing-penalty">Federation-without-API-hashing penalty</h3>
+<p>If we federated naively (each package = monolithic cache unit, content-hash keyed):</p>
+<table>
+<thead>
+<tr>
+<th>approach</th>
+<th style="text-align: right;">median module blast</th>
+<th style="text-align: right;">p90</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>File-level cache (today)</td>
+<td style="text-align: right;">507 / 8,183 = 6 %</td>
+<td style="text-align: right;">6,460 = 79 %</td>
+</tr>
+<tr>
+<td>Naive namespace federation</td>
+<td style="text-align: right;"><strong>8,008 / 8,183 = 98 %</strong></td>
+<td style="text-align: right;">8,008 = 98 %</td>
+</tr>
+<tr>
+<td>Naive collapse-to-foundation</td>
+<td style="text-align: right;">8,008 / 8,183 = 98 %</td>
+<td style="text-align: right;">8,008 = 98 %</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Naive federation is strictly worse</strong> because granularity becomes coarser without becoming smarter. The win has to come from API-hashing, not boundary location.</p>
+<h3 id="two-phase-build-penalty">Two-phase build penalty</h3>
+<table>
+<thead>
+<tr>
+<th>strategy</th>
+<th style="text-align: right;">wall-clock floor</th>
+<th style="text-align: right;">vs monolithic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Monolithic (current)</td>
+<td style="text-align: right;">750 s</td>
+<td style="text-align: right;">—</td>
+</tr>
+<tr>
+<td>Foundation A → downstream</td>
+<td style="text-align: right;">861 s</td>
+<td style="text-align: right;">+15 %</td>
+</tr>
+<tr>
+<td>Foundation B → downstream</td>
+<td style="text-align: right;">1010 s</td>
+<td style="text-align: right;">+35 %</td>
+</tr>
+<tr>
+<td>Foundation C → downstream</td>
+<td style="text-align: right;">975 s</td>
+<td style="text-align: right;">+30 %</td>
+</tr>
+</tbody>
+</table>
+<p>Phasing the build always loses to monolithic because in a monolithic build, downstream modules start the moment their <em>specific</em> upstream deps finish — they don't wait for an entire upstream package. The phasing barrier is dead time.</p>
+<h3 id="naturally-extractable-packages">Naturally-extractable packages</h3>
+<p>Without any refactoring, only 2 % of mathlib is federable today:</p>
+<table>
+<thead>
+<tr>
+<th>namespace</th>
+<th style="text-align: right;">modules</th>
+<th style="text-align: right;">work</th>
+<th style="text-align: right;">internal CP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Mathlib.AlgebraicGeometry</code></td>
+<td style="text-align: right;">127</td>
+<td style="text-align: right;">867 s</td>
+<td style="text-align: right;">218 s</td>
+</tr>
+<tr>
+<td><code>Mathlib.Condensed</code></td>
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">161 s</td>
+<td style="text-align: right;">35 s</td>
+</tr>
+<tr>
+<td><code>Mathlib.InformationTheory</code></td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">23 s</td>
+<td style="text-align: right;">8 s</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-recommendations-ranked-by-leverage">5. Recommendations (ranked by leverage)</h2>
+<h3 id="1-private-import-adoption-highest-leverage-available-today">1. <code>private import</code> adoption — highest leverage, available today</h3>
+<ul>
+<li><strong>What</strong>: convert non-API-affecting imports in the top-50 leverage modules (and progressively wider) from <code>import</code> to <code>private import</code>.</li>
+<li><strong>Why</strong>: 91 % theoretical headroom on rebuild CP. Empirically validated mechanism (Lean's module system already supports it). Mechanically discoverable conversion candidates: 329 just among top-30 CP modules.</li>
+<li><strong>Cost</strong>: per-PR localized work. Audit-style — no coordination needed across files. Each conversion is mergeable independently.</li>
+<li><strong>Risk</strong>: low — <code>private import</code> is well-understood Lean 4 semantics. Only risk is misidentifying an import as convertible (compiler will reject if downstream needs the public re-export).</li>
+<li><strong>Validation</strong>: rerun <code>lakeprof report -r</code> after a wave of conversions; the gap to standard <code>-p</code> should grow. Lake's content-hash cache won't show the win directly until point #2 also lands.</li>
+</ul>
+<h3 id="2-lake-cache-keyed-on-signature-hash-not-file-content-biggest-multiplier">2. Lake cache keyed on signature hash, not file content — biggest multiplier</h3>
+<ul>
+<li><strong>What</strong>: upstream Lean/Lake change. Cache key for downstream oleans depends on <code>hash(my_source ⊕ deps' signature_hashes)</code>, not deps' content hashes.</li>
+<li><strong>Why</strong>: turns <code>private import</code> from a Lean-elaboration optimization into a real cache primitive. Most foundation commits (which we measured invalidate 36–66 % of CP under content hashing) don't change exposed signatures and become free.</li>
+<li><strong>Cost</strong>: multi-month engineering project on Lake/Lean side. Requires precise definition of "API surface" for Lean (signatures + reducibility + instance priorities + macros). Determinism guarantees.</li>
+<li><strong>Risk</strong>: moderate — getting "what is the API" exactly right is subtle. Easy to ship a version that under-invalidates and produces incorrect builds.</li>
+<li><strong>Pre-work</strong>: deploy CI instrumentation (#5 below) to measure API-change rates and validate the assumption "most commits are internals-only."</li>
+</ul>
+<h3 id="3-targeted-refactor-of-top-5-analysis-cp-modules">3. Targeted refactor of top-5 Analysis CP modules</h3>
+<ul>
+<li><strong>What</strong>: split each of these into smaller, parallelizable units:</li>
+<li><code>Mathlib.Analysis.Distribution.SchwartzSpace.Basic</code> (32 s on CP)</li>
+<li><code>Mathlib.Analysis.Normed.Module.Multilinear.Basic</code> (26 s)</li>
+<li><code>Mathlib.Analysis.Analytic.Constructions</code> (26 s)</li>
+<li><code>Mathlib.Analysis.Analytic.Basic</code> (22 s)</li>
+<li><code>Mathlib.Analysis.Calculus.ContDiff.Defs</code> (20 s)</li>
+<li><strong>Why</strong>: ~85 s of CP reduction for 5 splits. Diminishing returns past K=5 — alternative chains take over.</li>
+<li><strong>Cost</strong>: one-off mathematical refactor; needs domain expertise.</li>
+<li><strong>Risk</strong>: low. Pure code reorganization.</li>
+<li><strong>Limit</strong>: bounded payoff (~11 % of clean-build floor). Don't expand to K&gt;5 without coordinated work on parallel chains.</li>
+</ul>
+<h3 id="4-hardware-32-cores-is-the-sweet-spot">4. Hardware: 32 cores is the sweet spot</h3>
+<ul>
+<li><strong>What</strong>: standardize CI / contributor recommendation around 32-core machines.</li>
+<li><strong>Why</strong>: ~20 minute wall-clock for clean rebuild. Practical knee at 96–112 cores → ~13 minutes. Past that, diminishing returns. 192-core true saturation is academic.</li>
+<li><strong>Cost</strong>: hardware spend.</li>
+<li><strong>Risk</strong>: zero technical risk. Pure cost-optimization decision.</li>
+</ul>
+<h3 id="5-ci-instrumentation-foundation-for-everything-else">5. CI instrumentation (foundation for everything else)</h3>
+<ul>
+<li><strong>Layer 1 (1 day)</strong>: weekly clean-build CI job recording <code>lakeprof.log</code> artifact. Builds the longitudinal dataset.</li>
+<li><strong>Layer 2 (1 week)</strong>: deploy <code>pr_impact.py</code> as a GitHub Action; comment predicted blast radius on every PR. Makes cost visible.</li>
+<li><strong>Layer 3 (1 month)</strong>: weekly digest post (top-N hot modules, CP trend, coupling drift) to mathlib's discussion forum.</li>
+<li><strong>Layer 4 (2 months, biggest payoff)</strong>: API-hash manifest computation in CI. Even a crude version (strip comments + proof bodies, hash declaration headers) gives the missing data point — <em>what fraction of commits actually change the API?</em> — that justifies #2.</li>
+</ul>
+<h3 id="things-to-not-do">Things to <em>not</em> do</h3>
+<ul>
+<li><strong>Don't try to phase the build.</strong> Two-phase pipelines are 15–35 % slower than monolithic.</li>
+<li><strong>Don't shard at namespace level without API hashing.</strong> Strictly worse than current.</li>
+<li><strong>Don't pursue per-namespace federation without first relocating 1,957 specific imports</strong> (the feedback arc set). The cycles will sabotage any package boundary.</li>
+<li><strong>Don't buy &gt;128-core hardware.</strong> The curve is essentially flat past 96–112 cores.</li>
+<li><strong>Don't expand the K=5 Analysis split to K=10+.</strong> Returns plateau immediately.</li>
+</ul>
+<hr />
+<h2 id="6-open-questions-not-explored">6. Open questions / not-explored</h2>
+<p>These would require additional data we don't have:</p>
+<ul>
+<li><strong>Actual API-change rate per commit.</strong> Our "blast radius" is content-hash based. To validate the API-hashing thesis, we'd need a syntactic API-diff tool (strip proof bodies, hash declaration types) and replay it over commit history.</li>
+<li><strong>Effect of <code>Mathlib.Analysis</code> internal restructuring.</strong> We measured CP impact of zeroing top-5 modules but not of realistic refactors (typically you can split a module to 60–80 % of its self-time, not 0).</li>
+<li><strong>Cross-machine distributed-build cost.</strong> Our simulator assumes free intra-cluster bandwidth. Realistic distributed RBE has non-trivial network costs that grow with module count.</li>
+<li><strong>Per-commit CI cache-hit rate distribution.</strong> Would tell us how much of the predicted blast is actually paid by mathlib CI today vs. served from cache.</li>
+<li><strong>The 4-level partition's giant SCC composition.</strong> We know it's 57 % of modules but didn't dig into which 4-level packages compose it.</li>
+</ul>
+<hr />
+<h2 id="7-reproducibility">7. Reproducibility</h2>
+<p>All scripts in this directory; rerun against a fresh <code>mathlib-clean.log</code> to refresh.</p>
+<table>
+<thead>
+<tr>
+<th>script</th>
+<th>purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lakeprof record lake build</code></td>
+<td>clean-build capture (Phase 1)</td>
+</tr>
+<tr>
+<td><code>lakeprof report -p -s -r</code></td>
+<td>baseline metrics (Phase 2)</td>
+</tr>
+<tr>
+<td><code>sweep.py</code></td>
+<td>finer linear core sweep</td>
+</tr>
+<tr>
+<td><code>shard_analysis.py</code></td>
+<td>parallelism profile + bottleneck what-if</td>
+</tr>
+<tr>
+<td><code>foundation_analysis.py</code></td>
+<td>two-phase pipeline experiment</td>
+</tr>
+<tr>
+<td><code>churn_analysis.py</code></td>
+<td>per-commit blast distribution</td>
+</tr>
+<tr>
+<td><code>leverage_analysis.py</code></td>
+<td>top-N leverage table</td>
+</tr>
+<tr>
+<td><code>boundary_analysis.py</code></td>
+<td>co-edit + cross-cuts</td>
+</tr>
+<tr>
+<td><code>boundary_split3.py</code></td>
+<td>partition simulation + SCC condensation</td>
+</tr>
+<tr>
+<td><code>cycle_breakers.py</code></td>
+<td>feedback arc set analysis</td>
+</tr>
+<tr>
+<td><code>cycle_offenders.py</code></td>
+<td>per-module cycle-contribution ranking</td>
+</tr>
+<tr>
+<td><code>phase7.py</code></td>
+<td>private-import headroom</td>
+</tr>
+<tr>
+<td><code>pr_impact.py</code></td>
+<td>per-PR blast predictor (deployment-ready)</td>
+</tr>
+</tbody>
+</table>
+<p>Pitfall: scripts that compute critical paths must populate edge weights via <code>for u, v, data in g.edges(data=True): data["time"] = g.nodes[u]["time"]</code> after parsing. Without this, <code>dag_longest_path_length(g, weight="time")</code> silently uses default weight=1 and returns edge counts instead of seconds.</p>
+<hr />
+<h2 id="closing">Closing</h2>
+<p>Across every analytical lens — clean-build CP, sim parallelism, churn distribution, leverage ranking, namespace cycles, boundary-split simulation, cycle-offender enumeration — the conclusion converged:</p>
+<p><strong>The wall-clock floor is set by graph shape; graph shape can't be fixed by sharding, hardware, or boundary location. Only two things move it: (a) cache semantics that don't invalidate spuriously and (b) targeted refactor of the few hot Analysis modules at the floor.</strong></p>
+<p>Deploy <code>pr_impact.py</code> this week. Start the <code>private import</code> audit on the top-50 leverage list. Lobby Lake/Lean for signature-hash caching. Everything else is decoration.</p>
+</main>
+</body>
+</html>

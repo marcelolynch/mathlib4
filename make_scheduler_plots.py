@@ -1,37 +1,35 @@
-"""Generate figures for the scheduler-headroom blog post.
+"""Generate figures for the scheduler-headroom blog post + technical report.
 
-Saves SVGs to /Users/chelo/lakeprof-experiments/reports/figs-scheduler/.
+Reads the runner-trace graph and cache-hit sweep from the project layout:
+    06-scheduler/data/runner-clean.graph.json
+    06-scheduler/data/runner_cache_hit_sweep.json
+Writes five SVGs to:
+    reports/figs-scheduler/
 
-Run from /Users/chelo/mathlib4-lakeprof.
-
-If RUNNER=1 in the environment, sources data from runner-clean.graph.json +
-runner_cache_hit_sweep.json (recorded on the Xeon Gold 6248R pr runner) and
-writes to figs-scheduler-runner/ instead. Otherwise uses the local
-Apple-Silicon trace.
+Run from anywhere — paths are resolved relative to this script's location.
 """
 import json
 import os
 import sys
 
-sys.path.insert(0, "/Users/chelo/lakeprof")
-import lakeprof
 import networkx
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
 import numpy as np
 
-sys.path.insert(0, ".")
-from scheduler_sim import simulate, wall_clock, load_graph_json
+# scheduler_sim.py lives next to us in scripts/
+HERE = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(HERE)              # 06-scheduler/
+EXP_ROOT = os.path.dirname(PROJECT_ROOT)          # ~/lakeprof-experiments/
 
-RUNNER = os.environ.get("RUNNER") == "1"
-OUT = ("/Users/chelo/lakeprof-experiments/reports/figs-scheduler-runner"
-       if RUNNER else
-       "/Users/chelo/lakeprof-experiments/reports/figs-scheduler")
-SUBTITLE = ("runner trace — Xeon Gold 6248R, 12 cores, KVM"
-            if RUNNER else
-            "local 18-core Apple-Silicon trace")
+sys.path.insert(0, HERE)
+from scheduler_sim import simulate, wall_clock, load_graph_json  # noqa: E402
+
+GRAPH_IN  = os.path.join(PROJECT_ROOT, "data", "runner-clean.graph.json")
+SWEEP_IN  = os.path.join(PROJECT_ROOT, "data", "runner_cache_hit_sweep.json")
+OUT       = os.path.join(EXP_ROOT, "reports", "figs-scheduler")
+SUBTITLE  = "runner trace — Xeon Gold 6248R, 12 cores, KVM"
 os.makedirs(OUT, exist_ok=True)
 
 plt.rcParams.update({
@@ -62,11 +60,7 @@ PALETTE = {
 # Load data
 # --------------------------------------------------------------------------- #
 
-if RUNNER:
-    g = load_graph_json("runner-clean.graph.json")
-else:
-    with open("mathlib-clean.log") as f:
-        g = lakeprof.parse(f)
+g = load_graph_json(GRAPH_IN)
 for u, _, d in g.edges(data=True):
     d["time"] = g.nodes[u]["time"]
 total_work = sum(d["time"] for _, d in g.nodes(data=True))
@@ -84,8 +78,7 @@ for pol in ("fifo", "hlfet", "lpt", "random"):
 print(f"clean-build wall-clocks: {walls}")
 print(f"  total_work={total_work:.0f}s, CP={cp_clean:.0f}s, LB={LB_clean:.1f}s")
 
-sweep_path = "runner_cache_hit_sweep.json" if RUNNER else "scheduler_cache_hit_sweep.json"
-with open(sweep_path) as f:
+with open(SWEEP_IN) as f:
     sweep = json.load(f)
 rows = sweep["rows"]
 print(f"sweep rows: {len(rows)}")

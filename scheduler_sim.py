@@ -230,7 +230,7 @@ def load_graph_json(path: str) -> networkx.DiGraph:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("-i", "--input", default="mathlib-clean.log",
+    ap.add_argument("-i", "--input", default="lakeprof.log",
                     help="lakeprof log path (parsed via lakeprof.parse, needs lake)")
     ap.add_argument("--graph-json", default=None,
                     help="alternative input: pre-parsed networkx graph JSON "

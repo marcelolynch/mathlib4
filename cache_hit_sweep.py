@@ -96,7 +96,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("-n", "--commits", type=int, default=200)
     ap.add_argument("-p", "--nproc", type=int, default=12)
-    ap.add_argument("-i", "--input", default="mathlib-clean.log",
+    ap.add_argument("-i", "--input", default="lakeprof.log",
                     help="lakeprof log to parse (requires `lake query` in cwd)")
     ap.add_argument("--graph-json", default=None,
                     help="alternative input: pre-parsed graph JSON from lakeprof_capture")
@@ -235,7 +235,7 @@ def main() -> int:
     if args.out:
         with open(args.out, "w") as f:
             json.dump({
-                "input": args.input,
+                "input": args.graph_json or args.input,
                 "nproc": args.nproc,
                 "n_commits_walked": args.commits,
                 "n_rows": len(rows),
