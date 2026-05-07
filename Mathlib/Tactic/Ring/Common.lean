@@ -483,7 +483,7 @@ variable {R : Type*} [CommSemiring R]
 section
 
 /-- Get the leading coefficient of an `ExProd`. -/
-def ExProd.coeff {e : Q($α)} :
+private def ExProd.coeff {e : Q($α)} :
     have : Inhabited <| Σ c, bt c := ⟨default, default⟩
   ExProd bt sα e → Σ c, bt c
   | .const q => ⟨_, q⟩
@@ -525,7 +525,7 @@ If the monomials are not compatible, returns `none`.
 For example, `xy + 2xy = 3xy` is a `.nonzero` overlap, while `xy + xz` returns `none`
 and `xy + -xy = 0` is a `.zero` overlap.
 -/
-def evalAddOverlap {a b : Q($α)} (va : ExProd bt sα a) (vb : ExProd bt sα b) :
+private def evalAddOverlap {a b : Q($α)} (va : ExProd bt sα a) (vb : ExProd bt sα b) :
     OptionT MetaM (Overlap bt sα q($a + $b)) := do
   Lean.Core.checkSystem decl_name%.toString
   match va, vb with
@@ -666,7 +666,7 @@ theorem mul_add {d : R} (_ : (a : R) * b₁ = c₁) (_ : a * b₂ = c₂) (_ : c
 * `a * 0 = 0`
 * `a * (b₁ + b₂) = (a * b₁) + (a * b₂)`
 -/
-def evalMul₁ {a b : Q($α)} (va : ExProd bt sα a) (vb : ExSum bt sα b) :
+private def evalMul₁ {a b : Q($α)} (va : ExProd bt sα a) (vb : ExSum bt sα b) :
     MetaM <| Result (ExSum bt sα) q($a * $b) := do
   match vb with
   | .zero => return ⟨_, .zero, q(mul_zero $a)⟩
@@ -709,7 +709,7 @@ theorem neg_mul {R} [CommRing R] (a₁ : R) (a₂) {a₃ b : R}
 * `-c = (-c)` (for `c` coefficient)
 * `-(a₁ * a₂) = a₁ * -a₂`
 -/
-def evalNegProd {a : Q($α)} (rα : Q(CommRing $α)) (va : ExProd bt sα a) :
+private def evalNegProd {a : Q($α)} (rα : Q(CommRing $α)) (va : ExProd bt sα a) :
     MetaM <| Result (ExProd bt sα) q(-$a) := do
   Lean.Core.checkSystem decl_name%.toString
   match va with
@@ -751,7 +751,7 @@ theorem sub_pf {R} [CommRing R] {a b c d : R}
 
 * `a - b = a + -b`
 -/
-def evalSub {a b : Q($α)}
+private def evalSub {a b : Q($α)}
     (rα : Q(CommRing $α)) (va : ExSum bt sα a) (vb : ExSum bt sα b) :
     MetaM <| Result (ExSum bt sα) q($a - $b) := do
   let ⟨_c, vc, pc⟩ ← evalNeg rc rα vb
@@ -772,7 +772,7 @@ the input types are different.)
 
 * `x ^ e = (x + 0) ^ e * 1`
 -/
-def evalPowProdAtom {a : Q($α)} {b : Q(ℕ)} (va : ExProd bt sα a) (vb : ExProdNat b) :
+private def evalPowProdAtom {a : Q($α)} {b : Q(ℕ)} (va : ExProd bt sα a) (vb : ExProdNat b) :
     Result (ExProd bt sα) q($a ^ $b) :=
     let ⟨_, vc, pc⟩ := (ExBase.sum va.toSum).toProd rc vb
   ⟨_, vc, q(pow_prod_atom $a $b $pc)⟩
@@ -787,7 +787,7 @@ exponent expression.
 
 * `x ^ e = x ^ e * 1 + 0`
 -/
-def evalPowAtom {a : Q($α)} {b : Q(ℕ)} (va : ExBase bt sα a) (vb : ExProdNat b) :
+private def evalPowAtom {a : Q($α)} {b : Q(ℕ)} (va : ExBase bt sα a) (vb : ExProdNat b) :
     Result (ExSum bt sα) q($a ^ $b) :=
   let ⟨_, vc, pc⟩ := (va.toProd rc vb)
   ⟨_, vc.toSum, q(pow_atom $a $b $pc)⟩
@@ -913,7 +913,7 @@ private local instance {m m'} [Monad m] [Monad m'] [MonadLiftT m m'] :
 
 In all other cases we use `evalPowProdAtom`.
 -/
-def evalPowProd {a : Q($α)} {b : Q(ℕ)} (va : ExProd bt sα a) (vb : ExProdNat b) :
+private def evalPowProd {a : Q($α)} {b : Q(ℕ)} (va : ExProd bt sα a) (vb : ExProdNat b) :
     MetaM <| Result (ExProd bt sα) q($a ^ $b) := do
   Lean.Core.checkSystem decl_name%.toString
   let res : OptionT MetaM (Result (ExProd bt sα) q($a ^ $b)) := do
@@ -967,7 +967,7 @@ theorem coeff_mul {a₃ c₂ k : ℕ}
 * `c = 1 * c` (if `c` is a constant)
 * `a * b = (a * b') * k` if `b = b' * k`
 -/
-def extractCoeff {a : Q(ℕ)} (va : ExProdNat a) : ExtractCoeff a :=
+private def extractCoeff {a : Q(ℕ)} (va : ExProdNat a) : ExtractCoeff a :=
   match va with
   | .const _ => Id.run do
     have k : Q(ℕ) := a.appArg!
@@ -1044,7 +1044,7 @@ theorem pow_add {b₁ b₂ : ℕ} {d : R}
 * `a ^ 0 = 1`
 * `a ^ (b₁ + b₂) = a ^ b₁ * a ^ b₂`
 -/
-def evalPow {a : Q($α)} {b : Q(ℕ)} (va : ExSum bt sα a) (vb : ExSumNat b) :
+private def evalPow {a : Q($α)} {b : Q(ℕ)} (va : ExSum bt sα a) (vb : ExSumNat b) :
     MetaM <| Result (ExSum bt sα) q($a ^ $b) := do
   match vb with
   | .zero =>
@@ -1090,7 +1090,7 @@ Evaluates an atom, an expression where `ring` can find no additional structure.
 
 * `a = a ^ 1 * 1 + 0`
 -/
-def evalAtom (e : Q($α)) : AtomM (Result (ExSum bt sα) e) := do
+private def evalAtom (e : Q($α)) : AtomM (Result (ExSum bt sα) e) := do
   let r ← (← read).evalAtom e
   have e' : Q($α) := r.expr
   let (i, ⟨a', _⟩) ← addAtomQ e'
@@ -1181,7 +1181,7 @@ theorem div_pf {R} [Semifield R] {a b c d : R}
 
 * `a / b = a * b⁻¹`
 -/
-def evalDiv {a b : Q($α)} (rα : Q(Semifield $α)) (czα : Option Q(CharZero $α))
+private def evalDiv {a b : Q($α)} (rα : Q(Semifield $α)) (czα : Option Q(CharZero $α))
     (va : ExSum bt sα a) (vb : ExSum bt sα b) : AtomM (Result (ExSum bt sα) q($a / $b)) := do
   let ⟨_c, vc, pc⟩ ← vb.evalInv rc rcℕ rα czα
   let ⟨d, vd, pd⟩ ← evalMul rc rcℕ va vc
