@@ -54,7 +54,7 @@ theorem isClosed (s : Closeds α) : IsClosed (s : Set α) :=
   s.isClosed'
 
 /-- See Note [custom simps projection]. -/
-def Simps.coe (s : Closeds α) : Set α := s
+private def Simps.coe (s : Closeds α) : Set α := s
 
 initialize_simps_projections Closeds (carrier → coe, as_prefix coe)
 
@@ -332,7 +332,7 @@ lemma isOpen (s : Clopens α) : IsOpen (s : Set α) := s.isClopen.isOpen
 lemma isClosed (s : Clopens α) : IsClosed (s : Set α) := s.isClopen.isClosed
 
 /-- See Note [custom simps projection]. -/
-def Simps.coe (s : Clopens α) : Set α := s
+private def Simps.coe (s : Clopens α) : Set α := s
 
 initialize_simps_projections Clopens (carrier → coe, as_prefix coe)
 
@@ -420,7 +420,7 @@ theorem isIrreducible (s : IrreducibleCloseds α) : IsIrreducible (s : Set α) :
 theorem isClosed (s : IrreducibleCloseds α) : IsClosed (s : Set α) := s.isClosed'
 
 /-- See Note [custom simps projection]. -/
-def Simps.coe (s : IrreducibleCloseds α) : Set α := s
+private def Simps.coe (s : IrreducibleCloseds α) : Set α := s
 
 initialize_simps_projections IrreducibleCloseds (carrier → coe, as_prefix coe)
 
@@ -476,7 +476,7 @@ def equivSubtype' : IrreducibleCloseds α ≃ { x : Set α // IsClosed x ∧ IsI
 variable (α) in
 /-- The equivalence `IrreducibleCloseds α ≃ { x : Set α // IsIrreducible x ∧ IsClosed x }` is an
 order isomorphism. -/
-def orderIsoSubtype : IrreducibleCloseds α ≃o { x : Set α // IsIrreducible x ∧ IsClosed x } :=
+private def orderIsoSubtype : IrreducibleCloseds α ≃o { x : Set α // IsIrreducible x ∧ IsClosed x } :=
   equivSubtype.toOrderIso (fun _ _ h ↦ h) (fun _ _ h ↦ h)
 
 variable (α) in
