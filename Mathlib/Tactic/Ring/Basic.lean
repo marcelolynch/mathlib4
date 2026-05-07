@@ -270,7 +270,7 @@ variable {v : Lean.Level} {β : Q(Type v)} (sβ : Q(CommSemiring $β))
 * An atom `e` causes `↑e` to be allocated as a new atom.
 * A sum delegates to `ExSum.evalIntCast`.
 -/
-def ExBase.evalIntCast {a : Q(ℤ)} (rα : Q(CommRing $α)) (va : ExBase sβ a) :
+private def ExBase.evalIntCast {a : Q(ℤ)} (rα : Q(CommRing $α)) (va : ExBase sβ a) :
     AtomM (Result (ExBase sα) q($a)) :=
   match va with
   | .atom _ => do
@@ -287,7 +287,7 @@ def ExBase.evalIntCast {a : Q(ℤ)} (rα : Q(CommRing $α)) (va : ExBase sβ a) 
 * `↑c = c` if `c` is a numeric literal
 * `↑(a ^ n * b) = ↑a ^ n * ↑b`
 -/
-def ExProd.evalIntCast {a : Q(ℤ)} (rα : Q(CommRing $α)) (va : ExProd sβ a) :
+private def ExProd.evalIntCast {a : Q(ℤ)} (rα : Q(CommRing $α)) (va : ExProd sβ a) :
     AtomM (Result (ExProd sα) q($a)) :=
   match va with
   | .const ⟨c, hc⟩ => do
@@ -308,7 +308,7 @@ def ExProd.evalIntCast {a : Q(ℤ)} (rα : Q(CommRing $α)) (va : ExProd sβ a) 
 * `↑0 = 0`
 * `↑(a + b) = ↑a + ↑b`
 -/
-def ExSum.evalIntCast {a : Q(ℤ)} (rα : Q(CommRing $α))
+private def ExSum.evalIntCast {a : Q(ℤ)} (rα : Q(CommRing $α))
     (va : ExSum sβ a) :
     AtomM (Result (ExSum sα) q($a)) :=
   match va with
@@ -327,21 +327,21 @@ end
 mutual
 
 /-- Converts `ExBase sα` to `ExBase sβ`, assuming `sα` and `sβ` are defeq. -/
-def ExBase.cast
+private def ExBase.cast
     {v : Lean.Level} {β : Q(Type v)} {sβ : Q(CommSemiring $β)} {a : Q($α)} :
     ExBase sα a → Σ a, ExBase sβ a
   | .atom i => ⟨a, .atom i⟩
   | .sum a => let ⟨_, vb⟩ := ExSum.cast a; ⟨_, .sum vb⟩
 
 /-- Converts `ExProd sα` to `ExProd sβ`, assuming `sα` and `sβ` are defeq. -/
-def ExProd.cast
+private def ExProd.cast
     {v : Lean.Level} {β : Q(Type v)} {sβ : Q(CommSemiring $β)} {a : Q($α)} :
     ExProd sα a → Σ a, ExProd sβ a
   | .const ⟨i, h⟩ => ⟨a, .const ⟨i, h⟩⟩
   | .mul a₁ a₂ a₃ => ⟨_, .mul (ExBase.cast a₁).2 a₂ (ExProd.cast a₃).2⟩
 
 /-- Converts `ExSum sα` to `ExSum sβ`, assuming `sα` and `sβ` are defeq. -/
-def ExSum.cast
+private def ExSum.cast
     {v : Lean.Level} {β : Q(Type v)} {sβ : Q(CommSemiring $β)} {a : Q($α)} :
     ExSum sα a → Σ a, ExSum sβ a
   | .zero => ⟨_, .zero⟩
@@ -377,7 +377,7 @@ namespace RingCompute
 mutual
 
 /-- Add two rational number expressions. If the result is zero, returns a proof of this fact. -/
-partial def add {u : Lean.Level} {α : Q(Type u)} (sα : Q(CommSemiring $α))
+private partial def add {u : Lean.Level} {α : Q(Type u)} (sα : Q(CommSemiring $α))
     {a b : Q($α)} (za : RatCoeff a) (zb : RatCoeff b) :
     MetaM (Result RatCoeff q($a + $b) × Option Q(IsNat ($a + $b) 0)) := do
   let res ← za.toResult.add zb.toResult
@@ -393,7 +393,7 @@ partial def add {u : Lean.Level} {α : Q(Type u)} (sα : Q(CommSemiring $α))
   return ⟨r, isZero⟩
 
 /-- Evaluate the product of two rational number expressions. -/
-partial def mul {u : Lean.Level} {α : Q(Type u)} (sα : Q(CommSemiring $α))
+private partial def mul {u : Lean.Level} {α : Q(Type u)} (sα : Q(CommSemiring $α))
     {a b : Q($α)} (za : RatCoeff a) (zb : RatCoeff b) :
     MetaM (Result RatCoeff q($a * $b)) := do
   let res ← za.toResult.mul zb.toResult
@@ -427,7 +427,7 @@ partial def cast {u : Lean.Level} {α : Q(Type u)} (sα : Q(CommSemiring $α)) (
   | _ => failure
 
 /-- Negate rational number expressions. -/
-partial def neg {u : Lean.Level} {α : Q(Type u)}
+private partial def neg {u : Lean.Level} {α : Q(Type u)}
     {a : Q($α)} (_crα : Q(CommRing $α)) (za : RatCoeff a) :
     MetaM (Result RatCoeff q(-$a)) := do
   let res ← za.toResult.neg q(inferInstance)
@@ -438,7 +438,7 @@ partial def neg {u : Lean.Level} {α : Q(Type u)}
 /-- Raise a rational number expression to the power of a natural number.
 
 Fails if the exponent is not a literal. -/
-partial def pow {u : Lean.Level} {α : Q(Type u)} (sα : Q(CommSemiring $α))
+private partial def pow {u : Lean.Level} {α : Q(Type u)} (sα : Q(CommSemiring $α))
     {a : Q($α)} {b : Q(ℕ)} (za : RatCoeff a)
     (vb : Common.ExProdNat q($b)) :
     OptionT MetaM (Result RatCoeff q($a ^ $b)) := do
@@ -456,7 +456,7 @@ partial def pow {u : Lean.Level} {α : Q(Type u)} (sα : Q(CommSemiring $α))
   | _ => OptionT.fail
 
 /-- Evaluate the inverse of a natural number expression. -/
-partial def inv {u : Lean.Level} {α : Q(Type u)} (_sα : Q(CommSemiring $α))
+private partial def inv {u : Lean.Level} {α : Q(Type u)} (_sα : Q(CommSemiring $α))
     {a : Q($α)} (czα : Option Q(CharZero $α)) (_sfα : Q(Semifield $α)) (za : RatCoeff a) :
     AtomM (Option (Result RatCoeff q($a⁻¹))) := do
   match (← (Lean.observing? <| za.toResult.inv _ czα :)) with
@@ -466,14 +466,14 @@ partial def inv {u : Lean.Level} {α : Q(Type u)} (_sα : Q(CommSemiring $α))
   | none => return none
 
 /-- Try to evaluate an expression as a rational constant using `norm_num`. -/
-partial def derive {u : Lean.Level} {α : Q(Type u)} (sα : Q(CommSemiring $α)) (x : Q($α)) :
+private partial def derive {u : Lean.Level} {α : Q(Type u)} (sα : Q(CommSemiring $α)) (x : Q($α)) :
     MetaM (Result (Common.ExSum RatCoeff sα) q($x)) := do
   let res ← NormNum.derive x
   let ⟨_, va, pa⟩ ← evalCast sα res
   return ⟨_, va, q($pa)⟩
 
 /-- Decide if `x` is 1 and provide a proof if so. -/
-partial def isOne {u : Lean.Level} {α : Q(Type u)} (sα : Q(CommSemiring $α))
+private partial def isOne {u : Lean.Level} {α : Q(Type u)} (sα : Q(CommSemiring $α))
     {x : Q($α)} (zx : RatCoeff x) : Option Q(IsNat $x 1) := do
   let ⟨qx, _hx⟩ := zx
   if qx == 1 then
