@@ -167,7 +167,7 @@ theorem toFun_eq_coe (f : A →ₛₙₐ[φ] B) : f.toFun = ⇑f :=
   rfl
 
 /-- See Note [custom simps projection] -/
-def Simps.apply (f : A →ₛₙₐ[φ] B) : A → B := f
+private def Simps.apply (f : A →ₛₙₐ[φ] B) : A → B := f
 
 initialize_simps_projections NonUnitalAlgHom
   (toDistribMulActionHom_toMulActionHom_toFun → apply, -toDistribMulActionHom)
