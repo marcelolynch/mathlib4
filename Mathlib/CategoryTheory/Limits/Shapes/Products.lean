@@ -261,7 +261,7 @@ def Fan.ext {f : β → C} {c₁ c₂ : Fan f} (e : c₁.pt ≅ c₂.pt)
   Cone.ext e (fun ⟨j⟩ => w j)
 
 /-- A fan `c` on `f` such that the induced map `c.pt ⟶ ∏ f` is an iso, is a product. -/
-def Fan.isLimitOfIsIsoPiLift {f : β → C} [HasProduct f] (c : Fan f)
+private def Fan.isLimitOfIsIsoPiLift {f : β → C} [HasProduct f] (c : Fan f)
     [hc : IsIso (Pi.lift c.proj)] : IsLimit c :=
   IsLimit.ofIsoLimit (limit.isLimit (Discrete.functor f))
     (Fan.ext (@asIso _ _ _ _ _ hc) (fun _ => (limit.lift_π _ _).symm)).symm
@@ -689,7 +689,7 @@ theorem sigmaComparison_map_desc [HasCoproduct f] [HasCoproduct fun b => G.obj (
     Cofan.mk_pt, Cofan.mk_ι_app]
 
 /-- `F.mapCone c` being limiting is the same as the induced fan being limiting. -/
-def Fan.isLimitMapConeEquiv (F : C ⥤ D) {ι : Type*} (X : ι → C) (c : Fan X) :
+private def Fan.isLimitMapConeEquiv (F : C ⥤ D) {ι : Type*} (X : ι → C) (c : Fan X) :
     IsLimit (F.mapCone c) ≃ IsLimit (Fan.mk _ fun i ↦ F.map (c.proj i)) :=
   (IsLimit.postcomposeHomEquiv Discrete.natIsoFunctor (F.mapCone c)).symm.trans <|
     IsLimit.equivIsoLimit (Cone.ext (Iso.refl _))
