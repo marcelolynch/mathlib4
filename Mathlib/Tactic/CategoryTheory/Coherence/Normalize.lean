@@ -108,7 +108,7 @@ def WhiskerLeft.e : WhiskerLeft → Mor₂
   | .whisker e .. => e
 
 /-- Whether a given 2-isomorphism is structural or not. -/
-def Mor₂Iso.isStructural (α : Mor₂Iso) : Bool :=
+private def Mor₂Iso.isStructural (α : Mor₂Iso) : Bool :=
   match α with
   | .structuralAtom _ => true
   | .comp _ _ _ _ η θ => η.isStructural && θ.isStructural
@@ -207,32 +207,32 @@ namespace NormalExpr
 variable [MonadMor₂Iso m] [MonadNormalExpr m]
 
 /-- The identity 2-morphism as a term of `normalExpr`. -/
-def idM (f : Mor₁) : m NormalExpr := do
+private def idM (f : Mor₁) : m NormalExpr := do
   MonadNormalExpr.nilM <| .structuralAtom <| ← MonadMor₂Iso.id₂M f
 
 /-- The associator as a term of `normalExpr`. -/
-def associatorM (f g h : Mor₁) : m NormalExpr := do
+private def associatorM (f g h : Mor₁) : m NormalExpr := do
   MonadNormalExpr.nilM <| .structuralAtom <| ← MonadMor₂Iso.associatorM f g h
 
 /-- The inverse of the associator as a term of `normalExpr`. -/
-def associatorInvM (f g h : Mor₁) : m NormalExpr := do
+private def associatorInvM (f g h : Mor₁) : m NormalExpr := do
   MonadNormalExpr.nilM <| ← MonadMor₂Iso.symmM <|
     .structuralAtom <| ← MonadMor₂Iso.associatorM f g h
 
 /-- The left unitor as a term of `normalExpr`. -/
-def leftUnitorM (f : Mor₁) : m NormalExpr := do
+private def leftUnitorM (f : Mor₁) : m NormalExpr := do
   MonadNormalExpr.nilM <| .structuralAtom <| ← MonadMor₂Iso.leftUnitorM f
 
 /-- The inverse of the left unitor as a term of `normalExpr`. -/
-def leftUnitorInvM (f : Mor₁) : m NormalExpr := do
+private def leftUnitorInvM (f : Mor₁) : m NormalExpr := do
   MonadNormalExpr.nilM <| ← MonadMor₂Iso.symmM <| .structuralAtom <| ← MonadMor₂Iso.leftUnitorM f
 
 /-- The right unitor as a term of `normalExpr`. -/
-def rightUnitorM (f : Mor₁) : m NormalExpr := do
+private def rightUnitorM (f : Mor₁) : m NormalExpr := do
   MonadNormalExpr.nilM <| .structuralAtom <| ← MonadMor₂Iso.rightUnitorM f
 
 /-- The inverse of the right unitor as a term of `normalExpr`. -/
-def rightUnitorInvM (f : Mor₁) : m NormalExpr := do
+private def rightUnitorInvM (f : Mor₁) : m NormalExpr := do
   MonadNormalExpr.nilM <| ← MonadMor₂Iso.symmM <| .structuralAtom <| ← MonadMor₂Iso.rightUnitorM f
 
 /-- Construct a `NormalExpr` expression from a `WhiskerLeft` expression. -/
@@ -241,13 +241,13 @@ def ofM [MonadMor₁ m] (η : WhiskerLeft) : m NormalExpr := do
     (← MonadNormalExpr.nilM ((.structuralAtom <| ← MonadMor₂Iso.id₂M (← η.tgtM))))
 
 /-- Construct a `NormalExpr` expression from a Lean expression for an atomic 2-morphism. -/
-def ofAtomM [MonadMor₁ m] (η : Atom) : m NormalExpr :=
+private def ofAtomM [MonadMor₁ m] (η : Atom) : m NormalExpr :=
   NormalExpr.ofM <| .of <| .of <| .of η
 
 end NormalExpr
 
 /-- Convert a `NormalExpr` expression into a list of `WhiskerLeft` expressions. -/
-def NormalExpr.toList : NormalExpr → List WhiskerLeft
+private def NormalExpr.toList : NormalExpr → List WhiskerLeft
   | NormalExpr.nil _ _ => []
   | NormalExpr.cons _ _ η ηs => η :: NormalExpr.toList ηs
 
@@ -357,12 +357,12 @@ variable [MonadMor₂Iso (CoherenceM ρ)] [MonadNormalExpr (CoherenceM ρ)] [MkE
 open MkEvalComp MonadMor₂Iso MonadNormalExpr
 
 /-- Evaluate the expression `α ≫ η` into a normalized form. -/
-def evalCompNil (α : Structural) : NormalExpr → CoherenceM ρ Eval.Result
+private def evalCompNil (α : Structural) : NormalExpr → CoherenceM ρ Eval.Result
   | .nil _ β => do return ⟨← nilM (← comp₂M α β), ← mkEvalCompNilNil α β⟩
   | .cons _ β η ηs => do return ⟨← consM (← comp₂M α β) η ηs, ← mkEvalCompNilCons α β η ηs⟩
 
 /-- Evaluate the expression `η ≫ θ` into a normalized form. -/
-def evalComp : NormalExpr → NormalExpr → CoherenceM ρ Eval.Result
+private def evalComp : NormalExpr → NormalExpr → CoherenceM ρ Eval.Result
   | .nil _ α, η => do evalCompNil α η
   | .cons _ α η ηs, θ => do
     let ⟨ι, e_ι⟩ ← evalComp ηs θ
@@ -373,7 +373,7 @@ open MkEvalWhiskerLeft
 variable [MonadMor₁ (CoherenceM ρ)]
 
 /-- Evaluate the expression `f ◁ η` into a normalized form. -/
-def evalWhiskerLeft : Mor₁ → NormalExpr → CoherenceM ρ Eval.Result
+private def evalWhiskerLeft : Mor₁ → NormalExpr → CoherenceM ρ Eval.Result
   | f, .nil _ α => do
     return ⟨← nilM (← whiskerLeftM f α), ← mkEvalWhiskerLeftNil f α⟩
   | .of f, .cons _ α η ηs => do
@@ -515,7 +515,7 @@ variable {ρ : Type}
     [MonadMor₂ (CoherenceM ρ)]
 
 /-- Trace the proof of the normalization. -/
-def traceProof (nm : Name) (result : Expr) : CoherenceM ρ Unit := do
+private def traceProof (nm : Name) (result : Expr) : CoherenceM ρ Unit := do
   withTraceNode nm (fun _ => return m!"{← inferType result}") do
     if ← isTracingEnabledFor nm then addTrace nm m!"proof: {result}"
 
