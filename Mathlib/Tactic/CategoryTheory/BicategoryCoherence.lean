@@ -97,7 +97,7 @@ def exception {α : Type} (g : MVarId) (msg : MessageData) : MetaM α :=
   throwTacticEx `bicategorical_coherence g msg
 
 /-- Helper function for throwing exceptions with respect to the main goal. -/
-def exception' (msg : MessageData) : TacticM Unit := do
+private def exception' (msg : MessageData) : TacticM Unit := do
   try
     liftMetaTactic (exception (msg := msg))
   catch _ =>
