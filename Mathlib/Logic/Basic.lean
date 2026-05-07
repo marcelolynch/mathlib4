@@ -720,7 +720,7 @@ protected noncomputable def byContradiction' {α : Sort*} (H : ¬(α → False))
   Classical.choice <| (peirce _ False) fun h ↦ (H fun a ↦ h ⟨a⟩).elim
 
 /-- `Classical.byContradiction'` is equivalent to lean's axiom `Classical.choice`. -/
-def choice_of_byContradiction' {α : Sort*} (contra : ¬(α → False) → α) : Nonempty α → α :=
+private def choice_of_byContradiction' {α : Sort*} (contra : ¬(α → False) → α) : Nonempty α → α :=
   fun H ↦ contra H.elim
 
 -- This can be removed after https://github.com/leanprover/lean4/pull/11316
