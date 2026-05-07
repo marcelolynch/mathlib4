@@ -85,7 +85,7 @@ def succ : PosNum → PosNum
   | bit0 n => bit1 n
 
 /-- Returns a Boolean for whether the `PosNum` is `one`. -/
-def isOne : PosNum → Bool
+private def isOne : PosNum → Bool
   | 1 => true
   | _ => false
 
@@ -366,12 +366,12 @@ def sub' : PosNum → PosNum → ZNum
 
 /-- Converts a `ZNum` to `Option PosNum`, where it is `some` if the `ZNum` was positive and `none`
   otherwise. -/
-def ofZNum' : ZNum → Option PosNum
+private def ofZNum' : ZNum → Option PosNum
   | ZNum.pos p => some p
   | _ => none
 
 /-- Converts a `ZNum` to a `PosNum`, mapping all out of range values to `1`. -/
-def ofZNum : ZNum → PosNum
+private def ofZNum : ZNum → PosNum
   | ZNum.pos p => p
   | _ => 1
 
@@ -399,7 +399,7 @@ def pred : Num → Num
   | pos p => p.pred'
 
 /-- Divides a `Num` by `2` -/
-def div2 : Num → Num
+private def div2 : Num → Num
   | 0 => 0
   | 1 => 0
   | pos (PosNum.bit0 p) => pos p
@@ -424,7 +424,7 @@ def sub' : Num → Num → ZNum
   | pos a, pos b => a.sub' b
 
 /-- Subtraction of two `Num`s, producing an `Option Num`. -/
-def psub (a b : Num) : Option Num :=
+private def psub (a b : Num) : Option Num :=
   ofZNum' (sub' a b)
 
 /-- Subtraction of two `Num`s, where if `a < b`, `a - b = 0`. -/
