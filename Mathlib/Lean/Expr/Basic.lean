@@ -31,7 +31,7 @@ namespace BinderInfo
 /-! ### Declarations about `BinderInfo` -/
 
 /-- The brackets corresponding to a given `BinderInfo`. -/
-def brackets : BinderInfo → String × String
+private def brackets : BinderInfo → String × String
   | BinderInfo.implicit => ("{", "}")
   | BinderInfo.strictImplicit => ("{{", "}}")
   | BinderInfo.instImplicit => ("[", "]")
@@ -62,7 +62,7 @@ def fromComponents : List Name → Name := go .anonymous where
   | n, s :: rest => go (s.updatePrefix n) rest
 
 /-- Update the last component of a name. -/
-def updateLast (f : String → String) : Name → Name
+private def updateLast (f : String → String) : Name → Name
   | .str n s => .str n (f s)
   | n        => n
 
@@ -185,7 +185,7 @@ namespace Expr
 
 /-! ### Declarations about `Expr` -/
 
-def bvarIdx? : Expr → Option Nat
+private def bvarIdx? : Expr → Option Nat
   | bvar idx => some idx
   | _        => none
 
@@ -212,7 +212,7 @@ The resulting expression has the same type as the old one.
 
 It is useful, e.g., to verify if the proof-irrelevant part of a definition depends on a variable.
 -/
-def eraseProofs (e : Expr) : MetaM Expr :=
+private def eraseProofs (e : Expr) : MetaM Expr :=
   Meta.transform (skipConstInApp := true) e
     (pre := fun e => do
       if (← Meta.isProof e) then
@@ -307,7 +307,7 @@ partial def hasInstanceBinderOf (p : Expr → Bool) (e : Expr) : Bool :=
   | _ => false
 
 /-- Counts the immediate depth of a nested `let` expression. -/
-def letDepth : Expr → Nat
+private def letDepth : Expr → Nat
   | .letE _ _ _ b _ => b.letDepth + 1
   | _ => 0
 
