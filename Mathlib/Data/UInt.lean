@@ -151,10 +151,10 @@ def isASCIIDigit (c : UInt8) : Bool :=
   c ≥ 48 && c ≤ 57
 
 /-- Is this an alphanumeric ASCII character? -/
-def isASCIIAlphanum (c : UInt8) : Bool :=
+private def isASCIIAlphanum (c : UInt8) : Bool :=
   c.isASCIIAlpha || c.isASCIIDigit
 
 /-- The numbers from 0 to 256 are all valid UTF-8 characters, so we can embed one in the other. -/
-def toChar (n : UInt8) : Char := ⟨n.toUInt32, .inl (Nat.lt_trans n.toBitVec.isLt (by decide))⟩
+private def toChar (n : UInt8) : Char := ⟨n.toUInt32, .inl (Nat.lt_trans n.toBitVec.isLt (by decide))⟩
 
 end UInt8
