@@ -86,14 +86,14 @@ instance : Ord Monom where
 abbrev Sum : Type := Map Monom ℤ
 
 /-- `1` is represented as the singleton sum of the monomial `Monom.one` with coefficient 1. -/
-def Sum.one : Sum := TreeMap.empty.insert Monom.one 1
+private def Sum.one : Sum := TreeMap.empty.insert Monom.one 1
 
 /-- `Sum.scaleByMonom s m` multiplies every monomial in `s` by `m`. -/
 def Sum.scaleByMonom (s : Sum) (m : Monom) : Sum :=
   s.foldr (fun m' coeff sm => sm.insert (m + m') coeff) TreeMap.empty
 
 /-- `sum.mul s1 s2` distributes the multiplication of two sums. -/
-def Sum.mul (s1 s2 : Sum) : Sum :=
+private def Sum.mul (s1 s2 : Sum) : Sum :=
   s1.foldr (fun mn coeff sm => sm + ((s2.scaleByMonom mn).map (fun _ v => v * coeff)))
     TreeMap.empty
 
@@ -110,14 +110,14 @@ partial def Sum.pow (s : Sum) : ℕ → Sum
       a.mul a |>.mul s
 
 /-- `SumOfMonom m` lifts `m` to a sum with coefficient `1`. -/
-def SumOfMonom (m : Monom) : Sum :=
+private def SumOfMonom (m : Monom) : Sum :=
   TreeMap.empty.insert m 1
 
 /-- The unit monomial `one` is represented by the empty TreeMap. -/
 def one : Monom := TreeMap.empty
 
 /-- A scalar `z` is represented by a `Sum` with coefficient `z` and monomial `one` -/
-def scalar (z : ℤ) : Sum :=
+private def scalar (z : ℤ) : Sum :=
   TreeMap.empty.insert one z
 
 /-- A single variable `n` is represented by a sum with coefficient `1` and monomial `n`. -/
@@ -142,7 +142,7 @@ abbrev ExprMap := List (Expr × ℕ)
 If `e` appears with index `k` in `map`, it returns the singleton sum `var k`.
 Otherwise it updates `map`, adding `e` with index `n`, and returns the singleton sum `var n`.
 -/
-def linearFormOfAtom (red : TransparencyMode) (m : ExprMap) (e : Expr) : MetaM (ExprMap × Sum) := do
+private def linearFormOfAtom (red : TransparencyMode) (m : ExprMap) (e : Expr) : MetaM (ExprMap × Sum) := do
   try
     let k ← m.findDefeq red e
     return (m, var k)
@@ -216,7 +216,7 @@ into a `comp` object.
 `e_map` maps atomic expressions to indices; `monom_map` maps monomials to indices.
 Both of these are updated during processing and returned.
 -/
-def toComp (red : TransparencyMode) (e : Expr) (e_map : ExprMap) (monom_map : Map Monom ℕ) :
+private def toComp (red : TransparencyMode) (e : Expr) (e_map : ExprMap) (monom_map : Map Monom ℕ) :
     MetaM (Comp × ExprMap × Map Monom ℕ) := do
   let (iq, e) ← parseCompAndExpr e
   let (m', comp') ← linearFormOfExpr red e_map e
