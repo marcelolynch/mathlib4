@@ -58,7 +58,7 @@ structure App where
   arg : Expr
 
 /-- Is `e` morphism application? -/
-def isMorApp? (e : Expr) : MetaM (Option App) := do
+private def isMorApp? (e : Expr) : MetaM (Option App) := do
 
   let .app (.app coe f) x := e | return none
   if ← isCoeFun coe then
@@ -96,7 +96,7 @@ Weak normal head form of an expression involving morphism applications.
 
 For example calling this on `coe (f a) b` will put `f` in weak normal head form instead of `coe`.
 -/
-def whnf (e : Expr) : MetaM Expr :=
+private def whnf (e : Expr) : MetaM Expr :=
   whnfPred e (fun _ => return false)
 
 
@@ -109,7 +109,7 @@ structure Arg where
   deriving Inhabited
 
 /-- Morphism application -/
-def app (f : Expr) (arg : Arg) : Expr :=
+private def app (f : Expr) (arg : Arg) : Expr :=
   match arg.coe with
   | none => f.app arg.expr
   | some coe => (coe.app f).app arg.expr
@@ -147,7 +147,7 @@ where
 If the given expression is a sequence of morphism applications `f a₁ .. aₙ`, return `f`.
 Otherwise return the input expression.
 -/
-def getAppFn (e : Expr) : MetaM Expr :=
+private def getAppFn (e : Expr) : MetaM Expr :=
   match e with
   | .mdata _ b => getAppFn b
   | .app (.app c f) _ => do
@@ -160,7 +160,7 @@ def getAppFn (e : Expr) : MetaM Expr :=
   | e => return e
 
 /-- Given `f a₁ a₂ ... aₙ`, returns `#[a₁, ..., aₙ]` where `f` can be bundled morphism. -/
-def getAppArgs (e : Expr) : MetaM (Array Arg) := withApp e fun _ xs => return xs
+private def getAppArgs (e : Expr) : MetaM (Array Arg) := withApp e fun _ xs => return xs
 
 /-- `mkAppN f #[a₀, ..., aₙ]` ==> `f a₀ a₁ .. aₙ` where `f` can be bundled morphism. -/
 def mkAppN (f : Expr) (xs : Array Arg) : Expr :=
