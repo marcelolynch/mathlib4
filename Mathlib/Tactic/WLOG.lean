@@ -117,7 +117,7 @@ def _root_.Lean.MVarId.wlog (goal : MVarId) (h : Option Name) (P : Expr)
   return ⟨reductionGoal, (HFVarId, negHyp), hGoal, hFVar, revertedFVars⟩
 
 /-- The implementation of `wlog` and `wlog!` -/
-def wlogCore (h : TSyntax ``binderIdent) (P : Term) (xs : Option (TSyntaxArray `ident))
+private def wlogCore (h : TSyntax ``binderIdent) (P : Term) (xs : Option (TSyntaxArray `ident))
     (H : Option (TSyntax `ident)) (pushConfig : Option (TSyntax ``optConfig) := none) :
     TacticM Unit := do
   withMainContext do
