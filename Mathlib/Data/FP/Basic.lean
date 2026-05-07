@@ -122,7 +122,7 @@ protected def Float.neg : Float → Float
   | Float.finite s e m f => Float.finite (not s) e m f
 
 @[nolint docBlame]
-def divNatLtTwoPow (n d : ℕ) : ℤ → Bool
+private def divNatLtTwoPow (n d : ℕ) : ℤ → Bool
   | Int.ofNat e => n < d <<< e
   | Int.negSucc e => n <<< e.succ < d
 
