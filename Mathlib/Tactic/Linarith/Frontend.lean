@@ -182,7 +182,7 @@ structure LinarithConfig : Type where
 `default` if `reduce_default` is true. In this case, it also sets the discharger to `ring!`,
 since this is typically needed when using stronger unification.
 -/
-def LinarithConfig.updateReducibility (cfg : LinarithConfig) (reduce_default : Bool) :
+private def LinarithConfig.updateReducibility (cfg : LinarithConfig) (reduce_default : Bool) :
     LinarithConfig :=
   if reduce_default then
     { cfg with transparency := .default, discharger := do evalTactic (← `(tactic| ring1!)) }
@@ -214,7 +214,7 @@ It returns the type of the terms in the comparison (e.g. the type of `a` and `b`
 newly introduced local constant.
 Otherwise returns `none`.
 -/
-def applyContrLemma (g : MVarId) : MetaM (Option (Expr × Expr) × MVarId) := do
+private def applyContrLemma (g : MVarId) : MetaM (Option (Expr × Expr) × MVarId) := do
   try
     let (nm, tp) ← getContrLemma (← withReducible g.getType')
     let [g] ← g.apply (← mkConst' nm) | failure
@@ -285,7 +285,7 @@ On success, the metavariable `g` is assigned and the function returns the indice
 original hypotheses that were used with nonzero coefficient in the final proof.
 -/
 -- If it succeeds, the passed metavariable should have been assigned.
-def runLinarith (cfg : LinarithConfig) (prefType : Option Expr) (g : MVarId)
+private def runLinarith (cfg : LinarithConfig) (prefType : Option Expr) (g : MVarId)
     (hyps : List Expr) : MetaM (List Nat) := do
   let singleProcess (g : MVarId) (hyps : List (Expr × Nat)) : MetaM (Expr × List Nat) :=
     g.withContext do
