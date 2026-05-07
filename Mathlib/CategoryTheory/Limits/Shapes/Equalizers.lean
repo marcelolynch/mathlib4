@@ -278,7 +278,7 @@ def parallelPairHom {X' Y' : C} (f g : X ⟶ Y) (f' g' : X' ⟶ Y') (p : X ⟶ X
   parallelPairHomMk p q
 
 /-- Construct a isomorphism between parallel pairs. -/
-def parallelPairIso {X' Y' : C} (f g : X ⟶ Y) (f' g' : X' ⟶ Y') (p : X ≅ X') (q : Y ≅ Y')
+private def parallelPairIso {X' Y' : C} (f g : X ⟶ Y) (f' g' : X' ⟶ Y') (p : X ≅ X') (q : Y ≅ Y')
     (wf : f ≫ q.hom = p.hom ≫ f') (wg : g ≫ q.hom = p.hom ≫ g') :
     parallelPair f g ≅ parallelPair f' g' := parallelPairIsoMk p q
 
@@ -764,7 +764,7 @@ def Cofork.ext {s t : Cofork f g} (i : s.pt ≅ t.pt) (w : s.π ≫ i.hom = t.π
   inv := Cofork.mkHom i.inv (by rw [Iso.comp_inv_eq, w])
 
 /-- Two coforks of the form `ofπ` are isomorphic whenever their `π`'s are equal. -/
-def CoforkOfπ.ext {P : C} {π π' : Y ⟶ P} (w : f ≫ π = g ≫ π) (w' : f ≫ π' = g ≫ π') (h : π = π') :
+private def CoforkOfπ.ext {P : C} {π π' : Y ⟶ P} (w : f ≫ π = g ≫ π) (w' : f ≫ π' = g ≫ π') (h : π = π') :
     Cofork.ofπ π w ≅ Cofork.ofπ π' w' :=
   Cofork.ext (Iso.refl _) (by simp [h])
 
