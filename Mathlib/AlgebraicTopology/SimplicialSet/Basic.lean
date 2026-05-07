@@ -70,7 +70,7 @@ lemma const_comp {X Y Z : SSet.{u}} (y : Y _⦋0⦌) (g : Y ⟶ Z) :
   cat_disch
 
 /-- The ulift functor `SSet.{u} ⥤ SSet.{max u v}` on simplicial sets. -/
-def uliftFunctor : SSet.{u} ⥤ SSet.{max u v} :=
+private def uliftFunctor : SSet.{u} ⥤ SSet.{max u v} :=
   (SimplicialObject.whiskering _ _).obj CategoryTheory.uliftFunctor.{v, u}
 
 /-- The functor which sends `n : SimplexCategoryᵒᵖ` to the evaluation
@@ -85,7 +85,7 @@ namespace Truncated
 
 /-- The ulift functor `SSet.Truncated.{u} ⥤ SSet.Truncated.{max u v}` on truncated
 simplicial sets. -/
-def uliftFunctor (k : ℕ) : SSet.Truncated.{u} k ⥤ SSet.Truncated.{max u v} k :=
+private def uliftFunctor (k : ℕ) : SSet.Truncated.{u} k ⥤ SSet.Truncated.{max u v} k :=
   (whiskeringRight _ _ _).obj CategoryTheory.uliftFunctor.{v, u}
 
 @[ext]
@@ -115,7 +115,7 @@ end Truncated
 abbrev truncation (n : ℕ) : SSet ⥤ SSet.Truncated n := SimplicialObject.truncation n
 
 /-- For all `m ≤ n`, `truncation m` factors through `SSet.Truncated n`. -/
-def truncationCompTrunc {n m : ℕ} (h : m ≤ n) :
+private def truncationCompTrunc {n m : ℕ} (h : m ≤ n) :
     truncation n ⋙ Truncated.trunc n m ≅ truncation m :=
   Iso.refl _
 
