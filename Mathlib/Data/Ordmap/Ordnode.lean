@@ -461,7 +461,7 @@ def splitMin' : Ordnode α → α → Ordnode α → α × Ordnode α
 split_min {1, 2, 3} = some (1, {2, 3})
 split_min ∅ = none
 ``` -/
-def splitMin : Ordnode α → Option (α × Ordnode α)
+private def splitMin : Ordnode α → Option (α × Ordnode α)
   | nil => none
   | node _ l x r => splitMin' l x r
 
@@ -480,7 +480,7 @@ def splitMax' : Ordnode α → α → Ordnode α → Ordnode α × α
 split_max {1, 2, 3} = some ({1, 2}, 3)
 split_max ∅ = none
 ``` -/
-def splitMax : Ordnode α → Option (Ordnode α × α)
+private def splitMax : Ordnode α → Option (Ordnode α × α)
   | nil => none
   | node _ x l r => splitMax' x l r
 
@@ -560,7 +560,7 @@ def link (l : Ordnode α) (x : α) : Ordnode α → Ordnode α :=
 filter (fun x ↦ x < 3) {1, 2, 4} = {1, 2}
 filter (fun x ↦ x > 5) {1, 2, 4} = ∅
 ``` -/
-def filter (p : α → Prop) [DecidablePred p] : Ordnode α → Ordnode α
+private def filter (p : α → Prop) [DecidablePred p] : Ordnode α → Ordnode α
   | nil => nil
   | node _ l x r => if p x then
                       link (filter p l) x (filter p r) else
@@ -571,7 +571,7 @@ def filter (p : α → Prop) [DecidablePred p] : Ordnode α → Ordnode α
 ```
 partition (fun x ↦ x < 3) {1, 2, 4} = ({1, 2}, {3})
 ``` -/
-def partition (p : α → Prop) [DecidablePred p] : Ordnode α → Ordnode α × Ordnode α
+private def partition (p : α → Prop) [DecidablePred p] : Ordnode α → Ordnode α × Ordnode α
   | nil => (nil, nil)
   | node _ l x r =>
     let (l₁, l₂) := partition p l
@@ -634,7 +634,7 @@ def toList (t : Ordnode α) : List α :=
 toRevList {1, 2, 4} = [4, 2, 1]
 toRevList {2, 1, 1, 4} = [4, 2, 1]
 ``` -/
-def toRevList (t : Ordnode α) : List α :=
+private def toRevList (t : Ordnode α) : List α :=
   foldl (flip List.cons) [] t
 
 instance [ToString α] : ToString (Ordnode α) :=
@@ -660,7 +660,7 @@ instance [DecidableEq α] : DecidableRel (@Equiv α) := fun x y =>
 ```
 powerset {1, 2, 3} = {∅, {1}, {2}, {3}, {1,2}, {1,3}, {2,3}, {1,2,3}}
 ``` -/
-def powerset (t : Ordnode α) : Ordnode (Ordnode α) :=
+private def powerset (t : Ordnode α) : Ordnode (Ordnode α) :=
   insertMin nil <| foldr (fun x ts => glue (insertMin (ι x) (map (insertMin x) ts)) ts) t nil
 
 /-- O(m * n). The Cartesian product of two sets: `(a, b) ∈ s.prod t` iff `a ∈ s` and `b ∈ t`.
@@ -696,7 +696,7 @@ P to these elements inside the set, producing a set in the subtype.
 ```
 attach' (fun x ↦ x < 4) {1, 2} H = ({1, 2} : Ordnode {x // x<4})
 ``` -/
-def attach' {P : α → Prop} : ∀ t, All P t → Ordnode { a // P a } :=
+private def attach' {P : α → Prop} : ∀ t, All P t → Ordnode { a // P a } :=
   pmap Subtype.mk
 
 /-- O(log n). Get the `i`th element of the set, by its index from left to right.
@@ -705,7 +705,7 @@ def attach' {P : α → Prop} : ∀ t, All P t → Ordnode { a // P a } :=
 nth {a, b, c, d} 2 = some c
 nth {a, b, c, d} 5 = none
 ``` -/
-def nth : Ordnode α → ℕ → Option α
+private def nth : Ordnode α → ℕ → Option α
   | nil, _ => none
   | node _ l x r, i =>
     match Nat.psub' i (size l) with
@@ -719,7 +719,7 @@ def nth : Ordnode α → ℕ → Option α
 remove_nth {a, b, c, d} 2 = {a, b, d}
 remove_nth {a, b, c, d} 5 = {a, b, c, d}
 ``` -/
-def removeNth : Ordnode α → ℕ → Ordnode α
+private def removeNth : Ordnode α → ℕ → Ordnode α
   | nil, _ => nil
   | node _ l x r, i =>
     match Nat.psub' i (size l) with
@@ -750,7 +750,7 @@ def takeAux : Ordnode α → ℕ → Ordnode α
 take 2 {a, b, c, d} = {a, b}
 take 5 {a, b, c, d} = {a, b, c, d}
 ``` -/
-def take (i : ℕ) (t : Ordnode α) : Ordnode α :=
+private def take (i : ℕ) (t : Ordnode α) : Ordnode α :=
   if size t ≤ i then t else takeAux t i
 
 /-- Auxiliary definition for `drop`. (Can also be used in lieu of `drop` if you know the
@@ -776,7 +776,7 @@ def dropAux : Ordnode α → ℕ → Ordnode α
 drop 2 {a, b, c, d} = {c, d}
 drop 5 {a, b, c, d} = ∅
 ``` -/
-def drop (i : ℕ) (t : Ordnode α) : Ordnode α :=
+private def drop (i : ℕ) (t : Ordnode α) : Ordnode α :=
   if size t ≤ i then nil else dropAux t i
 
 /-- Auxiliary definition for `splitAt`. (Can also be used in lieu of `splitAt` if you know the
@@ -806,7 +806,7 @@ def splitAtAux : Ordnode α → ℕ → Ordnode α × Ordnode α
 splitAt 2 {a, b, c, d} = ({a, b}, {c, d})
 splitAt 5 {a, b, c, d} = ({a, b, c, d}, ∅)
 ``` -/
-def splitAt (i : ℕ) (t : Ordnode α) : Ordnode α × Ordnode α :=
+private def splitAt (i : ℕ) (t : Ordnode α) : Ordnode α × Ordnode α :=
   if size t ≤ i then (t, nil) else splitAtAux t i
 
 /-- O(log n). Get an initial segment of the set that satisfies the predicate `p`.
@@ -816,7 +816,7 @@ def splitAt (i : ℕ) (t : Ordnode α) : Ordnode α × Ordnode α :=
 takeWhile (fun x ↦ x < 4) {1, 2, 3, 4, 5} = {1, 2, 3}
 takeWhile (fun x ↦ x > 4) {1, 2, 3, 4, 5} = precondition violation
 ``` -/
-def takeWhile (p : α → Prop) [DecidablePred p] : Ordnode α → Ordnode α
+private def takeWhile (p : α → Prop) [DecidablePred p] : Ordnode α → Ordnode α
   | nil => nil
   | node _ l x r => if p x then link l x (takeWhile p r) else takeWhile p l
 
@@ -827,7 +827,7 @@ def takeWhile (p : α → Prop) [DecidablePred p] : Ordnode α → Ordnode α
 dropWhile (fun x ↦ x < 4) {1, 2, 3, 4, 5} = {4, 5}
 dropWhile (fun x ↦ x > 4) {1, 2, 3, 4, 5} = precondition violation
 ``` -/
-def dropWhile (p : α → Prop) [DecidablePred p] : Ordnode α → Ordnode α
+private def dropWhile (p : α → Prop) [DecidablePred p] : Ordnode α → Ordnode α
   | nil => nil
   | node _ l x r => if p x then dropWhile p r else link (dropWhile p l) x r
 
@@ -838,7 +838,7 @@ def dropWhile (p : α → Prop) [DecidablePred p] : Ordnode α → Ordnode α
 span (fun x ↦ x < 4) {1, 2, 3, 4, 5} = ({1, 2, 3}, {4, 5})
 span (fun x ↦ x > 4) {1, 2, 3, 4, 5} = precondition violation
 ``` -/
-def span (p : α → Prop) [DecidablePred p] : Ordnode α → Ordnode α × Ordnode α
+private def span (p : α → Prop) [DecidablePred p] : Ordnode α → Ordnode α × Ordnode α
   | nil => (nil, nil)
   | node _ l x r =>
     if p x then
@@ -979,7 +979,7 @@ Using a preorder on `ℕ × ℕ` that only compares the first coordinate:
 adjustWith f (1, 1) {(0, 1), (1, 2)} = {(0, 1), f (1, 2)}
 adjustWith f (3, 1) {(0, 1), (1, 2)} = {(0, 1), (1, 2)}
 ``` -/
-def adjustWith (f : α → α) (x : α) : Ordnode α → Ordnode α
+private def adjustWith (f : α → α) (x : α) : Ordnode α → Ordnode α
   | nil => nil
   | _t@(node sz l y r) =>
     match cmpLE x y with
@@ -996,7 +996,7 @@ updateWith f 0 {1, 2, 3} = {1, 2, 3}
 updateWith f 1 {1, 2, 3} = {2, 3}     if f 1 = none
                          = {a, 2, 3}  if f 1 = some a
 ``` -/
-def updateWith (f : α → Option α) (x : α) : Ordnode α → Ordnode α
+private def updateWith (f : α → Option α) (x : α) : Ordnode α → Ordnode α
   | nil => nil
   | _t@(node sz l y r) =>
     match cmpLE x y with
@@ -1017,7 +1017,7 @@ alter f 0 {1, 2, 3} = {1, 2, 3}     if f none = none
 alter f 1 {1, 2, 3} = {2, 3}     if f 1 = none
                     = {a, 2, 3}  if f 1 = some a
 ``` -/
-def alter (f : Option α → Option α) (x : α) : Ordnode α → Ordnode α
+private def alter (f : Option α → Option α) (x : α) : Ordnode α → Ordnode α
   | nil => Option.recOn (f none) nil Ordnode.singleton
   | _t@(node sz l y r) =>
     match cmpLE x y with
@@ -1090,7 +1090,7 @@ Using a preorder on `ℕ × ℕ` that only compares the first coordinate:
 split (1, 1) {(0, 1), (1, 2)} = ({(0, 1)}, ∅)
 split (3, 1) {(0, 1), (1, 2)} = ({(0, 1), (1, 2)}, ∅)
 ``` -/
-def split (x : α) : Ordnode α → Ordnode α × Ordnode α
+private def split (x : α) : Ordnode α → Ordnode α × Ordnode α
   | nil => (nil, nil)
   | node _ l y r =>
     match cmpLE x y with
@@ -1152,7 +1152,7 @@ def erase (x : α) : Ordnode α → Ordnode α
     | Ordering.gt => balanceL l y (erase x r)
 
 /-- Auxiliary definition for `findLt`. -/
-def findLtAux (x : α) : Ordnode α → α → α
+private def findLtAux (x : α) : Ordnode α → α → α
   | nil, best => best
   | node _ l y r, best => if x ≤ y then findLtAux x l best else findLtAux x r y
 
@@ -1163,12 +1163,12 @@ findLt 2 {1, 2, 4} = some 1
 findLt 3 {1, 2, 4} = some 2
 findLt 0 {1, 2, 4} = none
 ``` -/
-def findLt (x : α) : Ordnode α → Option α
+private def findLt (x : α) : Ordnode α → Option α
   | nil => none
   | node _ l y r => if x ≤ y then findLt x l else some (findLtAux x r y)
 
 /-- Auxiliary definition for `findGt`. -/
-def findGtAux (x : α) : Ordnode α → α → α
+private def findGtAux (x : α) : Ordnode α → α → α
   | nil, best => best
   | node _ l y r, best => if y ≤ x then findGtAux x r best else findGtAux x l y
 
@@ -1179,12 +1179,12 @@ findGt 2 {1, 2, 4} = some 4
 findGt 3 {1, 2, 4} = some 4
 findGt 4 {1, 2, 4} = none
 ``` -/
-def findGt (x : α) : Ordnode α → Option α
+private def findGt (x : α) : Ordnode α → Option α
   | nil => none
   | node _ l y r => if y ≤ x then findGt x r else some (findGtAux x l y)
 
 /-- Auxiliary definition for `findLe`. -/
-def findLeAux (x : α) : Ordnode α → α → α
+private def findLeAux (x : α) : Ordnode α → α → α
   | nil, best => best
   | node _ l y r, best =>
     match cmpLE x y with
@@ -1199,7 +1199,7 @@ findLe 2 {1, 2, 4} = some 2
 findLe 3 {1, 2, 4} = some 2
 findLe 0 {1, 2, 4} = none
 ``` -/
-def findLe (x : α) : Ordnode α → Option α
+private def findLe (x : α) : Ordnode α → Option α
   | nil => none
   | node _ l y r =>
     match cmpLE x y with
@@ -1208,7 +1208,7 @@ def findLe (x : α) : Ordnode α → Option α
     | Ordering.gt => some (findLeAux x r y)
 
 /-- Auxiliary definition for `findGe`. -/
-def findGeAux (x : α) : Ordnode α → α → α
+private def findGeAux (x : α) : Ordnode α → α → α
   | nil, best => best
   | node _ l y r, best =>
     match cmpLE x y with
@@ -1223,7 +1223,7 @@ findGe 2 {1, 2, 4} = some 2
 findGe 3 {1, 2, 4} = some 4
 findGe 5 {1, 2, 4} = none
 ``` -/
-def findGe (x : α) : Ordnode α → Option α
+private def findGe (x : α) : Ordnode α → Option α
   | nil => none
   | node _ l y r =>
     match cmpLE x y with
@@ -1248,7 +1248,7 @@ findIndex 2 {1, 2, 4} = some 1
 findIndex 4 {1, 2, 4} = some 2
 findIndex 5 {1, 2, 4} = none
 ``` -/
-def findIndex (x : α) (t : Ordnode α) : Option ℕ :=
+private def findIndex (x : α) (t : Ordnode α) : Option ℕ :=
   findIndexAux x t 0
 
 /-- Auxiliary definition for `isSubset`. -/
@@ -1265,7 +1265,7 @@ def isSubsetAux : Ordnode α → Ordnode α → Bool
 is_subset {1, 4} {1, 2, 4} = tt
 is_subset {1, 3} {1, 2, 4} = ff
 ``` -/
-def isSubset (t₁ t₂ : Ordnode α) : Bool :=
+private def isSubset (t₁ t₂ : Ordnode α) : Bool :=
   decide (size t₁ ≤ size t₂) && isSubsetAux t₁ t₂
 
 /-- O(m + n). Is every element of `t₁` not equivalent to any element of `t₂`?
@@ -1274,7 +1274,7 @@ def isSubset (t₁ t₂ : Ordnode α) : Bool :=
 disjoint {1, 3} {2, 4} = tt
 disjoint {1, 2} {2, 4} = ff
 ``` -/
-def disjoint : Ordnode α → Ordnode α → Bool
+private def disjoint : Ordnode α → Ordnode α → Bool
   | nil, _ => true
   | _, nil => true
   | node _ l x r, t =>
@@ -1294,7 +1294,7 @@ Using a preorder on `ℕ × ℕ` that only compares the first coordinate:
 ```
 union {(1, 1)} {(0, 1), (1, 2)} = {(0, 1), (1, 1)}
 ``` -/
-def union : Ordnode α → Ordnode α → Ordnode α
+private def union : Ordnode α → Ordnode α → Ordnode α
   | t₁, nil => t₁
   | nil, t₂ => t₂
   | t₁@(node s₁ l₁ x₁ r₁), t₂@(node s₂ _ x₂ _) =>
@@ -1311,7 +1311,7 @@ def union : Ordnode α → Ordnode α → Ordnode α
 diff {1, 2} {2, 3} = {1}
 diff {1, 2, 3} {2} = {1, 3}
 ``` -/
-def diff : Ordnode α → Ordnode α → Ordnode α
+private def diff : Ordnode α → Ordnode α → Ordnode α
   | t₁, nil => t₁
   | t₁, t₂@(node _ l₂ x r₂) =>
     cond t₁.empty t₂ <|
@@ -1327,7 +1327,7 @@ def diff : Ordnode α → Ordnode α → Ordnode α
 inter {1, 2} {2, 3} = {2}
 inter {1, 3} {2} = ∅
 ``` -/
-def inter : Ordnode α → Ordnode α → Ordnode α
+private def inter : Ordnode α → Ordnode α → Ordnode α
   | nil, _ => nil
   | t₁@(node _ l₁ x r₁), t₂ =>
     cond t₂.empty t₁ <|
@@ -1359,7 +1359,7 @@ def ofList (l : List α) : Ordnode α :=
 ofList' [1, 2, 3] = {1, 2, 3}
 ofList' [2, 1, 1, 3] = {1, 2, 3}
 ``` -/
-def ofList' : List α → Ordnode α
+private def ofList' : List α → Ordnode α
   | [] => nil
   | l@(_ :: _) => if List.IsChain (fun a b => ¬b ≤ a) l then ofAscList l else ofList l
 
@@ -1371,7 +1371,7 @@ Equivalent elements are selected with a preference for smaller source elements.
 image (fun x ↦ x + 2) {1, 2, 4} = {3, 4, 6}
 image (fun x : ℕ ↦ x - 2) {1, 2, 4} = {0, 2}
 ``` -/
-def image {α β} [LE β] [DecidableLE β] (f : α → β) (t : Ordnode α) : Ordnode β :=
+private def image {α β} [LE β] [DecidableLE β] (f : α → β) (t : Ordnode α) : Ordnode β :=
   ofList (t.toList.map f)
 
 end
