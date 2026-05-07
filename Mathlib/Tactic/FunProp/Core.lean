@@ -172,7 +172,7 @@ Try to prove `e` using the *identity lambda theorem*.
 
 For example, `e = q(Continuous fun x ↦ x)` and `funPropDecl` is `FunPropDecl` for `Continuous`.
 -/
-def applyIdRule (funPropDecl : FunPropDecl) (e : Expr)
+private def applyIdRule (funPropDecl : FunPropDecl) (e : Expr)
     (funProp : Expr → FunPropM (Option Result)) : FunPropM (Option Result) := do
   let thms ← getLambdaTheorems funPropDecl.funPropName .id
   if thms.size = 0 then
@@ -192,7 +192,7 @@ Try to prove `e` using the *constant lambda theorem*.
 
 For example, `e = q(Continuous fun x ↦ y)` and `funPropDecl` is `FunPropDecl` for `Continuous`.
 -/
-def applyConstRule (funPropDecl : FunPropDecl) (e : Expr)
+private def applyConstRule (funPropDecl : FunPropDecl) (e : Expr)
     (funProp : Expr → FunPropM (Option Result)) : FunPropM (Option Result) := do
   let thms ← getLambdaTheorems funPropDecl.funPropName .const
   if thms.size = 0 then
@@ -276,7 +276,7 @@ For example,
   - `e = q(Continuous fun x ↦ let y := φ x; ψ x y)`
   - `f = q(fun x ↦ let y := φ x; ψ x y)`
 -/
-def letCase (funPropDecl : FunPropDecl) (e : Expr) (f : Expr)
+private def letCase (funPropDecl : FunPropDecl) (e : Expr) (f : Expr)
     (funProp : Expr → FunPropM (Option Result)) :
     FunPropM (Option Result) := do
   match f with
@@ -386,7 +386,7 @@ def removeArgRule (funPropDecl : FunPropDecl) (e : Expr) (fData : FunctionData)
 
 
 /-- Prove function property of `fun f ↦ f x₁ ... xₙ`. -/
-def bvarAppCase (funPropDecl : FunPropDecl) (e : Expr) (fData : FunctionData)
+private def bvarAppCase (funPropDecl : FunPropDecl) (e : Expr) (fData : FunctionData)
     (funProp : Expr → FunPropM (Option Result)) : FunPropM (Option Result) := do
 
   if (← fData.isMorApplication) != .none then
@@ -526,7 +526,7 @@ def tryTheorems (funPropDecl : FunPropDecl) (e : Expr) (fData : FunctionData)
   return none
 
 /-- Prove function property of `fun x ↦ f x₁ ... xₙ` where `f` is free variable. -/
-def fvarAppCase (funPropDecl : FunPropDecl) (e : Expr) (fData : FunctionData)
+private def fvarAppCase (funPropDecl : FunPropDecl) (e : Expr) (fData : FunctionData)
     (funProp : Expr → FunPropM (Option Result)) : FunPropM (Option Result) := do
 
   -- fvar theorems are almost exclusively in uncurried form so we decompose if we can
@@ -562,7 +562,7 @@ def fvarAppCase (funPropDecl : FunPropDecl) (e : Expr) (fData : FunctionData)
 
 
 /-- Prove function property of `fun x ↦ f x₁ ... xₙ` where `f` is declared function. -/
-def constAppCase (funPropDecl : FunPropDecl) (e : Expr) (fData : FunctionData)
+private def constAppCase (funPropDecl : FunPropDecl) (e : Expr) (fData : FunctionData)
     (funProp : Expr → FunPropM (Option Result)) : FunPropM (Option Result) := do
 
   let some (funName, _) := fData.fn.const?
@@ -612,12 +612,12 @@ def constAppCase (funPropDecl : FunPropDecl) (e : Expr) (fData : FunctionData)
 
 
 /-- Cache result if it does not have any subgoals. -/
-def cacheResult (e : Expr) (r : Result) : FunPropM Result := do -- return proof?
+private def cacheResult (e : Expr) (r : Result) : FunPropM Result := do -- return proof?
   modify (fun s => { s with cache := s.cache.insert e { expr := q(True), proof? := r.proof} })
   return r
 
 /-- Cache for failed goals such that `fun_prop` can fail fast next time. -/
-def cacheFailure (e : Expr) : FunPropM Unit := do -- return proof?
+private def cacheFailure (e : Expr) : FunPropM Unit := do -- return proof?
   modify (fun s => { s with failureCache := s.failureCache.insert e })
 
 
