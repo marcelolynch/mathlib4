@@ -897,13 +897,13 @@ theorem Algebra.adjoin_int {R : Type*} [Ring R] (s : Set R) :
 
 /-- The `ℕ`-algebra equivalence between `Subsemiring.closure s` and `Algebra.adjoin ℕ s` given
 by the identity map. -/
-def Subsemiring.closureEquivAdjoinNat {R : Type*} [Semiring R] (s : Set R) :
+private def Subsemiring.closureEquivAdjoinNat {R : Type*} [Semiring R] (s : Set R) :
     Subsemiring.closure s ≃ₐ[ℕ] Algebra.adjoin ℕ s :=
   Subalgebra.equivOfEq (subalgebraOfSubsemiring <| Subsemiring.closure s) _ (adjoin_nat s).symm
 
 /-- The `ℤ`-algebra equivalence between `Subring.closure s` and `Algebra.adjoin ℤ s` given by
 the identity map. -/
-def Subring.closureEquivAdjoinInt {R : Type*} [Ring R] (s : Set R) :
+private def Subring.closureEquivAdjoinInt {R : Type*} [Ring R] (s : Set R) :
     Subring.closure s ≃ₐ[ℤ] Algebra.adjoin ℤ s :=
   Subalgebra.equivOfEq (subalgebraOfSubring <| Subring.closure s) _ (adjoin_int s).symm
 
