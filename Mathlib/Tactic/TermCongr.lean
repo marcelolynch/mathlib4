@@ -145,7 +145,7 @@ def hasCHole (mvarCounterSaved : Nat) (e : Expr) : Option Expr :=
   e.find? fun e' => (cHole? e' mvarCounterSaved).isSome
 
 /-- Eliminate all congruence holes from an expression by replacing them with their values. -/
-def removeCHoles (e : Expr) : Expr :=
+private def removeCHoles (e : Expr) : Expr :=
   e.replace fun e' => if let some (_, val, _) := cHole? e' then val else none
 
 /-- Elaborates a congruence hole and returns either the left-hand side or the right-hand side,
@@ -205,7 +205,7 @@ def elaboratePattern (t : Term) (expectedType? : Option Expr) (forLhs : Bool) :
 
 /-- Ensures the expected type is an equality. Returns the equality.
 The returned expression satisfies `Lean.Expr.eq?`. -/
-def mkEqForExpectedType (expectedType? : Option Expr) : MetaM Expr := do
+private def mkEqForExpectedType (expectedType? : Option Expr) : MetaM Expr := do
   let u ← mkFreshLevelMVar
   let ty ← mkFreshExprMVar (mkSort u)
   let eq := mkApp3 (mkConst ``Eq [u]) ty (← mkFreshExprMVar ty) (← mkFreshExprMVar ty)
@@ -216,7 +216,7 @@ def mkEqForExpectedType (expectedType? : Option Expr) : MetaM Expr := do
 
 /-- Ensures the expected type is a HEq. Returns the HEq.
 This expression satisfies `Lean.Expr.heq?`. -/
-def mkHEqForExpectedType (expectedType? : Option Expr) : MetaM Expr := do
+private def mkHEqForExpectedType (expectedType? : Option Expr) : MetaM Expr := do
   let u ← mkFreshLevelMVar
   let tya ← mkFreshExprMVar (mkSort u)
   let tyb ← mkFreshExprMVar (mkSort u)
@@ -238,7 +238,7 @@ def mkIffForExpectedType (expectedType? : Option Expr) : MetaM Expr := do
   return iff
 
 /-- Make sure that the expected type of `pf` is an iff by unification. -/
-def ensureIff (pf : Expr) : MetaM Expr := do
+private def ensureIff (pf : Expr) : MetaM Expr := do
   discard <| mkIffForExpectedType (← inferType pf)
   return pf
 
@@ -305,7 +305,7 @@ def CongrResult.iff (res : CongrResult) : MetaM Expr := do
 /-- Combine two congruence proofs using transitivity.
 Does not check that `res1.rhs` is defeq to `res2.lhs`.
 If both `res1` and `res2` are trivial then the result is trivial. -/
-def CongrResult.trans (res1 res2 : CongrResult) : CongrResult where
+private def CongrResult.trans (res1 res2 : CongrResult) : CongrResult where
   lhs := res1.lhs
   rhs := res2.rhs
   pf? :=
@@ -383,7 +383,7 @@ where
 
 /-- Force the lhs and rhs to be defeq. For when `dsimp`-like congruence is necessary.
 Clears the proof. -/
-def CongrResult.defeq (res : CongrResult) : MetaM CongrResult := do
+private def CongrResult.defeq (res : CongrResult) : MetaM CongrResult := do
   if res.isRfl then
     return res
   else
@@ -413,7 +413,8 @@ def CongrResult.mkDefault (lhs rhs : Expr) : MetaM CongrResult := do
   throwError "Could not generate congruence between{indentD lhs}\nand{indentD rhs}"
 
 /-- Does `CongrResult.mkDefault` but makes sure there are no lingering congruence holes. -/
-def CongrResult.mkDefault' (mvarCounterSaved : Nat) (lhs rhs : Expr) : MetaM CongrResult := do
+private def CongrResult.mkDefault' (mvarCounterSaved : Nat) (lhs rhs : Expr) : MetaM CongrResult
+    := do
   if let some h := hasCHole mvarCounterSaved lhs then
     throwError "Left-hand side{indentD lhs}\nstill has a congruence hole{indentD h}"
   if let some h := hasCHole mvarCounterSaved rhs then
@@ -428,7 +429,8 @@ def throwCongrEx {α : Type} (lhs rhs : Expr) (msg : MessageData) : MetaM α := 
 /-- If `lhs` or `rhs` is a congruence hole, then process it.
 Only process ones that are at least as new as `mvarCounterSaved`
 since nothing prevents congruence holes from leaking into the local context. -/
-def mkCongrOfCHole? (mvarCounterSaved : Nat) (lhs rhs : Expr) : MetaM (Option CongrResult) := do
+private def mkCongrOfCHole? (mvarCounterSaved : Nat) (lhs rhs : Expr) : MetaM (Option CongrResult)
+    := do
   match cHole? lhs mvarCounterSaved, cHole? rhs mvarCounterSaved with
   | some (isLhs1, val1, pf1), some (isLhs2, val2, pf2) =>
     trace[Elab.congr] "mkCongrOfCHole, both holes"
