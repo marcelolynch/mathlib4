@@ -207,7 +207,7 @@ end Cone
 namespace Cocone
 
 /-- The isomorphism between a cocone on `F` and an element of the functor `F.cocones`. -/
-def equiv (F : J ⥤ C) : Cocone F ≅ Σ X, F.cocones.obj X where
+private def equiv (F : J ⥤ C) : Cocone F ≅ Σ X, F.cocones.obj X where
   hom := ↾fun c ↦ ⟨c.pt, c.ι⟩
   inv := ↾fun c ↦
     { pt := c.1
