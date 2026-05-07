@@ -25,7 +25,7 @@ open Qq
 initialize registerTraceClass `tauto
 
 /-- Tries to apply de-Morgan-like rules on a hypothesis. -/
-def distribNotOnceAt (hypFVar : Expr) (g : MVarId) : MetaM AssertAfterResult := g.withContext do
+private def distribNotOnceAt (hypFVar : Expr) (g : MVarId) : MetaM AssertAfterResult := g.withContext do
   let .fvar fvarId := hypFVar | throwError "not fvar {hypFVar}"
   let h ← fvarId.getDecl
   let e : Q(Prop) ← (do guard <| ← Meta.isProp h.type; pure h.type)
@@ -200,7 +200,7 @@ def finishingConstructorMatcher (e : Q(Prop)) : MetaM Bool :=
   | _ => pure false
 
 /-- Implementation of the `tauto` tactic. -/
-def tautology : TacticM Unit := focus do
+private def tautology : TacticM Unit := focus do
   classical do
     let g ← getMainGoal
     tautoCore
