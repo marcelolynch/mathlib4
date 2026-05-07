@@ -57,11 +57,11 @@ def toNF (l : qNF q($M)) : Q(NF $M) := l.foldr (fun ((a, x), _) l ↦ q(($a, $x)
 /-- Given `l` of type `qNF M`, i.e. a list of `(ℤ × Q($M)) × ℕ`s (two `Expr`s and a natural
 number), apply an expression representing a function with domain `ℤ` to each of the `ℤ`
 components. -/
-def onExponent (l : qNF M) (f : ℤ → ℤ) : qNF M :=
+private def onExponent (l : qNF M) (f : ℤ → ℤ) : qNF M :=
   l.map fun ((a, x), k) ↦ ((f a, x), k)
 
 /-- Build a transparent expression for the product of powers represented by `l : qNF M`. -/
-def evalPrettyMonomial (iM : Q(GroupWithZero $M)) (r : ℤ) (x : Q($M)) :
+private def evalPrettyMonomial (iM : Q(GroupWithZero $M)) (r : ℤ) (x : Q($M)) :
     MetaM (Σ e : Q($M), Q(zpow' $x $r = $e)) := do
   match r with
   | 0 => /- If an exponent is zero then we must not have been able to prove that x is nonzero.  -/
@@ -77,7 +77,7 @@ def evalPrettyMonomial (iM : Q(GroupWithZero $M)) (r : ℤ) (x : Q($M)) :
 /-- Try to drop an expression `zpow' x r` from the beginning of a product. If `r ≠ 0` this of course
 can't be done. If `r = 0`, then `zpow' x r` is equal to `x / x`, so it can be simplified to 1 (hence
 dropped from the beginning of the product) if we can find a proof that `x ≠ 0`. -/
-def tryClearZero
+private def tryClearZero
     (disch : ∀ {u : Level} (type : Q(Sort u)), MetaM Q($type)) (iM : Q(CommGroupWithZero $M))
     (r : ℤ) (x : Q($M)) (i : ℕ) (l : qNF M) :
     MetaM <| Σ l' : qNF M, Q(NF.eval $(qNF.toNF (((r, x), i) :: l)) = NF.eval $(l'.toNF)) := do
@@ -182,7 +182,7 @@ def mul : qNF q($M) → qNF q($M) → qNF q($M)
 `Expr` and a natural number), recursively construct a proof that in the field `$M`, the product of
 the "multiplicative linear combinations" represented by `l₁` and `l₂` is the multiplicative linear
 combination represented by `FieldSimp.qNF.mul l₁ l₁`. -/
-def mkMulProof (iM : Q(CommGroupWithZero $M)) (l₁ l₂ : qNF M) :
+private def mkMulProof (iM : Q(CommGroupWithZero $M)) (l₁ l₂ : qNF M) :
     Q((NF.eval $(l₁.toNF)) * NF.eval $(l₂.toNF) = NF.eval $((qNF.mul l₁ l₂).toNF)) :=
   match l₁, l₂ with
   | [], l => (q(one_mul (NF.eval $(l.toNF))):)
@@ -226,7 +226,7 @@ def div : qNF M → qNF M → qNF M
 `Expr` and a natural number), recursively construct a proof that in the field `$M`, the quotient
 of the "multiplicative linear combinations" represented by `l₁` and `l₂` is the multiplicative
 linear combination represented by `FieldSimp.qNF.div l₁ l₁`. -/
-def mkDivProof (iM : Q(CommGroupWithZero $M)) (l₁ l₂ : qNF M) :
+private def mkDivProof (iM : Q(CommGroupWithZero $M)) (l₁ l₂ : qNF M) :
     Q(NF.eval $(l₁.toNF) / NF.eval $(l₂.toNF) = NF.eval $((qNF.div l₁ l₂).toNF)) :=
   match l₁, l₂ with
   | [], l => (q(NF.one_div_eq_eval $(l.toNF)):)
@@ -264,7 +264,7 @@ to the value of `DenomCondition`) of that expression's nonzeroness, strict posit
 /-- The empty field-simp-normal-form expression `[]` (representing `1` as an empty product of powers
 of atoms) can be proved to be nonzero, strict positivity, etc., as needed, as specified by the
 value of `DenomCondition`. -/
-def proofZero {iM : Q(CommGroupWithZero $M)} :
+private def proofZero {iM : Q(CommGroupWithZero $M)} :
     ∀ cond : DenomCondition (M := M) q(inferInstance), cond.proof []
   | .none => Unit.unit
   | .nonzero => q(one_ne_zero (α := $M))
@@ -277,7 +277,7 @@ end DenomCondition
 construct a corresponding proof for `((r, e), i) :: L`.
 
 In this version we also expose the proof of nonzeroness of `e`. -/
-def mkDenomConditionProofSucc {iM : Q(CommGroupWithZero $M)}
+private def mkDenomConditionProofSucc {iM : Q(CommGroupWithZero $M)}
     (disch : ∀ {u : Level} (type : Q(Sort u)), MetaM Q($type))
     {cond : DenomCondition (M := M) q(inferInstance)}
     {L : qNF M} (hL : cond.proof L) (e : Q($M)) (r : ℤ) (i : ℕ) :
@@ -297,7 +297,7 @@ def mkDenomConditionProofSucc {iM : Q(CommGroupWithZero $M)}
 /-- Given a proof of the nonzeroness, strict positivity, etc. (as specified by the value of
 `DenomCondition`) of a field-simp-normal-form expression `L` (a product of powers of atoms),
 construct a corresponding proof for `((r, e), i) :: L`. -/
-def mkDenomConditionProofSucc' {iM : Q(CommGroupWithZero $M)}
+private def mkDenomConditionProofSucc' {iM : Q(CommGroupWithZero $M)}
     (disch : ∀ {u : Level} (type : Q(Sort u)), MetaM Q($type))
     {cond : DenomCondition (M := M) q(inferInstance)}
     {L : qNF M} (hL : cond.proof L) (e : Q($M)) (r : ℤ) (i : ℕ) :
@@ -590,7 +590,7 @@ def reduceLtQ (disch : ∀ {u : Level} (type : Q(Sort u)), MetaM Q($type))
 
 /-- Given `x` in a commutative group-with-zero, construct a new expression in the standard form
 *** / *** (all denominators at the end) which is equal to `x`. -/
-def reduceExpr (disch : ∀ {u : Level} (type : Q(Sort u)), MetaM Q($type)) (x : Expr) :
+private def reduceExpr (disch : ∀ {u : Level} (type : Q(Sort u)), MetaM Q($type)) (x : Expr) :
     AtomM Simp.Result := do
   -- for `field_simp` to work with the recursive infrastructure in `AtomM.recurse`, we need to fail
   -- on things `field_simp` would treat as atoms
