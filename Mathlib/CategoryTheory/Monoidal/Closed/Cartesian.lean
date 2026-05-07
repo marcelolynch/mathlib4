@@ -65,7 +65,7 @@ end CartesianClosed
 open CartesianClosed
 
 /-- The internal element which points at the given morphism. -/
-def internalizeHom {C : Type u} [Category.{v} C] [CartesianMonoidalCategory C] {A Y : C} [Closed A]
+private def internalizeHom {C : Type u} [Category.{v} C] [CartesianMonoidalCategory C] {A Y : C} [Closed A]
     (f : A ⟶ Y) : 𝟙_ C ⟶ A ⟹ Y :=
   MonoidalClosed.curry (fst _ _ ≫ f)
 
