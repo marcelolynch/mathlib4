@@ -53,7 +53,7 @@ namespace AlgebraNorm
 variable {R : Type*} [SeminormedCommRing R] {S : Type*} [Ring S] [Algebra R S] {f : AlgebraNorm R S}
 
 /-- The ring seminorm underlying an algebra norm. -/
-def toRingSeminorm' (f : AlgebraNorm R S) : RingSeminorm S :=
+private def toRingSeminorm' (f : AlgebraNorm R S) : RingSeminorm S :=
   f.toRingNorm.toRingSeminorm
 
 instance : FunLike (AlgebraNorm R S) S ℝ where
@@ -103,7 +103,7 @@ def restriction (A : Subalgebra R S) (f : AlgebraNorm R S) : AlgebraNorm R A whe
 
 set_option linter.style.whitespace false in -- manual alignment is not recognised
 /-- The restriction of an algebra norm in a scalar tower. -/
-def isScalarTower_restriction {A : Type*} [CommRing A] [Algebra R A] [Algebra A S]
+private def isScalarTower_restriction {A : Type*} [CommRing A] [Algebra R A] [Algebra A S]
     [IsScalarTower R A S] (hinj : Function.Injective (algebraMap A S)) (f : AlgebraNorm R S) :
     AlgebraNorm R A where
   toFun x     := f (algebraMap A S x)
@@ -213,7 +213,7 @@ variable {R : Type*} [NonAssocRing R]
 
 set_option linter.style.whitespace false in -- manual alignment is not recognised
 /-- The ring norm underlying a multiplicative ring norm. -/
-def toRingNorm (f : MulRingNorm R) : RingNorm R where
+private def toRingNorm (f : MulRingNorm R) : RingNorm R where
   toFun       := f
   map_zero'   := f.map_zero'
   add_le'     := f.add_le'
