@@ -350,7 +350,7 @@ def tensorLeftAdjunction (Y Y' : C) [ExactPairing Y Y'] : tensorLeft Y' ⊣ tens
 /-- If `Y Y'` have an exact pairing,
 then the functor `tensor_right Y` is left adjoint to `tensor_right Y'`.
 -/
-def tensorRightAdjunction (Y Y' : C) [ExactPairing Y Y'] : tensorRight Y ⊣ tensorRight Y' :=
+private def tensorRightAdjunction (Y Y' : C) [ExactPairing Y Y'] : tensorRight Y ⊣ tensorRight Y' :=
   Adjunction.mkOfHomEquiv
     { homEquiv := fun X Z => tensorRightHomEquiv X Y Y' Z
       homEquiv_naturality_left_symm := fun f g => tensorRightHomEquiv_symm_naturality f g
