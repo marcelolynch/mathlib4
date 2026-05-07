@@ -469,7 +469,7 @@ def NormedField.toMulRingNorm (R : Type*) [NormedField R] : MulRingNorm R where
 
 set_option linter.style.whitespace false in -- manual alignment is not recognised
 /-- The norm on a `NormedField`, as an `AbsoluteValue`. -/
-def NormedField.toAbsoluteValue (R : Type*) [NormedField R] : AbsoluteValue R ℝ where
+private def NormedField.toAbsoluteValue (R : Type*) [NormedField R] : AbsoluteValue R ℝ where
   toFun     := norm
   map_mul'  := norm_mul
   nonneg'   := norm_nonneg
