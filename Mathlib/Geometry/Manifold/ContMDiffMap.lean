@@ -97,15 +97,15 @@ def const (y : M') : C^n⟮I, M; I', M'⟯ :=
   ⟨fun _ => y, contMDiff_const⟩
 
 /-- The first projection of a product, as a `C^n` map. -/
-def fst : C^n⟮I.prod I', M × M'; I, M⟯ :=
+private def fst : C^n⟮I.prod I', M × M'; I, M⟯ :=
   ⟨Prod.fst, contMDiff_fst⟩
 
 /-- The second projection of a product, as a `C^n` map. -/
-def snd : C^n⟮I.prod I', M × M'; I', M'⟯ :=
+private def snd : C^n⟮I.prod I', M × M'; I', M'⟯ :=
   ⟨Prod.snd, contMDiff_snd⟩
 
 /-- Given two `C^n` maps `f` and `g`, this is the `C^n` map `x ↦ (f x, g x)`. -/
-def prodMk (f : C^n⟮J, N; I, M⟯) (g : C^n⟮J, N; I', M'⟯) : C^n⟮J, N; I.prod I', M × M'⟯ :=
+private def prodMk (f : C^n⟮J, N; I, M⟯) (g : C^n⟮J, N; I', M'⟯) : C^n⟮J, N; I.prod I', M × M'⟯ :=
   ⟨fun x => (f x, g x), f.2.prodMk g.2⟩
 
 end ContMDiffMap
