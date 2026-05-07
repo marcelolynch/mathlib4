@@ -174,7 +174,7 @@ If none of the handled cases apply, we simply return `e` (after beta-reducing).
 This function is used for implementing the `T%` elaborator.
 -/
 -- TODO: document how this elaborator works, any gotchas, etc.
-def totalSpaceMk (e : Expr) : MetaM Expr := do
+private def totalSpaceMk (e : Expr) : MetaM Expr := do
   let etype ← whnf <| ← instantiateMVars <| ← inferType e
   match etype with
   | .forallE x base tgt _ => withLocalDeclD x base fun x ↦ do
