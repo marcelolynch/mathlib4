@@ -36,7 +36,7 @@ open Tactic
 /--
 Run a tactic, optionally restoring the original state, and report just the number of heartbeats.
 -/
-def runTacForHeartbeats (tac : TSyntax `Lean.Parser.Tactic.tacticSeq) (revert : Bool := true) :
+private def runTacForHeartbeats (tac : TSyntax `Lean.Parser.Tactic.tacticSeq) (revert : Bool := true) :
     TacticM Nat := do
   let start ← IO.getNumHeartbeats
   let s ← saveState
@@ -62,7 +62,7 @@ def variation (counts : List Nat) : List Nat :=
 /--
 Given a `List Nat`, log an info message with the minimum, maximum, and standard deviation.
 -/
-def logVariation {m} [Monad m] [MonadLog m] [AddMessageContext m] [MonadOptions m]
+private def logVariation {m} [Monad m] [MonadLog m] [AddMessageContext m] [MonadOptions m]
     (counts : List Nat) : m Unit := do
   if let [min, max, stddev] := variation counts then
   -- convert `[min, max, stddev]` to user-facing heartbeats
@@ -106,7 +106,7 @@ elab "#count_heartbeats! " n:(num)? "in" ppLine tac:tacticSeq : tactic => do
 /--
 Round down the number `n` to the nearest thousand, if `approx` is `true`.
 -/
-def roundDownIf (n : Nat) (approx : Bool) : String :=
+private def roundDownIf (n : Nat) (approx : Bool) : String :=
   if approx then s!"approximately {(n / 1000) * 1000}" else s!"{n}"
 
 set_option linter.style.maxHeartbeats false in
@@ -191,7 +191,7 @@ set_option linter.style.maxHeartbeats false in
 /--
 Run a command, optionally restoring the original state, and report just the number of heartbeats.
 -/
-def elabForHeartbeats (cmd : TSyntax `command) (revert : Bool := true) : CommandElabM Nat := do
+private def elabForHeartbeats (cmd : TSyntax `command) (revert : Bool := true) : CommandElabM Nat := do
   let start ← IO.getNumHeartbeats
   let s ← get
   elabCommand (← `(command| set_option maxHeartbeats 0 in $cmd))
@@ -260,7 +260,7 @@ register_option linter.countHeartbeatsApprox : Bool := {
 namespace CountHeartbeats
 
 @[inherit_doc Mathlib.Linter.linter.countHeartbeats]
-def countHeartbeatsLinter : Linter where run := withSetOptionIn fun stx ↦ do
+private def countHeartbeatsLinter : Linter where run := withSetOptionIn fun stx ↦ do
   unless getLinterValue linter.countHeartbeats (← getLinterOptions) do
     return
   if (← get).messages.hasErrors then
