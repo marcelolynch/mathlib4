@@ -66,7 +66,7 @@ abbrev ofHom {M N : Type u} [SeminormedAddCommGroup M] [SeminormedAddCommGroup N
   ConcreteCategory.ofHom (C := SemiNormedGrp) f
 
 /-- Use the `ConcreteCategory.hom` projection for `@[simps]` lemmas. -/
-def Hom.Simps.hom (M N : SemiNormedGrp.{u}) (f : Hom M N) :=
+private def Hom.Simps.hom (M N : SemiNormedGrp.{u}) (f : Hom M N) :=
   f.hom
 
 initialize_simps_projections Hom (hom' → hom)
@@ -262,7 +262,7 @@ abbrev mkHom {M N : Type u} [SeminormedAddCommGroup M] [SeminormedAddCommGroup N
   ConcreteCategory.ofHom ⟨f, i⟩
 
 /-- Use the `ConcreteCategory.hom` projection for `@[simps]` lemmas. -/
-def Hom.Simps.hom (M N : SemiNormedGrp₁.{u}) (f : Hom M N) : NormedAddGroupHom M N :=
+private def Hom.Simps.hom (M N : SemiNormedGrp₁.{u}) (f : Hom M N) : NormedAddGroupHom M N :=
   f.hom
 
 initialize_simps_projections Hom (hom' → hom)
