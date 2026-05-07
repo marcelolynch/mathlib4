@@ -381,7 +381,7 @@ protected def symm (e : α ≃+*o β) : β ≃+*o α :=
     erw [← map_le_map_iff e, e.1.apply_symm_apply, e.1.apply_symm_apply]⟩
 
 /-- See Note [custom simps projection] -/
-def Simps.symm_apply (e : α ≃+*o β) : β → α :=
+private def Simps.symm_apply (e : α ≃+*o β) : β → α :=
   e.symm
 
 @[simp]
