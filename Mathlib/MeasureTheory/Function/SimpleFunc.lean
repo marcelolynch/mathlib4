@@ -84,7 +84,7 @@ def ofFinite [Finite α] [MeasurableSingletonClass α] (f : α → β) : α →�
 
 
 /-- Simple function defined on the empty type. -/
-def ofIsEmpty [IsEmpty α] : α →ₛ β := ofFinite isEmptyElim
+private def ofIsEmpty [IsEmpty α] : α →ₛ β := ofFinite isEmptyElim
 
 /-- Range of a simple function `α →ₛ β` as a `Finset β`. -/
 protected def range (f : α →ₛ β) : Finset β :=
