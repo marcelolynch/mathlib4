@@ -175,7 +175,7 @@ def Arrow.mpr {α β : TypeVec n} (h : α = β) : β ⟹ α
   | _ => Eq.mpr (congr_fun h _)
 
 /-- decompose a vector into its prefix appended with its last element -/
-def toAppend1DropLast {α : TypeVec (n + 1)} : α ⟹ (drop α ::: last α) :=
+private def toAppend1DropLast {α : TypeVec (n + 1)} : α ⟹ (drop α ::: last α) :=
   Arrow.mpr (append1_drop_last _)
 
 /-- stitch two bits of a vector back together -/
@@ -282,7 +282,7 @@ protected theorem casesCons_append1 (n : ℕ) {β : TypeVec (n + 1) → Sort*}
   rfl
 
 /-- cases distinction for an arrow in the category of 0-length type vectors -/
-def typevecCasesNil₃ {β : ∀ v v' : TypeVec 0, v ⟹ v' → Sort*}
+private def typevecCasesNil₃ {β : ∀ v v' : TypeVec 0, v ⟹ v' → Sort*}
     (f : β Fin2.elim0 Fin2.elim0 nilFun) :
     ∀ v v' fs, β v v' fs := fun v v' fs => by
   refine cast ?_ f
@@ -292,7 +292,7 @@ def typevecCasesNil₃ {β : ∀ v v' : TypeVec 0, v ⟹ v' → Sort*}
   cases eq₁; cases eq₂; cases eq₃; rfl
 
 /-- cases distinction for an arrow in the category of (n+1)-length type vectors -/
-def typevecCasesCons₃ (n : ℕ) {β : ∀ v v' : TypeVec (n + 1), v ⟹ v' → Sort*}
+private def typevecCasesCons₃ (n : ℕ) {β : ∀ v v' : TypeVec (n + 1), v ⟹ v' → Sort*}
     (F : ∀ (t t') (f : t → t') (v v' : TypeVec n) (fs : v ⟹ v'),
     β (v ::: t) (v' ::: t') (fs ::: f)) :
     ∀ v v' fs, β v v' fs := by
@@ -412,7 +412,7 @@ instance Curry.inhabited (F : TypeVec.{u} (n + 1) → Type*) (α : Type u) (β :
   I
 
 /-- arrow to remove one element of a `repeat` vector -/
-def dropRepeat (α : Type*) : ∀ {n}, drop («repeat» (succ n) α) ⟹ «repeat» n α
+private def dropRepeat (α : Type*) : ∀ {n}, drop («repeat» (succ n) α) ⟹ «repeat» n α
   | succ _, Fin2.fs i => dropRepeat α i
   | succ _, Fin2.fz => fun (a : α) => a
 
