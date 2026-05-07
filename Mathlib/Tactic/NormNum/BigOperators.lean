@@ -62,7 +62,7 @@ not propositional equality, for use in dependent types.
 
 Fails if neither of the options succeed.
 -/
-def Nat.unifyZeroOrSucc (n : Q(ℕ)) : MetaM (Nat.UnifyZeroOrSuccResult n) := do
+private def Nat.unifyZeroOrSucc (n : Q(ℕ)) : MetaM (Nat.UnifyZeroOrSuccResult n) := do
   match ← isDefEqQ n q(0) with
   | .defEq pf => return .zero pf
   | .notDefEq => do
@@ -84,7 +84,7 @@ inductive List.ProveNilOrConsResult {α : Q(Type u)} (s : Q(List $α))
 
 If `s` does not unify with `t`, this results in a type-incorrect proof.
 -/
-def List.ProveNilOrConsResult.uncheckedCast {α : Q(Type u)} {β : Q(Type v)}
+private def List.ProveNilOrConsResult.uncheckedCast {α : Q(Type u)} {β : Q(Type v)}
     (s : Q(List $α)) (t : Q(List $β)) :
     List.ProveNilOrConsResult s → List.ProveNilOrConsResult t
   | .nil pf => .nil pf
@@ -92,7 +92,7 @@ def List.ProveNilOrConsResult.uncheckedCast {α : Q(Type u)} {β : Q(Type v)}
 
 /-- If `s = t` and we can get the result for `t`, then we can get the result for `s`.
 -/
-def List.ProveNilOrConsResult.eq_trans {α : Q(Type u)} {s t : Q(List $α)}
+private def List.ProveNilOrConsResult.eq_trans {α : Q(Type u)} {s t : Q(List $α)}
     (eq : Q($s = $t)) :
     List.ProveNilOrConsResult t → List.ProveNilOrConsResult s
   | .nil pf => .nil q(Eq.trans $eq $pf)
@@ -166,7 +166,7 @@ def Multiset.ProveZeroOrConsResult.uncheckedCast {α : Q(Type u)} {β : Q(Type v
 
 /-- If `s = t` and we can get the result for `t`, then we can get the result for `s`.
 -/
-def Multiset.ProveZeroOrConsResult.eq_trans {α : Q(Type u)} {s t : Q(Multiset $α)}
+private def Multiset.ProveZeroOrConsResult.eq_trans {α : Q(Type u)} {s t : Q(Multiset $α)}
     (eq : Q($s = $t)) :
     Multiset.ProveZeroOrConsResult t → Multiset.ProveZeroOrConsResult s
   | .zero pf => .zero q(Eq.trans $eq $pf)
@@ -187,7 +187,7 @@ lemma Multiset.range_succ' {n nn n' : ℕ} (pn : NormNum.IsNat n nn) (pn' : nn =
 
 Fails if we cannot determine which of the alternatives apply to the expression.
 -/
-partial def Multiset.proveZeroOrCons {α : Q(Type u)} (s : Q(Multiset $α)) :
+private partial def Multiset.proveZeroOrCons {α : Q(Type u)} (s : Q(Multiset $α)) :
     MetaM (Multiset.ProveZeroOrConsResult s) :=
   match s.getAppFnArgs with
   | (``EmptyCollection.emptyCollection, _) => haveI : $s =Q {} := ⟨⟩; pure (.zero q(rfl))
@@ -227,7 +227,7 @@ inductive Finset.ProveEmptyOrConsResult {α : Q(Type u)} (s : Q(Finset $α))
 
 If `s` does not unify with `t`, this results in a type-incorrect proof.
 -/
-def Finset.ProveEmptyOrConsResult.uncheckedCast {α : Q(Type u)} {β : Q(Type v)}
+private def Finset.ProveEmptyOrConsResult.uncheckedCast {α : Q(Type u)} {β : Q(Type v)}
     (s : Q(Finset $α)) (t : Q(Finset $β)) :
     Finset.ProveEmptyOrConsResult s → Finset.ProveEmptyOrConsResult t
   | .empty pf => .empty pf
@@ -235,7 +235,7 @@ def Finset.ProveEmptyOrConsResult.uncheckedCast {α : Q(Type u)} {β : Q(Type v)
 
 /-- If `s = t` and we can get the result for `t`, then we can get the result for `s`.
 -/
-def Finset.ProveEmptyOrConsResult.eq_trans {α : Q(Type u)} {s t : Q(Finset $α)}
+private def Finset.ProveEmptyOrConsResult.eq_trans {α : Q(Type u)} {s t : Q(Finset $α)}
     (eq : Q($s = $t)) :
     Finset.ProveEmptyOrConsResult t → Finset.ProveEmptyOrConsResult s
   | .empty pf => .empty q(Eq.trans $eq $pf)
