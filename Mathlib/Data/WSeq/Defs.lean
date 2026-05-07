@@ -44,11 +44,11 @@ instance toList_terminates (s : WSeq α) [h : IsFinite s] : (toList s).Terminate
   h.out
 
 /-- Get the list corresponding to a finite weak sequence. -/
-def get (s : WSeq α) [IsFinite s] : List α :=
+private def get (s : WSeq α) [IsFinite s] : List α :=
   (toList s).get
 
 /-- Replace the `n`th element of `s` with `a`. -/
-def updateNth (s : WSeq α) (n : ℕ) (a : α) : WSeq α :=
+private def updateNth (s : WSeq α) (n : ℕ) (a : α) : WSeq α :=
   @Seq.corec (Option α) (ℕ × WSeq α)
     (fun ⟨n, s⟩ =>
       match Seq.destruct s, n with
@@ -60,7 +60,7 @@ def updateNth (s : WSeq α) (n : ℕ) (a : α) : WSeq α :=
     (n + 1, s)
 
 /-- Remove the `n`th element of `s`. -/
-def removeNth (s : WSeq α) (n : ℕ) : WSeq α :=
+private def removeNth (s : WSeq α) (n : ℕ) : WSeq α :=
   @Seq.corec (Option α) (ℕ × WSeq α)
     (fun ⟨n, s⟩ =>
       match Seq.destruct s, n with
@@ -85,7 +85,7 @@ def filter (p : α → Prop) [DecidablePred p] : WSeq α → WSeq α :=
 
 -- example of infinite list manipulations
 /-- Get the first element of `s` satisfying `p`. -/
-def find (p : α → Prop) [DecidablePred p] (s : WSeq α) : Computation (Option α) :=
+private def find (p : α → Prop) [DecidablePred p] (s : WSeq α) : Computation (Option α) :=
   head <| filter p s
 
 /-- Zip a function over two weak sequences -/
@@ -113,16 +113,16 @@ def findIndex (p : α → Prop) [DecidablePred p] (s : WSeq α) : Computation �
   (fun o => Option.getD o 0) <$> head (findIndexes p s)
 
 /-- Get the index of the first occurrence of `a` in `s` -/
-def indexOf [DecidableEq α] (a : α) : WSeq α → Computation ℕ :=
+private def indexOf [DecidableEq α] (a : α) : WSeq α → Computation ℕ :=
   findIndex (Eq a)
 
 /-- Get the indexes of occurrences of `a` in `s` -/
-def indexesOf [DecidableEq α] (a : α) : WSeq α → WSeq ℕ :=
+private def indexesOf [DecidableEq α] (a : α) : WSeq α → WSeq ℕ :=
   findIndexes (Eq a)
 
 /-- `union s1 s2` is a weak sequence which interleaves `s1` and `s2` in
   some order (nondeterministically). -/
-def union (s1 s2 : WSeq α) : WSeq α :=
+private def union (s1 s2 : WSeq α) : WSeq α :=
   @Seq.corec (Option α) (WSeq α × WSeq α)
     (fun ⟨s1, s2⟩ =>
       match Seq.destruct s1, Seq.destruct s2 with
@@ -136,17 +136,17 @@ def union (s1 s2 : WSeq α) : WSeq α :=
     (s1, s2)
 
 /-- Returns `true` if `s` is `nil` and `false` if `s` has an element -/
-def isEmpty (s : WSeq α) : Computation Bool :=
+private def isEmpty (s : WSeq α) : Computation Bool :=
   Computation.map Option.isNone <| head s
 
 /-- Calculate one step of computation -/
-def compute (s : WSeq α) : WSeq α :=
+private def compute (s : WSeq α) : WSeq α :=
   match Seq.destruct s with
   | some (none, s') => s'
   | _ => s
 
 /-- Get the first `n` elements of a weak sequence -/
-def take (s : WSeq α) (n : ℕ) : WSeq α :=
+private def take (s : WSeq α) (n : ℕ) : WSeq α :=
   @Seq.corec (Option α) (ℕ × WSeq α)
     (fun ⟨n, s⟩ =>
       match n, Seq.destruct s with
@@ -158,7 +158,7 @@ def take (s : WSeq α) (n : ℕ) : WSeq α :=
 
 /-- Split the sequence at position `n` into a finite initial segment
   and the weak sequence tail -/
-def splitAt (s : WSeq α) (n : ℕ) : Computation (List α × WSeq α) :=
+private def splitAt (s : WSeq α) (n : ℕ) : Computation (List α × WSeq α) :=
   @Computation.corec (List α × WSeq α) (ℕ × List α × WSeq α)
     (fun ⟨n, l, s⟩ =>
       match n, Seq.destruct s with
@@ -169,7 +169,7 @@ def splitAt (s : WSeq α) (n : ℕ) : Computation (List α × WSeq α) :=
     (n, [], s)
 
 /-- Returns `true` if any element of `s` satisfies `p` -/
-def any (s : WSeq α) (p : α → Bool) : Computation Bool :=
+private def any (s : WSeq α) (p : α → Bool) : Computation Bool :=
   Computation.corec
     (fun s : WSeq α =>
       match Seq.destruct s with
@@ -179,7 +179,7 @@ def any (s : WSeq α) (p : α → Bool) : Computation Bool :=
     s
 
 /-- Returns `true` if every element of `s` satisfies `p` -/
-def all (s : WSeq α) (p : α → Bool) : Computation Bool :=
+private def all (s : WSeq α) (p : α → Bool) : Computation Bool :=
   Computation.corec
     (fun s : WSeq α =>
       match Seq.destruct s with
@@ -191,7 +191,7 @@ def all (s : WSeq α) (p : α → Bool) : Computation Bool :=
 /-- Apply a function to the elements of the sequence to produce a sequence
   of partial results. (There is no `scanr` because this would require
   working from the end of the sequence, which may not exist.) -/
-def scanl (f : α → β → α) (a : α) (s : WSeq β) : WSeq α :=
+private def scanl (f : α → β → α) (a : α) (s : WSeq β) : WSeq α :=
   cons a <|
     @Seq.corec (Option α) (α × WSeq β)
       (fun ⟨a, s⟩ =>
@@ -204,7 +204,7 @@ def scanl (f : α → β → α) (a : α) (s : WSeq β) : WSeq α :=
       (a, s)
 
 /-- Get the weak sequence of initial segments of the input sequence -/
-def inits (s : WSeq α) : WSeq (List α) :=
+private def inits (s : WSeq α) : WSeq (List α) :=
   cons [] <|
     @Seq.corec (Option (List α)) (Batteries.DList α × WSeq α)
       (fun ⟨l, s⟩ =>
@@ -218,7 +218,7 @@ def inits (s : WSeq α) : WSeq (List α) :=
 
 /-- Like take, but does not wait for a result. Calculates `n` steps of
   computation and returns the sequence computed so far -/
-def collect (s : WSeq α) (n : ℕ) : List α :=
+private def collect (s : WSeq α) (n : ℕ) : List α :=
   (Seq.take n s).filterMap id
 
 theorem length_eq_map (s : WSeq α) : length s = Computation.map List.length (toList s) := by
