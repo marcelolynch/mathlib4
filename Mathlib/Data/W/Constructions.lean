@@ -75,7 +75,7 @@ theorem rightInverse_nat : Function.RightInverse ofNat toNat
   | Nat.succ n => by rw [ofNat, toNat, rightInverse_nat n]
 
 /-- The naturals are equivalent to their associated `WType` -/
-def equivNat : WType Natβ ≃ ℕ where
+private def equivNat : WType Natβ ≃ ℕ where
   toFun := toNat
   invFun := ofNat
   left_inv := leftInverse_nat
