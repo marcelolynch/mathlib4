@@ -70,11 +70,11 @@ protected def symm (h : α ≃ᵤ β) : β ≃ᵤ α where
 
 /-- See Note [custom simps projection]. We need to specify this projection explicitly in this case,
   because it is a composition of multiple projections. -/
-def Simps.apply (h : α ≃ᵤ β) : α → β :=
+private def Simps.apply (h : α ≃ᵤ β) : α → β :=
   h
 
 /-- See Note [custom simps projection] -/
-def Simps.symm_apply (h : α ≃ᵤ β) : β → α :=
+private def Simps.symm_apply (h : α ≃ᵤ β) : β → α :=
   h.symm
 
 initialize_simps_projections UniformEquiv (toFun → apply, invFun → symm_apply)
@@ -160,7 +160,7 @@ protected theorem surjective (h : α ≃ᵤ β) : Function.Surjective h :=
   h.toEquiv.surjective
 
 /-- Change the uniform equiv `f` to make the inverse function definitionally equal to `g`. -/
-def changeInv (f : α ≃ᵤ β) (g : β → α) (hg : Function.RightInverse g f) : α ≃ᵤ β :=
+private def changeInv (f : α ≃ᵤ β) (g : β → α) (hg : Function.RightInverse g f) : α ≃ᵤ β :=
   have : g = f.symm :=
     funext fun x => calc
       g x = f.symm (f (g x)) := (f.left_inv (g x)).symm
@@ -219,7 +219,7 @@ noncomputable def ofIsUniformEmbedding (f : α → β) (hf : IsUniformEmbedding 
   toEquiv := Equiv.ofInjective f hf.injective
 
 /-- If two sets are equal, then they are uniformly equivalent. -/
-def setCongr {s t : Set α} (h : s = t) : s ≃ᵤ t where
+private def setCongr {s t : Set α} (h : s = t) : s ≃ᵤ t where
   uniformContinuous_toFun := uniformContinuous_subtype_val.subtype_mk _
   uniformContinuous_invFun := uniformContinuous_subtype_val.subtype_mk _
   toEquiv := Equiv.setCongr h
@@ -262,7 +262,7 @@ theorem coe_prodComm : ⇑(prodComm α β) = Prod.swap :=
   rfl
 
 /-- `(α × β) × γ` is uniformly isomorphic to `α × (β × γ)`. -/
-def prodAssoc : (α × β) × γ ≃ᵤ α × β × γ where
+private def prodAssoc : (α × β) × γ ≃ᵤ α × β × γ where
   uniformContinuous_toFun :=
     (uniformContinuous_fst.comp uniformContinuous_fst).prodMk
       ((uniformContinuous_snd.comp uniformContinuous_fst).prodMk uniformContinuous_snd)
@@ -344,7 +344,7 @@ def piCongr {ι₁ ι₂ : Type*} {β₁ : ι₁ → Type*} {β₂ : ι₂ → T
   (UniformEquiv.piCongrRight F).trans (UniformEquiv.piCongrLeft e)
 
 /-- Uniform equivalence between `ULift α` and `α`. -/
-def ulift : ULift.{v, u} α ≃ᵤ α :=
+private def ulift : ULift.{v, u} α ≃ᵤ α :=
   { Equiv.ulift with
     uniformContinuous_toFun := uniformContinuous_comap
     uniformContinuous_invFun := by
@@ -376,7 +376,7 @@ def finTwoArrow (α : Type*) [UniformSpace α] : (Fin 2 → α) ≃ᵤ α × α 
 
 /-- A subset of a uniform space is uniformly isomorphic to its image under a uniform isomorphism.
 -/
-def image (e : α ≃ᵤ β) (s : Set α) : s ≃ᵤ e '' s where
+private def image (e : α ≃ᵤ β) (s : Set α) : s ≃ᵤ e '' s where
   uniformContinuous_toFun := (e.uniformContinuous.comp uniformContinuous_subtype_val).subtype_mk _
   uniformContinuous_invFun :=
     (e.symm.uniformContinuous.comp uniformContinuous_subtype_val).subtype_mk _
