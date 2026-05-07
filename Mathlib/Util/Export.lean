@@ -75,12 +75,12 @@ abbrev ExportM := StateT Export.State CoreM
 
 namespace Export
 
-def alloc {α} [BEq α] [Hashable α] [OfState α] (a : α) : ExportM Nat := do
+private def alloc {α} [BEq α] [Hashable α] [OfState α] (a : α) : ExportM Nat := do
   let n := (OfState.get (α := α) (← get)).next
   modify <| OfState.modify (α := α) fun s ↦ {map := s.map.insert a n, next := n + 1}
   pure n
 
-def exportName (n : Name) : ExportM Nat := do
+private def exportName (n : Name) : ExportM Nat := do
   match (← get).names.map[n]? with
   | some i => pure i
   | none => match n with
@@ -88,7 +88,7 @@ def exportName (n : Name) : ExportM Nat := do
     | .num p a => let i ← alloc n; IO.println s!"{i} #NI {← exportName p} {a}"; pure i
     | .str p s => let i ← alloc n; IO.println s!"{i} #NS {← exportName p} {s}"; pure i
 
-def exportLevel (L : Level) : ExportM Nat := do
+private def exportLevel (L : Level) : ExportM Nat := do
   match (← get).levels.map[L]? with
   | some i => pure i
   | none => match L with
@@ -103,7 +103,7 @@ def exportLevel (L : Level) : ExportM Nat := do
       let i ← alloc L; IO.println s!"{i} #UP {← exportName n}"; pure i
     | .mvar _ => unreachable!
 
-def biStr : BinderInfo → String
+private def biStr : BinderInfo → String
   | BinderInfo.default        => "#BD"
   | BinderInfo.implicit       => "#BI"
   | BinderInfo.strictImplicit => "#BS"
@@ -200,7 +200,7 @@ where
 
 end
 
-def runExportM {α : Type} (m : ExportM α) : CoreM α := m.run' default
+private def runExportM {α : Type} (m : ExportM α) : CoreM α := m.run' default
 
 -- #eval runExportM (exportDef `Lean.Expr)
 end Export
