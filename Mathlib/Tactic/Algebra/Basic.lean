@@ -80,9 +80,9 @@ inductive BaseType : (a : Q($A)) → Type
   | mk (r : Q($R)) (_ : Ring.ExSum q($sR) r) : BaseType q(algebraMap $R $A $r)
 
 @[expose, inherit_doc Common.ExBase]
-def ExBase := Common.ExBase (BaseType sAlg) sA
+private def ExBase := Common.ExBase (BaseType sAlg) sA
 @[expose, inherit_doc Common.ExProd]
-def ExProd := Common.ExProd (BaseType sAlg) sA
+private def ExProd := Common.ExProd (BaseType sAlg) sA
 @[expose, inherit_doc Common.ExSum]
 def ExSum := Common.ExSum (BaseType sAlg) sA
 
@@ -264,7 +264,7 @@ def ringCompare :
 open Algebra.RingCompute in
 /-- The data used by the `algebra` tactic to normalize the constant coefficients, which are
 expressions in `R` normalized by `ring`. -/
-def ringCompute (cR : Algebra.Cache sR) (cA : Algebra.Cache sA) :
+private def ringCompute (cR : Algebra.Cache sR) (cA : Algebra.Cache sA) :
     Common.RingCompute (BaseType sAlg) sA where
   add := add sAlg cR.toCache
   mul := mul sAlg cR.toCache
