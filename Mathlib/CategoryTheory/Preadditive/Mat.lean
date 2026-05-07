@@ -595,7 +595,7 @@ instance : (equivalenceSingleObjInverse R).IsEquivalence where
 
 /-- The categorical equivalence between the category of matrices over a ring,
 and the category of matrices over that ring considered as a single-object category. -/
-def equivalenceSingleObj : Mat R ≌ Mat_ (SingleObj Rᵐᵒᵖ) :=
+private def equivalenceSingleObj : Mat R ≌ Mat_ (SingleObj Rᵐᵒᵖ) :=
   (equivalenceSingleObjInverse R).asEquivalence.symm
 
 instance (X Y : Mat R) : AddCommGroup (X ⟶ Y) :=
