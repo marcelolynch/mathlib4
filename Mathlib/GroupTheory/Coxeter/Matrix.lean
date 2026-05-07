@@ -180,7 +180,7 @@ The corresponding Coxeter-Dynkin diagram is:
     o --- o --- o --- o --- o
 ```
 -/
-def E₆ : CoxeterMatrix (Fin 6) where
+private def E₆ : CoxeterMatrix (Fin 6) where
   M := !![1, 2, 3, 2, 2, 2;
           2, 1, 2, 3, 2, 2;
           3, 2, 1, 3, 2, 2;
@@ -197,7 +197,7 @@ The corresponding Coxeter-Dynkin diagram is:
     o --- o --- o --- o --- o --- o
 ```
 -/
-def E₇ : CoxeterMatrix (Fin 7) where
+private def E₇ : CoxeterMatrix (Fin 7) where
   M := !![1, 2, 3, 2, 2, 2, 2;
           2, 1, 2, 3, 2, 2, 2;
           3, 2, 1, 3, 2, 2, 2;
@@ -215,7 +215,7 @@ The corresponding Coxeter-Dynkin diagram is:
     o --- o --- o --- o --- o --- o --- o
 ```
 -/
-def E₈ : CoxeterMatrix (Fin 8) where
+private def E₈ : CoxeterMatrix (Fin 8) where
   M := !![1, 2, 3, 2, 2, 2, 2, 2;
           2, 1, 2, 3, 2, 2, 2, 2;
           3, 2, 1, 3, 2, 2, 2, 2;
@@ -233,7 +233,7 @@ The corresponding Coxeter-Dynkin diagram is:
     o --- o --- o --- o
 ```
 -/
-def F₄ : CoxeterMatrix (Fin 4) where
+private def F₄ : CoxeterMatrix (Fin 4) where
   M := !![1, 3, 2, 2;
           3, 1, 4, 2;
           2, 4, 1, 3;
@@ -247,7 +247,7 @@ The corresponding Coxeter-Dynkin diagram is:
     o --- o
 ```
 -/
-def G₂ : CoxeterMatrix (Fin 2) where
+private def G₂ : CoxeterMatrix (Fin 2) where
   M := !![1, 6;
           6, 1]
 
@@ -259,7 +259,7 @@ The corresponding Coxeter-Dynkin diagram is:
     o --- o --- o
 ```
 -/
-def H₃ : CoxeterMatrix (Fin 3) where
+private def H₃ : CoxeterMatrix (Fin 3) where
   M := !![1, 3, 2;
           3, 1, 5;
           2, 5, 1]
@@ -272,7 +272,7 @@ The corresponding Coxeter-Dynkin diagram is:
     o --- o --- o --- o
 ```
 -/
-def H₄ : CoxeterMatrix (Fin 4) where
+private def H₄ : CoxeterMatrix (Fin 4) where
   M := !![1, 3, 2, 2;
           3, 1, 3, 2;
           2, 3, 1, 5;
