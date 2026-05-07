@@ -1,4 +1,5 @@
 import Lean
+import Lean.Compiler.InlineAttrs
 import ImportGraph.Lean.Environment
 
 /-!
@@ -250,6 +251,47 @@ def kindOf (info : ConstantInfo) : String :=
   | .recInfo _       => "rec"
   | .quotInfo _      => "quot"
 
+/-! ## Forbidden-attribute detection
+
+The cache-cut tooling identifies hidable declarations, but a few attributes
+make a decl semantically incompatible with `private`-flipping even when the
+build still passes. Specifically:
+
+  * `@[implicit_reducible]` — explicit signal that downstream should unfold
+    this def transparently during unification. Privatizing hides the body
+    from `import M` consumers, defeating the attribute's purpose. The build
+    only passes today because the decl currently has no external users.
+  * `@[reducible]` — same logic as `implicit_reducible`, slightly stronger
+    reducibility flag.
+  * `@[inline]` — compile-time hint for cross-module callers; private
+    defeats it (no cross-module callers can exist).
+  * `@[deprecated]` — an active migration window for external users that
+    `private` skips.
+
+Each is detected via Lean's env-level attribute query API. We do NOT scan
+for `@[simp]`, `@[ext]`, `@[norm_cast]`, `@[gcongr]`, `@[mono]`, `@[positivity]`,
+`@[norm_num]`, `@[fun_prop]`, `@[instance]`, `@[coe]`, `@[simps]`, `@[simps!]`
+because they're rejected by Lean at attribute-application time when applied to
+a `private` decl (the lake-build verification loop catches them).
+-/
+
+/-- Return the list of forbidden attributes attached to `declName` in `env`.
+Empty list ⇒ scan-time green light for privatization. -/
+def getForbiddenAttrs (env : Environment) (declName : Name) : List String := Id.run do
+  let mut found : List String := []
+  -- @[reducible] / @[implicit_reducible]
+  match Lean.getReducibilityStatusCore env declName with
+  | .reducible         => found := "reducible" :: found
+  | .implicitReducible => found := "implicit_reducible" :: found
+  | _                  => pure ()
+  -- @[deprecated foo (since := "...")]
+  if (Lean.Linter.deprecatedAttr.getParam? env declName).isSome then
+    found := "deprecated" :: found
+  -- @[inline] / @[noinline] / @[macro_inline] / @[inline_if_reduce]
+  if (Lean.Compiler.getInlineAttribute? env declName).isSome then
+    found := "inline" :: found
+  return found
+
 /-! ## Per-decl forward record (the pass-1 output type) -/
 
 /--
@@ -281,6 +323,11 @@ structure ForwardRec where
   `initialize { add := fun ... ↦ ... }` pattern), but they are skipped
   during JSON emission. -/
   isInternal : Bool
+  /-- The set of attributes attached to this decl that make it incompatible
+  with `private`-flipping (see `getForbiddenAttrs`). Empty list = scan-time
+  green light. Non-empty ⇒ rerank should not propose this decl as a
+  candidate. -/
+  forbiddenAttrs : List String
   /-- Constants referenced in `info.type` — i.e., the signature. -/
   sigRefs : NameSet
   /-- Constants referenced in `info.value? (allowOpaque := true)` — the
@@ -378,6 +425,7 @@ def gatherForward (env : Environment) : IO (Array ForwardRec) := do
       | some v => referencedConsts v
       | none   => NameSet.empty
     let docOpt ← Lean.findDocString? env n
+    let forbiddenAttrs := getForbiddenAttrs env n
     out := out.push {
       name := n,
       module,
@@ -385,6 +433,7 @@ def gatherForward (env : Environment) : IO (Array ForwardRec) := do
       hasDocstring := docOpt.isSome,
       isPrivate := Lean.isPrivateName n,
       isInternal := isInt,
+      forbiddenAttrs,
       sigRefs,
       bodyRefs,
     }
@@ -456,6 +505,9 @@ downstream consumer (`rerank_lean.py`).
     "is_private":                 bool    — `private` keyword in source
     "has_docstring":              bool    — has /-- ... -/
     "name_pattern":               string  — see classifyNamePattern
+    "forbidden_attrs":            array of string — attributes that block `private`-flipping
+                                              (subset of {"reducible", "implicit_reducible",
+                                              "deprecated", "inline"}; empty = green light)
     "n_external_users":           number  — distinct cross-module referrers (modules)
     "n_external_users_sig":       number  — signature-only count
     "n_external_users_body":      number  — body-only count
@@ -527,6 +579,7 @@ def emitJson (env : Environment) (recs : Array ForwardRec)
         ++ ",\"is_private\":" ++ (if rec.isPrivate then "true" else "false")
         ++ ",\"has_docstring\":" ++ (if rec.hasDocstring then "true" else "false")
         ++ ",\"name_pattern\":" ++ jsonStr pattern
+        ++ ",\"forbidden_attrs\":" ++ jsonStrList rec.forbiddenAttrs
         ++ ",\"n_external_users\":0"
         ++ ",\"n_external_users_sig\":0"
         ++ ",\"n_external_users_body\":0"
@@ -577,6 +630,7 @@ def emitJson (env : Environment) (recs : Array ForwardRec)
       ++ ",\"is_private\":" ++ (if rec.isPrivate then "true" else "false")
       ++ ",\"has_docstring\":" ++ (if rec.hasDocstring then "true" else "false")
       ++ ",\"name_pattern\":" ++ jsonStr pattern
+      ++ ",\"forbidden_attrs\":" ++ jsonStrList rec.forbiddenAttrs
       ++ ",\"n_external_users\":" ++ toString allExt.size
       ++ ",\"n_external_users_sig\":" ++ toString sigExt.size
       ++ ",\"n_external_users_body\":" ++ toString bodyExt.size
