@@ -11,3 +11,6 @@ lean_lib DeclCensus
 @[default_target]
 lean_exe decl_census where
   root := `Main
+
+lean_exe test_census where
+  root := `TestMain

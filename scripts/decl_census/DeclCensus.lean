@@ -1,123 +1,239 @@
 import Lean
+import ImportGraph.Lean.Environment
+
+/-!
+# DeclCensus — type-aware per-declaration usage census for mathlib
+
+Single-pass design (O(N + total-references), not O(N²)):
+
+  Pass 1: walk env.constants.map₁ once. Per declaration:
+    - module = env.getModuleFor? name
+    - sig_refs = info.type.foldConsts ...
+    - body_refs = info.value?.foldConsts ... (if present)
+    Record these in a flat array.
+
+  Pass 2: invert. For each (referrer, ref) edge in the sig/body sets,
+    update sig_rev_modules[ref].insert referrer.module
+    and intra_referrers[ref].insert referrer.name when same module.
+
+  Pass 3: emit one JSON line per Mathlib declaration with:
+    - external_users_sig, external_users_body  (cross-module module sets)
+    - intra_module_referrers                   (same-module decl names)
+    - has_docstring, name_pattern              (intent signals)
+    - signature_referenced_by_intra            (precondition for encap clusters)
+
+Output: one JSON per line on stdout. Stream — never accumulate output.
+-/
 
 open Lean
 
 namespace DeclCensus
 
-/-- JSON serialization helpers -/
-def escapeJsonString (s : String) : String :=
-  s.replace "\"" "\\\""
-    |>.replace "\\" "\\\\"
-    |>.replace "\n" "\\n"
-    |>.replace "\r" "\\r"
-    |>.replace "\t" "\\t"
+/-- Internal-decl filter: drop compiler-generated names (`Decl._cstage1`, etc.). -/
+def isInternalDecl (n : Name) : Bool :=
+  n.isInternal
 
-def jsonString (s : String) : String :=
-  "\"" ++ escapeJsonString s ++ "\""
+/-- Decide if a name should be in the census output (Mathlib decls only). -/
+def isMathlibDecl (env : Environment) (n : Name) : Bool :=
+  match env.getModuleFor? n with
+  | some m => m.toString.startsWith "Mathlib"
+  | none   => false
 
-def jsonArray (items : List String) : String :=
-  "[" ++ ", ".intercalate items ++ "]"
+/-- Cheap substring-contains for the small needles we care about. -/
+def strContains (hay : String) (needle : String) : Bool :=
+  (hay.splitOn needle).length != 1
 
-def jsonObject (fields : List (String × String)) : String :=
-  "{" ++ ", ".intercalate (fields.map fun (k, v) => jsonString k ++ ": " ++ v) ++ "}"
+/-- Classify a leaf-name + namespace into one of four name-pattern buckets. -/
+def classifyNamePattern (leaf : String) (ns : String) : String :=
+  if leaf.startsWith "_" then "underscore_prefix"
+  else if strContains leaf.toLower "aux" then "aux"
+  else
+    let ns_lower := ns.toLower
+    if strContains ns_lower "internal"
+       || strContains ns_lower "impl"
+       || strContains ns_lower "private" then
+      "internal_namespace"
+    else "normal"
 
-/-- Collect constants referenced in an expression -/
-partial def collectReferencedConstants (e : Expr) : NameSet :=
-  e.foldConsts NameSet.empty fun consts n => consts.insert n
+/-- Given a fully-qualified name, return (namespace, leaf). -/
+def splitName (n : Name) : String × String :=
+  let leaf := match n with
+    | .str _ s => s
+    | _ => n.toString
+  let ns := match n.getPrefix with
+    | .anonymous => ""
+    | p => p.toString
+  (ns, leaf)
 
-/-- Process all declarations in the environment -/
-def censusAllDecls (env : Environment) : IO Unit := do
-  let stdout := IO.stdout
+/-- Walk an Expr and collect referenced constants into a NameSet. -/
+def referencedConsts (e : Expr) : NameSet :=
+  e.foldConsts NameSet.empty fun n s => s.insert n
 
-  -- Build a mapping of constants to their defining modules
-  let mut constToModule : HashMap Name Name := .empty
-  for modName in env.header.moduleNames do
-    if let some idx := env.getModuleIdx? modName then
-      for constName in (env.getModuleConstants idx).toList do
-        constToModule := constToModule.insert constName modName
+/-- Constant-kind classifier. -/
+def kindOf (info : ConstantInfo) : String :=
+  match info with
+  | .thmInfo _       => "theorem"
+  | .defnInfo _      => "def"
+  | .axiomInfo _     => "axiom"
+  | .opaqueInfo _    => "opaque"
+  | .inductInfo _    => "inductive"
+  | .ctorInfo _      => "ctor"
+  | .recInfo _       => "rec"
+  | .quotInfo _      => "quot"
 
-  let constants := env.constants.map
+/-- Per-decl forward record. -/
+structure ForwardRec where
+  name : Name
+  module : Name
+  kind : String
+  hasDocstring : Bool
+  isPrivate : Bool
+  sigRefs : NameSet
+  bodyRefs : NameSet
+deriving Inhabited
 
-  -- Process only Mathlib declarations
-  for (constName, info) in constants do
-    let constStr := constName.toString
-    -- Filter: only Mathlib decls
-    if !constStr.startsWith "Mathlib." then
+/-- JSON-string escape. Decl names won't contain control chars, so we cover
+the common cases only. -/
+def escapeJson (s : String) : String :=
+  s.foldl (init := "") fun acc c =>
+    match c with
+    | '"'  => acc ++ "\\\""
+    | '\\' => acc ++ "\\\\"
+    | '\n' => acc ++ "\\n"
+    | '\r' => acc ++ "\\r"
+    | '\t' => acc ++ "\\t"
+    | c    => acc.push c
+
+def jsonStr (s : String) : String := "\"" ++ escapeJson s ++ "\""
+
+/-- Build a JSON list of strings. -/
+def jsonStrList (xs : List String) : String :=
+  "[" ++ String.intercalate "," (xs.map jsonStr) ++ "]"
+
+def jsonNameList (xs : List Name) : String :=
+  jsonStrList (xs.map Name.toString)
+
+end DeclCensus
+
+namespace DeclCensus
+
+/-- Phase 1 — walk all imported constants once, building per-decl records. -/
+def gatherForward (env : Environment) : IO (Array ForwardRec) := do
+  let mut out : Array ForwardRec := #[]
+  let constants := env.constants.map₁
+  let mut i := 0
+  let mut nSkippedInternal := 0
+  let mut nSkippedNonMathlib := 0
+  for info in constants.values do
+    i := i + 1
+    if i % 50000 == 0 then
+      IO.eprintln s!"[census] forward pass: processed {i} consts ..."
+    let n := info.name
+    if isInternalDecl n then
+      nSkippedInternal := nSkippedInternal + 1
       continue
+    if !isMathlibDecl env n then
+      nSkippedNonMathlib := nSkippedNonMathlib + 1
+      continue
+    let module := (env.getModuleFor? n).getD `unknown
+    let sigRefs := referencedConsts info.type
+    let bodyRefs :=
+      match info.value? (allowOpaque := true) with
+      | some v => referencedConsts v
+      | none   => NameSet.empty
+    let docOpt ← Lean.findDocString? env n
+    out := out.push {
+      name := n,
+      module,
+      kind := kindOf info,
+      hasDocstring := docOpt.isSome,
+      isPrivate := Lean.isPrivateName n,
+      sigRefs,
+      bodyRefs,
+    }
+  IO.eprintln s!"[census] forward pass done: kept {out.size}, skipped internal {nSkippedInternal}, skipped non-Mathlib {nSkippedNonMathlib}"
+  return out
 
-    try
-      -- Get defining module
-      let definingMod := match constToModule.find? constName with
-        | some m => m.toString
-        | none => "unknown"
+/-- Phase 2 — build reverse maps: for each target, list of referrers (sig/body). -/
+def buildReverse (recs : Array ForwardRec)
+    : IO (NameMap (Array Name) × NameMap (Array Name)) := do
+  let mut sigRev : NameMap (Array Name) := .empty
+  let mut bodyRev : NameMap (Array Name) := .empty
+  let mut i := 0
+  for rec in recs do
+    i := i + 1
+    if i % 50000 == 0 then
+      IO.eprintln s!"[census] reverse pass: processed {i} ..."
+    for tgt in rec.sigRefs do
+      let cur := sigRev.find? tgt |>.getD #[]
+      sigRev := sigRev.insert tgt (cur.push rec.name)
+    for tgt in rec.bodyRefs do
+      let cur := bodyRev.find? tgt |>.getD #[]
+      bodyRev := bodyRev.insert tgt (cur.push rec.name)
+  IO.eprintln s!"[census] reverse pass done: sigRev size={sigRev.size}, bodyRev size={bodyRev.size}"
+  return (sigRev, bodyRev)
 
-      -- Collect references
-      let typeSig := info.type
-      let sigConsts := collectReferencedConstants typeSig
-      let bodyConsts := match info.value? with
-        | some body => collectReferencedConstants body
-        | none => NameSet.empty
+/-- Phase 3 — emit JSONL with per-decl combined data. -/
+def emitJson (env : Environment) (recs : Array ForwardRec)
+    (sigRev bodyRev : NameMap (Array Name)) : IO Unit := do
+  let stdout ← IO.getStdout
+  let mut i := 0
+  for rec in recs do
+    i := i + 1
+    if i % 20000 == 0 then
+      IO.eprintln s!"[census] emit: {i} of {recs.size} ..."
+    let (ns, leaf) := splitName rec.name
+    let pattern := classifyNamePattern leaf ns
+    -- Lookup referrers of this decl.
+    let sigReferrers := sigRev.find? rec.name |>.getD #[]
+    let bodyReferrers := bodyRev.find? rec.name |>.getD #[]
+    -- Partition into intra-module vs cross-module.
+    let mut sigIntra : Array Name := #[]
+    let mut sigExt   : NameSet := .empty   -- module set
+    for r in sigReferrers do
+      let m := (env.getModuleFor? r).getD `unknown
+      if m == rec.module then
+        sigIntra := sigIntra.push r
+      else
+        sigExt := sigExt.insert m
+    let mut bodyIntra : Array Name := #[]
+    let mut bodyExt   : NameSet := .empty
+    for r in bodyReferrers do
+      let m := (env.getModuleFor? r).getD `unknown
+      if m == rec.module then
+        bodyIntra := bodyIntra.push r
+      else
+        bodyExt := bodyExt.insert m
+    let allExt := sigExt.union bodyExt
+    let intraAll := (sigIntra.toList ++ bodyIntra.toList).eraseDups
+    let json :=
+      "{"
+      ++ "\"fq_name\":" ++ jsonStr rec.name.toString
+      ++ ",\"defining_module\":" ++ jsonStr rec.module.toString
+      ++ ",\"kind\":" ++ jsonStr rec.kind
+      ++ ",\"namespace\":" ++ jsonStr ns
+      ++ ",\"leaf\":" ++ jsonStr leaf
+      ++ ",\"is_private\":" ++ (if rec.isPrivate then "true" else "false")
+      ++ ",\"has_docstring\":" ++ (if rec.hasDocstring then "true" else "false")
+      ++ ",\"name_pattern\":" ++ jsonStr pattern
+      ++ ",\"external_users_sig\":" ++ jsonNameList sigExt.toList
+      ++ ",\"external_users_body\":" ++ jsonNameList bodyExt.toList
+      ++ ",\"n_external_users\":" ++ toString allExt.size
+      ++ ",\"intra_module_referrers\":" ++ jsonNameList intraAll
+      ++ ",\"n_intra_module_refs\":" ++ toString intraAll.length
+      ++ ",\"signature_referenced_by_intra\":" ++ jsonNameList sigIntra.toList
+      ++ ",\"n_signature_refs\":" ++ toString sigIntra.size
+      ++ ",\"n_sig_refs_fwd\":" ++ toString rec.sigRefs.size
+      ++ ",\"n_body_refs_fwd\":" ++ toString rec.bodyRefs.size
+      ++ "}"
+    stdout.putStrLn json
 
-      -- Find external users (declarations that reference this one)
-      let mut externalUsersSig : NameSet := NameSet.empty
-      let mut externalUsersBody : NameSet := NameSet.empty
-      let mut intraModuleReferrers : NameSet := NameSet.empty
-
-      for (refName, refInfo) in constants do
-        let refMod := constToModule.find? refName |>.map (·.toString)
-        let refTypeSig := refInfo.type
-        let refBodyVal := refInfo.value?
-
-        let refSigConsts := collectReferencedConstants refTypeSig
-        if refSigConsts.contains constName then
-          match refMod with
-          | some m if m == definingMod =>
-            intraModuleReferrers := intraModuleReferrers.insert refName
-          | some m =>
-            externalUsersSig := externalUsersSig.insert m
-          | none => ()
-
-        match refBodyVal with
-        | some body =>
-          let refBodyConsts := collectReferencedConstants body
-          if refBodyConsts.contains constName then
-            match refMod with
-            | some m if m == definingMod =>
-              intraModuleReferrers := intraModuleReferrers.insert refName
-            | some m if !externalUsersSig.contains m =>
-              externalUsersBody := externalUsersBody.insert m
-            | _ => ()
-        | none => ()
-
-      -- Get declaration kind
-      let kind := match info with
-        | ConstantInfo.thmInfo _ => "theorem"
-        | ConstantInfo.defInfo _ => "def"
-        | ConstantInfo.axiomInfo _ => "axiom"
-        | ConstantInfo.opaqueInfo _ => "opaque"
-        | ConstantInfo.inductiveInfo _ => "inductive"
-        | ConstantInfo.structureInfo _ => "structure"
-        | ConstantInfo.classInfo _ => "class"
-        | _ => "other"
-
-      -- Build JSON output
-      let externalUsersAll := externalUsersSig.union externalUsersBody
-      let json := jsonObject [
-        ("fq_name", jsonString constName.toString),
-        ("defining_module", jsonString definingMod),
-        ("kind", jsonString kind),
-        ("attributes", jsonArray []),
-        ("is_private", if constName.isPrivateName then "true" else "false"),
-        ("is_protected", "false"),
-        ("external_users_sig", jsonArray (externalUsersSig.toList.map jsonString)),
-        ("external_users_body", jsonArray (externalUsersBody.toList.map jsonString)),
-        ("n_external_users", toString externalUsersAll.size),
-        ("intra_module_referrers", jsonArray (intraModuleReferrers.toList.map jsonString)),
-        ("n_intra_module_refs", toString intraModuleReferrers.size)
-      ]
-
-      stdout.putStrLn json
-    catch _ =>
-      ()
+/-- Top-level orchestration. -/
+def run (env : Environment) : IO Unit := do
+  IO.eprintln s!"[census] env loaded: {env.constants.map₁.size} imported constants"
+  let recs ← gatherForward env
+  let (sigRev, bodyRev) ← buildReverse recs
+  emitJson env recs sigRev bodyRev
+  IO.eprintln "[census] done."
 
 end DeclCensus

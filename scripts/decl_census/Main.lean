@@ -3,13 +3,11 @@ import DeclCensus
 
 open Lean
 
-def main : IO Unit := do
-  IO.eprintln "[decl_census] Importing Mathlib..."
-  let env ← Lean.importModules
-    [{ module := `Mathlib, runtimeOnly := false }]
-    {}
-    .empty
-
-  IO.eprintln "[decl_census] Starting census of mathlib declarations..."
-  DeclCensus.censusAllDecls env
-  IO.eprintln "[decl_census] Census complete." 
+/-- Entry point: load mathlib, run the census, stream JSONL. -/
+unsafe def main : IO Unit := do
+  initSearchPath (← findSysroot)
+  Lean.enableInitializersExecution
+  IO.eprintln "[census] importing Mathlib..."
+  withImportModules #[{ module := `Mathlib }] {} (trustLevel := 1024) fun env => do
+    IO.eprintln s!"[census] mathlib loaded ({env.header.moduleNames.size} modules)"
+    DeclCensus.run env
