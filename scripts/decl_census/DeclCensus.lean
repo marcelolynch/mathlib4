@@ -193,15 +193,10 @@ def emitJson (env : Environment) (recs : Array ForwardRec)
     (sigRev bodyRev : NameMap NameSet) : IO Unit := do
   let stdout ← IO.getStdout
   let mut i := 0
-  let mut buf : String := ""
-  let flush := fun (b : String) => stdout.putStr b
   for rec in recs do
     i := i + 1
     if i % 20000 == 0 then
       IO.eprintln s!"[census] emit: {i} of {recs.size} ..."
-    if buf.length > 65536 then
-      flush buf
-      buf := ""
     let (ns, leaf) := splitName rec.name
     let pattern := classifyNamePattern leaf ns
     let sigReferrers := sigRev.find? rec.name |>.getD .empty
@@ -228,7 +223,7 @@ def emitJson (env : Environment) (recs : Array ForwardRec)
         ++ ",\"n_sig_refs_fwd\":" ++ toString rec.sigRefs.size
         ++ ",\"n_body_refs_fwd\":" ++ toString rec.bodyRefs.size
         ++ "}"
-      buf := buf ++ json ++ "\n"
+      stdout.putStrLn json
       continue
 
     -- Slow path: partition into intra-module vs cross-module module set.
@@ -271,10 +266,7 @@ def emitJson (env : Environment) (recs : Array ForwardRec)
       ++ ",\"n_sig_refs_fwd\":" ++ toString rec.sigRefs.size
       ++ ",\"n_body_refs_fwd\":" ++ toString rec.bodyRefs.size
       ++ "}"
-    buf := buf ++ json ++ "\n"
-  -- final flush
-  if buf.length > 0 then
-    flush buf
+    stdout.putStrLn json
 
 /-- Top-level orchestration. -/
 def run (env : Environment) : IO Unit := do
