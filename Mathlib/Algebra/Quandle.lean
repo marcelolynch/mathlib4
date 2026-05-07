@@ -290,7 +290,7 @@ theorem self_invAct_eq_iff_eq {x y : R} : x ◃⁻¹ x = y ◃⁻¹ y ↔ x = y 
 /-- The map `x ↦ x ◃ x` is a bijection.  (This has applications for the
 regular isotopy version of the Reidemeister I move for knot diagrams.)
 -/
-def selfApplyEquiv (R : Type*) [Rack R] : R ≃ R where
+private def selfApplyEquiv (R : Type*) [Rack R] : R ≃ R where
   toFun x := x ◃ x
   invFun x := x ◃⁻¹ x
   left_inv x := by simp
@@ -307,7 +307,7 @@ theorem involutory_invAct_eq_act {R : Type*} [Rack R] (h : IsInvolutory R) (x y 
 
 /-- An abelian rack is one for which the mediality axiom holds.
 -/
-def IsAbelian (R : Type*) [Rack R] : Prop :=
+private def IsAbelian (R : Type*) [Rack R] : Prop :=
   ∀ x y z w : R, (x ◃ y) ◃ z ◃ w = (x ◃ z) ◃ y ◃ w
 
 /-- Associative racks are uninteresting.
