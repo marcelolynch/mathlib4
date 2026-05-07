@@ -124,7 +124,7 @@ inductive IProp : Type
 instance : Inhabited IProp := ⟨IProp.true⟩
 
 /-- Given the contents of an `And` variant, return the two conjuncts. -/
-def AndKind.sides : AndKind → IProp → IProp → IProp × IProp
+private def AndKind.sides : AndKind → IProp → IProp → IProp × IProp
   | .and, A, B => (A, B)
   | _, A, B => (A.imp B, B.imp A)
 
@@ -142,7 +142,7 @@ def IProp.format : IProp → Std.Format
 instance : Std.ToFormat IProp := ⟨IProp.format⟩
 
 /-- A comparator for `AndKind`. (There should really be a derive handler for this.) -/
-def AndKind.cmp (p q : AndKind) : Ordering := by
+private def AndKind.cmp (p q : AndKind) : Ordering := by
   cases p <;> cases q
   exacts [.eq, .lt, .lt, .gt, .eq, .lt, .gt, .gt, .eq]
 
@@ -263,18 +263,18 @@ def Proof.format : Proof → Std.Format
 instance : Std.ToFormat Proof := ⟨Proof.format⟩
 
 /-- A variant on `Proof.exfalso'` that performs opportunistic simplification. -/
-def Proof.exfalso : IProp → Proof → Proof
+private def Proof.exfalso : IProp → Proof → Proof
   | .false, p => p
   | _, p => .exfalso' p
 
 /-- A variant on `Proof.orElim'` that performs opportunistic simplification. -/
-def Proof.orElim : Proof → Name → Proof → Proof → Proof
+private def Proof.orElim : Proof → Name → Proof → Proof → Proof
   | .em cl p, x, q, r => .decidableElim cl p x q r
   | p, x, q, r => .orElim' p x q r
 
 /-- A variant on `Proof.app'` that performs opportunistic simplification.
 (This doesn't do full normalization because we don't want the proof size to blow up.) -/
-def Proof.app : Proof → Proof → Proof
+private def Proof.app : Proof → Proof → Proof
   | .curry ak p, q => .curry₂ ak p q
   | .curry₂ ak p q, r => p.app (q.andIntro ak r)
   | .orImpL p, q => p.app q.orInL
@@ -386,16 +386,16 @@ and just prove `B` outright. -/
   | .error p => pure (true, p B)
 
 /-- Map a function over the proof (regardless of whether the proof is successful or not). -/
-def mapProof (f : Proof → Proof) : Bool × Proof → Bool × Proof
+private def mapProof (f : Proof → Proof) : Bool × Proof → Bool × Proof
   | (b, p) => (b, f p)
 
 /-- Convert a value-with-success to an optional value. -/
-def isOk : (Bool × Proof) × Nat → Option (Proof × Nat)
+private def isOk : (Bool × Proof) × Nat → Option (Proof × Nat)
   | ((false, _), _) => none
   | ((true, p), n) => some (p, n)
 
 /-- Skip the continuation and return a failed proof if the Boolean is false. -/
-def whenOk : Bool → IProp → StateM Nat (Bool × Proof) → StateM Nat (Bool × Proof)
+private def whenOk : Bool → IProp → StateM Nat (Bool × Proof) → StateM Nat (Bool × Proof)
   | false, _, _ => pure (false, .sorry)
   | true, _, f => f
 
@@ -643,7 +643,7 @@ partial def applyProof (g : MVarId) (Γ : NameMap Expr) (p : Proof) : MetaM Unit
 * `extraDec` will add `a ∨ ¬ a` to the context for specified (not necessarily atomic)
   propositions `a`.
 -/
-def itautoCore (g : MVarId)
+private def itautoCore (g : MVarId)
     (useDec useClassical : Bool) (extraDec : Array Expr) : MetaM Unit := do
   AtomM.run (← getTransparency) do
     let mut hs := mkNameMap Expr
