@@ -177,23 +177,64 @@ def buildReverse (recs : Array ForwardRec)
   IO.eprintln s!"[census] reverse pass done: sigRev size={sigRev.size}, bodyRev size={bodyRev.size}"
   return (sigRev, bodyRev)
 
-/-- Phase 3 — emit JSONL with per-decl combined data. -/
+/-- Phase 3 — emit JSONL with per-decl combined data.
+
+Optimization notes:
+  - For decls with no referrers in either map, skip the partition step and
+    emit a minimal "no-users" JSON. Most decls have 0 external users.
+  - We DROP the large `external_users_sig` and `external_users_body` lists.
+    Keeping just the COUNTS plus the small `signature_referenced_by_intra`
+    list (cluster-detection signal). Reduces output size ~10x and skips the
+    expensive `Name.toString`-on-every-module work.
+  - `intra_module_referrers` is also dropped — we keep `signature_referenced_by_intra`
+    which is the cluster-relevant subset.
+-/
 def emitJson (env : Environment) (recs : Array ForwardRec)
     (sigRev bodyRev : NameMap NameSet) : IO Unit := do
   let stdout ← IO.getStdout
   let mut i := 0
+  let mut buf : String := ""
+  let flush := fun (b : String) => stdout.putStr b
   for rec in recs do
     i := i + 1
     if i % 20000 == 0 then
       IO.eprintln s!"[census] emit: {i} of {recs.size} ..."
+    if buf.length > 65536 then
+      flush buf
+      buf := ""
     let (ns, leaf) := splitName rec.name
     let pattern := classifyNamePattern leaf ns
-    -- Lookup referrers of this decl.
     let sigReferrers := sigRev.find? rec.name |>.getD .empty
     let bodyReferrers := bodyRev.find? rec.name |>.getD .empty
-    -- Partition into intra-module vs cross-module.
-    let mut sigIntra : NameSet := .empty
-    let mut sigExt   : NameSet := .empty   -- module set
+
+    -- Fast path: no referrers anywhere. Emit minimal JSON.
+    if sigReferrers.isEmpty && bodyReferrers.isEmpty then
+      let json :=
+        "{"
+        ++ "\"fq_name\":" ++ jsonStr rec.name.toString
+        ++ ",\"defining_module\":" ++ jsonStr rec.module.toString
+        ++ ",\"kind\":" ++ jsonStr rec.kind
+        ++ ",\"namespace\":" ++ jsonStr ns
+        ++ ",\"leaf\":" ++ jsonStr leaf
+        ++ ",\"is_private\":" ++ (if rec.isPrivate then "true" else "false")
+        ++ ",\"has_docstring\":" ++ (if rec.hasDocstring then "true" else "false")
+        ++ ",\"name_pattern\":" ++ jsonStr pattern
+        ++ ",\"n_external_users\":0"
+        ++ ",\"n_external_users_sig\":0"
+        ++ ",\"n_external_users_body\":0"
+        ++ ",\"n_intra_module_refs\":0"
+        ++ ",\"signature_referenced_by_intra\":[]"
+        ++ ",\"n_signature_refs\":0"
+        ++ ",\"n_sig_refs_fwd\":" ++ toString rec.sigRefs.size
+        ++ ",\"n_body_refs_fwd\":" ++ toString rec.bodyRefs.size
+        ++ "}"
+      buf := buf ++ json ++ "\n"
+      continue
+
+    -- Slow path: partition into intra-module vs cross-module module set.
+    let mut sigIntra  : NameSet := .empty
+    let mut sigExt    : NameSet := .empty   -- module set, dedupe
+    let mut sigExtN   : Nat := 0            -- alias for size at end
     for r in sigReferrers do
       let m := (env.getModuleFor? r).getD `unknown
       if m == rec.module then
@@ -208,8 +249,9 @@ def emitJson (env : Environment) (recs : Array ForwardRec)
         bodyIntra := bodyIntra.insert r
       else
         bodyExt := bodyExt.insert m
+    let _ := sigExtN -- suppress unused-warning
     let allExt := sigExt.union bodyExt
-    let intraAll := (sigIntra.union bodyIntra).toList
+    let nIntra := (sigIntra.union bodyIntra).size
     let json :=
       "{"
       ++ "\"fq_name\":" ++ jsonStr rec.name.toString
@@ -220,17 +262,19 @@ def emitJson (env : Environment) (recs : Array ForwardRec)
       ++ ",\"is_private\":" ++ (if rec.isPrivate then "true" else "false")
       ++ ",\"has_docstring\":" ++ (if rec.hasDocstring then "true" else "false")
       ++ ",\"name_pattern\":" ++ jsonStr pattern
-      ++ ",\"external_users_sig\":" ++ jsonNameList sigExt.toList
-      ++ ",\"external_users_body\":" ++ jsonNameList bodyExt.toList
       ++ ",\"n_external_users\":" ++ toString allExt.size
-      ++ ",\"intra_module_referrers\":" ++ jsonNameList intraAll
-      ++ ",\"n_intra_module_refs\":" ++ toString intraAll.length
+      ++ ",\"n_external_users_sig\":" ++ toString sigExt.size
+      ++ ",\"n_external_users_body\":" ++ toString bodyExt.size
+      ++ ",\"n_intra_module_refs\":" ++ toString nIntra
       ++ ",\"signature_referenced_by_intra\":" ++ jsonNameList sigIntra.toList
       ++ ",\"n_signature_refs\":" ++ toString sigIntra.size
       ++ ",\"n_sig_refs_fwd\":" ++ toString rec.sigRefs.size
       ++ ",\"n_body_refs_fwd\":" ++ toString rec.bodyRefs.size
       ++ "}"
-    stdout.putStrLn json
+    buf := buf ++ json ++ "\n"
+  -- final flush
+  if buf.length > 0 then
+    flush buf
 
 /-- Top-level orchestration. -/
 def run (env : Environment) : IO Unit := do
