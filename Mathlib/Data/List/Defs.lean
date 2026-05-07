@@ -60,13 +60,13 @@ def takeI [Inhabited α] (n : Nat) (l : List α) : List α :=
 
 /-- `findM tac l` returns the first element of `l` on which `tac` succeeds, and
 fails otherwise. -/
-def findM {α} {m : Type u → Type v} [Alternative m] (tac : α → m PUnit) : List α → m α :=
+private def findM {α} {m : Type u → Type v} [Alternative m] (tac : α → m PUnit) : List α → m α :=
   List.firstM fun a => (tac a) $> a
 
 /-- `findM? p l` returns the first element `a` of `l` for which `p a` returns
 true. `findM?` short-circuits, so `p` is not necessarily run on every `a` in
 `l`. This is a monadic version of `List.find`. -/
-def findM?'
+private def findM?'
     {m : Type u → Type v}
     [Monad m] {α : Type u}
     (p : α → m (ULift Bool)) : List α → m (Option α)
@@ -82,13 +82,13 @@ variable {m : Type → Type v} [Monad m]
 /-- `orM xs` runs the actions in `xs`, returning true if any of them returns
 true. `orM` short-circuits, so if an action returns true, later actions are
 not run. -/
-def orM : List (m Bool) → m Bool :=
+private def orM : List (m Bool) → m Bool :=
   anyM id
 
 /-- `andM xs` runs the actions in `xs`, returning true if all of them return
 true. `andM` short-circuits, so if an action returns false, later actions are
 not run. -/
-def andM : List (m Bool) → m Bool :=
+private def andM : List (m Bool) → m Bool :=
   allM id
 
 end
@@ -98,7 +98,7 @@ section foldIdxM
 variable {m : Type v → Type w} [Monad m]
 
 /-- Monadic variant of `foldlIdx`. -/
-def foldlIdxM {α β} (f : ℕ → β → α → m β) (b : β) (as : List α) : m β :=
+private def foldlIdxM {α β} (f : ℕ → β → α → m β) (b : β) (as : List α) : m β :=
   as.foldlIdx
     (fun i ma b => do
       let a ← ma
@@ -106,7 +106,7 @@ def foldlIdxM {α β} (f : ℕ → β → α → m β) (b : β) (as : List α) :
     (pure b)
 
 /-- Monadic variant of `foldrIdx`. -/
-def foldrIdxM {α β} (f : ℕ → α → β → m β) (b : β) (as : List α) : m β :=
+private def foldrIdxM {α β} (f : ℕ → α → β → m β) (b : β) (as : List α) : m β :=
   as.foldrIdx
     (fun i a mb => do
       let b ← mb
