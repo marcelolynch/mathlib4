@@ -492,7 +492,7 @@ def projectionsInfo (l : List ProjectionData) (pref : String) (str : Name) : Mes
 /-- Find the indices of the projections that need to be applied to elaborate `$e.$projName`.
 Example: If `e : α ≃+ β` and ``projName = `invFun`` then this returns `[0, 1]`, because the first
 projection of `MulEquiv` is `toEquiv` and the second projection of `Equiv` is `invFun`. -/
-def findProjectionIndices (strName projName : Name) : MetaM (List Nat) := do
+private def findProjectionIndices (strName projName : Name) : MetaM (List Nat) := do
   let env ← getEnv
   let some baseStr := findField? env strName projName |
     throwError "{strName} has no field {projName} in parent structure"
@@ -940,7 +940,7 @@ used to generate (and parse) projection names. For example, in the structure
      ...]
   ```
 -/
-def getProjectionExprs (stx : Syntax) (tgt : Expr) (rhs : Expr) (cfg : Config) :
+private def getProjectionExprs (stx : Syntax) (tgt : Expr) (rhs : Expr) (cfg : Config) :
     MetaM <| Array <| Expr × ProjectionData := do
   -- the parameters of the structure
   let params := tgt.getAppArgs
@@ -965,7 +965,7 @@ variable (ref : Syntax) (univs : List Name)
 
 /-- Add a lemma with `nm` stating that `lhs = rhs`. `type` is the type of both `lhs` and `rhs`,
 `args` is the list of local constants occurring, and `univs` is the list of universe variables. -/
-def addProjection (declName : Name) (type lhs rhs : Expr) (args : Array Expr)
+private def addProjection (declName : Name) (type lhs rhs : Expr) (args : Array Expr)
     (cfg : Config) : MetaM Unit := do
   trace[simps.debug] "Planning to add the equality{indentD m!"{lhs} = ({rhs} : {type})"}"
   let env ← getEnv
@@ -1222,7 +1222,7 @@ def simpsTac (ref : Syntax) (nm : Name) (cfg : Config := {})
     nm d.type lhs (d.value! (allowOpaque := true)) #[] (mustBeStr := true) cfg todo []
 
 /-- elaborate the syntax and run `simpsTac`. -/
-def simpsTacFromSyntax (nm : Name) (stx : Syntax) : AttrM (Array Name) :=
+private def simpsTacFromSyntax (nm : Name) (stx : Syntax) : AttrM (Array Name) :=
   match stx with
   | `(attr| simps $[!%$bang]? $[?%$trc]? $optAttr $c:optConfig $[$ids]*) => do
     let extraAttrs ← Mathlib.Tactic.elabOptAttrArg optAttr |>.run' |>.run'
