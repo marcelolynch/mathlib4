@@ -57,7 +57,7 @@ inductive ElimStatus
 
 /-- Combine two statuses, keeping a success from either side
 or merging the failures. -/
-def ElimStatus.merge : ElimStatus → ElimStatus → ElimStatus
+private def ElimStatus.merge : ElimStatus → ElimStatus → ElimStatus
   | success, _ => success
   | _, success => success
   | failure ts₁, failure ts₂ => failure (ts₁ ++ ts₂)
@@ -86,7 +86,7 @@ open Batteries.ExtendedBinder in
 - `_` - anonymous
 - `(x : T)` - identifier with type annotation
 - `(_ : T)` - anonymous with type annotation -/
-def parseChooseArg (stx : TSyntax ``chooseBinder) : MetaM ChooseArg := do
+private def parseChooseArg (stx : TSyntax ``chooseBinder) : MetaM ChooseArg := do
   match stx with
   | `(chooseBinder| $id:binderIdent) => return parseBinderIdent id
   | `(chooseBinder| ($id:binderIdent : $ty:term)) =>
@@ -180,7 +180,7 @@ def choose1 (g : MVarId) (nondep : Bool) (h : Option Expr) (data : Name) :
 
 /-- A wrapper around `choose1` that parses identifiers, adds variable info to new variables,
 and optionally checks the type annotation. -/
-def choose1WithInfo (g : MVarId) (nondep : Bool) (h : Option Expr) (arg : ChooseArg) :
+private def choose1WithInfo (g : MVarId) (nondep : Bool) (h : Option Expr) (arg : ChooseArg) :
     TermElabM (ElimStatus × MVarId) := do
   let (status, fvar, g) ← choose1 g nondep h arg.name
   let g ← g.withContext do
@@ -198,7 +198,7 @@ def choose1WithInfo (g : MVarId) (nondep : Bool) (h : Option Expr) (arg : Choose
   pure (status, g)
 
 /-- A loop around `choose1`. The main entry point for the `choose` tactic. -/
-def elabChoose (nondep : Bool) (h : Option Expr) :
+private def elabChoose (nondep : Bool) (h : Option Expr) :
     List ChooseArg → ElimStatus → MVarId → TermElabM MVarId
   | [], _, _ => throwError "expect list of variables"
   | [arg], status, g =>
