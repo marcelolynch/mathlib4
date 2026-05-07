@@ -663,7 +663,7 @@ theorem top_prod_top : (⊤ : Subsemiring R).prod (⊤ : Subsemiring S) = ⊤ :=
   (top_prod _).trans <| comap_top _
 
 /-- Product of subsemirings is isomorphic to their product as monoids. -/
-def prodEquiv (s : Subsemiring R) (t : Subsemiring S) : s.prod t ≃+* s × t :=
+private def prodEquiv (s : Subsemiring R) (t : Subsemiring S) : s.prod t ≃+* s × t :=
   { Equiv.Set.prod (s : Set R) (t : Set S) with
     map_mul' := fun _ _ => rfl
     map_add' := fun _ _ => rfl }
