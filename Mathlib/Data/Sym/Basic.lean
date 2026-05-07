@@ -626,7 +626,7 @@ end SymOptionSuccEquiv
 
 /-- The symmetric product over `Option` is a disjoint union over simpler symmetric products. -/
 --@[simps]
-def symOptionSuccEquiv [DecidableEq α] :
+private def symOptionSuccEquiv [DecidableEq α] :
     Sym (Option α) n.succ ≃ Sym (Option α) n ⊕ Sym α n.succ where
   toFun := SymOptionSuccEquiv.encode
   invFun := SymOptionSuccEquiv.decode
