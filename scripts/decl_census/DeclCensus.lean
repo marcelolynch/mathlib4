@@ -154,28 +154,32 @@ def gatherForward (env : Environment) : IO (Array ForwardRec) := do
   IO.eprintln s!"[census] forward pass done: kept {out.size}, skipped internal {nSkippedInternal}, skipped non-Mathlib {nSkippedNonMathlib}"
   return out
 
-/-- Phase 2 — build reverse maps: for each target, list of referrers (sig/body). -/
+/-- Phase 2 — build reverse maps: for each target, set of referrers (sig/body).
+
+    Uses NameSet (RBTree) for the inner value, so each insert is O(log n)
+    instead of array-copy O(n). For decls referenced by thousands of others
+    (basic types like Eq, And, True), the array version was quadratic. -/
 def buildReverse (recs : Array ForwardRec)
-    : IO (NameMap (Array Name) × NameMap (Array Name)) := do
-  let mut sigRev : NameMap (Array Name) := .empty
-  let mut bodyRev : NameMap (Array Name) := .empty
+    : IO (NameMap NameSet × NameMap NameSet) := do
+  let mut sigRev : NameMap NameSet := .empty
+  let mut bodyRev : NameMap NameSet := .empty
   let mut i := 0
   for rec in recs do
     i := i + 1
     if i % 50000 == 0 then
       IO.eprintln s!"[census] reverse pass: processed {i} ..."
     for tgt in rec.sigRefs do
-      let cur := sigRev.find? tgt |>.getD #[]
-      sigRev := sigRev.insert tgt (cur.push rec.name)
+      let cur := sigRev.find? tgt |>.getD .empty
+      sigRev := sigRev.insert tgt (cur.insert rec.name)
     for tgt in rec.bodyRefs do
-      let cur := bodyRev.find? tgt |>.getD #[]
-      bodyRev := bodyRev.insert tgt (cur.push rec.name)
+      let cur := bodyRev.find? tgt |>.getD .empty
+      bodyRev := bodyRev.insert tgt (cur.insert rec.name)
   IO.eprintln s!"[census] reverse pass done: sigRev size={sigRev.size}, bodyRev size={bodyRev.size}"
   return (sigRev, bodyRev)
 
 /-- Phase 3 — emit JSONL with per-decl combined data. -/
 def emitJson (env : Environment) (recs : Array ForwardRec)
-    (sigRev bodyRev : NameMap (Array Name)) : IO Unit := do
+    (sigRev bodyRev : NameMap NameSet) : IO Unit := do
   let stdout ← IO.getStdout
   let mut i := 0
   for rec in recs do
@@ -185,27 +189,27 @@ def emitJson (env : Environment) (recs : Array ForwardRec)
     let (ns, leaf) := splitName rec.name
     let pattern := classifyNamePattern leaf ns
     -- Lookup referrers of this decl.
-    let sigReferrers := sigRev.find? rec.name |>.getD #[]
-    let bodyReferrers := bodyRev.find? rec.name |>.getD #[]
+    let sigReferrers := sigRev.find? rec.name |>.getD .empty
+    let bodyReferrers := bodyRev.find? rec.name |>.getD .empty
     -- Partition into intra-module vs cross-module.
-    let mut sigIntra : Array Name := #[]
+    let mut sigIntra : NameSet := .empty
     let mut sigExt   : NameSet := .empty   -- module set
     for r in sigReferrers do
       let m := (env.getModuleFor? r).getD `unknown
       if m == rec.module then
-        sigIntra := sigIntra.push r
+        sigIntra := sigIntra.insert r
       else
         sigExt := sigExt.insert m
-    let mut bodyIntra : Array Name := #[]
+    let mut bodyIntra : NameSet := .empty
     let mut bodyExt   : NameSet := .empty
     for r in bodyReferrers do
       let m := (env.getModuleFor? r).getD `unknown
       if m == rec.module then
-        bodyIntra := bodyIntra.push r
+        bodyIntra := bodyIntra.insert r
       else
         bodyExt := bodyExt.insert m
     let allExt := sigExt.union bodyExt
-    let intraAll := (sigIntra.toList ++ bodyIntra.toList).eraseDups
+    let intraAll := (sigIntra.union bodyIntra).toList
     let json :=
       "{"
       ++ "\"fq_name\":" ++ jsonStr rec.name.toString
