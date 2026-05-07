@@ -86,7 +86,7 @@ def matchPatterns (pats : Array AbstractMVarsResult) (e : Expr) : MetaM Bool := 
   pats.anyM fun p ↦ return (← Conv.matchPattern? p e) matches some (_, #[])
 
 /-- Common implementation of `casesm` and `casesm!`. -/
-def elabCasesM (pats : Array Term) (recursive allowSplit : Bool) : TacticM Unit := do
+private def elabCasesM (pats : Array Term) (recursive allowSplit : Bool) : TacticM Unit := do
   let pats ← elabPatterns pats
   liftMetaTactic (casesMatching (matchPatterns pats) recursive allowSplit)
 
@@ -121,7 +121,7 @@ elab (name := casesm!) "casesm!" recursive:"*"? ppSpace pats:term,+ : tactic => 
   elabCasesM pats recursive.isSome false
 
 /-- Common implementation of `cases_type` and `cases_type!`. -/
-def elabCasesType (heads : Array Ident)
+private def elabCasesType (heads : Array Ident)
     (recursive := false) (allowSplit := true) : TacticM Unit := do
   let heads ← heads.mapM (fun stx => realizeGlobalConstNoOverloadWithInfo stx)
   liftMetaTactic (casesType heads recursive allowSplit)
