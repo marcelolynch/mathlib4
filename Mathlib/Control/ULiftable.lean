@@ -76,22 +76,22 @@ abbrev down {f : Type u₀ → Type u₁} {g : Type max u₀ v → Type v₁} [U
   (ULiftable.congr Equiv.ulift.symm).invFun
 
 /-- convenient shortcut to avoid manipulating `ULift` -/
-def adaptUp (F : Type v₀ → Type v₁) (G : Type max v₀ u₀ → Type u₁) [ULiftable F G] [Monad G] {α β}
+private def adaptUp (F : Type v₀ → Type v₁) (G : Type max v₀ u₀ → Type u₁) [ULiftable F G] [Monad G] {α β}
     (x : F α) (f : α → G β) : G β :=
   up x >>= f ∘ ULift.down.{u₀}
 
 /-- convenient shortcut to avoid manipulating `ULift` -/
-def adaptDown {F : Type max u₀ v₀ → Type u₁} {G : Type v₀ → Type v₁} [L : ULiftable G F] [Monad F]
+private def adaptDown {F : Type max u₀ v₀ → Type u₁} {G : Type v₀ → Type v₁} [L : ULiftable G F] [Monad F]
     {α β} (x : F α) (f : α → G β) : G β :=
   @down.{max u₀ v₀} G F L β <| x >>= @up.{max u₀ v₀} G F L β ∘ f
 
 /-- map function that moves up universes -/
-def upMap {F : Type u₀ → Type u₁} {G : Type max u₀ v₀ → Type v₁} [ULiftable F G] [Functor G]
+private def upMap {F : Type u₀ → Type u₁} {G : Type max u₀ v₀ → Type v₁} [ULiftable F G] [Functor G]
     {α β} (f : α → β) (x : F α) : G β :=
   Functor.map (f ∘ ULift.down.{v₀}) (up x)
 
 /-- map function that moves down universes -/
-def downMap {F : Type max u₀ v₀ → Type u₁} {G : Type u₀ → Type v₁} [ULiftable G F]
+private def downMap {F : Type max u₀ v₀ → Type u₁} {G : Type u₀ → Type v₁} [ULiftable G F]
     [Functor F] {α β} (f : α → β) (x : F α) : G β :=
   down (Functor.map (ULift.up.{v₀} ∘ f) x : F (ULift β))
 
