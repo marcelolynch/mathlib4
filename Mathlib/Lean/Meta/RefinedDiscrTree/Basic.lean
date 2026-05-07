@@ -94,7 +94,7 @@ Converts an entry (i.e., `List Key`) to the discrimination tree into
 
 This is a copy of `Lean.Meta.DiscrTree.keysAsPattern`
 -/
-partial def keysAsPattern (keys : Array Key) : CoreM MessageData := do
+private partial def keysAsPattern (keys : Array Key) : CoreM MessageData := do
   let (msg, keys) ← go (paren := false) |>.run keys.toList
   if !keys.isEmpty then
     throwError "illegal discrimination tree entry: {keys.map Key.format}"
