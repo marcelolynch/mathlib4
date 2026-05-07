@@ -210,7 +210,7 @@ lemma fullyFaithful_preimage {X Y : Cᵒᵖ} (f : coyoneda.obj X ⟶ coyoneda.ob
 
 /-- The morphism `X ⟶ Y` corresponding to a natural transformation
 `coyoneda.obj X ⟶ coyoneda.obj Y`. -/
-def preimage {X Y : Cᵒᵖ} (f : coyoneda.obj X ⟶ coyoneda.obj Y) : X ⟶ Y :=
+private def preimage {X Y : Cᵒᵖ} (f : coyoneda.obj X ⟶ coyoneda.obj Y) : X ⟶ Y :=
   (f.app _ (𝟙 X.unop)).op
 
 instance coyoneda_full : (coyoneda : Cᵒᵖ ⥤ C ⥤ Type v₁).Full :=
@@ -253,7 +253,7 @@ def objOpOp (X : C) : coyoneda.obj (op (op X)) ≅ yoneda.obj X :=
   NatIso.ofComponents fun _ => (opEquiv _ _).toIso
 
 /-- Taking the `unop` of morphisms is a natural isomorphism. -/
-def opIso : yoneda ⋙ (whiskeringLeft _ _ _).obj (opOp C) ≅ coyoneda :=
+private def opIso : yoneda ⋙ (whiskeringLeft _ _ _).obj (opOp C) ≅ coyoneda :=
   NatIso.ofComponents (fun X ↦ NatIso.ofComponents (fun Y ↦ (opEquiv (op Y) X).toIso)
     (fun _ ↦ rfl)) (fun _ ↦ rfl)
 
