@@ -62,7 +62,7 @@ instance : One ONote :=
   ⟨oadd 0 1 0⟩
 
 /-- Notation for ω -/
-def omega : ONote :=
+private def omega : ONote :=
   oadd 1 1 0
 
 /-- The ordinal denoted by a notation -/
@@ -1182,7 +1182,7 @@ instance : WellFoundedRelation NONote :=
   ⟨(· < ·), lt_wf⟩
 
 /-- Convert a natural number to an ordinal notation -/
-def ofNat (n : ℕ) : NONote :=
+private def ofNat (n : ℕ) : NONote :=
   ⟨ONote.ofNat n, ⟨⟨_, nfBelow_ofNat _⟩⟩⟩
 
 /-- Compare ordinal notations -/
