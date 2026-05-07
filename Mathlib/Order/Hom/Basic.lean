@@ -238,7 +238,7 @@ protected theorem mono (f : α →o β) : Monotone f :=
 
 /-- See Note [custom simps projection]. We give this manually so that we use `toFun` as the
 projection directly instead. -/
-def Simps.coe (f : α →o β) : α → β := f
+private def Simps.coe (f : α →o β) : α → β := f
 
 /- TODO: all other DFunLike classes use `apply` instead of `coe`
 for the projection names. Maybe we should change this. -/
