@@ -96,7 +96,7 @@ variable (φ h₁ h₂)
 /-- A choice of the (unique) homology map data associated with a morphism
 `φ : S₁ ⟶ S₂` where both short complexes `S₁` and `S₂` are equipped with
 homology data. -/
-def homologyMapData : HomologyMapData φ h₁ h₂ := default
+private def homologyMapData : HomologyMapData φ h₁ h₂ := default
 
 variable {φ h₁ h₂}
 
