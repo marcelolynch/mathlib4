@@ -63,7 +63,7 @@ structure NormNumExt where
 variable {u : Level}
 
 /-- Read a `norm_num` extension from a declaration of the right type. -/
-def mkNormNumExt (n : Name) : ImportM NormNumExt := do
+private def mkNormNumExt (n : Name) : ImportM NormNumExt := do
   let { env, opts, .. } ← read
   IO.ofExcept <| unsafe env.evalConstCheck NormNumExt opts ``NormNumExt n
 
@@ -172,7 +172,7 @@ Erase a name marked as a `norm_num` attribute.
 Check that it does in fact have the `norm_num` attribute by making sure it names a `NormNumExt`
 found somewhere in the state's tree, and is not erased.
 -/
-def NormNums.erase {m : Type → Type} [Monad m] [MonadError m] (d : NormNums) (declName : Name) :
+private def NormNums.erase {m : Type → Type} [Monad m] [MonadError m] (d : NormNums) (declName : Name) :
     m NormNums := do
   unless d.tree.values.any (·.name == declName) && ! d.erased.contains declName
   do
