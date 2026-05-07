@@ -808,7 +808,7 @@ variable {R : Type u} {S : Type v} [NonUnitalRing R] [NonUnitalRing S] {s t : No
 
 /-- Makes the identity isomorphism from a proof two `NonUnitalSubring`s of a multiplicative
 monoid are equal. -/
-def nonUnitalSubringCongr (h : s = t) : s ≃+* t :=
+private def nonUnitalSubringCongr (h : s = t) : s ≃+* t :=
   {
     Equiv.setCongr <| congr_arg _ h with
     map_mul' := fun _ _ => rfl
