@@ -854,7 +854,7 @@ theorem comap_top [IsScalarTower R B B] [SMulCommClass R B B]
   eq_top_iff.2 fun _ => mem_top
 
 /-- `NonUnitalAlgHom` to `⊤ : NonUnitalSubalgebra R A`. -/
-def toTop : A →ₙₐ[R] (⊤ : NonUnitalSubalgebra R A) :=
+private def toTop : A →ₙₐ[R] (⊤ : NonUnitalSubalgebra R A) :=
   NonUnitalAlgHom.codRestrict (NonUnitalAlgHom.id R A) ⊤ fun _ => mem_top
 
 end IsScalarTower
