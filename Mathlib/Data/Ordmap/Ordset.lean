@@ -718,7 +718,7 @@ def mem (x : α) (s : Ordset α) : Bool :=
 
 /-- O(log n). Retrieve an element in the set that is equivalent to `x` in the order,
   if it exists. -/
-def find (x : α) (s : Ordset α) : Option α :=
+private def find (x : α) (s : Ordset α) : Option α :=
   Ordnode.find x s.val
 
 instance instMembership : Membership α (Ordset α) :=
@@ -735,11 +735,11 @@ end
 
 /-- O(log n). Remove an element from the set equivalent to `x`. Does nothing if there
 is no such element. -/
-def erase [DecidableLE α] (x : α) (s : Ordset α) : Ordset α :=
+private def erase [DecidableLE α] (x : α) (s : Ordset α) : Ordset α :=
   ⟨Ordnode.erase x s.val, Ordnode.erase.valid x s.property⟩
 
 /-- O(n). Map a function across a tree, without changing the structure. -/
-def map {β} [Preorder β] (f : α → β) (f_strict_mono : StrictMono f) (s : Ordset α) : Ordset β :=
+private def map {β} [Preorder β] (f : α → β) (f_strict_mono : StrictMono f) (s : Ordset α) : Ordset β :=
   ⟨Ordnode.map f s.val, Ordnode.map.valid f_strict_mono s.property⟩
 
 end Ordset
