@@ -84,7 +84,7 @@ namespace Lean.Attr
 property that has been tagged with the `algebraize` attribute. This is done by either returning the
 parameter of the attribute, or by assuming that the tagged declaration has name `RingHom.Property`
 and then returning `Algebra.Property`. -/
-def algebraizeGetParam (thm : Name) (stx : Syntax) : AttrM Name := do
+private def algebraizeGetParam (thm : Name) (stx : Syntax) : AttrM Name := do
   match stx with
   | `(attr| algebraize $name:ident) => return name.getId
   /- If no argument is provided, assume `thm` is of the form `RingHom.Property`,
@@ -132,7 +132,7 @@ this function adds the instance `Algebra A B` to the context (if it does not alr
 This function also requires the type of `f`, given by the parameter `ft`. The reason this is done
 (even though `ft` can be inferred from `f`) is to avoid recomputing `ft` in the `algebraize` tactic,
 as when `algebraize` calls `addAlgebraInstanceFromRingHom` it has already computed `ft`. -/
-def addAlgebraInstanceFromRingHom (f ft : Expr) : TacticM Unit := withMainContext do
+private def addAlgebraInstanceFromRingHom (f ft : Expr) : TacticM Unit := withMainContext do
   let (_, l) := ft.getAppFnArgs
   -- The type of the corresponding algebra instance
   let alg ← mkAppOptM ``Algebra #[l[0]!, l[1]!, none, none]
@@ -146,7 +146,7 @@ def addAlgebraInstanceFromRingHom (f ft : Expr) : TacticM Unit := withMainContex
 
 /-- Given an expression `g.comp f` which is the composition of two `RingHom`s, this function adds
 the instance `IsScalarTower A B C` to the context (if it does not already exist). -/
-def addIsScalarTowerInstanceFromRingHomComp (fn : Expr) : TacticM Unit := withMainContext do
+private def addIsScalarTowerInstanceFromRingHomComp (fn : Expr) : TacticM Unit := withMainContext do
   let (_, l) := fn.getAppFnArgs
   let tower ← mkAppOptM ``IsScalarTower #[l[0]!, l[1]!, l[2]!, none, none, none]
   -- If the instance already exists, we do not do anything
@@ -171,7 +171,7 @@ and searches through the local context to find any additional properties of thes
 which it tries to add the corresponding `Algebra` properties to the context. It only looks for
 properties that have been tagged with the `algebraize` attribute, and uses this tag to find the
 corresponding `Algebra` property. -/
-def addProperties (t : Array Expr) : TacticM Unit := withMainContext do
+private def addProperties (t : Array Expr) : TacticM Unit := withMainContext do
   let ctx ← getLCtx
   ctx.forM fun decl => do
     if decl.isImplementationDetail then return
