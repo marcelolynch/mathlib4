@@ -202,7 +202,7 @@ def testBit : Num → Nat → Bool
   | pos p, n => p.testBit n
 
 /-- `n.oneBits` is the list of indices of active bits in the binary representation of `n`. -/
-def oneBits : Num → List Nat
+private def oneBits : Num → List Nat
   | 0 => []
   | pos p => p.oneBits 0
 
@@ -279,11 +279,11 @@ def not : NzsNum → NzsNum
 scoped prefix:100 "~" => not
 
 /-- Add an inactive bit at the end of a `NzsNum`. This mimics `PosNum.bit0`. -/
-def bit0 : NzsNum → NzsNum :=
+private def bit0 : NzsNum → NzsNum :=
   bit false
 
 /-- Add an active bit at the end of a `NzsNum`. This mimics `PosNum.bit1`. -/
-def bit1 : NzsNum → NzsNum :=
+private def bit1 : NzsNum → NzsNum :=
   bit true
 
 /-- The `head` of a `NzsNum` is the Boolean value of its LSB. -/
@@ -304,7 +304,7 @@ namespace SNum
 open NzsNum
 
 /-- Sign of a `SNum`. -/
-def sign : SNum → Bool
+private def sign : SNum → Bool
   | zero z => z
   | nz p => p.sign
 
@@ -332,7 +332,7 @@ def bit0 : SNum → SNum :=
   bit false
 
 /-- Add an active bit at the end of a `SNum`. This mimics `ZNum.bit1`. -/
-def bit1 : SNum → SNum :=
+private def bit1 : SNum → SNum :=
   bit true
 
 theorem bit_zero (b : Bool) : (b :: zero b) = zero b := by cases b <;> rfl
@@ -358,13 +358,13 @@ namespace SNum
 open NzsNum
 
 /-- The `head` of a `SNum` is the Boolean value of its LSB. -/
-def head : SNum → Bool
+private def head : SNum → Bool
   | zero z => z
   | nz p => p.head
 
 /-- The `tail` of a `SNum` is obtained by removing the LSB.
 Edge cases: `tail 1 = 0`, `tail (-2) = -1`, `tail 0 = 0` and `tail (-1) = -1`. -/
-def tail : SNum → SNum
+private def tail : SNum → SNum
   | zero z => zero z
   | nz p => p.tail
 
@@ -379,7 +379,7 @@ def rec' {α} (z : Bool → α) (s : Bool → SNum → α → α) : SNum → α 
 
 /-- `SNum.testBit n a` is `true` iff the `n`-th bit (starting from the LSB) of `a` is active.
 If the size of `a` is less than `n`, this evaluates to `false`. -/
-def testBit : Nat → SNum → Bool
+private def testBit : Nat → SNum → Bool
   | 0, p => head p
   | n + 1, p => testBit n (tail p)
 
@@ -411,7 +411,7 @@ end SNum
 namespace SNum
 
 /-- `a.bits n` is the vector of the `n` first bits of `a` (starting from the LSB). -/
-def bits : SNum → ∀ n, List.Vector Bool n
+private def bits : SNum → ∀ n, List.Vector Bool n
   | _, 0 => Vector.nil
   | p, n + 1 => head p ::ᵥ bits (tail p) n
 
