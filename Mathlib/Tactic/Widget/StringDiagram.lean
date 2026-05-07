@@ -160,7 +160,7 @@ open Widget.StringDiagram
 
 /-- The list of nodes associated with a 2-morphism. The position is counted from the
 specified natural numbers. -/
-def WhiskerRight.nodes (v h₁ h₂ : ℕ) : WhiskerRight → List Node
+private def WhiskerRight.nodes (v h₁ h₂ : ℕ) : WhiskerRight → List Node
   | WhiskerRight.of η => [.atom ⟨v, h₁, h₂, η⟩]
   | WhiskerRight.whisker _ η f =>
     let ηs := η.nodes v h₁ h₂
@@ -171,7 +171,7 @@ def WhiskerRight.nodes (v h₁ h₂ : ℕ) : WhiskerRight → List Node
 
 /-- The list of nodes associated with a 2-morphism. The position is counted from the
 specified natural numbers. -/
-def HorizontalComp.nodes (v h₁ h₂ : ℕ) : HorizontalComp → List Node
+private def HorizontalComp.nodes (v h₁ h₂ : ℕ) : HorizontalComp → List Node
   | HorizontalComp.of η => η.nodes v h₁ h₂
   | HorizontalComp.cons _ η ηs =>
     let s₁ := η.nodes v h₁ h₂
@@ -182,7 +182,7 @@ def HorizontalComp.nodes (v h₁ h₂ : ℕ) : HorizontalComp → List Node
 
 /-- The list of nodes associated with a 2-morphism. The position is counted from the
 specified natural numbers. -/
-def WhiskerLeft.nodes (v h₁ h₂ : ℕ) : WhiskerLeft → List Node
+private def WhiskerLeft.nodes (v h₁ h₂ : ℕ) : WhiskerLeft → List Node
   | WhiskerLeft.of η => η.nodes v h₁ h₂
   | WhiskerLeft.whisker _ f η =>
     let s : Node := .id ⟨v, h₁, h₂, f⟩
@@ -390,7 +390,7 @@ def stringMorOrEqM? (e : Expr) : MetaM (Option Html) := do
 
 /-- The `Expr` presenter for displaying string diagrams. -/
 @[expr_presenter]
-def stringPresenter : ExprPresenter where
+private def stringPresenter : ExprPresenter where
   userName := "String diagram"
   layoutKind := .block
   present type := do
