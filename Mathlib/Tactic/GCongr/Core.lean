@@ -183,11 +183,11 @@ structure GCongrLemma where
 abbrev GCongrLemmas := Std.TreeMap GCongrKey (List GCongrLemma)
 
 /-- Return `true` if the priority of `a` is less than or equal to the priority of `b`. -/
-def GCongrLemma.prioLE (a b : GCongrLemma) : Bool :=
+private def GCongrLemma.prioLE (a b : GCongrLemma) : Bool :=
   (compare a.prio b.prio).then (compare b.numVarying a.numVarying) |>.isLE
 
 /-- Insert a `GCongrLemma` in a collection of lemmas, making sure that the lemmas are sorted. -/
-def addGCongrLemmaEntry (m : GCongrLemmas) (l : GCongrLemma) : GCongrLemmas :=
+private def addGCongrLemmaEntry (m : GCongrLemmas) (l : GCongrLemma) : GCongrLemmas :=
   m.alter l.key fun
   | none    => [l]
   | some es => insert l es
@@ -229,7 +229,7 @@ def getRel (e : Expr) : Option (Name × Expr × Expr) :=
   | _ => none
 
 /-- If `e` is of the form `r a b`, replace either `a` or `b` with `e`. -/
-def updateRel (r e : Expr) (isLhs : Bool) : Expr :=
+private def updateRel (r e : Expr) (isLhs : Bool) : Expr :=
   match r with
   | .forallE _ d b _ => if isLhs then r.updateForallE! e b else r.updateForallE! d e
   | .app (.app rel lhs) rhs => if isLhs then mkApp2 rel e rhs else mkApp2 rel lhs e
@@ -237,7 +237,7 @@ def updateRel (r e : Expr) (isLhs : Bool) : Expr :=
 
 /-- Try to construct the `GCongrLemma` for a lemma with hypotheses `hyps` and
 conclusion `target`. -/
-def makeGCongrLemma (hyps : Array Expr) (target : Expr) (declName : Name) (prio : Nat) :
+private def makeGCongrLemma (hyps : Array Expr) (target : Expr) (declName : Name) (prio : Nat) :
     MetaM GCongrLemma := do
   let fail {α} (m : MessageData) : MetaM α := throwError "\
     @[gcongr] attribute only applies to lemmas proving f x₁ ... xₙ ∼ f x₁' ... xₙ'.\n \
@@ -476,7 +476,7 @@ def hasHoleAnnotation (e : Expr) : Bool :=
 
 /-- Determine whether `e` contains a `gcongrHole` mdata annotation in any subexpression.
 This tells `gcongr` whether to continue applying `gcongr` lemmas. -/
-def containsHoleAnnotation (e : Expr) : Bool :=
+private def containsHoleAnnotation (e : Expr) : Bool :=
   (e.find? hasHoleAnnotation).isSome
 
 /-- (Internal for `gcongr`)
@@ -507,7 +507,7 @@ This will be tried if there is no other available `@[gcongr]` lemma.
 For example, the relation `a ≡ b [ZMOD n]` has an instance of `IsTrans`, so a congruence of the form
 `a ≡ b [ZMOD n] → c ≡ d [ZMOD n]` can be solved with `rel_imp_rel`, `rel_trans` or `rel_trans'`.
 -/
-def relImpRelLemma (arity : Nat) : List GCongrLemma :=
+private def relImpRelLemma (arity : Nat) : List GCongrLemma :=
   if arity < 2 then [] else [{
     declName := ``rel_imp_rel
     mainSubgoals := #[(7, 0, true), (8, 0, false)]
