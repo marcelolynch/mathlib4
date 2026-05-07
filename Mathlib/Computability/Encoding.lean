@@ -148,7 +148,7 @@ def encodingNatBool : Encoding ℕ where
   decode_encode n := congr_arg _ (decode_encodeNat n)
 
 /-- A binary encoding of `ℕ` in `Bool`, as a `FinEncoding`. -/
-def finEncodingNatBool : FinEncoding ℕ :=
+private def finEncodingNatBool : FinEncoding ℕ :=
   ⟨encodingNatBool, Bool.fintype⟩
 
 /-- A binary `Encoding` of `ℕ` in `Γ'`. -/
@@ -159,7 +159,7 @@ def encodingNatΓ' : Encoding ℕ where
   decode_encode x := congr_arg _ <| by simp [Function.comp_def]
 
 /-- A binary `FinEncoding` of `ℕ` in `Γ'`. -/
-def finEncodingNatΓ' : FinEncoding ℕ :=
+private def finEncodingNatΓ' : FinEncoding ℕ :=
   ⟨encodingNatΓ', inferInstanceAs (Fintype Γ')⟩
 
 /-- A unary encoding function of `ℕ` in `Bool`. -/
@@ -175,7 +175,7 @@ def unaryDecodeNat : List Bool → Nat :=
   Nat.rec rfl (fun (_m : ℕ) hm => (congr_arg Nat.succ hm.symm).symm) n
 
 /-- A unary `FinEncoding` of `ℕ` in `Bool`. -/
-def unaryFinEncodingNat : FinEncoding ℕ where
+private def unaryFinEncodingNat : FinEncoding ℕ where
   Γ := Bool
   encode := unaryEncodeNat
   decode n := some (unaryDecodeNat n)
@@ -219,7 +219,7 @@ theorem FinEncoding.card_le_aleph0 {α : Type u} (e : FinEncoding α) : #α ≤ 
   e.toEncoding.card_le_aleph0
 
 /-- A `FinEncoding` of a `List α` in (finite) alphabet `α`, encoded directly. -/
-def finEncodingList (α : Type) [Fintype α] : FinEncoding (List α) where
+private def finEncodingList (α : Type) [Fintype α] : FinEncoding (List α) where
   Γ := α
   encode := id
   decode := Option.some
@@ -232,7 +232,7 @@ constructs a `FinEncoding` of `α × β` by concatenating the encodings,
 mapping the symbols from the first encoding with `Sum.inl`
 and those from the second with `Sum.inr`.
 -/
-def finEncodingPair {α β : Type*} (ea : FinEncoding α) (eb : FinEncoding β) :
+private def finEncodingPair {α β : Type*} (ea : FinEncoding α) (eb : FinEncoding β) :
     FinEncoding (α × β) where
   Γ := ea.Γ ⊕ eb.Γ
   encode x := (ea.encode x.1).map .inl ++ (eb.encode x.2).map .inr
