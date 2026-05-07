@@ -187,14 +187,14 @@ def counitCofork (B : D) :
 
 variable {adj} in
 /-- The unit cofork is a colimit provided `G` preserves it. -/
-def unitColimitOfPreservesCoequalizer (A : adj.toMonad.Algebra)
+private def unitColimitOfPreservesCoequalizer (A : adj.toMonad.Algebra)
     [HasCoequalizer (F.map A.a) (adj.counit.app (F.obj A.A))]
     [PreservesColimit (parallelPair (F.map A.a) (adj.counit.app (F.obj A.A))) G] :
     IsColimit (unitCofork (G := G) A) :=
   isColimitOfHasCoequalizerOfPreservesColimit G _ _
 
 /-- The counit cofork is a colimit provided `G` reflects it. -/
-def counitCoequalizerOfReflectsCoequalizer (B : D)
+private def counitCoequalizerOfReflectsCoequalizer (B : D)
     [ReflectsColimit (parallelPair (F.map (G.map (adj.counit.app B)))
       (adj.counit.app (F.obj (G.obj B)))) G] :
     IsColimit (counitCofork (adj := adj) B) :=
