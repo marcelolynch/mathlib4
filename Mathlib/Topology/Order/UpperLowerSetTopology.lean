@@ -114,12 +114,12 @@ lemma ofUpperSet_le_iff {a b : WithUpperSet α} : ofUpperSet a ≤ ofUpperSet b 
 lemma toUpperSet_le_iff {a b : α} : toUpperSet a ≤ toUpperSet b ↔ a ≤ b := Iff.rfl
 
 /-- `ofUpperSet` as an `OrderIso` -/
-def ofUpperSetOrderIso : WithUpperSet α ≃o α where
+private def ofUpperSetOrderIso : WithUpperSet α ≃o α where
   toEquiv := ofUpperSet
   map_rel_iff' := ofUpperSet_le_iff
 
 /-- `toUpperSet` as an `OrderIso` -/
-def toUpperSetOrderIso : α ≃o WithUpperSet α where
+private def toUpperSetOrderIso : α ≃o WithUpperSet α where
   toEquiv := toUpperSet
   map_rel_iff' := toUpperSet_le_iff
 
@@ -163,12 +163,12 @@ lemma ofLowerSet_le_iff {a b : WithLowerSet α} : ofLowerSet a ≤ ofLowerSet b 
 lemma toLowerSet_le_iff {a b : α} : toLowerSet a ≤ toLowerSet b ↔ a ≤ b := Iff.rfl
 
 /-- `ofLowerSet` as an `OrderIso` -/
-def ofLowerSetOrderIso : WithLowerSet α ≃o α where
+private def ofLowerSetOrderIso : WithLowerSet α ≃o α where
   toEquiv := ofLowerSet
   map_rel_iff' := ofLowerSet_le_iff
 
 /-- `toLowerSet` as an `OrderIso` -/
-def toLowerSetOrderIso : α ≃o WithLowerSet α where
+private def toLowerSetOrderIso : α ≃o WithLowerSet α where
   toEquiv := toLowerSet
   map_rel_iff' := toLowerSet_le_iff
 
@@ -177,7 +177,7 @@ end WithLowerSet
 /--
 The Upper Set topology is homeomorphic to the Lower Set topology on the dual order
 -/
-def WithUpperSet.toDualHomeomorph [Preorder α] : WithUpperSet α ≃ₜ WithLowerSet αᵒᵈ where
+private def WithUpperSet.toDualHomeomorph [Preorder α] : WithUpperSet α ≃ₜ WithLowerSet αᵒᵈ where
   toFun := OrderDual.toDual
   invFun := OrderDual.ofDual
   left_inv := OrderDual.toDual_ofDual
@@ -232,7 +232,7 @@ instance _root_.OrderDual.instIsLowerSet : Topology.IsLowerSet αᵒᵈ where
 
 /-- If `α` is equipped with the upper set topology, then it is homeomorphic to
 `WithUpperSet α`. -/
-def WithUpperSetHomeomorph : WithUpperSet α ≃ₜ α :=
+private def WithUpperSetHomeomorph : WithUpperSet α ≃ₜ α :=
   WithUpperSet.ofUpperSet.toHomeomorphOfIsInducing ⟨topology_eq α ▸ induced_id.symm⟩
 
 lemma isOpen_iff_isUpperSet : IsOpen s ↔ IsUpperSet s := by
