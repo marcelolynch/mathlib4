@@ -117,7 +117,7 @@ context, and the given list of arguments.
 Compared to `context.app`, this takes the name of the typeclass, rather than an
 inferred typeclass instance.
 -/
-def Context.mkApp (c : Context) (n inst : Name) (l : Array Expr) : MetaM Expr := do
+private def Context.mkApp (c : Context) (n inst : Name) (l : Array Expr) : MetaM Expr := do
   return c.app n (← synthInstance ((Expr.const inst [c.univ]).app c.α)) l
 
 /-- Add the letter "g" to the end of the name, e.g. turning `term` into `termg`.
@@ -237,7 +237,7 @@ theorem term_neg {α} [AddCommGroup α] (n x a n' a')
 /--
 Interpret a negated expression in `abel`'s normal form.
 -/
-def evalNeg : NormalExpr → M (NormalExpr × Expr)
+private def evalNeg : NormalExpr → M (NormalExpr × Expr)
   | (zero _) => do
     let p ← (← read).mkApp ``neg_zero ``NegZeroClass #[]
     return (← zero', p)
@@ -336,7 +336,7 @@ lemma subst_into_negg {α} [AddCommGroup α] (a ta t : α)
     then simplifying `smulg ↑a b` using `subst_into_smul_upcast`
   * Using `smulg` in a monoid is impossible (or at least out of scope),
     because you need a group argument to write a `smulg` term -/
-def evalSMul' (eval : Expr → M (NormalExpr × Expr))
+private def evalSMul' (eval : Expr → M (NormalExpr × Expr))
     (is_smulg : Bool) (orig e₁ e₂ : Expr) : M (NormalExpr × Expr) := do
   trace[abel] "Calling NormNum on {e₁}"
   let ⟨e₁', p₁, _⟩ ← try Meta.NormNum.eval e₁ catch _ => pure { expr := e₁ }
@@ -454,7 +454,7 @@ theorem term_eq {α : Type*} [AddCommMonoid α] (n : ℕ) (x a : α) : term n x 
 theorem termg_eq {α : Type*} [AddCommGroup α] (n : ℤ) (x a : α) : termg n x a = n • x + a := (rfl)
 
 /-- True if this represents an atomic expression. -/
-def NormalExpr.isAtom : NormalExpr → Bool
+private def NormalExpr.isAtom : NormalExpr → Bool
   | .nterm _ (_, 1) _ (.zero _) => true
   | _ => false
 
