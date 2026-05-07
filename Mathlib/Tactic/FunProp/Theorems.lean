@@ -110,7 +110,7 @@ structure LambdaTheorems where
 
 
 /-- Return proof of lambda theorem -/
-def LambdaTheorem.getProof (thm : LambdaTheorem) : MetaM Expr := do
+private def LambdaTheorem.getProof (thm : LambdaTheorem) : MetaM Expr := do
   mkConstWithFreshMVarLevels thm.thmName
 
 /-- Environment extension storing lambda theorems. -/
@@ -183,7 +183,7 @@ structure FunctionTheorems where
 
 
 /-- return proof of function theorem -/
-def FunctionTheorem.getProof (thm : FunctionTheorem) : MetaM Expr := do
+private def FunctionTheorem.getProof (thm : FunctionTheorem) : MetaM Expr := do
   match thm.thmOrigin with
   | .decl name => mkConstWithFreshMVarLevels name
   | .fvar id => return .fvar id
@@ -218,7 +218,7 @@ def getTheoremsForFunction (funName : Name) (funPropName : Name) :
 --------------------------------------------------------------------------------
 
 /-- Get proof of a theorem. -/
-def GeneralTheorem.getProof (thm : GeneralTheorem) : MetaM Expr := do
+private def GeneralTheorem.getProof (thm : GeneralTheorem) : MetaM Expr := do
   mkConstWithFreshMVarLevels thm.thmName
 
 /-- Extensions for transition or morphism theorems -/
