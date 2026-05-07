@@ -400,7 +400,7 @@ def continuousSubsemiring (α : Type*) (R : Type*) [TopologicalSpace α] [Topolo
   { continuousAddSubmonoid α R, continuousSubmonoid α R with }
 
 /-- The subring of continuous maps `α → β`. -/
-def continuousSubring (α : Type*) (R : Type*) [TopologicalSpace α] [TopologicalSpace R] [Ring R]
+private def continuousSubring (α : Type*) (R : Type*) [TopologicalSpace α] [TopologicalSpace R] [Ring R]
     [IsTopologicalRing R] : Subring (α → R) :=
   { continuousAddSubgroup α R, continuousSubsemiring α R with }
 
@@ -512,7 +512,7 @@ variable (M : Type*) [TopologicalSpace M] [AddCommGroup M]
 variable [Module R M] [ContinuousConstSMul R M] [IsTopologicalAddGroup M]
 
 /-- The `R`-submodule of continuous maps `α → M`. -/
-def continuousSubmodule : Submodule R (α → M) :=
+private def continuousSubmodule : Submodule R (α → M) :=
   { continuousAddSubgroup α M with
     carrier := { f : α → M | Continuous f }
     smul_mem' := fun c _ hf => hf.const_smul c }
@@ -649,7 +649,7 @@ variable {α : Type*} [TopologicalSpace α] {R : Type*} [CommSemiring R] {A : Ty
   [TopologicalSpace A] [Semiring A] [Algebra R A] [IsTopologicalSemiring A]
 
 /-- The `R`-subalgebra of continuous maps `α → A`. -/
-def continuousSubalgebra : Subalgebra R (α → A) :=
+private def continuousSubalgebra : Subalgebra R (α → A) :=
   { continuousSubsemiring α A with
     carrier := { f : α → A | Continuous f }
     algebraMap_mem' := fun r => (continuous_const : Continuous fun _ : α => algebraMap R A r) }
