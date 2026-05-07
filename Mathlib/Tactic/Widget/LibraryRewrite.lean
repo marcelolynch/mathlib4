@@ -293,7 +293,7 @@ def getHypothesisRewrites (e : Expr) (except : Option FVarId) :
 /-! ### Filtering out duplicate lemmas -/
 
 /-- Get the `BinderInfo`s for the arguments of `mkAppN fn args`. -/
-def getBinderInfos (fn : Expr) (args : Array Expr) : MetaM (Array BinderInfo) := do
+private def getBinderInfos (fn : Expr) (args : Array Expr) : MetaM (Array BinderInfo) := do
   let mut fnType ← inferType fn
   let mut result := Array.mkEmpty args.size
   let mut j := 0
@@ -521,7 +521,7 @@ def rpc (props : SelectInsertParams) : RequestM (RequestTask Html) :=
 
 /-- The component called by the `rw??` tactic -/
 @[widget_module]
-def LibraryRewriteComponent : Component SelectInsertParams :=
+private def LibraryRewriteComponent : Component SelectInsertParams :=
   mk_rpc_widget% LibraryRewrite.rpc
 
 /--
