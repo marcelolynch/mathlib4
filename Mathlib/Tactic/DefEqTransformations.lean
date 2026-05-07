@@ -54,7 +54,7 @@ with instantiated metavariables as well as, if the location is a local hypothesi
 `m` *must* transform expressions to defeq expressions.
 If `checkDefEq = true` (the default) then `runDefEqTactic` will throw an error
 if the resulting expression is not definitionally equal to the original expression. -/
-def runDefEqTactic (m : Option FVarId → Expr → MetaM Expr)
+private def runDefEqTactic (m : Option FVarId → Expr → MetaM Expr)
     (loc? : Option (TSyntax ``Parser.Tactic.location))
     (tacticName : String)
     (checkDefEq : Bool := true) :
@@ -73,7 +73,7 @@ def runDefEqTactic (m : Option FVarId → Expr → MetaM Expr)
     (failed := fun _ => throwError "{tacticName} failed")
 
 /-- Like `Mathlib.Tactic.runDefEqTactic` but for `conv` mode. -/
-def runDefEqConvTactic (m : Expr → MetaM Expr) : TacticM Unit := withMainContext do
+private def runDefEqConvTactic (m : Expr → MetaM Expr) : TacticM Unit := withMainContext do
   Conv.changeLhs <| ← m (← instantiateMVars <| ← Conv.getLhs)
 
 
@@ -122,7 +122,7 @@ elab "reduce" loc?:(ppSpace Parser.Tactic.location)? : tactic =>
 /-! ### `unfold_let` -/
 
 /-- Unfold all the fvars from `fvars` in `e` that have local definitions (are "let-bound"). -/
-def unfoldFVars (fvars : Array FVarId) (e : Expr) : MetaM Expr := do
+private def unfoldFVars (fvars : Array FVarId) (e : Expr) : MetaM Expr := do
   transform (usedLetOnly := true) e fun node => do
     match node with
     | .fvar fvarId =>
@@ -138,7 +138,7 @@ def unfoldFVars (fvars : Array FVarId) (e : Expr) : MetaM Expr := do
 /-! ### `refold_let` -/
 
 /-- For each fvar, looks for its body in `e` and replaces it with the fvar. -/
-def refoldFVars (fvars : Array FVarId) (loc? : Option FVarId) (e : Expr) : MetaM Expr := do
+private def refoldFVars (fvars : Array FVarId) (loc? : Option FVarId) (e : Expr) : MetaM Expr := do
   -- Filter the fvars, only taking those that are from earlier in the local context.
   let fvars ←
     if let some loc := loc? then
@@ -179,7 +179,7 @@ elab_rules : conv
 /-! ### `unfold_projs` -/
 
 /-- Recursively unfold all the projection applications for class instances. -/
-def unfoldProjs (e : Expr) : MetaM Expr := do
+private def unfoldProjs (e : Expr) : MetaM Expr := do
   transform e fun node => do
     if let some node' ← unfoldProjInst? node then
       return .visit (← instantiateMVars node')
@@ -200,7 +200,7 @@ elab "unfold_projs" : conv => runDefEqConvTactic unfoldProjs
 /-! ### `eta_reduce` -/
 
 /-- Eta reduce everything -/
-def etaReduceAll (e : Expr) : MetaM Expr := do
+private def etaReduceAll (e : Expr) : MetaM Expr := do
   transform e fun node =>
     match node.etaExpandedStrict? with
     | some e' => return .visit e'
@@ -287,7 +287,7 @@ elab "eta_expand" : conv => runDefEqConvTactic etaExpandAll
 /-- Given an expression that's either a native projection or a registered projection
 function, gives (1) the name of the structure type, (2) the index of the projection, and
 (3) the object being projected. -/
-def getProjectedExpr (e : Expr) : MetaM (Option (Name × Nat × Expr)) := do
+private def getProjectedExpr (e : Expr) : MetaM (Option (Name × Nat × Expr)) := do
   if let .proj S i x := e then
     return (S, i, x)
   if let .const fn _ := e.getAppFn then
@@ -338,7 +338,7 @@ where
 
 /-- Finds all occurrences of expressions of the form `S.mk x.1 ... x.n` where `S.mk`
 is a structure constructor and replaces them by `x`. -/
-def etaStructAll (e : Expr) : MetaM Expr :=
+private def etaStructAll (e : Expr) : MetaM Expr :=
   transform e fun node => do
     if let some node' ← etaStruct? node then
       return .visit node'
