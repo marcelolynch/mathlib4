@@ -155,7 +155,7 @@ section
 variable {M} (x : X)
 
 /-- Homeomorphism `Ω^M X ≃ₜ Ω^N X` if `M ≃ N`. -/
-def congr (e : M ≃ N) : Ω^ M X x ≃ₜ Ω^ N X x where
+private def congr (e : M ≃ N) : Ω^ M X x ≃ₜ Ω^ N X x where
   toFun p := ⟨p.1.comp ⟨fun t m ↦ t (e m), by fun_prop⟩, fun y ⟨n, hn⟩ =>
     by simpa using p.2 _ ⟨e.symm n, by simpa using hn⟩⟩
   invFun p := ⟨p.1.comp ⟨fun t n ↦ t (e.symm n), by fun_prop⟩, fun y ⟨m, hm⟩ => by
@@ -481,7 +481,7 @@ def homotopyGroupEquivZerothHomotopyOfIsEmpty (N x) [IsEmpty N] :
             prop' := fun _ _ ⟨i, _⟩ ↦ isEmptyElim i }⟩])
 
 /-- The 0th homotopy "group" is in bijection with `ZerothHomotopy`. -/
-def HomotopyGroup.pi0EquivZerothHomotopy : π_ 0 X x ≃ ZerothHomotopy X :=
+private def HomotopyGroup.pi0EquivZerothHomotopy : π_ 0 X x ≃ ZerothHomotopy X :=
   homotopyGroupEquivZerothHomotopyOfIsEmpty (Fin 0) x
 
 /-- The 1-dimensional generalized loops based at `x` are in bijection with loops at `x`. -/
@@ -607,7 +607,7 @@ instance commGroup [Nontrivial N] : CommGroup (HomotopyGroup N X x) :=
 
 /-- The homotopy group at `x` indexed by a singleton is isomorphic to the fundamental group,
   i.e. the loops based at `x` up to homotopy. -/
-def homotopyGroupOfUniqueMulEquivFundamentalGroup (N) [Unique N] :
+private def homotopyGroupOfUniqueMulEquivFundamentalGroup (N) [Unique N] :
     HomotopyGroup N X x ≃* FundamentalGroup X x where
   toEquiv := homotopyGroupEquivFundamentalGroupOfUnique N
   map_mul' a b := Quotient.inductionOn₂ a b fun p q => by
@@ -616,7 +616,7 @@ def homotopyGroupOfUniqueMulEquivFundamentalGroup (N) [Unique N] :
     simp [genLoopEquivOfUnique_transAt]
 
 /-- The first homotopy group at `x` is isomorphic to the fundamental group. -/
-def pi1MulEquivFundamentalGroup :
+private def pi1MulEquivFundamentalGroup :
     π_ 1 X x ≃* FundamentalGroup X x where
   toEquiv := HomotopyGroup.pi1EquivFundamentalGroup (X := X) (x := x)
   map_mul' a b := Quotient.inductionOn₂ a b fun p q => by
