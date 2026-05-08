@@ -86,7 +86,7 @@ and return the resulting goals.
 With `symm = true`, reverses the equality in `v`, and uses `Eq.mpr v e` instead.
 With `depth = some n`, calls `MVarId.congrN! n` instead, with `n` as the max recursion depth.
 -/
-def Lean.MVarId.convert (e : Expr) (symm : Bool)
+private def Lean.MVarId.convert (e : Expr) (symm : Bool)
     (depth : Option Nat := none) (config : Congr!.Config := {})
     (patterns : List (TSyntax `rintroPat) := []) (g : MVarId) :
     MetaM (List MVarId) := g.withContext do
@@ -107,7 +107,7 @@ With `symm = true`, reverses the equality,
 changing the goal to prove `typeNew` is equal to `typeOld`.
 With `depth = some n`, calls `MVarId.congrN! n` instead, with `n` as the max recursion depth.
 -/
-def Lean.MVarId.convertLocalDecl (g : MVarId) (fvarId : FVarId) (typeNew : Expr) (symm : Bool)
+private def Lean.MVarId.convertLocalDecl (g : MVarId) (fvarId : FVarId) (typeNew : Expr) (symm : Bool)
     (depth : Option Nat := none) (config : Congr!.Config := {})
     (patterns : List (TSyntax `rintroPat) := []) :
     MetaM (MVarId × List MVarId) := g.withContext do
@@ -177,7 +177,7 @@ syntax (name := convert) "convert" Lean.Parser.Tactic.optConfig " ←"? ppSpace 
 Elaborates `term` ensuring the expected type, allowing stuck metavariables.
 Returns stuck metavariables as additional goals.
 -/
-def elabTermForConvert (term : Syntax) (expectedType? : Option Expr) :
+private def elabTermForConvert (term : Syntax) (expectedType? : Option Expr) :
     TacticM (Expr × List MVarId) := do
   withCollectingNewGoalsFrom (parentTag := ← getMainTag) (tagSuffix := `convert)
       (allowNaturalHoles := true) do
