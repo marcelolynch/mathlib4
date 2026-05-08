@@ -109,7 +109,7 @@ def getFunProp? (e : Expr) : MetaM (Option (FunPropDecl × Expr)) := do
     return (decl,f)
 
 /-- Is `e` a function property statement? -/
-def isFunProp (e : Expr) : MetaM Bool := do return (← getFunProp? e).isSome
+private def isFunProp (e : Expr) : MetaM Bool := do return (← getFunProp? e).isSome
 
 /-- Is `e` a `fun_prop` goal? For example `∀ y z, Continuous fun x ↦ f x y z` -/
 def isFunPropGoal (e : Expr) : MetaM Bool := do
@@ -117,14 +117,14 @@ def isFunPropGoal (e : Expr) : MetaM Bool := do
   return (← getFunProp? b).isSome
 
 /-- Returns function property declaration from `e = P f`. -/
-def getFunPropDecl? (e : Expr) : MetaM (Option FunPropDecl) := do
+private def getFunPropDecl? (e : Expr) : MetaM (Option FunPropDecl) := do
   match ← getFunProp? e with
   | some (decl, _) => return decl
   | none => return none
 
 
 /-- Returns function `f` from `e = P f` and `P` is function property. -/
-def getFunPropFun? (e : Expr) : MetaM (Option Expr) := do
+private def getFunPropFun? (e : Expr) : MetaM (Option Expr) := do
   match ← getFunProp? e with
   | some (_, f) => return f
   | none => return none
