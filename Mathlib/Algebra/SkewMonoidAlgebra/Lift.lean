@@ -223,7 +223,7 @@ variable {V : Type*} [AddCommMonoid V] [Module k V] [Module (SkewMonoidAlgebra k
 set_option linter.style.whitespace false in -- manual alignment is not recognised
 /-- A submodule over `k` which is stable under scalar multiplication by elements of `G` is a
 submodule over `SkewMonoidAlgebra k G` -/
-def submoduleOfSmulMem (W : Submodule k V) (h : ∀ (g : G) (v : V), v ∈ W → of k G g • v ∈ W) :
+private def submoduleOfSmulMem (W : Submodule k V) (h : ∀ (g : G) (v : V), v ∈ W → of k G g • v ∈ W) :
     Submodule (SkewMonoidAlgebra k G) V where
   carrier   := W
   zero_mem' := W.zero_mem'

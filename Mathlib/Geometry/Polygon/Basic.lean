@@ -69,7 +69,7 @@ theorem edgeSet_eq_image_edgePath [PartialOrder R] (poly : Polygon P n) (i : Fin
 
 variable (R) in
 /-- The boundary of the polygon is the union of all its edges. -/
-def boundary [PartialOrder R] (poly : Polygon P n) : Set P :=
+private def boundary [PartialOrder R] (poly : Polygon P n) : Set P :=
   ⋃ i, poly.edgeSet R i
 
 variable (R) in

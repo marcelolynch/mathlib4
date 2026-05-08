@@ -220,7 +220,7 @@ theorem projective_of_map_projective (adj : F ⊣ G) [F.Full] [F.Faithful] (P : 
 
 /-- Given an adjunction `F ⊣ G` such that `G` preserves epis, `F` maps a projective presentation of
 `X` to a projective presentation of `F(X)`. -/
-def mapProjectivePresentation (adj : F ⊣ G) [G.PreservesEpimorphisms] (X : C)
+private def mapProjectivePresentation (adj : F ⊣ G) [G.PreservesEpimorphisms] (X : C)
     (Y : ProjectivePresentation X) : ProjectivePresentation (F.obj X) where
   p := F.obj Y.p
   projective := adj.map_projective _ Y.projective

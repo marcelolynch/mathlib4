@@ -549,7 +549,7 @@ attribute [local instance] IsCofiltered.isConnected
 /-- (Implementation)
 The limit cone restricted to `Over i'` is still a limit because the diagram is cofiltered.
 See the section docstring. -/
-def hc' (j : A.𝒰D.I₀) : IsLimit (A.c' j) :=
+private def hc' (j : A.𝒰D.I₀) : IsLimit (A.c' j) :=
   isLimitOfPreserves (Over.pullback (A.𝒰D.f j) ⋙ Over.forget _) (Over.isLimitConePost _ A.hc)
 
 variable [∀ i, IsAffineHom (A.c.π.app i)]

@@ -607,7 +607,7 @@ theorem top_prod_top : (⊤ : NonUnitalSubsemiring R).prod (⊤ : NonUnitalSubse
   (top_prod _).trans <| comap_top _
 
 /-- Product of non-unital subsemirings is isomorphic to their product as semigroups. -/
-def prodEquiv (s : NonUnitalSubsemiring R) (t : NonUnitalSubsemiring S) : s.prod t ≃+* s × t :=
+private def prodEquiv (s : NonUnitalSubsemiring R) (t : NonUnitalSubsemiring S) : s.prod t ≃+* s × t :=
   { Equiv.Set.prod (s : Set R) (t : Set S) with
     map_mul' := fun _ _ => rfl
     map_add' := fun _ _ => rfl }
@@ -730,7 +730,7 @@ variable [NonUnitalNonAssocSemiring S] {F : Type*} [FunLike F R S] [NonUnitalRin
 
 /-- Makes the identity isomorphism from a proof two non-unital subsemirings of a multiplicative
 monoid are equal. -/
-def nonUnitalSubsemiringCongr (h : s = t) : s ≃+* t :=
+private def nonUnitalSubsemiringCongr (h : s = t) : s ≃+* t :=
   { Equiv.setCongr <| congr_arg _ h with
     map_mul' := fun _ _ => rfl
     map_add' := fun _ _ => rfl }

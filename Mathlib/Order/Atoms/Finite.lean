@@ -53,11 +53,11 @@ open scoped _root_.IsSimpleOrder
 
 variable [LE α] [BoundedOrder α] [IsSimpleOrder α] [DecidableEq α]
 
-theorem univ : (Finset.univ : Finset α) = {⊤, ⊥} := by
+private theorem univ : (Finset.univ : Finset α) = {⊤, ⊥} := by
   ext
   simpa using (eq_bot_or_eq_top _).symm
 
-theorem card : Fintype.card α = 2 :=
+private theorem card : Fintype.card α = 2 :=
   (Fintype.ofEquiv_card _).trans Fintype.card_bool
 
 end IsSimpleOrder

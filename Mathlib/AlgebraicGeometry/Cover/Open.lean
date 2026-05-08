@@ -216,7 +216,7 @@ def affineOpenCoverOfSpanRangeEqTop {R : CommRingCat} {ι : Type*} (s : ι → R
     exact (eq_iff_iff.mp congr(x ∈ $this)).mpr H.choose_spec
 
 /-- Given any open cover `𝓤`, this is an affine open cover which refines it. -/
-def OpenCover.fromAffineRefinement {X : Scheme.{u}} (𝓤 : X.OpenCover) :
+private def OpenCover.fromAffineRefinement {X : Scheme.{u}} (𝓤 : X.OpenCover) :
     𝓤.affineRefinement.openCover ⟶ 𝓤 where
   s₀ j := j.fst
   h₀ j := (𝓤.X j.fst).affineCover.f _

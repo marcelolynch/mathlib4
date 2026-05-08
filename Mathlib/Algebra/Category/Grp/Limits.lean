@@ -480,7 +480,7 @@ theorem kernelIsoKer_inv_comp_ι {G H : AddCommGrpCat.{u}} (f : G ⟶ H) :
 /-- The categorical kernel inclusion for `f : G ⟶ H`, as an object over `G`,
 agrees with the `AddSubgroup.subtype` map.
 -/
-def kernelIsoKerOver {G H : AddCommGrpCat.{u}} (f : G ⟶ H) :
+private def kernelIsoKerOver {G H : AddCommGrpCat.{u}} (f : G ⟶ H) :
     Over.mk (kernel.ι f) ≅ @Over.mk _ _ G (AddCommGrpCat.of f.hom.ker)
       (ofHom (AddSubgroup.subtype f.hom.ker)) :=
   Over.isoMk (kernelIsoKer f)

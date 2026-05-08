@@ -293,7 +293,7 @@ theorem eqvGen_mono {r s : α → α → Prop} (h : ∀ x y, r x y → s x y) :
 
 /-- There is a Galois insertion of equivalence relations on α into binary relations
 on α, with equivalence closure the lower adjoint. -/
-def gi : @GaloisInsertion (α → α → Prop) (Setoid α) _ _ EqvGen.setoid (⇑) where
+private def gi : @GaloisInsertion (α → α → Prop) (Setoid α) _ _ EqvGen.setoid (⇑) where
   choice r _ := EqvGen.setoid r
   gc _ s := ⟨fun H _ _ h => H <| EqvGen.rel _ _ h, fun H => eqvGen_of_setoid s ▸ eqvGen_mono H⟩
   le_l_u x := (eqvGen_of_setoid x).symm ▸ le_refl x
@@ -314,7 +314,7 @@ theorem ker_iff_mem_preimage {f : α → β} {x y} : ker f x y ↔ x ∈ f ⁻¹
 
 /-- Equivalence between functions `α → β` such that `r x y → f x = f y` and functions
 `quotient r → β`. -/
-def liftEquiv (r : Setoid α) : { f : α → β // r ≤ ker f } ≃ (Quotient r → β) where
+private def liftEquiv (r : Setoid α) : { f : α → β // r ≤ ker f } ≃ (Quotient r → β) where
   toFun f := Quotient.lift (f : α → β) f.2
   invFun f := ⟨f ∘ Quotient.mk'', fun x y h => by simp [ker_def, Quotient.sound' h]⟩
   right_inv _ := funext fun x => Quotient.inductionOn' x fun _ => rfl
@@ -421,7 +421,7 @@ theorem comap_eq {f : α → β} {r : Setoid β} : comap f r = ker (@Quotient.mk
   ext fun x y => show _ ↔ ⟦_⟧ = ⟦_⟧ by rw [Quotient.eq]; rfl
 
 /-- The second isomorphism theorem for sets. -/
-noncomputable def comapQuotientEquiv (f : α → β) (r : Setoid β) :
+private noncomputable def comapQuotientEquiv (f : α → β) (r : Setoid β) :
     Quotient (comap f r) ≃ Set.range (@Quotient.mk'' _ r ∘ f) :=
   (Quotient.congrRight <| Setoid.ext_iff.1 comap_eq).trans <| quotientKerEquivRange <|
     Quotient.mk'' ∘ f
@@ -448,7 +448,7 @@ open Quotient
 
 /-- Given an equivalence relation `r` on `α`, the order-preserving bijection between the set of
 equivalence relations containing `r` and the equivalence relations on the quotient of `α` by `r`. -/
-def correspondence (r : Setoid α) : { s // r ≤ s } ≃o Setoid (Quotient r) where
+private def correspondence (r : Setoid α) : { s // r ≤ s } ≃o Setoid (Quotient r) where
   toFun s := ⟨Quotient.lift₂ s.1.1 fun _ _ _ _ h₁ h₂ ↦ Eq.propIntro
       (fun h ↦ s.1.trans' (s.1.trans' (s.1.symm' (s.2 h₁)) h) (s.2 h₂))
       (fun h ↦ s.1.trans' (s.1.trans' (s.2 h₁) h) (s.1.symm' (s.2 h₂))),

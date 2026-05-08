@@ -279,7 +279,7 @@ theorem card_eq_zero_iff : card α = 0 ↔ IsEmpty α := by
 alias card_of_isEmpty := card_eq_zero
 
 /-- A `Fintype` with cardinality zero is equivalent to `Empty`. -/
-def cardEqZeroEquivEquivEmpty : card α = 0 ≃ (α ≃ Empty) :=
+private def cardEqZeroEquivEquivEmpty : card α = 0 ≃ (α ≃ Empty) :=
   (Equiv.ofIff card_eq_zero_iff).trans (Equiv.equivEmptyEquiv α).symm
 
 theorem card_pos_iff : 0 < card α ↔ Nonempty α :=
@@ -461,7 +461,7 @@ section Trunc
 
 /-- A `Fintype` with positive cardinality constructively contains an element.
 -/
-def truncOfCardPos {α} [Fintype α] (h : 0 < Fintype.card α) : Trunc α :=
+private def truncOfCardPos {α} [Fintype α] (h : 0 < Fintype.card α) : Trunc α :=
   letI := Fintype.card_pos_iff.mp h
   truncOfNonemptyFintype α
 

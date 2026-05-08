@@ -520,7 +520,7 @@ section NonAssocSemiring
 variable [NonAssocSemiring α]
 
 /-- The canonical isomorphism from the center of a (non-associative) semiring onto its centroid. -/
-def centerIsoCentroid : Subsemiring.center α ≃+* CentroidHom α :=
+private def centerIsoCentroid : Subsemiring.center α ≃+* CentroidHom α :=
   { centerToCentroid with
     invFun := fun T ↦
       ⟨T 1, by constructor <;> simp [commute_iff_eq, ← map_mul_left, ← map_mul_right]⟩

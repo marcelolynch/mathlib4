@@ -45,7 +45,7 @@ noncomputable abbrev tensor : CokernelCofork (coprod.desc (f₁ ▷ Y₂) (Y₁ 
 `f₂ : X₂ ⟶ Y₂`, if the cokernels of `f₁` and `f₂` are preserves by suitable
 tensor products, then `c₁.pt ⊗ c₂.pt` is the cokernel of the
 morphism `(X₁ ⊗ Y₂) ⨿ (Y₁ ⊗ X₂) ⟶ Y₁ ⊗ Y₂`. -/
-noncomputable def isColimitTensor
+private noncomputable def isColimitTensor
     [PreservesColimit (parallelPair f₂ 0) (tensorLeft c₁.pt)]
     [PreservesColimit (parallelPair f₁ 0) (tensorRight Y₂)]
     [PreservesColimit (parallelPair f₁ 0) (tensorRight X₂)] :

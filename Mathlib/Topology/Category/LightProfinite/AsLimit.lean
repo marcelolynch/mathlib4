@@ -75,7 +75,7 @@ def asLimit : IsLimit S.asLimitCone := S.asLimitAux.ofIsoLimit <|
     (Cone.forget _).mapIso S.isoMapCone) (fun _ ↦ by rw [← @Iso.inv_comp_eq]; rfl)
 
 /-- A bundled version of `S.asLimitCone` and `S.asLimit`. -/
-def lim : Limits.LimitCone S.diagram := ⟨S.asLimitCone, S.asLimit⟩
+private def lim : Limits.LimitCone S.diagram := ⟨S.asLimitCone, S.asLimit⟩
 
 /-- The projection from `S` to the `n`th component of `S.diagram`. -/
 abbrev proj (n : ℕ) : S ⟶ S.diagram.obj ⟨n⟩ := S.asLimitCone.π.app ⟨n⟩

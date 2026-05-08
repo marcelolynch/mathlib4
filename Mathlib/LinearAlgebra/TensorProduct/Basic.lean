@@ -99,7 +99,7 @@ def liftAux : M ⊗[R] N →+ P₂ :=
   liftAddHom (LinearMap.toAddMonoidHom'.comp <| f'.toAddMonoidHom)
     fun r m n => by dsimp; rw [LinearMap.map_smulₛₗ₂, map_smulₛₗ]
 
-theorem liftAux_tmul (m n) : liftAux f' (m ⊗ₜ n) = f' m n :=
+private theorem liftAux_tmul (m n) : liftAux f' (m ⊗ₜ n) = f' m n :=
   rfl
 
 variable {f f'}

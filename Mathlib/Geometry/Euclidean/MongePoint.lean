@@ -273,7 +273,7 @@ theorem mongePlane_def {n : ℕ} (s : Simplex ℝ P (n + 2)) (i₁ i₂ : Fin (n
         affineSpan ℝ (Set.range s.points) :=
   rfl
 
-lemma mongePlane_reindex {m n : ℕ} (s : Simplex ℝ P (n + 2)) (e : Fin (n + 3) ≃ Fin (m + 3))
+private lemma mongePlane_reindex {m n : ℕ} (s : Simplex ℝ P (n + 2)) (e : Fin (n + 3) ≃ Fin (m + 3))
     (i₁ i₂ : Fin (m + 3)) :
     (s.reindex e).mongePlane i₁ i₂ = s.mongePlane (e.symm i₁) (e.symm i₂) := by
   obtain rfl : n = m := by simpa using Fintype.card_eq.2 ⟨e⟩

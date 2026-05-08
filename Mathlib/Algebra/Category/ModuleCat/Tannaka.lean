@@ -29,7 +29,7 @@ attribute [local ext] End.ext in
 A ring `R` is equivalent to
 the endomorphisms of the additive forgetful functor `Module R ⥤ AddCommGroup`.
 -/
-def ringEquivEndForget₂ (R : Type u) [Ring R] :
+private def ringEquivEndForget₂ (R : Type u) [Ring R] :
     R ≃+* End (AdditiveFunctor.of (forget₂ (ModuleCat.{u} R) AddCommGrpCat.{u})) where
   toFun r :=
     ObjectProperty.homMk

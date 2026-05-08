@@ -113,7 +113,7 @@ def typeToPointed : Type u ⥤ Pointed.{u} where
   map_comp _ _ := Pointed.Hom.ext <| by simp; rfl
 
 /-- `typeToPointed` is the free functor. -/
-def typeToPointedForgetAdjunction : typeToPointed ⊣ forget Pointed :=
+private def typeToPointedForgetAdjunction : typeToPointed ⊣ forget Pointed :=
   Adjunction.mkOfHomEquiv {
     homEquiv := fun X Y =>
         { toFun := fun f => ↾(f.toFun ∘ Option.some)

@@ -390,7 +390,7 @@ instance nerveFunctor.full : nerveFunctor.{u, u}.Full :=
   Functor.Full.of_iso Nerve.cosk₂Iso.symm
 
 /-- The nerve functor is both full and faithful and thus is fully faithful. -/
-noncomputable def nerveFunctor.fullyfaithful : nerveFunctor.FullyFaithful :=
+private noncomputable def nerveFunctor.fullyfaithful : nerveFunctor.FullyFaithful :=
   Functor.FullyFaithful.ofFullyFaithful _
 
 instance nerveAdjunction.isIso_counit : IsIso nerveAdjunction.counit :=

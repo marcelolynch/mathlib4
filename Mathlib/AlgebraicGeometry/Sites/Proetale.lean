@@ -117,7 +117,7 @@ protected def forget : S.ProEt ⥤ Over S :=
   MorphismProperty.Over.forget @WeaklyEtale ⊤ S
 
 /-- The forgetful functor from the pro-étale site of `S` to schemes over `S` is fully faithful. -/
-def forgetFullyFaithful : (ProEt.forget S).FullyFaithful :=
+private def forgetFullyFaithful : (ProEt.forget S).FullyFaithful :=
   MorphismProperty.Comma.forgetFullyFaithful _ _ _
 
 instance : (ProEt.forget S).Full :=
@@ -161,7 +161,7 @@ instance : (topology S).Subcanonical :=
   GrothendieckTopology.subcanonical_of_full_of_faithful (ProEt.forget S) _ (proetaleTopology.over S)
 
 /-- If `S` is the empty scheme, the pro-étale site over `S` is a point. -/
-noncomputable def equivOfIsEmpty [IsEmpty S] : S.ProEt ≌ Discrete PUnit :=
+private noncomputable def equivOfIsEmpty [IsEmpty S] : S.ProEt ≌ Discrete PUnit :=
   MorphismProperty.overEquivOfIsInitial _ _ _ isInitialOfIsEmpty
 
 variable {S} in

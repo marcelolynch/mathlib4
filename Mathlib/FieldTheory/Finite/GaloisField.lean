@@ -145,7 +145,7 @@ theorem splits_zmod_X_pow_sub_X : Splits (X ^ p - X : (ZMod p)[X]) := by
   rw [splits_iff_card_roots, h1, ← Finset.card_def, Finset.card_univ, h2, ZMod.card]
 
 /-- A Galois field with exponent 1 is equivalent to `ZMod` -/
-def equivZmodP : GaloisField p 1 ≃ₐ[ZMod p] ZMod p :=
+private def equivZmodP : GaloisField p 1 ≃ₐ[ZMod p] ZMod p :=
   have h : (X ^ p ^ 1 : (ZMod p)[X]) = X ^ Fintype.card (ZMod p) := by rw [pow_one, ZMod.card p]
   have inst : IsSplittingField (ZMod p) (ZMod p) (X ^ p ^ 1 - X) := by rw [h]; infer_instance
   (@IsSplittingField.algEquiv _ (ZMod p) _ _ _ (X ^ p ^ 1 - X : (ZMod p)[X]) inst).symm
@@ -206,7 +206,7 @@ instance (priority := 100) {K K' : Type*} [Field K] [Field K'] [Finite K'] [Alge
       hn.symm ▸ dvd_pow_self p n.ne_zero))
 
 /-- Any finite field is (possibly noncanonically) isomorphic to some Galois field. -/
-def algEquivGaloisField (h : Nat.card K = p ^ n) : K ≃ₐ[ZMod p] GaloisField p n :=
+private def algEquivGaloisField (h : Nat.card K = p ^ n) : K ≃ₐ[ZMod p] GaloisField p n :=
   haveI := FiniteField.isSplittingField_of_nat_card_eq _ _ h
   IsSplittingField.algEquiv _ _
 
@@ -272,7 +272,7 @@ def algEquivOfCardEq (p : ℕ) [h_prime : Fact p.Prime] [Algebra (ZMod p) K] [Al
 
 /-- Uniqueness of finite fields:
   Any two finite fields of the same cardinality are (possibly noncanonically) isomorphic -/
-def ringEquivOfCardEq (hKK' : Fintype.card K = Fintype.card K') : K ≃+* K' := by
+private def ringEquivOfCardEq (hKK' : Fintype.card K = Fintype.card K') : K ≃+* K' := by
   choose p _char_p_K using CharP.exists K
   choose p' _char_p'_K' using CharP.exists K'
   choose n hp hK using FiniteField.card K p

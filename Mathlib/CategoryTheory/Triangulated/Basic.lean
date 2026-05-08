@@ -388,7 +388,7 @@ def productTriangle.lift {T' : Triangle C} (φ : ∀ j, T' ⟶ T j) :
 set_option backward.isDefEq.respectTransparency false in
 /-- The triangle `productTriangle T` satisfies the universal property of the categorical
 product of the triangles `T`. -/
-def productTriangle.isLimitFan : IsLimit (productTriangle.fan T) :=
+private def productTriangle.isLimitFan : IsLimit (productTriangle.fan T) :=
   mkFanLimit _ (fun s => productTriangle.lift T s.proj) (fun s j => by cat_disch) (by
     intro s m hm
     ext1

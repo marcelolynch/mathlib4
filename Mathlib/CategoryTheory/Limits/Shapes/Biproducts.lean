@@ -410,7 +410,7 @@ variable {C}
 
 /-- The isomorphism between the specified limit and the specified colimit for
 a functor with a bilimit. -/
-def biproductIso (F : J → C) [HasBiproduct F] : Limits.piObj F ≅ Limits.sigmaObj F :=
+private def biproductIso (F : J → C) [HasBiproduct F] : Limits.piObj F ≅ Limits.sigmaObj F :=
   (IsLimit.conePointUniqueUpToIso (limit.isLimit _) (biproduct.isLimit F)).trans <|
     IsColimit.coconePointUniqueUpToIso (biproduct.isColimit F) (colimit.isColimit _)
 

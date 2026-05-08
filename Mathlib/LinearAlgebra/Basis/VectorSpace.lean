@@ -73,7 +73,7 @@ def sumExtendIndex (hs : LinearIndependent K v) : Set V :=
   LinearIndepOn.extend hs.linearIndepOn_id (subset_univ _) \ range v
 
 /-- If `v` is a linear independent family of vectors, extend it to a basis indexed by a sum type. -/
-noncomputable def sumExtend (hs : LinearIndependent K v) : Basis (ι ⊕ sumExtendIndex hs) K V :=
+private noncomputable def sumExtend (hs : LinearIndependent K v) : Basis (ι ⊕ sumExtendIndex hs) K V :=
   let s := Set.range v
   let e : ι ≃ s := Equiv.ofInjective v hs.injective
   let b := hs.linearIndepOn_id.extend (subset_univ (Set.range v))

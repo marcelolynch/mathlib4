@@ -731,11 +731,11 @@ theorem isCauSeq_im (f : CauSeq K norm) : IsCauSeq abs fun n => im (f n) := fun 
     lt_of_le_of_lt (by simpa only [map_sub] using abs_im_le_norm (f j - f i)) (H _ ij)
 
 /-- The real part of a K Cauchy sequence, as a real Cauchy sequence. -/
-noncomputable def cauSeqRe (f : CauSeq K norm) : CauSeq ℝ abs :=
+private noncomputable def cauSeqRe (f : CauSeq K norm) : CauSeq ℝ abs :=
   ⟨_, isCauSeq_re f⟩
 
 /-- The imaginary part of a K Cauchy sequence, as a real Cauchy sequence. -/
-noncomputable def cauSeqIm (f : CauSeq K norm) : CauSeq ℝ abs :=
+private noncomputable def cauSeqIm (f : CauSeq K norm) : CauSeq ℝ abs :=
   ⟨_, isCauSeq_im f⟩
 
 theorem isCauSeq_norm {f : ℕ → K} (hf : IsCauSeq norm f) : IsCauSeq abs (norm ∘ f) := fun ε ε0 =>

@@ -76,7 +76,7 @@ instance : Repr XgcdType where
                 [{repr (g.ap + 1)}, {repr (g.bp + 1)}]]"
 
 /-- Another `mk` using ℕ and ℕ+ -/
-def mk' (w : ℕ+) (x : ℕ) (y : ℕ) (z : ℕ+) (a : ℕ+) (b : ℕ+) : XgcdType :=
+private def mk' (w : ℕ+) (x : ℕ) (y : ℕ) (z : ℕ+) (a : ℕ+) (b : ℕ+) : XgcdType :=
   mk w.val.pred x y z.val.pred a.val.pred b.val.pred
 
 /-- `w = wp + 1` -/

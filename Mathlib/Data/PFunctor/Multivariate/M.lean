@@ -173,7 +173,7 @@ def M.dest {α : TypeVec n} (x : P.M α) : P (α ::: P.M α) :=
   M.dest' P (Sigma.eta <| PFunctor.M.dest x.fst).symm x.snd
 
 /-- Constructor for M-types -/
-def M.mk {α : TypeVec n} : P (α.append1 (P.M α)) → P.M α :=
+private def M.mk {α : TypeVec n} : P (α.append1 (P.M α)) → P.M α :=
   M.corec _ fun i => appendFun id (M.dest P) <$$> i
 
 theorem M.dest'_eq_dest' {α : TypeVec n} {x : P.last.M} {a₁ : P.A}

@@ -308,7 +308,7 @@ end simp
 end Multiseries
 
 /-- Convert a real number to a multiseries in an empty basis. -/
-def ofReal (c : ℝ) : MultiseriesExpansion [] := c
+private def ofReal (c : ℝ) : MultiseriesExpansion [] := c
 
 /-- Convert a multiseries in an empty basis to a real number. -/
 def toReal (ms : MultiseriesExpansion []) : ℝ := ms

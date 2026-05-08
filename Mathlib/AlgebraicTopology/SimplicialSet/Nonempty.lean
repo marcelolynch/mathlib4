@@ -52,7 +52,7 @@ lemma notNonempty_iff_hasDimensionLT_zero :
 
 variable {X} in
 /-- If a simplicial set is not nonempty, it is an initial object. -/
-def isInitialOfNotNonempty (hX : ¬ X.Nonempty) : IsInitial X := by
+private def isInitialOfNotNonempty (hX : ¬ X.Nonempty) : IsInitial X := by
   simp only [not_nonempty_iff] at hX
   have (n : SimplexCategoryᵒᵖ) : IsEmpty (X.obj n) :=
     Function.isEmpty (X.map (⦋0⦌.const n.unop 0).op)

@@ -131,7 +131,7 @@ def imageOpOp : Opposite.op (image f) ≅ image f.op :=
   imageUnopOp f.op
 
 /-- The image of `f.op` is the opposite of the image of `f`. -/
-def imageOpUnop : (image f.op).unop ≅ image f :=
+private def imageOpUnop : (image f.op).unop ≅ image f :=
   (imageUnopOp f.op).unop
 
 /-- The image of `g` is the opposite of the image of `g.unop.` -/

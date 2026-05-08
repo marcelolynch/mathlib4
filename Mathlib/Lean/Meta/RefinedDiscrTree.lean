@@ -146,7 +146,7 @@ def findModuleMatches (moduleRef : ModuleDiscrTreeRef α) (ty : Expr) : MetaM (M
 * `capacityPerTask` is the initial capacity of the `HashMap` at the root of the
   `RefinedDiscrTree` for each new task.
 -/
-def findMatches (ext : EnvExtension (IO.Ref (Option (RefinedDiscrTree α))))
+private def findMatches (ext : EnvExtension (IO.Ref (Option (RefinedDiscrTree α))))
     (addEntry : Name → ConstantInfo → MetaM (List (α × List (Key × LazyEntry))))
     (ty : Expr) (constantsPerTask : Nat := 1000) (capacityPerTask : Nat := 128) :
     MetaM (MatchResult α × MatchResult α) := do

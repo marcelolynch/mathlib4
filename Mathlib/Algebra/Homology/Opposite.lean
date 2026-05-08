@@ -407,13 +407,13 @@ def cyclesOpNatIso :
     (fun _ ↦ cyclesOpIso_hom_naturality _ _)
 
 /-- The natural isomorphism `K.op.opcycles i ≅ op (K.cycles i)`. -/
-def opcyclesOpNatIso :
+private def opcyclesOpNatIso :
     opFunctor V c ⋙ opcyclesFunctor Vᵒᵖ c.symm i ≅ (cyclesFunctor V c i).op :=
   NatIso.ofComponents (fun K ↦ (unop K).opcyclesOpIso i)
     (fun _ ↦ opcyclesOpIso_hom_naturality _ _)
 
 /-- The natural isomorphism `K.op.homology i ≅ op (K.homology i)`. -/
-def homologyOpNatIso :
+private def homologyOpNatIso :
     opFunctor V c ⋙ homologyFunctor Vᵒᵖ c.symm i ≅ (homologyFunctor V c i).op :=
   NatIso.ofComponents (fun K ↦ (unop K).homologyOp i)
     (fun _ ↦ homologyOp_hom_naturality _ _)

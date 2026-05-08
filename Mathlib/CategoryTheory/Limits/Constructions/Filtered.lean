@@ -227,7 +227,7 @@ def finiteSubproductsCone (f : α → C) [HasProduct f] :
 
 set_option backward.isDefEq.respectTransparency false in
 /-- The cone `finiteSubproductsCone` is a limit cone. -/
-def isLimitFiniteSubproductsCone (f : α → C) [HasLimitsOfShape (Finset (Discrete α))ᵒᵖ C]
+private def isLimitFiniteSubproductsCone (f : α → C) [HasLimitsOfShape (Finset (Discrete α))ᵒᵖ C]
     [HasProduct f] : IsLimit (finiteSubproductsCone f) :=
   IsLimit.ofIsoLimit (limit.isLimit _)
     (Cone.ext (IsLimit.conePointUniqueUpToIso

@@ -124,23 +124,23 @@ instance (N N') [AddCommMonoid N] [Module R N] [AddCommMonoid N'] [Module R N'] 
 
 /-- If `A` is a localization of `R`, tensoring two `A`-modules over `A` is the same as
 tensoring them over `R`. -/
-noncomputable def moduleTensorEquiv : M₁ ⊗[A] M₂ ≃ₗ[A] M₁ ⊗[R] M₂ :=
+private noncomputable def moduleTensorEquiv : M₁ ⊗[A] M₂ ≃ₗ[A] M₁ ⊗[R] M₂ :=
   have := tensorProduct_compatibleSMul S A M₁ M₂
   equivOfCompatibleSMul R A A M₁ M₂
 
 /-- If `A` is a localization of `R`, tensoring an `A`-module with `A` over `R` does nothing. -/
-noncomputable def moduleLid : A ⊗[R] M₁ ≃ₗ[A] M₁ :=
+private noncomputable def moduleLid : A ⊗[R] M₁ ≃ₗ[A] M₁ :=
   have := tensorProduct_compatibleSMul S A A M₁
   (equivOfCompatibleSMul R A A A M₁).symm ≪≫ₗ TensorProduct.lid _ _
 
 /-- If `A` is a localization of `R`, tensoring two `A`-algebras over `A` is the same as
 tensoring them over `R`. -/
-noncomputable def algebraTensorEquiv : B ⊗[A] C ≃ₐ[A] B ⊗[R] C :=
+private noncomputable def algebraTensorEquiv : B ⊗[A] C ≃ₐ[A] B ⊗[R] C :=
   have := tensorProduct_compatibleSMul S A B C
   Algebra.TensorProduct.equivOfCompatibleSMul R A A B C
 
 /-- If `A` is a localization of `R`, tensoring an `A`-algebra with `A` over `R` does nothing. -/
-noncomputable def algebraLid : A ⊗[R] B ≃ₐ[A] B :=
+private noncomputable def algebraLid : A ⊗[R] B ≃ₐ[A] B :=
   have := tensorProduct_compatibleSMul S A A B
   Algebra.TensorProduct.lidOfCompatibleSMul R A B
 

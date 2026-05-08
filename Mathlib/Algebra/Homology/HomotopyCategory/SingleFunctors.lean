@@ -142,7 +142,7 @@ noncomputable def singleFunctorsPostcompQuotientIso :
   Iso.refl _
 
 /-- `HomotopyCategory.singleFunctor C n` is induced by `CochainComplex.singleFunctor C n`. -/
-noncomputable def singleFunctorPostcompQuotientIso (n : ℤ) :
+private noncomputable def singleFunctorPostcompQuotientIso (n : ℤ) :
     singleFunctor C n ≅ CochainComplex.singleFunctor C n ⋙ quotient _ _ :=
   (SingleFunctors.evaluation _ _ n).mapIso (singleFunctorsPostcompQuotientIso C)
 

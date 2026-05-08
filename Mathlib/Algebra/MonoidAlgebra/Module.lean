@@ -257,7 +257,7 @@ variable [Module k V] [Module k[G] V] [IsScalarTower k k[G] V]
 set_option backward.isDefEq.respectTransparency false in
 /-- A submodule over `k` which is stable under scalar multiplication by elements of `G` is a
 submodule over `k[G]` -/
-def submoduleOfSMulMem (W : Submodule k V) (h : ∀ (g : G) (v : V), v ∈ W → of k G g • v ∈ W) :
+private def submoduleOfSMulMem (W : Submodule k V) (h : ∀ (g : G) (v : V), v ∈ W → of k G g • v ∈ W) :
     Submodule k[G] V where
   carrier := W
   zero_mem' := W.zero_mem'

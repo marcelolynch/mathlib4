@@ -76,7 +76,7 @@ noncomputable def sheafificationCompToSheaf :
 
 /-- The sheafification of presheaves of modules commutes with the functor which
 forgets the module structures. -/
-noncomputable def sheafificationCompForgetCompToPresheaf :
+private noncomputable def sheafificationCompForgetCompToPresheaf :
     sheafification.{v} α ⋙ SheafOfModules.forget _ ⋙ toPresheaf _ ≅
       toPresheaf _ ⋙ presheafToSheaf J AddCommGrpCat ⋙ sheafToPresheaf J AddCommGrpCat :=
   Iso.refl _

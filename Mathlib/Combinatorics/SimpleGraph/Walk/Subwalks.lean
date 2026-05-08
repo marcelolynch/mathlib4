@@ -70,7 +70,7 @@ lemma IsSubwalk.trans {u₁ v₁ u₂ v₂ u₃ v₃} {p₁ : G.Walk u₁ v₁} 
   use q₂.append q₁, r₁.append r₂
   simp [append_assoc]
 
-lemma isSubwalk_nil_iff {u v u'} (p : G.Walk u v) :
+private lemma isSubwalk_nil_iff {u v u'} (p : G.Walk u v) :
     p.IsSubwalk (nil : G.Walk u' u') ↔ ∃ (hu : u' = u) (hv : u' = v), p = nil.copy hu hv := by
   cases p with
   | nil =>
@@ -84,12 +84,12 @@ lemma isSubwalk_nil_iff {u v u'} (p : G.Walk u v) :
     · rintro ⟨_ | _, _, h⟩ <;> simp at h
     · rintro ⟨rfl, rfl, ⟨⟩⟩
 
-lemma nil_isSubwalk_iff_exists {u' u v} (q : G.Walk u v) :
+private lemma nil_isSubwalk_iff_exists {u' u v} (q : G.Walk u v) :
     (Walk.nil : G.Walk u' u').IsSubwalk q ↔
       ∃ (ru : G.Walk u u') (rv : G.Walk u' v), q = ru.append rv := by
   simp [IsSubwalk]
 
-lemma length_le_of_isSubwalk {u₁ v₁ u₂ v₂} {q : G.Walk u₁ v₁} {p : G.Walk u₂ v₂}
+private lemma length_le_of_isSubwalk {u₁ v₁ u₂ v₂} {q : G.Walk u₁ v₁} {p : G.Walk u₂ v₂}
     (h : p.IsSubwalk q) : p.length ≤ q.length := by
   grind [IsSubwalk, length_append]
 
@@ -97,7 +97,7 @@ lemma isSubwalk_of_append_left {v w u : V} {p₁ : G.Walk v w} {p₂ : G.Walk w 
     (h : p₃ = p₁.append p₂) : p₁.IsSubwalk p₃ :=
   ⟨nil, p₂, h⟩
 
-lemma isSubwalk_of_append_right {v w u : V} {p₁ : G.Walk v w} {p₂ : G.Walk w u} {p₃ : G.Walk v u}
+private lemma isSubwalk_of_append_right {v w u : V} {p₁ : G.Walk v w} {p₂ : G.Walk w u} {p₃ : G.Walk v u}
     (h : p₃ = p₁.append p₂) : p₂.IsSubwalk p₃ :=
   ⟨p₁, nil, append_nil _ ▸ h⟩
 
@@ -146,7 +146,7 @@ theorem isSubwalk_toWalk_iff_mem_darts (p : G.Walk u v) (h : G.Adj u' v') :
     h.toWalk.IsSubwalk p ↔ ⟨⟨u', v'⟩, h⟩ ∈ p.darts := by
   simp [isSubwalk_iff_darts_isInfix, List.singleton_infix_iff]
 
-theorem isSubwalk_toWalk_adj_iff_mem_darts {d : G.Dart} (p : G.Walk u v) :
+private theorem isSubwalk_toWalk_adj_iff_mem_darts {d : G.Dart} (p : G.Walk u v) :
     d.adj.toWalk.IsSubwalk p ↔ d ∈ p.darts :=
   isSubwalk_toWalk_iff_mem_darts ..
 
@@ -160,7 +160,7 @@ theorem isSubwalk_toWalk_iff_mem_edges {p : G.Walk u v} (h : G.Adj u' v') :
     <;> convert hd using 2
     <;> exact h.symm
 
-theorem infix_support_iff_mem_edges {p : G.Walk u v} :
+private theorem infix_support_iff_mem_edges {p : G.Walk u v} :
     [u', v'] <:+: p.support ∨ [v', u'] <:+: p.support ↔ s(u', v') ∈ p.edges := by
   refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
   · have := h.elim adj_of_infix_support (adj_of_infix_support · |>.symm)
@@ -168,7 +168,7 @@ theorem infix_support_iff_mem_edges {p : G.Walk u v} :
   · have := (isSubwalk_toWalk_iff_mem_edges <| p.adj_of_mem_edges h).mpr h
     simpa [isSubwalk_iff_support_isInfix]
 
-lemma isSubwalk_antisymm {u v} {p₁ p₂ : G.Walk u v} (h₁ : p₁.IsSubwalk p₂) (h₂ : p₂.IsSubwalk p₁) :
+private lemma isSubwalk_antisymm {u v} {p₁ p₂ : G.Walk u v} (h₁ : p₁.IsSubwalk p₂) (h₂ : p₂.IsSubwalk p₁) :
     p₁ = p₂ := by
   rw [isSubwalk_iff_support_isInfix] at h₁ h₂
   exact ext_support <| List.infix_antisymm h₁ h₂
@@ -196,7 +196,7 @@ theorem IsSubwalk.darts_subset {u v u' v' : V} {p₁ : G.Walk u v} {p₂ : G.Wal
     (h : p₂.IsSubwalk p₁) : p₂.darts ⊆ p₁.darts :=
   h.darts_isInfix.subset
 
-protected lemma IsSubwalk.map {u v u' v' : V} {p₁ : G.Walk u v} {p₂ : G.Walk u' v'}
+private protected lemma IsSubwalk.map {u v u' v' : V} {p₁ : G.Walk u v} {p₂ : G.Walk u' v'}
     (h : p₂.IsSubwalk p₁) (f : G →g G') : (p₂.map f).IsSubwalk (p₁.map f) := by
   simp [isSubwalk_iff_support_isInfix, isSubwalk_iff_support_isInfix.mp h, List.IsInfix.map]
 
@@ -205,7 +205,7 @@ protected lemma IsSubwalk.copy {u v u' v' x y x' y'} {p : G.Walk x y} {q : G.Wal
     (p.copy hx hy).IsSubwalk (q.copy hu hv) := by
   simp [isSubwalk_iff_support_isInfix, isSubwalk_iff_support_isInfix.mp h]
 
-protected lemma IsSubwalk.dropLast {u v u' v'} {p : G.Walk u v} {q : G.Walk u' v'}
+private protected lemma IsSubwalk.dropLast {u v u' v'} {p : G.Walk u v} {q : G.Walk u' v'}
     (hpq : p.IsSubwalk q) : p.dropLast.IsSubwalk q :=
   (isSubwalk_take _ _).trans hpq
 

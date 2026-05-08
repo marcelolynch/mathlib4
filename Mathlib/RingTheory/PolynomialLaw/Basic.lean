@@ -241,7 +241,7 @@ theorem one_tmul_ground_apply' {S : Type u} [CommSemiring S] [Algebra R S] (x : 
 
 /-- The map ground assigning a function `M → N` to a polynomial map `f : M →ₚₗ[R] N` as a
   linear map. -/
-def lground : (M →ₚₗ[R] N) →ₗ[R] (M → N) where
+private def lground : (M →ₚₗ[R] N) →ₗ[R] (M → N) where
   toFun := ground
   map_add' x y := by ext m; simp [ground]
   map_smul' r x := by ext m; simp [ground]

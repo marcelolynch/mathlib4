@@ -89,7 +89,7 @@ noncomputable def cechIsoAugmentedCechNerve :
 
 /-- The Cech object of `U : FormalCoproduct C` has an extra degeneracy
 when there is a morphism `T ⟶ U.obj i₀` from the terminal object. -/
-noncomputable def extraDegeneracyCech {i₀ : U.I} (d : T ⟶ U.obj i₀) :
+private noncomputable def extraDegeneracyCech {i₀ : U.I} (d : T ⟶ U.obj i₀) :
     (U.cech.augmentOfIsTerminal (isTerminalIncl _ hT)).ExtraDegeneracy :=
   .ofIso (U.cechIsoAugmentedCechNerve hT).symm
     (Arrow.AugmentedCechNerve.extraDegeneracy _

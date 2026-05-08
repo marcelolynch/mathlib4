@@ -173,7 +173,7 @@ theorem end_mem_tail_support_of_ne {u v : V} (h : u ≠ v) (p : G.Walk u v) : v 
   obtain ⟨_, _, _, rfl⟩ := exists_eq_cons_of_ne h p
   simp
 
-theorem support_subset_support_cons {u v w : V} (p : G.Walk v w) (hadj : G.Adj u v) :
+private theorem support_subset_support_cons {u v w : V} (p : G.Walk v w) (hadj : G.Adj u v) :
     p.support ⊆ (p.cons hadj).support := by
   simp
 
@@ -277,7 +277,7 @@ theorem mem_darts_iff_infix_support {u' v'} {p : G.Walk u v} (h : G.Adj u' v') :
     convert p.darts.getElem_mem (n := i) (by grind)
       <;> grind [fst_darts_getElem, snd_darts_getElem]
 
-theorem mem_darts_iff_fst_snd_infix_support {p : G.Walk u v} {d : G.Dart} :
+private theorem mem_darts_iff_fst_snd_infix_support {p : G.Walk u v} {d : G.Dart} :
     d ∈ p.darts ↔ [d.fst, d.snd] <:+: p.support :=
   mem_darts_iff_infix_support ..
 
@@ -289,11 +289,11 @@ theorem dart_fst_mem_support_of_mem_darts {u v : V} :
     · exact .inl rfl
     · exact .inr (dart_fst_mem_support_of_mem_darts _ hd)
 
-theorem mem_support_iff_exists_mem_edges {u v w : V} {p : G.Walk u v} :
+private theorem mem_support_iff_exists_mem_edges {u v w : V} {p : G.Walk u v} :
     w ∈ p.support ↔ w = v ∨ ∃ e ∈ p.edges, w ∈ e := by
   induction p <;> aesop
 
-theorem darts_nodup_of_support_nodup {u v : V} {p : G.Walk u v} (h : p.support.Nodup) :
+private theorem darts_nodup_of_support_nodup {u v : V} {p : G.Walk u v} (h : p.support.Nodup) :
     p.darts.Nodup := by
   induction p with
   | nil => simp
@@ -301,7 +301,7 @@ theorem darts_nodup_of_support_nodup {u v : V} {p : G.Walk u v} (h : p.support.N
     simp only [darts_cons, support_cons, List.nodup_cons] at h ⊢
     exact ⟨(h.1 <| dart_fst_mem_support_of_mem_darts p' ·), ih h.2⟩
 
-theorem edges_eq_zipWith_support {u v : V} {p : G.Walk u v} :
+private theorem edges_eq_zipWith_support {u v : V} {p : G.Walk u v} :
     p.edges = List.zipWith (s(·, ·)) p.support p.support.tail := by
   induction p with
   | nil => simp
@@ -332,7 +332,7 @@ lemma edgeSet_nil (u : V) : (nil : G.Walk u u).edgeSet = ∅ := by ext; simp
 theorem edgeSet_cons {u v w : V} (h : G.Adj u v) (p : G.Walk v w) :
     (cons h p).edgeSet = insert s(u, v) p.edgeSet := by ext; simp
 
-theorem coe_edges_toFinset [DecidableEq V] {u v : V} (p : G.Walk u v) :
+private theorem coe_edges_toFinset [DecidableEq V] {u v : V} (p : G.Walk u v) :
     (p.edges.toFinset : Set (Sym2 V)) = p.edgeSet := by
   simp [edgeSet]
 
@@ -373,7 +373,7 @@ lemma nil_iff_length_eq {p : G.Walk v w} : p.Nil ↔ p.length = 0 := by
 lemma not_nil_iff_lt_length {p : G.Walk v w} : ¬ p.Nil ↔ 0 < p.length := by
   cases p <;> simp
 
-lemma not_nil_iff {p : G.Walk v w} :
+private lemma not_nil_iff {p : G.Walk v w} :
     ¬ p.Nil ↔ ∃ (u : V) (h : G.Adj v u) (q : G.Walk u w), p = cons h q := by
   cases p <;> simp [*]
 

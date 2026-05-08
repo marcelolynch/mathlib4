@@ -101,7 +101,7 @@ def fromKleisli : Kleisli T ⥤ C where
 set_option backward.isDefEq.respectTransparency false in
 /-- The Kleisli adjunction which gives rise to the monad `(T, η_ T, μ_ T)`.
 cf Lemma 5.2.11 of [Riehl][riehl2017]. -/
-def adj : toKleisli T ⊣ fromKleisli T :=
+private def adj : toKleisli T ⊣ fromKleisli T :=
   Adjunction.mkOfHomEquiv
     { homEquiv X Y := { toFun f := f.of, invFun f := .mk f }
       homEquiv_naturality_left_symm := fun {X} {Y} {Z} f g => by
@@ -110,7 +110,7 @@ def adj : toKleisli T ⊣ fromKleisli T :=
 
 set_option backward.isDefEq.respectTransparency false in
 /-- The composition of the adjunction gives the original functor. -/
-def toKleisliCompFromKleisliIsoSelf : toKleisli T ⋙ fromKleisli T ≅ T :=
+private def toKleisliCompFromKleisliIsoSelf : toKleisli T ⋙ fromKleisli T ≅ T :=
   NatIso.ofComponents fun _ => Iso.refl _
 
 end Adjunction
@@ -173,13 +173,13 @@ def fromCokleisli : Cokleisli U ⥤ C where
 
 set_option backward.isDefEq.respectTransparency false in
 /-- The co-Kleisli adjunction which gives rise to the comonad `(U, ε_ U, δ_ U)`. -/
-def adj : fromCokleisli U ⊣ toCokleisli U :=
+private def adj : fromCokleisli U ⊣ toCokleisli U :=
   Adjunction.mkOfHomEquiv
     { homEquiv X Y := { toFun f := .mk f, invFun f := f.of }
       homEquiv_naturality_right := fun {X} {Y} {_} f g => by cat_disch }
 
 /-- The composition of the adjunction gives the original functor. -/
-def toCokleisliCompFromCokleisliIsoSelf : toCokleisli U ⋙ fromCokleisli U ≅ U :=
+private def toCokleisliCompFromCokleisliIsoSelf : toCokleisli U ⋙ fromCokleisli U ≅ U :=
   NatIso.ofComponents fun _ => Iso.refl _
 
 end Adjunction

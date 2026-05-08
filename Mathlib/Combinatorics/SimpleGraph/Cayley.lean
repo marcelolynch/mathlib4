@@ -77,7 +77,7 @@ theorem mulCayley_monotone : Monotone (mulCayley (M := M) ·) :=
   (mulCayley_gc M).monotone_l
 
 @[to_additive (attr := gcongr)]
-theorem mulCayley_mono {U V : Set M} (hUV : U ⊆ V) : mulCayley U ≤ mulCayley V :=
+private theorem mulCayley_mono {U V : Set M} (hUV : U ⊆ V) : mulCayley U ≤ mulCayley V :=
   mulCayley_monotone hUV
 
 @[to_additive (attr := simp)]
@@ -110,11 +110,11 @@ theorem mulCayley_erase_one : mulCayley (s \ {1}) = mulCayley s := by
   simp +contextual [mulCayley_adj']
 
 @[to_additive (attr := simp)]
-theorem mulCayley_insert_one : mulCayley (insert 1 s) = mulCayley s := by
+private theorem mulCayley_insert_one : mulCayley (insert 1 s) = mulCayley s := by
   simp [← Set.union_singleton, ← mulCayley_erase_one]
 
 @[to_additive (attr := simp)]
-theorem mulCayley_singleton_one : mulCayley ({1} : Set M) = ⊥ := by
+private theorem mulCayley_singleton_one : mulCayley ({1} : Set M) = ⊥ := by
   rw [← mulCayley_erase_one, Set.diff_self, mulCayley_empty]
 
 end MulOneClass
@@ -128,7 +128,7 @@ lemma mulCayley_adj (u v : M) :
     and_or_left, exists_or]
 
 @[to_additive (attr := simp)]
-theorem mulCayley_inv : mulCayley s⁻¹ = mulCayley s := by
+private theorem mulCayley_inv : mulCayley s⁻¹ = mulCayley s := by
   ext u v
   simp [mulCayley_adj, or_comm]
 
@@ -142,7 +142,7 @@ theorem mulCayley_univ : mulCayley (Set.univ : Set M) = ⊤ := by
   simp [mulCayley_adj]
 
 @[to_additive (attr := simp)]
-theorem mulCayley_compl_singleton_one : mulCayley ({1}ᶜ : Set M) = ⊤ := by
+private theorem mulCayley_compl_singleton_one : mulCayley ({1}ᶜ : Set M) = ⊤ := by
   simp [Set.compl_eq_univ_diff]
 
 end Group

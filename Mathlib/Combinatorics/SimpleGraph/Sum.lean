@@ -84,7 +84,7 @@ lemma Preconnected.sum_sup_edge (hG : G.Preconnected) (hH : H.Preconnected) :
   · exact ((hG ..).sum_sup_edge (hH ..)).symm
   · exact ((hH w₁ w₂).map Embedding.sumInr.toHom).mono le_sup_left
 
-lemma Connected.sum_sup_edge (hG : G.Connected) (hH : H.Connected) :
+private lemma Connected.sum_sup_edge (hG : G.Connected) (hH : H.Connected) :
     (G.sum H ⊔ edge (.inl v) (.inr w)).Connected := by
   obtain ⟨hG⟩ := hG; exact ⟨hG.sum_sup_edge hH.preconnected⟩
 
@@ -112,7 +112,7 @@ theorem Coloring.sum_sumLeft_sumRight (c : (G ⊕g H).Coloring γ) : c.sumLeft.s
   ext (u | u) <;> rfl
 
 /-- Bijection between `(G ⊕g H).Coloring γ` and `G.Coloring γ × H.Coloring γ` -/
-def Coloring.sumEquiv : (G ⊕g H).Coloring γ ≃ G.Coloring γ × H.Coloring γ where
+private def Coloring.sumEquiv : (G ⊕g H).Coloring γ ≃ G.Coloring γ × H.Coloring γ where
   toFun c := ⟨c.sumLeft, c.sumRight⟩
   invFun p := p.1.sum p.2
   left_inv c := by simp [sum_sumLeft_sumRight c]

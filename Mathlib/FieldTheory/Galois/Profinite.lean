@@ -338,7 +338,7 @@ noncomputable def profiniteGalGrp [IsGalois k K] : ProfiniteGrp :=
 
 /-- The categorical isomorphism between `profiniteGalGrp` and `lim Gal(L/k)` where `L` is a
   `FiniteGaloisIntermediateField` ordered by inverse inclusion -/
-noncomputable def profiniteGalGrpIsoLimit [IsGalois k K] :
+private noncomputable def profiniteGalGrpIsoLimit [IsGalois k K] :
     profiniteGalGrp k K ≅ limit (asProfiniteGaloisGroupFunctor k K) :=
   ContinuousMulEquiv.toProfiniteGrpIso (continuousMulEquivToLimit k K)
 

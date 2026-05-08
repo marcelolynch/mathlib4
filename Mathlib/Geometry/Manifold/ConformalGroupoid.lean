@@ -38,5 +38,5 @@ def conformalPregroupoid : Pregroupoid X where
   congr hu h hf x hx := (hf x hx).congr hx hu h
 
 /-- The groupoid of conformal maps. -/
-def conformalGroupoid : StructureGroupoid X :=
+private def conformalGroupoid : StructureGroupoid X :=
   conformalPregroupoid.groupoid

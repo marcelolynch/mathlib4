@@ -919,7 +919,7 @@ theorem le_pullback_bind (S : Presieve X) (R : ∀ ⦃Y : C⦄ ⦃f : Y ⟶ X⦄
   apply pushforward_le_bind_of_mem
 
 /-- If `f` is a monomorphism, the pushforward-pullback adjunction on sieves is coreflective. -/
-def galoisCoinsertionOfMono (f : Y ⟶ X) [Mono f] :
+private def galoisCoinsertionOfMono (f : Y ⟶ X) [Mono f] :
     GaloisCoinsertion (Sieve.pushforward f) (Sieve.pullback f) := by
   apply (galoisConnection f).toGaloisCoinsertion
   rintro S Z g ⟨g₁, hf, hg₁⟩
@@ -927,7 +927,7 @@ def galoisCoinsertionOfMono (f : Y ⟶ X) [Mono f] :
   rwa [← hf]
 
 /-- If `f` is a split epi, the pushforward-pullback adjunction on sieves is reflective. -/
-def galoisInsertionOfIsSplitEpi (f : Y ⟶ X) [IsSplitEpi f] :
+private def galoisInsertionOfIsSplitEpi (f : Y ⟶ X) [IsSplitEpi f] :
     GaloisInsertion (Sieve.pushforward f) (Sieve.pullback f) := by
   apply (galoisConnection f).toGaloisInsertion
   intro S Z g hg
@@ -1105,7 +1105,7 @@ lemma functorPushforward_pullback_le {X Y : C} (f : Y ⟶ X) (S : Sieve X) :
   exact Sieve.le_functorPushforward_pullback _ _
 
 /-- When `F` is essentially surjective and full, the Galois connection is a Galois insertion. -/
-def essSurjFullFunctorGaloisInsertion [F.EssSurj] [F.Full] (X : C) :
+private def essSurjFullFunctorGaloisInsertion [F.EssSurj] [F.Full] (X : C) :
     GaloisInsertion (Sieve.functorPushforward F : Sieve X → Sieve (F.obj X))
       (Sieve.functorPullback F) := by
   apply (functor_galoisConnection F X).toGaloisInsertion

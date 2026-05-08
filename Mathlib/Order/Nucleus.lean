@@ -276,7 +276,7 @@ set_option backward.privateInPublic true in
 set_option backward.privateInPublic.warn false in
 /-- The restriction of a nucleus to its range forms a Galois insertion with the forgetful map from
 the range to the original frame. -/
-def giRestrict (n : Nucleus X) : GaloisInsertion n.restrict Subtype.val := n.giAux
+private def giRestrict (n : Nucleus X) : GaloisInsertion n.restrict Subtype.val := n.giAux
 
 lemma comp_eq_right_iff_le : n ∘ m = m ↔ n ≤ m where
   mpr h := funext_iff.mpr <| fun _ ↦ le_antisymm (le_trans (h (m _)) (m.idempotent' _)) le_apply

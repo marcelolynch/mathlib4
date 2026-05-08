@@ -618,7 +618,7 @@ end MLList
 
 /-- Translate a sequence to a list. This function will run forever if
   run on an infinite sequence. -/
-unsafe def forceToList (s : Seq α) : List α :=
+private unsafe def forceToList (s : Seq α) : List α :=
   (toMLList s).force
 
 /-- Take the first `n` elements of the sequence (producing a list) -/
@@ -640,13 +640,13 @@ def toStream (s : Seq α) (h : ¬s.Terminates) : Stream' α := fun n =>
 /-- Convert a sequence into either a list or a stream depending on whether
   it is finite or infinite. (Without decidability of the infiniteness predicate,
   this is not constructively possible.) -/
-def toListOrStream (s : Seq α) [Decidable s.Terminates] : List α ⊕ Stream' α :=
+private def toListOrStream (s : Seq α) [Decidable s.Terminates] : List α ⊕ Stream' α :=
   if h : s.Terminates then Sum.inl (toList s h) else Sum.inr (toStream s h)
 
 /-- Convert a sequence into a list, embedded in a computation to allow for
   the possibility of infinite sequences (in which case the computation
   never returns anything). -/
-def toList' {α} (s : Seq α) : Computation (List α) :=
+private def toList' {α} (s : Seq α) : Computation (List α) :=
   @Computation.corec (List α) (List α × Seq α)
     (fun ⟨l, s⟩ =>
       match destruct s with
@@ -719,7 +719,7 @@ def zip : Seq α → Seq β → Seq (α × β) :=
   zipWith Prod.mk
 
 /-- Separate a sequence of pairs into two sequences -/
-def unzip (s : Seq (α × β)) : Seq α × Seq β :=
+private def unzip (s : Seq (α × β)) : Seq α × Seq β :=
   (map Prod.fst s, map Prod.snd s)
 
 /-- The sequence of natural numbers some 0, some 1, ... -/

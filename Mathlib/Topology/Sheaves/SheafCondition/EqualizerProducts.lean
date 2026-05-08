@@ -157,7 +157,7 @@ then the `fork F U`, the canonical cone of the sheaf condition diagram for `F`,
 is isomorphic to `fork F G` postcomposed with the corresponding isomorphism between
 sheaf condition diagrams.
 -/
-def fork.isoOfIso (α : F ≅ G) :
+private def fork.isoOfIso (α : F ≅ G) :
     fork F U ≅ (Cone.postcompose (diagram.isoOfIso U α).inv).obj (fork G U) := by
   fapply Fork.ext
   · apply α.app

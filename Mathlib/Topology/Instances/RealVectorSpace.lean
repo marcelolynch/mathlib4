@@ -47,7 +47,7 @@ end AddMonoidHom
 
 /-- Reinterpret a continuous additive equivalence between two real vector spaces
 as a continuous real-linear map. -/
-def AddEquiv.toRealLinearEquiv (e : E ≃+ F) (h₁ : Continuous e) (h₂ : Continuous e.symm) :
+private def AddEquiv.toRealLinearEquiv (e : E ≃+ F) (h₁ : Continuous e) (h₂ : Continuous e.symm) :
     E ≃L[ℝ] F :=
   { e, e.toAddMonoidHom.toRealLinearMap h₁ with }
 

@@ -103,7 +103,7 @@ def free : Type _ ⥤ Compactum :=
   Monad.free _
 
 /-- The adjunction between `free` and `forget`. -/
-def adj : free ⊣ forget :=
+private def adj : free ⊣ forget :=
   Monad.adj _
 
 instance : CoeSort Compactum Type* :=

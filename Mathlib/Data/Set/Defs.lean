@@ -243,7 +243,7 @@ instance : Inter (Set α) := ⟨Set.inter⟩
 /-- The complement of a set `s` is the set of elements not contained in `s`.
 
 Note that you should **not** use this definition directly, but instead write `sᶜ`. -/
-protected def compl (s : Set α) : Set α := {a | a ∉ s}
+private protected def compl (s : Set α) : Set α := {a | a ∉ s}
 
 /-- The difference of two sets `s` and `t` is the set of elements contained in `s` but not in `t`.
 

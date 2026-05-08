@@ -259,7 +259,7 @@ presheafToTopCommRing X (TopCommRingCat.of ℂ)
 ```
 (this requires `import Topology.Instances.Complex`).
 -/
-def presheafToTopCommRing (T : TopCommRingCat.{v}) : X.Presheaf CommRingCat.{v} :=
+private def presheafToTopCommRing (T : TopCommRingCat.{v}) : X.Presheaf CommRingCat.{v} :=
   (Opens.toTopCat X).op ⋙ commRingYoneda.obj T
 
 end TopCat

@@ -513,7 +513,7 @@ def Function.PullbackSelf.map_fst {f : X → Y} {g : Z → Y} :
 
 open Function.Pullback in
 /-- The projection $(X \times_Y Z) \times_X (X \times_Y Z) \to Z \times_Y Z$. -/
-def Function.PullbackSelf.map_snd {f : X → Y} {g : Z → Y} :
+private def Function.PullbackSelf.map_snd {f : X → Y} {g : Z → Y} :
     (@fst X Y Z f g).PullbackSelf → g.PullbackSelf :=
   mapPullback snd f snd (pullback_comm_sq f g).symm (pullback_comm_sq f g).symm
 

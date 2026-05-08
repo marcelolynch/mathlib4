@@ -188,7 +188,7 @@ def pointedToBipointedCompBipointedToPointedSnd :
 
 /-- The free/forgetful adjunction between `PointedToBipointed_fst` and `BipointedToPointed_fst`.
 -/
-def pointedToBipointedFstBipointedToPointedFstAdjunction :
+private def pointedToBipointedFstBipointedToPointedFstAdjunction :
     pointedToBipointedFst ⊣ bipointedToPointedFst :=
   Adjunction.mkOfHomEquiv
     { homEquiv := fun X Y =>
@@ -207,7 +207,7 @@ def pointedToBipointedFstBipointedToPointedFstAdjunction :
 
 /-- The free/forgetful adjunction between `PointedToBipointed_snd` and `BipointedToPointed_snd`.
 -/
-def pointedToBipointedSndBipointedToPointedSndAdjunction :
+private def pointedToBipointedSndBipointedToPointedSndAdjunction :
     pointedToBipointedSnd ⊣ bipointedToPointedSnd :=
   Adjunction.mkOfHomEquiv
     { homEquiv := fun X Y =>

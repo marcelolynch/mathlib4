@@ -125,7 +125,7 @@ lemma objMk_apply {n m : ℕ} (f : Fin (m + 1) →o Fin (n + 1)) (i : Fin (m + 1
     objMk.{u} (n := ⦋n⦌) (m := op ⦋m⦌) f i = f i :=
   rfl
 
-lemma objMk_bijective {n : SimplexCategory} {m : SimplexCategoryᵒᵖ} :
+private lemma objMk_bijective {n : SimplexCategory} {m : SimplexCategoryᵒᵖ} :
     Function.Bijective (objMk (n := n) (m := m)) :=
   (objEquiv.trans homEquivOrderHom).symm.bijective
 
@@ -236,7 +236,7 @@ def edge (n : ℕ) (a b : Fin (n + 1)) (hab : a ≤ b) : Δ[n] _⦋1⦌ := by
   simp only [unop_op, len_mk, Fin.forall_fin_one]
   apply Fin.mk_le_mk.mpr hab
 
-lemma coe_edge_down_toOrderHom (n : ℕ) (a b : Fin (n + 1)) (hab : a ≤ b) :
+private lemma coe_edge_down_toOrderHom (n : ℕ) (a b : Fin (n + 1)) (hab : a ≤ b) :
     ↑(edge n a b hab).down.toOrderHom = ![a, b] :=
   rfl
 
@@ -248,7 +248,7 @@ def triangle {n : ℕ} (a b c : Fin (n + 1)) (hab : a ≤ b) (hbc : b ≤ c) : �
   dsimp
   simp only [*, true_and]
 
-lemma coe_triangle_down_toOrderHom {n : ℕ} (a b c : Fin (n + 1)) (hab : a ≤ b) (hbc : b ≤ c) :
+private lemma coe_triangle_down_toOrderHom {n : ℕ} (a b c : Fin (n + 1)) (hab : a ≤ b) (hbc : b ≤ c) :
     ↑(triangle a b c hab hbc).down.toOrderHom = ![a, b, c] :=
   rfl
 
@@ -424,7 +424,7 @@ lemma mem_nonDegenerate_iff_mono {n d : ℕ} (s : (Δ[n] : SSet.{u}) _⦋d⦌) :
   · exact h'
   · simpa [Fin.ext_iff] using h h'
 
-lemma objEquiv_symm_mem_nonDegenerate_iff_mono {n d : ℕ} (f : ⦋d⦌ ⟶ ⦋n⦌) :
+private lemma objEquiv_symm_mem_nonDegenerate_iff_mono {n d : ℕ} (f : ⦋d⦌ ⟶ ⦋n⦌) :
     (objEquiv.{u} (m := (op ⦋d⦌))).symm f ∈ Δ[n].nonDegenerate d ↔ Mono f := by
   simp [mem_nonDegenerate_iff_mono]
 
@@ -493,7 +493,7 @@ noncomputable def finOrderIsoPairCompl {n : ℕ} (i j : Fin (n + 2)) (h : i < j)
     ((Fin.succAboveOrderEmb (i.castPred (Fin.ne_last_of_lt h))).trans
       (Fin.succAboveOrderEmb j)).map_rel_iff
 
-lemma finOrderIsoPairCompl_apply_val {n : ℕ} (i j : Fin (n + 2)) (h : i < j) (k : Fin n) :
+private lemma finOrderIsoPairCompl_apply_val {n : ℕ} (i j : Fin (n + 2)) (h : i < j) (k : Fin n) :
     (finOrderIsoPairCompl i j h k).val =
       j.succAbove ((i.castPred (Fin.ne_last_of_lt h)).succAbove k) := rfl
 
@@ -640,7 +640,7 @@ lemma face_nonDegenerateEquiv' {n d : ℕ} (x : (Δ[n] : SSet.{u}).nonDegenerate
   face_eq_ofSimplex.{u} _ _ (orderIsoOfNonDegenerate x)
 
 set_option backward.isDefEq.respectTransparency false in
-lemma nonDegenerateEquiv'_symm_apply_mem {n d : ℕ}
+private lemma nonDegenerateEquiv'_symm_apply_mem {n d : ℕ}
     (S : { S : Finset (Fin (n + 1)) | S.card = d + 1 }) (i : Fin (d + 1)) :
       (nonDegenerateEquiv'.{u}.symm S).val i ∈ S.val := by
   obtain ⟨f, rfl⟩ := nonDegenerateEquiv'.{u}.surjective S
@@ -749,7 +749,7 @@ section Examples
 open Simplicial
 
 /-- The simplicial circle. -/
-noncomputable def S1 : SSet :=
+private noncomputable def S1 : SSet :=
   Limits.colimit <|
     Limits.parallelPair (stdSimplex.δ 0 : Δ[0] ⟶ Δ[1]) (stdSimplex.δ 1)
 

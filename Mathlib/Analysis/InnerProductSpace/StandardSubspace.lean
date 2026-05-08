@@ -201,7 +201,7 @@ lemma toClosedSubmodule_injective : Function.Injective (toClosedSubmodule (H := 
 
 /-- The image of a standard subspace by the multiplication by `Complex.I`, bundled as a
 `StandardSubspace`. -/
-noncomputable def mulI (S : StandardSubspace H) : StandardSubspace H where
+private noncomputable def mulI (S : StandardSubspace H) : StandardSubspace H where
   toClosedSubmodule := S.toClosedSubmodule.mulI
   IsSeparating := by simpa [mulI_mulI_eq, inf_comm] using S.IsSeparating
   IsCyclic := by simpa [mulI_mulI_eq, sup_comm] using S.IsCyclic

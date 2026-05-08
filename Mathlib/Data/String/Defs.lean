@@ -20,7 +20,7 @@ ASCII characters have code points in the range U+0000-U+007F.
 (Note: [the Unicode standard](https://www.unicode.org/Public/draft/charts/CodeCharts.pdf)) does
 not mention ASCII and instead calls this subset "C0 Controls and Basic Latin".)
 -/
-def Char.isAscii (c : Char) : Bool := c.toNat < 0x80
+private def Char.isAscii (c : Char) : Bool := c.toNat < 0x80
 
 namespace String
 
@@ -55,7 +55,7 @@ def mapTokens (c : Char) (f : String → String) : String → String :=
   intercalate (singleton c) ∘ List.map f ∘ (·.splitToList (· = c))
 
 /-- Produce the head character from the string `s`, if `s` is not empty, otherwise `'A'`. -/
-def head (s : String) : Char :=
+private def head (s : String) : Char :=
   s.front
 
 end String

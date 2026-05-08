@@ -136,11 +136,11 @@ lemma iso₁_hom_naturality {M N : ModuleCat.{u} R} (f : M ⟶ N) :
 variable (R)
 
 /-- The natural isomorphism `M.exteriorPower 0 ≅ ModuleCat.of R R`. -/
-noncomputable def natIso₀ : functor.{u} R 0 ≅ (Functor.const _).obj (ModuleCat.of R R) :=
+private noncomputable def natIso₀ : functor.{u} R 0 ≅ (Functor.const _).obj (ModuleCat.of R R) :=
   NatIso.ofComponents iso₀
 
 /-- The natural isomorphism `M.exteriorPower 1 ≅ M`. -/
-noncomputable def natIso₁ : functor.{u} R 1 ≅ 𝟭 _ :=
+private noncomputable def natIso₁ : functor.{u} R 1 ≅ 𝟭 _ :=
   NatIso.ofComponents iso₁
 
 end exteriorPower

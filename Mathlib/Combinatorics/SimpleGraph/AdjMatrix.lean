@@ -269,7 +269,7 @@ theorem _root_.Matrix.compl_zero_eq_of_one_sub_one [AddGroup α] [One α] [Decid
 
 variable {V}
 
-theorem adjMatrix_hadamard_self [MulZeroOneClass α] :
+private theorem adjMatrix_hadamard_self [MulZeroOneClass α] :
     G.adjMatrix α ⊙ G.adjMatrix α = G.adjMatrix α := by simp
 
 variable {α}
@@ -314,7 +314,7 @@ variable (α) in
 theorem trace_adjMatrix [AddCommMonoid α] [One α] : Matrix.trace (G.adjMatrix α) = 0 := by
   simp [Matrix.trace]
 
-theorem adjMatrix_mul_self_apply_self [NonAssocSemiring α] (i : V) :
+private theorem adjMatrix_mul_self_apply_self [NonAssocSemiring α] (i : V) :
     (G.adjMatrix α * G.adjMatrix α) i i = degree G i := by simp [filter_true_of_mem]
 
 variable (R) in
@@ -326,10 +326,10 @@ theorem natCast_card_dart_eq_dotProduct [NonAssocSemiring α] :
 
 variable {G}
 
-theorem adjMatrix_mulVec_const_apply [NonAssocSemiring α] {a : α} {v : V} :
+private theorem adjMatrix_mulVec_const_apply [NonAssocSemiring α] {a : α} {v : V} :
     (G.adjMatrix α *ᵥ Function.const _ a) v = G.degree v * a := by simp
 
-theorem adjMatrix_mulVec_const_apply_of_regular [NonAssocSemiring α] {d : ℕ} {a : α}
+private theorem adjMatrix_mulVec_const_apply_of_regular [NonAssocSemiring α] {d : ℕ} {a : α}
     (hd : G.IsRegularOfDegree d) {v : V} : (G.adjMatrix α *ᵥ Function.const _ a) v = d * a := by
   simp [hd v]
 

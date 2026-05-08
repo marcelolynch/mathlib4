@@ -193,7 +193,7 @@ instance : Algebra.Etale R P.Ring where
 
 /-- An `AlgEquiv` between `P.Ring` and `R[X][Y]/⟨f, Yg-1⟩`,
 to not abuse the defeq between the two. -/
-def equivPolynomialQuotient :
+private def equivPolynomialQuotient :
     P.Ring ≃ₐ[R] R[X][Y] ⧸ Ideal.span {C P.f, Y * C P.g - 1} := .refl ..
 
 /-- `R[X][Y]/⟨f, Yg-1⟩ ≃ (R[X]/f)[1/g]` -/
@@ -211,7 +211,7 @@ def equivAwayAdjoinRoot :
   · ext; simp
 
 /-- `R[X][Y]/⟨f, Yg-1⟩ ≃ R[X][1/g]/f` -/
-def equivAwayQuotient :
+private def equivAwayQuotient :
     P.Ring ≃ₐ[R] Localization.Away P.g ⧸ Ideal.span {algebraMap _ (Localization.Away P.g) P.f} := by
   refine .ofAlgHom (P.lift (algebraMap R[X] _ .X) ⟨?_, ?_⟩)
     (Ideal.Quotient.liftₐ _ (IsLocalization.liftAlgHom (M := .powers <| P.g)

@@ -95,7 +95,7 @@ def sheafToTypes (T : X → Type*) : Sheaf (Type _) X :=
 
 /-- The sheaf of not-necessarily-continuous functions on `X` with values in a type `T`.
 -/
-def sheafToType (T : Type*) : Sheaf (Type _) X :=
+private def sheafToType (T : Type*) : Sheaf (Type _) X :=
   ⟨presheafToType X T, Presheaf.toType_isSheaf _ _⟩
 
 end TopCat

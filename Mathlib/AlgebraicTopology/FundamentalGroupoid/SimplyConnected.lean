@@ -139,7 +139,7 @@ theorem IsSimplyConnected.isPathConnected {s : Set X} (hs : IsSimplyConnected s)
   have := hs.simplyConnectedSpace
   isPathConnected_iff_pathConnectedSpace.mpr inferInstance
 
-theorem IsSimplyConnected.nonempty {s : Set X} (hs : IsSimplyConnected s) : s.Nonempty :=
+private theorem IsSimplyConnected.nonempty {s : Set X} (hs : IsSimplyConnected s) : s.Nonempty :=
   hs.isPathConnected.nonempty
 
 theorem Topology.IsEmbedding.isSimplyConnected_image {f : X → Y} (hf : Topology.IsEmbedding f)

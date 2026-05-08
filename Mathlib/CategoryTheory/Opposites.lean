@@ -302,7 +302,7 @@ instance {F : C ⥤ D} [Faithful F] : Faithful F.op where
   map_injective h := Quiver.Hom.unop_inj <| by simpa using map_injective F (Quiver.Hom.op_inj h)
 
 /-- The opposite of a fully faithful functor is fully faithful. -/
-protected def FullyFaithful.op {F : C ⥤ D} (hF : F.FullyFaithful) : F.op.FullyFaithful where
+private protected def FullyFaithful.op {F : C ⥤ D} (hF : F.FullyFaithful) : F.op.FullyFaithful where
   preimage {X Y} f := .op <| hF.preimage f.unop
 
 /-- If F is faithful then the `rightOp` of F is also faithful. -/
@@ -320,12 +320,12 @@ instance leftOp_full {F : C ⥤ Dᵒᵖ} [Full F] : Full F.leftOp where
   map_surjective f := ⟨(F.preimage f.op).op, by simp⟩
 
 /-- The opposite of a fully faithful functor is fully faithful. -/
-protected def FullyFaithful.leftOp {F : C ⥤ Dᵒᵖ} (hF : F.FullyFaithful) :
+private protected def FullyFaithful.leftOp {F : C ⥤ Dᵒᵖ} (hF : F.FullyFaithful) :
     F.leftOp.FullyFaithful where
   preimage {X Y} f := .op <| hF.preimage f.op
 
 /-- The opposite of a fully faithful functor is fully faithful. -/
-protected def FullyFaithful.rightOp {F : Cᵒᵖ ⥤ D} (hF : F.FullyFaithful) :
+private protected def FullyFaithful.rightOp {F : Cᵒᵖ ⥤ D} (hF : F.FullyFaithful) :
     F.rightOp.FullyFaithful where
   preimage {X Y} f := .unop <| hF.preimage f.unop
 

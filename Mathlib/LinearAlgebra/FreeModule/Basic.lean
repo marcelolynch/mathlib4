@@ -96,7 +96,7 @@ such that `SMulCommClass R S M'` holds.
 If `R` is commutative, you can set `S := R`; if `R` is not commutative,
 you can recover an `AddEquiv` by setting `S := ℕ`.
 See library note [bundled maps over different rings]. -/
-noncomputable def constr {S : Type z} [Semiring S] [Module S N] [SMulCommClass R S N] :
+private noncomputable def constr {S : Type z} [Semiring S] [Module S N] [SMulCommClass R S N] :
     (ChooseBasisIndex R M → N) ≃ₗ[S] M →ₗ[R] N :=
   Basis.constr (chooseBasis R M) S
 

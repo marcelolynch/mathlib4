@@ -216,7 +216,7 @@ variable {K L : Type*} [Field K] [Field L] [Algebra K L] (E : IntermediateField 
 instance [Algebra.IsAlgebraic K E] : IsAlgClosure K (AlgebraicClosure E) :=
   ⟨AlgebraicClosure.isAlgClosed E, Algebra.IsAlgebraic.trans K E (AlgebraicClosure E)⟩
 
-theorem AdjoinSimple.normal_algebraicClosure {x : L} (hx : IsIntegral K x) :
+private theorem AdjoinSimple.normal_algebraicClosure {x : L} (hx : IsIntegral K x) :
     Normal K (AlgebraicClosure K⟮x⟯) :=
   have : Algebra.IsAlgebraic K K⟮x⟯ := isAlgebraic_adjoin_simple hx
   IsAlgClosure.normal _ _

@@ -355,12 +355,12 @@ def foldl {δ : Type w} (f : δ → ∀ a, β a → δ)
   m.entries.foldl (fun d s => f d s.1 s.2) d
 
 /-- `any f s` returns `true` iff there exists a value `v` in `s` such that `f v = true`. -/
-def any (f : ∀ x, β x → Bool) (s : Finmap β) : Bool :=
+private def any (f : ∀ x, β x → Bool) (s : Finmap β) : Bool :=
   s.foldl (fun x y z => x || f y z)
     (fun _ _ _ _ => by simp_rw [Bool.or_assoc, Bool.or_comm, imp_true_iff]) false
 
 /-- `all f s` returns `true` iff `f v = true` for all values `v` in `s`. -/
-def all (f : ∀ x, β x → Bool) (s : Finmap β) : Bool :=
+private def all (f : ∀ x, β x → Bool) (s : Finmap β) : Bool :=
   s.foldl (fun x y z => x && f y z)
     (fun _ _ _ _ => by simp_rw [Bool.and_assoc, Bool.and_comm, imp_true_iff]) true
 

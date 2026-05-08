@@ -143,7 +143,7 @@ def succeeds {α} (x : F α) : F Bool :=
   Functor.mapConst true x <|> pure false
 
 /-- Attempts to perform the computation, but fails silently if it doesn't succeed. -/
-def tryM {α} (x : F α) : F Unit :=
+private def tryM {α} (x : F α) : F Unit :=
   Functor.mapConst () x <|> pure ()
 
 /-- Attempts to perform the computation, and returns `none` if it doesn't succeed. -/

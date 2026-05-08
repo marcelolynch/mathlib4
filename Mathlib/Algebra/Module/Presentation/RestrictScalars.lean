@@ -45,7 +45,7 @@ variable (data : presM.RestrictScalarsData presB)
 /-- A presentation of the restriction of scalars from `B` to `A` of a `B`-module `M`,
 given a presentation of `M` as a `B`-module, a presentation of `B` as an `A`-module,
 and an additional data. -/
-noncomputable def restrictScalars : Presentation A M :=
+private noncomputable def restrictScalars : Presentation A M :=
   ofExact (g := LinearMap.restrictScalars A presM.π) (presB.finsupp presM.G) data
     presM.exact presM.surjective_π (by
       ext v

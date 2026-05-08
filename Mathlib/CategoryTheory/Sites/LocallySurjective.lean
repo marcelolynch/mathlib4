@@ -267,7 +267,7 @@ instance {F₁ F₂ : Cᵒᵖ ⥤ Type w} (f : F₁ ⟶ F₂) :
     exact ⟨t, Subtype.ext ht⟩
 
 /-- The image of `F` in `J.sheafify F` is isomorphic to the sheafification. -/
-noncomputable def sheafificationIsoImagePresheaf (F : Cᵒᵖ ⥤ Type (max u v)) :
+private noncomputable def sheafificationIsoImagePresheaf (F : Cᵒᵖ ⥤ Type (max u v)) :
     J.sheafify F ≅ ((Subfunctor.range (J.toSheafify F)).sheafify J).toFunctor where
   hom :=
     J.sheafifyLift (Subfunctor.toRangeSheafify J _)

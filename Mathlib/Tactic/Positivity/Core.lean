@@ -501,7 +501,7 @@ def solve (t : Q(Prop)) : MetaM Expr := do
 /-- The main entry point to the `positivity` tactic. Given a goal `goal` of the form `0 [≤/</≠] e`,
 attempts to recurse on the structure of `e` to prove the goal.
 It will either close `goal` or fail. -/
-def positivity (goal : MVarId) : MetaM Unit := do
+private def positivity (goal : MVarId) : MetaM Unit := do
   let t : Q(Prop) ← withReducible goal.getType'
   let p ← solve t
   goal.assign p

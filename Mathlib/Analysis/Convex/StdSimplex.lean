@@ -292,7 +292,7 @@ lemma zero_le (s : stdSimplex S X) (x : X) : 0 ≤ s x := s.2.1 x
 @[simp]
 lemma sum_eq_one (s : stdSimplex S X) : ∑ x, s x = 1 := s.2.2
 
-lemma add_eq_one (s : stdSimplex S (Fin 2)) :
+private lemma add_eq_one (s : stdSimplex S (Fin 2)) :
     s 0 + s 1 = 1 := by
   simpa only [Fin.sum_univ_two] using sum_eq_one s
 

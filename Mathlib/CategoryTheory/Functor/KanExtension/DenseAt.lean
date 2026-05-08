@@ -51,7 +51,7 @@ abbrev DenseAt (Y : D) : Type max u₁ u₂ v₂ :=
 
 /-- `F` is dense at `Y` if `Y` identifies to the colimit of the obvious functor
 `CostructuredArrow F Y ⥤ D`. -/
-def denseAtEquiv (Y : D) :
+private def denseAtEquiv (Y : D) :
     F.DenseAt Y ≃ IsColimit ((LeftExtension.mk (𝟭 D) F.rightUnitor.inv).coconeAt Y) :=
   .refl _
 

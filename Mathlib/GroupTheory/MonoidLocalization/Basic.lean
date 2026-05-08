@@ -796,10 +796,10 @@ namespace OreLocalization
 variable (R) [CommMonoid R] (S : Submonoid R)
 
 /-- The morphism `numeratorHom` is a monoid localization map in the case of commutative `R`. -/
-protected def localizationMap : S.LocalizationMap R[S⁻¹] := Localization.monoidOf S
+private protected def localizationMap : S.LocalizationMap R[S⁻¹] := Localization.monoidOf S
 
 /-- If `R` is commutative, Ore localization and monoid localization are isomorphic. -/
-protected noncomputable def equivMonoidLocalization : Localization S ≃* R[S⁻¹] := MulEquiv.refl _
+private protected noncomputable def equivMonoidLocalization : Localization S ≃* R[S⁻¹] := MulEquiv.refl _
 
 end OreLocalization
 

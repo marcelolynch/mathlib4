@@ -185,7 +185,7 @@ def weylGroupRootRep : Representation R P.weylGroup M :=
   Representation.ofDistribMulAction R P.weylGroup M
 
 /-- The natural representation of the Weyl group on the coroot space. -/
-def weylGroupCorootRep : Representation R P.weylGroup.op N :=
+private def weylGroupCorootRep : Representation R P.weylGroup.op N :=
   Representation.ofDistribMulAction R P.weylGroup.op N
 
 lemma weylGroup_apply_root (g : P.weylGroup) (i : ι) :

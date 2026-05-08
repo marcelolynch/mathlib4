@@ -153,7 +153,7 @@ lemma points_mem_affineSpan_faceOpposite [Nontrivial k] {n : ℕ} [NeZero n] (s 
   rw [faceOpposite, s.points_mem_affineSpan_face]
   simp
 
-lemma points_notMem_affineSpan_faceOpposite [Nontrivial k] {n : ℕ} [NeZero n] (s : Simplex k P n)
+private lemma points_notMem_affineSpan_faceOpposite [Nontrivial k] {n : ℕ} [NeZero n] (s : Simplex k P n)
     (i : Fin (n + 1)) : s.points i ∉ affineSpan k (Set.range (s.faceOpposite i).points) := by
   rw [points_mem_affineSpan_faceOpposite]
   simp
@@ -214,7 +214,7 @@ theorem map_id {n : ℕ} (s : Affine.Simplex k P n) :
     s.map (AffineMap.id _ _) Function.injective_id = s :=
   ext fun _ => rfl
 
-theorem map_comp {n : ℕ} (s : Affine.Simplex k P n)
+private theorem map_comp {n : ℕ} (s : Affine.Simplex k P n)
     (f : P →ᵃ[k] P₂) (hf : Function.Injective f)
     (g : P₂ →ᵃ[k] P₃) (hg : Function.Injective g) :
     s.map (g.comp f) (hg.comp hf) = (s.map f hf).map g hg :=
@@ -270,7 +270,7 @@ theorem reindex_range_points {m n : ℕ} (s : Simplex k P m) (e : Fin (m + 1) �
     Set.range (s.reindex e).points = Set.range s.points := by
   rw [reindex, Set.range_comp, Equiv.range_eq_univ, Set.image_univ]
 
-theorem reindex_map {m n : ℕ} (s : Simplex k P m) (e : Fin (m + 1) ≃ Fin (n + 1))
+private theorem reindex_map {m n : ℕ} (s : Simplex k P m) (e : Fin (m + 1) ≃ Fin (n + 1))
     (f : P →ᵃ[k] P₂) (hf : Function.Injective f) :
     (s.map f hf).reindex e = (s.reindex e).map f hf :=
   rfl
@@ -339,7 +339,7 @@ theorem restrict_map_subtype {n : ℕ} (s : Affine.Simplex k P n) :
     (s.restrict _ le_rfl).map (AffineSubspace.subtype _) Subtype.coe_injective = s :=
   rfl
 
-lemma restrict_reindex {m n : ℕ} (s : Affine.Simplex k P n) (e : Fin (n + 1) ≃ Fin (m + 1))
+private lemma restrict_reindex {m n : ℕ} (s : Affine.Simplex k P n) (e : Fin (n + 1) ≃ Fin (m + 1))
     {S : AffineSubspace k P} (hS : affineSpan k (Set.range s.points) ≤ S) :
     letI := Nonempty.map (AffineSubspace.inclusion hS) inferInstance
     (s.reindex e).restrict S (s.reindex_range_points e ▸ hS) = (s.restrict S hS).reindex e :=
@@ -356,7 +356,7 @@ lemma face_restrict {n : ℕ} (s : Affine.Simplex k P n) {S : AffineSubspace k P
   simp_rw [Affine.Simplex.face_points]
   simp
 
-lemma faceOpposite_restrict {n : ℕ} [NeZero n] (s : Affine.Simplex k P n) {S : AffineSubspace k P}
+private lemma faceOpposite_restrict {n : ℕ} [NeZero n] (s : Affine.Simplex k P n) {S : AffineSubspace k P}
     (hS : affineSpan k (Set.range s.points) ≤ S) (i : Fin (n + 1)) :
     letI := Nonempty.map (AffineSubspace.inclusion hS) inferInstance
     (s.restrict S hS).faceOpposite i = (s.faceOpposite i).restrict S
@@ -411,7 +411,7 @@ lemma affineCombination_mem_setInterior_iff {I : Set k} {n : ℕ} {s : Simplex k
     rw [affineCombination_mem_setInterior_iff hw']
     exact fun i ↦ hwI (e.symm i)
 
-lemma setInterior_mono {I J : Set k} (hij : I ⊆ J) {n : ℕ} (s : Simplex k P n) :
+private lemma setInterior_mono {I J : Set k} (hij : I ⊆ J) {n : ℕ} (s : Simplex k P n) :
     s.setInterior I ⊆ s.setInterior J :=
   fun _ ⟨w, hw, hw01, hww⟩ ↦ ⟨w, hw, fun i ↦ hij (hw01 i), hww⟩
 
@@ -497,7 +497,7 @@ lemma point_mem_closedInterior [ZeroLEOneClass k] {n : ℕ} (s : Simplex k P n) 
   intro j
   obtain rfl | hj := eq_or_ne j i <;> simp_all
 
-lemma interior_ssubset_closedInterior [ZeroLEOneClass k] {n : ℕ} (s : Simplex k P n) :
+private lemma interior_ssubset_closedInterior [ZeroLEOneClass k] {n : ℕ} (s : Simplex k P n) :
     s.interior ⊂ s.closedInterior := by
   rw [Set.ssubset_iff_exists]
   exact ⟨s.interior_subset_closedInterior, s.points 0, s.point_mem_closedInterior 0,
@@ -580,7 +580,7 @@ lemma affineCombination_mem_interior_face_iff_pos [IsOrderedAddMonoid k] {n : �
   obtain ⟨j, hj, hji⟩ := fs.exists_mem_ne (by grind [→ NeZero.ne]) i
   exact Finset.single_lt_sum hji hi hj (hii j hj) fun t ht _ ↦ (hii t ht).le
 
-lemma affineCombination_mem_closedInterior_face_iff_nonneg [IsOrderedAddMonoid k] {n : ℕ}
+private lemma affineCombination_mem_closedInterior_face_iff_nonneg [IsOrderedAddMonoid k] {n : ℕ}
     (s : Simplex k P n) {fs : Finset (Fin (n + 1))} {m : ℕ} (h : #fs = m + 1)
     {w : Fin (n + 1) → k} (hw : ∑ i, w i = 1) :
     Finset.univ.affineCombination k s.points w ∈ (s.face h).closedInterior ↔
@@ -590,7 +590,7 @@ lemma affineCombination_mem_closedInterior_face_iff_nonneg [IsOrderedAddMonoid k
   rw [← hw, ← Finset.sum_subset (Finset.subset_univ fs) fun j _ ↦ hi0 j]
   exact Finset.single_le_sum (fun t ht ↦ (hii t ht)) hi
 
-lemma interior_map {n : ℕ} (s : Simplex k P n) {f : P →ᵃ[k] P₂} (hf : Function.Injective f) :
+private lemma interior_map {n : ℕ} (s : Simplex k P n) {f : P →ᵃ[k] P₂} (hf : Function.Injective f) :
     (s.map f hf).interior = f '' s.interior :=
   s.setInterior_map _ hf
 
@@ -598,13 +598,13 @@ lemma closedInterior_map {n : ℕ} (s : Simplex k P n) {f : P →ᵃ[k] P₂} (h
     (s.map f hf).closedInterior = f '' s.closedInterior :=
   s.setInterior_map _ hf
 
-lemma interior_restrict {n : ℕ} (s : Simplex k P n) {S : AffineSubspace k P}
+private lemma interior_restrict {n : ℕ} (s : Simplex k P n) {S : AffineSubspace k P}
     (hS : affineSpan k (Set.range s.points) ≤ S) :
     letI := Nonempty.map (AffineSubspace.inclusion hS) inferInstance
     (s.restrict S hS).interior = S.subtype ⁻¹' s.interior :=
   s.setInterior_restrict _ hS
 
-lemma closedInterior_restrict {n : ℕ} (s : Simplex k P n) {S : AffineSubspace k P}
+private lemma closedInterior_restrict {n : ℕ} (s : Simplex k P n) {S : AffineSubspace k P}
     (hS : affineSpan k (Set.range s.points) ≤ S) :
     letI := Nonempty.map (AffineSubspace.inclusion hS) inferInstance
     (s.restrict S hS).closedInterior = S.subtype ⁻¹' s.closedInterior :=
@@ -664,7 +664,7 @@ theorem closedInterior_faceOpposite_subset_closedInterior [ZeroLEOneClass k] {n 
     (s.faceOpposite i).closedInterior ⊆ s.closedInterior :=
   s.closedInterior_face_subset_closedInterior _
 
-theorem closedInterior_faceOpposite_ssubset_closedInterior [Nontrivial k] [ZeroLEOneClass k] {n : ℕ}
+private theorem closedInterior_faceOpposite_ssubset_closedInterior [Nontrivial k] [ZeroLEOneClass k] {n : ℕ}
     [NeZero n] (s : Simplex k P n) (i : Fin (n + 1)) :
     (s.faceOpposite i).closedInterior ⊂ s.closedInterior :=
   s.closedInterior_face_ssubset_closedInterior (by simp) _
@@ -705,7 +705,7 @@ theorem closedInterior_eq_interior_union [IsOrderedAddMonoid k] [ZeroLEOneClass 
   · refine Set.union_subset s.interior_subset_closedInterior (Set.iUnion_subset fun i ↦ ?_)
     exact s.closedInterior_faceOpposite_subset_closedInterior i
 
-theorem closedInterior_diff_interior [Nontrivial k] [IsOrderedAddMonoid k] [ZeroLEOneClass k]
+private theorem closedInterior_diff_interior [Nontrivial k] [IsOrderedAddMonoid k] [ZeroLEOneClass k]
     {n : ℕ} [NeZero n] (s : Simplex k P n) :
     s.closedInterior \ s.interior = ⋃ i : Fin (n + 1), (s.faceOpposite i).closedInterior := by
   simpa [closedInterior_eq_interior_union] using

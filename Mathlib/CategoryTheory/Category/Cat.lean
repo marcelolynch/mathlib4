@@ -372,7 +372,7 @@ section
 attribute [local simp] eqToHom_map
 
 /-- Any isomorphism in `Cat` induces an equivalence of the underlying categories. -/
-def equivOfIso {C D : Cat} (γ : C ≅ D) : C ≌ D where
+private def equivOfIso {C D : Cat} (γ : C ≅ D) : C ≌ D where
   functor := γ.hom.toFunctor
   inverse := γ.inv.toFunctor
   unitIso := eqToIso <| congr($(γ.hom_inv_id).toFunctor).symm

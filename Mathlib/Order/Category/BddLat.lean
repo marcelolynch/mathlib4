@@ -234,7 +234,7 @@ def latToBddLatForgetAdjunction : latToBddLat.{u} ⊣ forget₂ BddLat Lat :=
       homEquiv_naturality_right := fun _ _ => Lat.ext fun _ => rfl }
 
 /-- `latToBddLat` and `OrderDual` commute. -/
-def latToBddLatCompDualIsoDualCompLatToBddLat :
+private def latToBddLatCompDualIsoDualCompLatToBddLat :
     latToBddLat.{u} ⋙ BddLat.dual ≅ Lat.dual ⋙ latToBddLat :=
   Adjunction.leftAdjointUniq (latToBddLatForgetAdjunction.comp BddLat.dualEquiv.toAdjunction)
     (Lat.dualEquiv.toAdjunction.comp latToBddLatForgetAdjunction)

@@ -154,7 +154,7 @@ def abelianize : GrpCat.{u} ⥤ CommGrpCat.{u} where
     rfl
 
 /-- The abelianization-forgetful adjunction from `Group` to `CommGroup`. -/
-def abelianizeAdj : abelianize ⊣ forget₂ CommGrpCat.{u} GrpCat.{u} :=
+private def abelianizeAdj : abelianize ⊣ forget₂ CommGrpCat.{u} GrpCat.{u} :=
   Adjunction.mkOfHomEquiv
     { homEquiv := fun _ _ => ((ConcreteCategory.homEquiv (C := CommGrpCat)).trans
         Abelianization.lift.symm).trans

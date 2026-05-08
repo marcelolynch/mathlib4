@@ -78,7 +78,7 @@ instance : Quiver.IsThin (Point.{u} (grothendieckTopology X)) :=
 /-- A point `x` of a topological space `X` specializes to `y` if and only iff
 there is a (unique) morphism between the corresponding points of the site
 `(Opens X, grothendieckTopology X)`. -/
-def pointGrothendieckTopologyHomEquiv {x y : X} :
+private def pointGrothendieckTopologyHomEquiv {x y : X} :
     (pointGrothendieckTopology x ⟶ pointGrothendieckTopology y) ≃ x ⤳ y where
   toFun f := specializes_iff_forall_open.2 (fun U h₁ h₂ ↦ (f.hom.app ⟨U, h₁⟩ ⟨⟨h₂⟩⟩).down.down)
   invFun s := { hom.app U := ↾fun hU ↦

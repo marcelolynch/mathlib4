@@ -58,7 +58,7 @@ structure Hom (E E' : SpectralSequence C c r₀) where
 
 /-- If `E` is a spectral sequence, and `r = r'`, this is the
 isomorphism `(E.page r).X pq ≅ (E.page r').X pq`. -/
-def pageXIsoOfEq (E : SpectralSequence C c r₀) (pq : κ) (r r' : ℤ) (h : r = r' := by lia)
+private def pageXIsoOfEq (E : SpectralSequence C c r₀) (pq : κ) (r r' : ℤ) (h : r = r' := by lia)
     (hr : r₀ ≤ r := by lia) :
     (E.page r).X pq ≅ (E.page r').X pq :=
   eqToIso (by subst h; rfl)

@@ -222,7 +222,7 @@ def coproductCoconeIsColimit : IsColimit (coproductCocone A B) where
       simp [map_one, ← hm (Discrete.mk WalkingPair.right)]
 
 /-- The limit cone of the tensor product `A ⊗[ℤ] B` in `CommRingCat`. -/
-def coproductColimitCocone : Limits.ColimitCocone (pair A B) :=
+private def coproductColimitCocone : Limits.ColimitCocone (pair A B) :=
   ⟨_, coproductCoconeIsColimit A B⟩
 
 end BinaryCoproduct

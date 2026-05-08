@@ -125,7 +125,7 @@ def Exact.isLimitImage (h : S.Exact) :
     (fun _ _ _ hm => by rw [← cancel_mono (Abelian.image.ι S.f), hm, kernel.lift_ι])
 
 /-- If `(f, g)` is exact, then `image.ι f` is a kernel of `g`. -/
-def Exact.isLimitImage' (h : S.Exact) :
+private def Exact.isLimitImage' (h : S.Exact) :
     IsLimit (KernelFork.ofι (Limits.image.ι S.f)
       (image_ι_comp_eq_zero S.zero) : KernelFork S.g) :=
   IsKernel.isoKernel _ _ h.isLimitImage (Abelian.imageIsoImage S.f).symm <| IsImage.lift_fac _ _
@@ -146,7 +146,7 @@ def Exact.isColimitCoimage (h : S.Exact) :
 
 set_option backward.isDefEq.respectTransparency false in
 /-- If `(f, g)` is exact, then `factorThruImage g` is a cokernel of `f`. -/
-def Exact.isColimitImage (h : S.Exact) :
+private def Exact.isColimitImage (h : S.Exact) :
     IsColimit (CokernelCofork.ofπ (Limits.factorThruImage S.g)
         (comp_factorThruImage_eq_zero S.zero)) :=
   IsCokernel.cokernelIso _ _ h.isColimitCoimage (Abelian.coimageIsoImage' S.g) <|

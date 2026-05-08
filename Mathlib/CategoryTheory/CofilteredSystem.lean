@@ -251,7 +251,7 @@ instance toEventualRanges_finite [∀ j, Finite (F.obj j)] : ∀ j, Finite (F.to
 
 /-- The sections of the functor `F : J ⥤ Type v` are in bijection with the sections of
 `F.toEventualRanges`. -/
-def toEventualRangesSectionsEquiv : F.toEventualRanges.sections ≃ F.sections where
+private def toEventualRangesSectionsEquiv : F.toEventualRanges.sections ≃ F.sections where
   toFun s := ⟨_, fun f => Subtype.coe_inj.2 <| s.prop f⟩
   invFun s :=
     ⟨fun _ => ⟨_, mem_iInter₂.2 fun _ f => ⟨_, s.prop f⟩⟩, fun f => Subtype.ext <| s.prop f⟩

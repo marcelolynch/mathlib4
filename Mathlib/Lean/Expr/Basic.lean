@@ -403,7 +403,7 @@ end recognizers
 
 universe u
 
-def modifyAppArgM {M : Type → Type u} [Functor M] [Pure M]
+private def modifyAppArgM {M : Type → Type u} [Functor M] [Pure M]
     (modifier : Expr → M Expr) : Expr → M Expr
   | app f a => mkApp f <$> modifier a
   | e => pure e
@@ -434,7 +434,7 @@ def getArg? (e : Expr) (i : Nat) (n := e.getAppNumArgs) : Option Expr :=
 
 /-- Given `f a₀ a₁ ... aₙ₋₁`, runs `modifier` on the `i`th argument.
 An argument `n` may be provided which says how many arguments we are expecting `e` to have. -/
-def modifyArgM {M : Type → Type u} [Monad M] (modifier : Expr → M Expr)
+private def modifyArgM {M : Type → Type u} [Monad M] (modifier : Expr → M Expr)
     (e : Expr) (i : Nat) (n := e.getAppNumArgs) : M Expr := do
   let some a := getArg? e i | return e
   let a ← modifier a
@@ -475,7 +475,7 @@ def mkDirectProjection (e : Expr) (fieldName : Name) : MetaM Expr := do
 
 /-- If `e` has a structure as type with field `fieldName` (either directly or in a parent
 structure), `mkProjection e fieldName` creates the projection expression `e.fieldName` -/
-def mkProjection (e : Expr) (fieldName : Name) : MetaM Expr := do
+private def mkProjection (e : Expr) (fieldName : Name) : MetaM Expr := do
   let .const structName _ := (← whnf (← inferType e)).getAppFn |
     throwError "{e} doesn't have a structure as type"
   let some baseStruct := findField? (← getEnv) structName fieldName |
@@ -520,7 +520,7 @@ def containsConst (e : Expr) (p : Name → Bool) : Bool :=
 return a `forall x, Not (p x)` and a proof for it.
 
 This function handles nested existentials. -/
-partial def forallNot_of_notExists (ex hNotEx : Expr) : MetaM (Expr × Expr) := do
+private partial def forallNot_of_notExists (ex hNotEx : Expr) : MetaM (Expr × Expr) := do
   let .app (.app (.const ``Exists [lvl]) A) p := ex | failure
   go lvl A p hNotEx
 where
@@ -551,7 +551,7 @@ end Expr
 /-- Get the projections that are projections to parent structures. Similar to `getParentStructures`,
 except that this returns the (last component of the) projection names instead of the parent names.
 -/
-def getFieldsToParents (env : Environment) (structName : Name) : Array Name :=
+private def getFieldsToParents (env : Environment) (structName : Name) : Array Name :=
   getStructureFields env structName |>.filter fun fieldName =>
     isSubobjectField? env structName fieldName |>.isSome
 

@@ -35,7 +35,7 @@ def toMk₁ {n : ℕ} (i : Fin (n + 2)) : ⦋n⦌ ⟶ ⦋1⦌ :=
         split_ifs <;> grind }
 
 @[local grind =]
-lemma toMk₁_apply {n : ℕ} (i : Fin (n + 2)) (j : Fin (n + 1)) :
+private lemma toMk₁_apply {n : ℕ} (i : Fin (n + 2)) (j : Fin (n + 1)) :
   dsimp% toMk₁ i j = if j.castSucc < i then 0 else 1 := rfl
 
 #adaptation_note /-- Before https://github.com/leanprover/lean4/pull/13166

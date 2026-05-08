@@ -133,7 +133,7 @@ noncomputable def orderBotOfHasInitial [HasInitial C] : OrderBot C :=
 
 variable (C) in
 /-- If `C` is a preorder with bot, then `⊥` is an initial object. -/
-def isInitialBot [OrderBot C] : IsInitial (⊥ : C) := IsInitial.ofUnique _
+private def isInitialBot [OrderBot C] : IsInitial (⊥ : C) := IsInitial.ofUnique _
 
 instance (priority := low) [OrderBot C] : HasInitial C := hasInitial_of_unique ⊥
 

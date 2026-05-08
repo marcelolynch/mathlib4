@@ -95,7 +95,7 @@ theorem toOrderHom_mk {a b : SimplexCategory} (f : Fin (a.len + 1) →o Fin (b.l
     (mk f).toOrderHom = f :=
   rfl
 
-theorem mk_toOrderHom_apply {a b : SimplexCategory} (f : Fin (a.len + 1) →o Fin (b.len + 1))
+private theorem mk_toOrderHom_apply {a b : SimplexCategory} (f : Fin (a.len + 1) →o Fin (b.len + 1))
     (i : Fin (a.len + 1)) : (mk f).toOrderHom i = f i :=
   rfl
 
@@ -160,7 +160,7 @@ abbrev inclusion (n : ℕ) : SimplexCategory.Truncated n ⥤ SimplexCategory :=
   ObjectProperty.ι _
 
 /-- A proof that the full subcategory inclusion is fully faithful -/
-noncomputable def inclusion.fullyFaithful (n : ℕ) :
+private noncomputable def inclusion.fullyFaithful (n : ℕ) :
     (inclusion n : Truncated n ⥤ _).op.FullyFaithful :=
   Functor.FullyFaithful.ofFullyFaithful _
 

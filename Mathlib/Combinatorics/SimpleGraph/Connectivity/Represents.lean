@@ -60,7 +60,7 @@ lemma disjoint_supp_of_notMem (hrep : Represents s C) (h : c ∉ C) : Disjoint s
   subst hc
   exact h (hrep.1 ha)
 
-lemma ncard_inter (hrep : Represents s C) (h : c ∈ C) : (s ∩ c.supp).ncard = 1 := by
+private lemma ncard_inter (hrep : Represents s C) (h : c ∈ C) : (s ∩ c.supp).ncard = 1 := by
   rw [Set.ncard_eq_one]
   exact exists_inter_eq_singleton hrep h
 

@@ -979,7 +979,7 @@ variable [AffineSpace V P] {ι : Type*} (s : Finset ι)
 
 -- TODO: define `affineMap.proj`, `affineMap.fst`, `affineMap.snd`
 /-- A weighted sum, as an affine map on the points involved. -/
-def weightedVSubOfPoint (w : ι → k) : (ι → P) × P →ᵃ[k] V where
+private def weightedVSubOfPoint (w : ι → k) : (ι → P) × P →ᵃ[k] V where
   toFun p := s.weightedVSubOfPoint p.fst p.snd w
   linear := ∑ i ∈ s, w i • ((LinearMap.proj i).comp (LinearMap.fst _ _ _) - LinearMap.snd _ _ _)
   map_vadd' := by

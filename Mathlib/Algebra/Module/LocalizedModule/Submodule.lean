@@ -240,7 +240,7 @@ instance isLocalizedModule : IsLocalizedModule p (M'.toLocalized' S p f) :=
 
 /-- The canonical isomorphism between the localization of a submodule and its realization
 as a submodule in the localized module. -/
-noncomputable def localizedEquiv : M'.localized p ≃ₗ[Localization p] LocalizedModule p M' :=
+private noncomputable def localizedEquiv : M'.localized p ≃ₗ[Localization p] LocalizedModule p M' :=
   have := IsLocalization.linearMap_compatibleSMul p
   IsLocalizedModule.linearEquiv p (M'.toLocalized p) (LocalizedModule.mkLinearMap _ _)
     |>.restrictScalars _

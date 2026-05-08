@@ -409,7 +409,7 @@ theorem isBoundedBilinearMap_compMultilinear {ι : Type*} {E : ι → Type*} [Fi
 We define this function here as a linear map `E × F →ₗ[𝕜] G`, then `IsBoundedBilinearMap.deriv`
 strengthens it to a continuous linear map `E × F →L[𝕜] G`.
 -/
-def IsBoundedBilinearMap.linearDeriv (h : IsBoundedBilinearMap 𝕜 f) (p : E × F) : E × F →ₗ[𝕜] G :=
+private def IsBoundedBilinearMap.linearDeriv (h : IsBoundedBilinearMap 𝕜 f) (p : E × F) : E × F →ₗ[𝕜] G :=
   (h.toContinuousLinearMap.deriv₂ p).toLinearMap
 
 /-- The derivative of a bounded bilinear map at a point `p : E × F`, as a continuous linear map

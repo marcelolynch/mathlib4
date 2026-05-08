@@ -271,7 +271,7 @@ theorem IsSemisimple.of_mem_adjoin_singleton {a : End K M}
     (ha : a ∈ K[f]) : a.IsSemisimple := by
   rw [adjoin_singleton_eq_range_aeval] at ha; obtain ⟨p, rfl⟩ := ha; exact .aeval hf _
 
-protected theorem IsSemisimple.pow (n : ℕ) : (f ^ n).IsSemisimple :=
+private protected theorem IsSemisimple.pow (n : ℕ) : (f ^ n).IsSemisimple :=
   .of_mem_adjoin_singleton hf (pow_mem (self_mem_adjoin_singleton _ _) _)
 
 end
@@ -318,13 +318,13 @@ theorem IsSemisimple.of_mem_adjoin_pair {a : End K M} (ha : a ∈ K[f, g]) :
     ((minpoly.isRadical K p).squarefree <| minpoly.ne_zero <| .of_finite K p) ?_
   rw [aeval_algHom, φ.comp_apply, minpoly.aeval, map_zero]
 
-theorem IsSemisimple.add_of_commute : (f + g).IsSemisimple := .of_mem_adjoin_pair
+private theorem IsSemisimple.add_of_commute : (f + g).IsSemisimple := .of_mem_adjoin_pair
   comm hf hg <| add_mem (Algebra.subset_adjoin <| .inl rfl) (Algebra.subset_adjoin <| .inr rfl)
 
 theorem IsSemisimple.sub_of_commute : (f - g).IsSemisimple := .of_mem_adjoin_pair
   comm hf hg <| sub_mem (subset_adjoin <| .inl rfl) (subset_adjoin <| .inr rfl)
 
-theorem IsSemisimple.mul_of_commute : (f * g).IsSemisimple := .of_mem_adjoin_pair
+private theorem IsSemisimple.mul_of_commute : (f * g).IsSemisimple := .of_mem_adjoin_pair
   comm hf hg <| mul_mem (subset_adjoin <| .inl rfl) (subset_adjoin <| .inr rfl)
 
 end PerfectField

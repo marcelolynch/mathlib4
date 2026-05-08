@@ -176,7 +176,7 @@ lemma of_exists_isStronglyCartesian {p : 𝒳 ⥤ 𝒮}
 T --g--> R --f--> S
 ```
 we have an isomorphism `T ×_S a ≅ T ×_R (R ×_S a)` -/
-noncomputable def pullbackPullbackIso {p : 𝒳 ⥤ 𝒮} [IsFibered p]
+private noncomputable def pullbackPullbackIso {p : 𝒳 ⥤ 𝒮} [IsFibered p]
     {R S T : 𝒮} {a : 𝒳} (ha : p.obj a = S) (f : R ⟶ S) (g : T ⟶ R) :
       pullbackObj ha (g ≫ f) ≅ pullbackObj (pullbackObj_proj ha f) g :=
   domainUniqueUpToIso p (g ≫ f) (pullbackMap (pullbackObj_proj ha f) g ≫ pullbackMap ha f)

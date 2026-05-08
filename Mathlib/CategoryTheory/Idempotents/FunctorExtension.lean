@@ -166,7 +166,7 @@ def karoubiUniversal₁ : C ⥤ Karoubi D ≌ Karoubi C ⥤ Karoubi D where
 
 /-- Compatibility isomorphisms of `functorExtension₁` with respect to the
 composition of functors. -/
-def functorExtension₁Comp (F : C ⥤ Karoubi D) (G : D ⥤ Karoubi E) :
+private def functorExtension₁Comp (F : C ⥤ Karoubi D) (G : D ⥤ Karoubi E) :
     (functorExtension₁ C E).obj (F ⋙ (functorExtension₁ D E).obj G) ≅
       (functorExtension₁ C D).obj F ⋙ (functorExtension₁ D E).obj G :=
   Iso.refl _

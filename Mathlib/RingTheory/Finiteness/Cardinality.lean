@@ -122,7 +122,7 @@ noncomputable def kerRepr := LinearMap.ker (Finite.exists_fin' R M).choose_spec.
 protected abbrev repr : Type u := _ ⧸ kerRepr R M
 
 /-- The representative is isomorphic to the original module. -/
-noncomputable def reprEquiv : Finite.repr R M ≃ₗ[R] M :=
+private noncomputable def reprEquiv : Finite.repr R M ≃ₗ[R] M :=
   LinearMap.quotKerEquivOfSurjective _ (Finite.exists_fin' R M).choose_spec.choose_spec
 
 end Ring

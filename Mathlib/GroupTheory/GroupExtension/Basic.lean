@@ -175,7 +175,7 @@ noncomputable def semidirectProductToGroupExtensionEquiv :
       SemidirectProduct.rightHom_eq_right]
 
 /-- The group associated to a split extension is isomorphic to a semidirect product. -/
-noncomputable def semidirectProductMulEquiv : N ⋊[s.conjAct] G ≃* E :=
+private noncomputable def semidirectProductMulEquiv : N ⋊[s.conjAct] G ≃* E :=
   s.semidirectProductToGroupExtensionEquiv.toMulEquiv
 
 end Splitting

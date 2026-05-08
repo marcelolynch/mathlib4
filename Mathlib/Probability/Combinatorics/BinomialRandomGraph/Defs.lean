@@ -64,7 +64,7 @@ lemma binomialRandom_apply' (S : Set (SimpleGraph V)) :
   rw [binomialRandom, measurableEmbedding_edgeSet.comap_apply]
 
 variable (p) in
-lemma binomialRandom_apply (S : Set (SimpleGraph V)) :
+private lemma binomialRandom_apply (S : Set (SimpleGraph V)) :
     G(V, p) S = infinitePi
       (fun e : Sym2 V ↦ toNNReal p • .dirac (¬ e.IsDiag) + toNNReal (σ p) • .dirac False)
       ((fun G e ↦ e ∈ G.edgeSet) '' S) := by

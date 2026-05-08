@@ -66,7 +66,7 @@ noncomputable def grpTypeEquivalenceGrp : Grp (Type u) ≌ GrpCat.{u} where
 /-- The equivalences `Mon (Type u) ≌ MonCat.{u}` and `Grp (Type u) ≌ GrpCat.{u}`
 are naturally compatible with the forgetful functors to `MonCat` and `Mon (Type u)`.
 -/
-noncomputable def grpTypeEquivalenceGrpForget :
+private noncomputable def grpTypeEquivalenceGrpForget :
     GrpTypeEquivalenceGrp.functor ⋙ forget₂ GrpCat MonCat ≅
       Grp.forget₂Mon (Type u) ⋙ MonTypeEquivalenceMon.functor :=
   Iso.refl _

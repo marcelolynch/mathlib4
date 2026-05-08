@@ -591,25 +591,25 @@ theorem zero_comp (g : β →co γ) : (0 : C_c(γ, δ)).comp g = 0 :=
 end
 
 /-- Composition as an additive monoid homomorphism. -/
-def compAddMonoidHom [AddMonoid δ] [ContinuousAdd δ] (g : β →co γ) : C_c(γ, δ) →+ C_c(β, δ) where
+private def compAddMonoidHom [AddMonoid δ] [ContinuousAdd δ] (g : β →co γ) : C_c(γ, δ) →+ C_c(β, δ) where
   toFun f := f.comp g
   map_zero' := zero_comp g
   map_add' _ _ := rfl
 
 /-- Composition as a semigroup homomorphism. -/
-def compMulHom [MulZeroClass δ] [ContinuousMul δ] (g : β →co γ) : C_c(γ, δ) →ₙ* C_c(β, δ) where
+private def compMulHom [MulZeroClass δ] [ContinuousMul δ] (g : β →co γ) : C_c(γ, δ) →ₙ* C_c(β, δ) where
   toFun f := f.comp g
   map_mul' _ _ := rfl
 
 /-- Composition as a linear map. -/
-def compLinearMap [AddCommMonoid δ] [ContinuousAdd δ] {R : Type*} [Semiring R] [Module R δ]
+private def compLinearMap [AddCommMonoid δ] [ContinuousAdd δ] {R : Type*} [Semiring R] [Module R δ]
     [ContinuousConstSMul R δ] (g : β →co γ) : C_c(γ, δ) →ₗ[R] C_c(β, δ) where
   toFun f := f.comp g
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
 
 /-- Composition as a non-unital algebra homomorphism. -/
-def compNonUnitalAlgHom {R : Type*} [Semiring R] [NonUnitalNonAssocSemiring δ]
+private def compNonUnitalAlgHom {R : Type*} [Semiring R] [NonUnitalNonAssocSemiring δ]
     [IsTopologicalSemiring δ] [Module R δ] [ContinuousConstSMul R δ] (g : β →co γ) :
     C_c(γ, δ) →ₙₐ[R] C_c(β, δ) where
   toFun f := f.comp g

@@ -93,7 +93,7 @@ then their quotients are also equivalent.
 
 (Special case of `algEquiv_quot_algEquiv` when `R = ℕ`, which in turn is a special
 case of the third isomorphism theorem.) -/
-def equivQuotEquiv {A B : Type v} [Semiring A] [Semiring B] (f : A ≃+* B) (rel : A → A → Prop) :
+private def equivQuotEquiv {A B : Type v} [Semiring A] [Semiring B] (f : A ≃+* B) (rel : A → A → Prop) :
     RingQuot rel ≃+* RingQuot (rel on f.symm) :=
   let f_alg : A ≃ₐ[ℕ] B :=
     AlgEquiv.ofRingEquiv (f := f) (fun n ↦ by simp)

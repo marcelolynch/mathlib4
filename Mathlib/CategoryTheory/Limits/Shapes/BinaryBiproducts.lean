@@ -398,7 +398,7 @@ instance (priority := 100) hasBinaryCoproducts_of_hasBinaryBiproducts [HasBinary
 
 /-- The isomorphism between the specified binary product and the specified binary coproduct for
 a pair for a binary biproduct. -/
-def biprodIso (X Y : C) [HasBinaryBiproduct X Y] : Limits.prod X Y ≅ Limits.coprod X Y :=
+private def biprodIso (X Y : C) [HasBinaryBiproduct X Y] : Limits.prod X Y ≅ Limits.coprod X Y :=
   (IsLimit.conePointUniqueUpToIso (limit.isLimit _) (BinaryBiproduct.isLimit X Y)).trans <|
     IsColimit.coconePointUniqueUpToIso (BinaryBiproduct.isColimit X Y) (colimit.isColimit _)
 

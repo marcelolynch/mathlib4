@@ -837,7 +837,7 @@ theorem sUnion_powerset_gc :
   gc_sSup_Iic
 
 /-- `⋃₀` and `𝒫` form a Galois insertion. -/
-def sUnionPowersetGI :
+private def sUnionPowersetGI :
     GaloisInsertion (⋃₀ · : Set (Set α) → Set α) (𝒫 · : Set α → Set (Set α)) :=
   gi_sSup_Iic
 

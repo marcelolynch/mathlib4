@@ -184,7 +184,7 @@ nonrec lemma is3Clique_iff [NoAccidental t] {s : Finset (α ⊕ β ⊕ γ)} :
   · rintro ⟨x, hx, rfl⟩
     exact toTriangle_is3Clique hx
 
-lemma toTriangle_surjOn [NoAccidental t] :
+private lemma toTriangle_surjOn [NoAccidental t] :
     (t : Set (α × β × γ)).SurjOn toTriangle ((graph t).cliqueSet 3) := fun _ ↦ is3Clique_iff.1
 
 variable (t)

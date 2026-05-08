@@ -56,7 +56,7 @@ lemma δ₀Iter_succ' (i : ℕ) {n m : ℕ} (h : n + (i + 1) = m := by lia) :
   dsimp
   lia
 
-lemma δ₀Iter_δ (i : ℕ) {n m : ℕ} (j : Fin (m + 2))
+private lemma δ₀Iter_δ (i : ℕ) {n m : ℕ} (j : Fin (m + 2))
     (hi : n + i = m := by lia) (hj : j.val ≤ i := by grind) :
     δ₀Iter i hi ≫ δ j = δ₀Iter (i + 1) := by
   refine ConcreteCategory.hom_ext _ _ (fun k ↦ ?_)

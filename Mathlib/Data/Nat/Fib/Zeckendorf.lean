@@ -174,7 +174,7 @@ lemma zeckendorf_sum_fib : ∀ {l}, IsZeckendorfRep l → zeckendorf (l.map fib)
 /-- **Zeckendorf's Theorem** as an equivalence between natural numbers and Zeckendorf
 representations. Every natural number can be written uniquely as a sum of non-consecutive Fibonacci
 numbers (if we forget about the first two terms `F₀ = 0`, `F₁ = 1`). -/
-def zeckendorfEquiv : ℕ ≃ {l // IsZeckendorfRep l} where
+private def zeckendorfEquiv : ℕ ≃ {l // IsZeckendorfRep l} where
   toFun n := ⟨zeckendorf n, isZeckendorfRep_zeckendorf _⟩
   invFun l := (map fib l).sum
   left_inv := sum_zeckendorf_fib

@@ -1067,7 +1067,7 @@ It is advisable to use `Adjunction.leftAdjointOplaxMonoidal` and
 `Adjunction.rightAdjointLaxMonoidal`, because compatibilities between
 the oplax monoidal left adjoint and the lax monoidal right adjoint
 (`Adjunction.IsMonoidal`) have been stated for these definitions. -/
-def laxMonoidalEquivOplaxMonoidal : G.LaxMonoidal ≃ F.OplaxMonoidal where
+private def laxMonoidalEquivOplaxMonoidal : G.LaxMonoidal ≃ F.OplaxMonoidal where
   toFun _ := adj.leftAdjointOplaxMonoidal
   invFun _ := adj.rightAdjointLaxMonoidal
   left_inv _ := by

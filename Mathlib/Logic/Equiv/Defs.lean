@@ -414,7 +414,7 @@ def equivEmptyEquiv (α : Sort u) : α ≃ Empty ≃ IsEmpty α :=
   ⟨fun e => Function.isEmpty e, @equivEmpty α, fun e => ext fun x => (e x).elim, fun _ => rfl⟩
 
 /-- The `Sort` of proofs of a false proposition is equivalent to `PEmpty`. -/
-def propEquivPEmpty {p : Prop} (h : ¬p) : p ≃ PEmpty := @equivPEmpty p <| IsEmpty.prop_iff.2 h
+private def propEquivPEmpty {p : Prop} (h : ¬p) : p ≃ PEmpty := @equivPEmpty p <| IsEmpty.prop_iff.2 h
 
 /-- If both `α` and `β` have a unique element, then `α ≃ β`. -/
 @[simps (attr := grind =)]
@@ -429,7 +429,7 @@ def ofUnique (α β : Sort _) [Unique.{u} α] [Unique.{v} β] : α ≃ β where
 def equivPUnit (α : Sort u) [Unique α] : α ≃ PUnit.{v} := ofUnique α _
 
 /-- The `Sort` of proofs of a true proposition is equivalent to `PUnit`. -/
-def propEquivPUnit {p : Prop} (h : p) : p ≃ PUnit.{0} := @equivPUnit p <| uniqueProp h
+private def propEquivPUnit {p : Prop} (h : p) : p ≃ PUnit.{0} := @equivPUnit p <| uniqueProp h
 
 /-- `ULift α` is equivalent to `α`. -/
 @[simps (attr := grind =) -fullyApplied apply symm_apply]
@@ -546,7 +546,7 @@ noncomputable def propEquivBool : Prop ≃ Bool where
 section
 
 /-- The sort of maps to `PUnit.{v}` is equivalent to `PUnit.{w}`. -/
-def arrowPUnitEquivPUnit (α : Sort*) : (α → PUnit.{v}) ≃ PUnit.{w} where
+private def arrowPUnitEquivPUnit (α : Sort*) : (α → PUnit.{v}) ≃ PUnit.{w} where
   toFun _ := .unit
   invFun _ _ := .unit
 
@@ -562,10 +562,10 @@ def piUnique [Unique α] (β : α → Sort*) : (∀ i, β i) ≃ β default wher
 def funUnique (α β) [Unique.{u} α] : (α → β) ≃ β := piUnique _
 
 /-- The sort of maps from `PUnit` is equivalent to the codomain. -/
-def punitArrowEquiv (α : Sort*) : (PUnit.{u} → α) ≃ α := funUnique PUnit.{u} α
+private def punitArrowEquiv (α : Sort*) : (PUnit.{u} → α) ≃ α := funUnique PUnit.{u} α
 
 /-- The sort of maps from `True` is equivalent to the codomain. -/
-def trueArrowEquiv (α : Sort*) : (True → α) ≃ α := funUnique _ _
+private def trueArrowEquiv (α : Sort*) : (True → α) ≃ α := funUnique _ _
 
 /-- The sort of maps from a type that `IsEmpty` is equivalent to `PUnit`. -/
 def arrowPUnitOfIsEmpty (α β : Sort*) [IsEmpty α] : (α → β) ≃ PUnit.{u} where
@@ -574,13 +574,13 @@ def arrowPUnitOfIsEmpty (α β : Sort*) [IsEmpty α] : (α → β) ≃ PUnit.{u}
   left_inv _ := funext isEmptyElim
 
 /-- The sort of maps from `Empty` is equivalent to `PUnit`. -/
-def emptyArrowEquivPUnit (α : Sort*) : (Empty → α) ≃ PUnit.{u} := arrowPUnitOfIsEmpty _ _
+private def emptyArrowEquivPUnit (α : Sort*) : (Empty → α) ≃ PUnit.{u} := arrowPUnitOfIsEmpty _ _
 
 /-- The sort of maps from `PEmpty` is equivalent to `PUnit`. -/
-def pemptyArrowEquivPUnit (α : Sort*) : (PEmpty → α) ≃ PUnit.{u} := arrowPUnitOfIsEmpty _ _
+private def pemptyArrowEquivPUnit (α : Sort*) : (PEmpty → α) ≃ PUnit.{u} := arrowPUnitOfIsEmpty _ _
 
 /-- The sort of maps from `False` is equivalent to `PUnit`. -/
-def falseArrowEquivPUnit (α : Sort*) : (False → α) ≃ PUnit.{u} := arrowPUnitOfIsEmpty _ _
+private def falseArrowEquivPUnit (α : Sort*) : (False → α) ≃ PUnit.{u} := arrowPUnitOfIsEmpty _ _
 
 end
 
@@ -655,7 +655,7 @@ def sigmaPLiftEquivSubtype {α : Type v} (P : α → Prop) : (Σ i, PLift (P i))
 /-- A `Sigma` with `fun i ↦ ULift (PLift (P i))` fibers is equivalent to `{ x // P x }`.
 Variant of `sigmaPLiftEquivSubtype`.
 -/
-def sigmaULiftPLiftEquivSubtype {α : Type v} (P : α → Prop) :
+private def sigmaULiftPLiftEquivSubtype {α : Type v} (P : α → Prop) :
     (Σ i, ULift (PLift (P i))) ≃ Subtype P :=
   (sigmaCongrRight fun _ => Equiv.ulift).trans (sigmaPLiftEquivSubtype P)
 
@@ -728,7 +728,7 @@ def sigmaAssoc {α : Type*} {β : α → Type*} (γ : ∀ a : α, β a → Type*
   invFun x := ⟨⟨x.1, x.2.1⟩, x.2.2⟩
 
 /-- The dependent product of sorts is associative up to an equivalence. -/
-def pSigmaAssoc {α : Sort*} {β : α → Sort*} (γ : ∀ a : α, β a → Sort*) :
+private def pSigmaAssoc {α : Sort*} {β : α → Sort*} (γ : ∀ a : α, β a → Sort*) :
     (Σ' ab : Σ' a : α, β a, γ ab.1 ab.2) ≃ Σ' a : α, Σ' b : β a, γ a b where
   toFun x := ⟨x.1.1, ⟨x.1.2, x.2⟩⟩
   invFun x := ⟨⟨x.1, x.2.1⟩, x.2.2⟩
@@ -863,7 +863,7 @@ protected def congrRight {r r' : α → α → Prop} (eq : ∀ a₁ a₂, r a₁
 
 /-- An equivalence `e : α ≃ β` generates an equivalence between the quotient space of `α`
 by a relation `ra` and the quotient space of `β` by the image of this relation under `e`. -/
-protected def congrLeft {r : α → α → Prop} (e : α ≃ β) :
+private protected def congrLeft {r : α → α → Prop} (e : α ≃ β) :
     Quot r ≃ Quot fun b b' => r (e.symm b) (e.symm b') :=
   Quot.congr e fun _ _ => by simp only [e.symm_apply_apply]
 

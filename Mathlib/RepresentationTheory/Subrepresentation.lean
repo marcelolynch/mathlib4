@@ -51,7 +51,7 @@ instance : SetLike (Subrepresentation ρ) W where
 instance : PartialOrder (Subrepresentation ρ) := .ofSetLike (Subrepresentation ρ) W
 
 /-- A subrepresentation is a representation. -/
-def toRepresentation (ρ' : Subrepresentation ρ) : Representation A G ρ'.toSubmodule where
+private def toRepresentation (ρ' : Subrepresentation ρ) : Representation A G ρ'.toSubmodule where
   toFun g := (ρ g).restrict (ρ'.apply_mem_toSubmodule g)
   map_one' := by ext; simp
   map_mul' x y := by ext; simp

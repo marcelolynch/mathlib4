@@ -468,7 +468,7 @@ variable {R G : Type*} [Ring R] [LinearOrder R] [IsStrictOrderedRing R] [FloorRi
   (a : G)
 
 /-- A map `f : R →+c[1, a] G` is defined by its values on `Set.Ico 0 1`. -/
-def mkFract : (Ico (0 : R) 1 → G) ≃ (R →+c[1, a] G) where
+private def mkFract : (Ico (0 : R) 1 → G) ≃ (R →+c[1, a] G) where
   toFun f := ⟨fun x ↦ f ⟨Int.fract x, Int.fract_nonneg _, Int.fract_lt_one _⟩ + ⌊x⌋ • a, fun x ↦ by
     simp [add_one_zsmul, add_assoc]⟩
   invFun f x := f x

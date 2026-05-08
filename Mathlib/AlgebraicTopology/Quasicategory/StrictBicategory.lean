@@ -59,7 +59,7 @@ instance QCat.catEnrichedOrdinaryCategory : EnrichedOrdinaryCategory Cat QCat :=
 
 /-- The underlying category of the `Cat`-enriched ordinary category of quasicategories is
 equivalent to `QCat`. -/
-def QCat.forgetEnrichment.equiv :
+private def QCat.forgetEnrichment.equiv :
     ForgetEnrichment Cat QCat ≌ QCat := ForgetEnrichment.equiv Cat
 
 /-- The bicategory of quasicategories extracted from `QCat.CatEnrichedOrdinaryCat`. -/

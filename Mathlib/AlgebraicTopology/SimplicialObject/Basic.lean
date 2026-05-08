@@ -97,7 +97,7 @@ lemma δ_def {n} (i : Fin (n + 2)) : X.δ i = X.map (SimplexCategory.δ i).op :=
 def σ {n} (i : Fin (n + 1)) : X _⦋n⦌ ⟶ X _⦋n + 1⦌ :=
   X.map (SimplexCategory.σ i).op
 
-lemma σ_def {n} (i : Fin (n + 1)) : X.σ i = X.map (SimplexCategory.σ i).op := rfl
+private lemma σ_def {n} (i : Fin (n + 1)) : X.σ i = X.map (SimplexCategory.σ i).op := rfl
 
 /-- The diagonal of a simplex is the long edge of the simplex. -/
 def diagonal {n : ℕ} : X _⦋n⦌ ⟶ X _⦋1⦌ := X.map ((SimplexCategory.diag n).op)
@@ -501,7 +501,7 @@ def augment (X : SimplicialObject C) (X₀ : C) (f : X _⦋0⦌ ⟶ X₀)
         simpa only [← X.map_comp, ← Category.assoc, Category.comp_id, ← op_comp] using w _ _ _ }
 
 -- Not `@[simp]` since `simp` can prove this.
-theorem augment_hom_zero (X : SimplicialObject C) (X₀ : C) (f : X _⦋0⦌ ⟶ X₀) (w) :
+private theorem augment_hom_zero (X : SimplicialObject C) (X₀ : C) (f : X _⦋0⦌ ⟶ X₀) (w) :
     (X.augment X₀ f w).hom.app (op ⦋0⦌) = f := by simp
 
 /-- The augmented simplicial object that is deduced from a simplicial object and
@@ -745,7 +745,7 @@ def truncation (n : ℕ) : CosimplicialObject C ⥤ CosimplicialObject.Truncated
   (whiskeringLeft _ _ _).obj (SimplexCategory.Truncated.inclusion n)
 
 /-- For all `m ≤ n`, `truncation m` factors through `Truncated n`. -/
-def truncationCompTrunc {n m : ℕ} (h : m ≤ n) :
+private def truncationCompTrunc {n m : ℕ} (h : m ≤ n) :
     truncation n ⋙ Truncated.trunc C n m ≅ truncation m :=
   Iso.refl _
 
@@ -865,7 +865,7 @@ def augment (X : CosimplicialObject C) (X₀ : C) (f : X₀ ⟶ X.obj ⦋0⦌)
         rw [Category.id_comp, Category.assoc, ← X.map_comp, w] }
 
 -- Not `@[simp]` since `simp` can prove this.
-theorem augment_hom_zero (X : CosimplicialObject C) (X₀ : C) (f : X₀ ⟶ X.obj ⦋0⦌) (w) :
+private theorem augment_hom_zero (X : CosimplicialObject C) (X₀ : C) (f : X₀ ⟶ X.obj ⦋0⦌) (w) :
     (X.augment X₀ f w).hom.app ⦋0⦌ = f := by simp
 
 /-- The coaugmented cosimplicial object that is deduced from a cosimplicial object and

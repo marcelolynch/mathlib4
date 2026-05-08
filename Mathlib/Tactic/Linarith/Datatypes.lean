@@ -87,7 +87,7 @@ def get (n : Nat) : Linexp → Option Int
 /--
 `l.contains n` is true iff `n` is the first element of a pair in `l`.
 -/
-def contains (n : Nat) : Linexp → Bool := Option.isSome ∘ get n
+private def contains (n : Nat) : Linexp → Bool := Option.isSome ∘ get n
 
 /--
 `l.zfind n` returns the value associated with key `n` if there is one, and 0 otherwise.

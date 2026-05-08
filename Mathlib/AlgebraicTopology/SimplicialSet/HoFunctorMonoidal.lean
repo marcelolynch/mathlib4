@@ -219,7 +219,7 @@ lemma inverse_comp_functor : inverse X Y ⋙ functor X Y = 𝟭 _ :=
 
 /-- The equivalence `(X ⊗ Y).HomotopyCategory ≌ X.HomotopyCategory ⥤ Y.HomotopyCategory`
 when `X` and `Y` are `2`-truncated simplicial sets. -/
-def equivalence :
+private def equivalence :
     (X ⊗ Y).HomotopyCategory ≌ X.HomotopyCategory × Y.HomotopyCategory where
   functor := functor X Y
   inverse := inverse X Y

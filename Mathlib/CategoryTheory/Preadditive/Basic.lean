@@ -137,7 +137,7 @@ def rightComp (P : C) {Q R : C} (g : Q ⟶ R) : (P ⟶ Q) →+ (P ⟶ R) :=
 variable {P Q R : C} (f f' : P ⟶ Q) (g g' : Q ⟶ R)
 
 /-- Composition as a bilinear group homomorphism -/
-def compHom : (P ⟶ Q) →+ (Q ⟶ R) →+ (P ⟶ R) :=
+private def compHom : (P ⟶ Q) →+ (Q ⟶ R) →+ (P ⟶ R) :=
   AddMonoidHom.mk' (fun f => leftComp _ f) fun f₁ f₂ =>
     AddMonoidHom.ext fun g => (rightComp _ g).map_add f₁ f₂
 

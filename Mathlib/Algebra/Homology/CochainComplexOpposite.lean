@@ -166,7 +166,7 @@ end
 /-- Two morphisms of cochain complexes indexed by `ℤ` are homotopic iff
 they are homotopic after the application of the functor
 `(opEquivalence C).functor : (CochainComplex C ℤ)ᵒᵖ ⥤ CochainComplex Cᵒᵖ ℤ`. -/
-def homotopyOpEquiv {K L : CochainComplex C ℤ} {f g : K ⟶ L} :
+private def homotopyOpEquiv {K L : CochainComplex C ℤ} {f g : K ⟶ L} :
     Homotopy f g ≃ Homotopy ((opEquivalence C).functor.map f.op)
       ((opEquivalence C).functor.map g.op) where
   toFun h := homotopyOp h

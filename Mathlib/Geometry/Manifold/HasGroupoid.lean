@@ -356,7 +356,7 @@ variable [TopologicalSpace M'] [TopologicalSpace M''] {G : StructureGroupoid H} 
   [ChartedSpace H M'']
 
 /-- The identity is a diffeomorphism of any charted space, for any groupoid. -/
-def Structomorph.refl (M : Type*) [TopologicalSpace M] [ChartedSpace H M] [HasGroupoid M G] :
+private def Structomorph.refl (M : Type*) [TopologicalSpace M] [ChartedSpace H M] [HasGroupoid M G] :
     Structomorph G M M :=
   { Homeomorph.refl M with
     mem_groupoid := fun c c' hc hc' ↦ by
@@ -365,7 +365,7 @@ def Structomorph.refl (M : Type*) [TopologicalSpace M] [ChartedSpace H M] [HasGr
       exact G.compatible hc hc' }
 
 /-- The inverse of a structomorphism is a structomorphism. -/
-def Structomorph.symm (e : Structomorph G M M') : Structomorph G M' M :=
+private def Structomorph.symm (e : Structomorph G M M') : Structomorph G M' M :=
   { e.toHomeomorph.symm with
     mem_groupoid := by
       intro c c' hc hc'
@@ -375,7 +375,7 @@ def Structomorph.symm (e : Structomorph G M M') : Structomorph G M' M :=
         at this }
 
 /-- The composition of structomorphisms is a structomorphism. -/
-def Structomorph.trans (e : Structomorph G M M') (e' : Structomorph G M' M'') :
+private def Structomorph.trans (e : Structomorph G M M') (e' : Structomorph G M' M'') :
     Structomorph G M M'' :=
   { Homeomorph.trans e.toHomeomorph e'.toHomeomorph with
     mem_groupoid := by
@@ -452,7 +452,7 @@ theorem StructureGroupoid.restriction_mem_maximalAtlas_subtype
   exact G.mem_maximalAtlas_of_eqOnSource (M := s) this (G.subtypeRestr_mem_maximalAtlas he hs)
 
 /-- Each chart of a charted space is a structomorphism between its source and target. -/
-def OpenPartialHomeomorph.toStructomorph {e : OpenPartialHomeomorph M H} (he : e ∈ atlas H M)
+private def OpenPartialHomeomorph.toStructomorph {e : OpenPartialHomeomorph M H} (he : e ∈ atlas H M)
     [HasGroupoid M G] [ClosedUnderRestriction G] :
     let s : Opens M := { carrier := e.source, is_open' := e.open_source }
     let t : Opens H := { carrier := e.target, is_open' := e.open_target }

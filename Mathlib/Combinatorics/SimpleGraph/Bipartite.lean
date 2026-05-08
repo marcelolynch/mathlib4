@@ -91,7 +91,7 @@ theorem IsBipartiteWith.symm (h : G.IsBipartiteWith s t) : G.IsBipartiteWith t s
     rw [@and_comm (v ∈ t) (w ∈ s), @and_comm (v ∈ s) (w ∈ t)]
     exact h.mem_of_adj hadj.symm
 
-theorem isBipartiteWith_comm : G.IsBipartiteWith s t ↔ G.IsBipartiteWith t s :=
+private theorem isBipartiteWith_comm : G.IsBipartiteWith s t ↔ G.IsBipartiteWith t s :=
   ⟨IsBipartiteWith.symm, IsBipartiteWith.symm⟩
 
 /-- If `G.IsBipartiteWith s t` and `v ∈ s`, then if `v` is adjacent to `w` in `G` then `w ∈ t`. -/
@@ -309,7 +309,7 @@ theorem isBipartite_iff_exists_isBipartiteWith :
 theorem chromaticNumber_le_two_iff_isBipartite : G.chromaticNumber ≤ 2 ↔ G.IsBipartite :=
   chromaticNumber_le_iff_colorable
 
-theorem chromaticNumber_eq_two_iff : G.chromaticNumber = 2 ↔ G.IsBipartite ∧ G ≠ ⊥ :=
+private theorem chromaticNumber_eq_two_iff : G.chromaticNumber = 2 ↔ G.IsBipartite ∧ G ≠ ⊥ :=
   ⟨fun h ↦ ⟨chromaticNumber_le_two_iff_isBipartite.mp (by simp [h]),
             two_le_chromaticNumber_iff_ne_bot.mp (by simp [h])⟩,
    fun ⟨h₁, h₂⟩ ↦ ENat.eq_of_forall_natCast_le_iff fun _ ↦
@@ -380,7 +380,7 @@ lemma IsBipartiteWith.subgraph (h : G.IsBipartiteWith s t) (H : Subgraph G) :
     H.coe.IsBipartiteWith {x : H.verts | ↑x ∈ s} {x : H.verts | ↑x ∈ t} :=
   ⟨by grind [h.disjoint], fun _ _ hadj' ↦ h.mem_of_adj <| H.adj_sub hadj'⟩
 
-lemma IsBipartite.subgraph (h : G.IsBipartite) (H : Subgraph G) : H.coe.IsBipartite :=
+private lemma IsBipartite.subgraph (h : G.IsBipartite) (H : Subgraph G) : H.coe.IsBipartite :=
   let ⟨_, _, hst⟩ := isBipartite_iff_exists_isBipartiteWith.mp h
   isBipartite_iff_exists_isBipartiteWith.mpr ⟨_, _, IsBipartiteWith.subgraph hst H⟩
 
@@ -394,9 +394,9 @@ def between (s t : Set V) (G : SimpleGraph V) : SimpleGraph V where
 
 lemma between_adj : (G.between s t).Adj v w ↔ G.Adj v w ∧ (v ∈ s ∧ w ∈ t ∨ v ∈ t ∧ w ∈ s) := by rfl
 
-lemma between_le : G.between s t ≤ G := fun _ _ h ↦ h.1
+private lemma between_le : G.between s t ≤ G := fun _ _ h ↦ h.1
 
-lemma between_comm : G.between s t = G.between t s := by simp [between, or_comm]
+private lemma between_comm : G.between s t = G.between t s := by simp [between, or_comm]
 
 instance [DecidableRel G.Adj] [DecidablePred (· ∈ s)] [DecidablePred (· ∈ t)] :
     DecidableRel (G.between s t).Adj :=
@@ -508,7 +508,7 @@ theorem IsBipartiteWith.encard_edgeSet_le (hG : G.IsBipartiteWith s t) :
   grw [hG.edgeSetEmbeddingCompleteBipartiteGraph.encard_le]
   simp [encard_edgeSet_completeBipartiteGraph]
 
-theorem IsBipartite.four_mul_encard_edgeSet_le (h : G.IsBipartite) :
+private theorem IsBipartite.four_mul_encard_edgeSet_le (h : G.IsBipartite) :
     4 * G.edgeSet.encard ≤ ENat.card V ^ 2 := by
   refine finite_or_infinite V |>.elim (fun hv ↦ ?_) (fun _ ↦ by simp)
   have ⟨s, t, h⟩ := h.exists_isBipartiteWith
@@ -607,7 +607,7 @@ theorem isBipartiteWith_bipartiteDoubleCover :
   disjoint := by simp [Set.disjoint_iff_forall_ne]
   mem_of_adj := by simp
 
-theorem isBipartite_bipartiteDoubleCover : G.bipartiteDoubleCover.IsBipartite :=
+private theorem isBipartite_bipartiteDoubleCover : G.bipartiteDoubleCover.IsBipartite :=
   isBipartiteWith_bipartiteDoubleCover.isBipartite
 
 end BipartiteDoubleCover

@@ -32,7 +32,7 @@ for `G` is a limit if it is so after applying the functors `Fᵢ`
 (see also `reflectsLimit_of_reflectsIsomorphisms` in the file
 `Mathlib/CategoryTheory/Limits/Preserves/Basic.lean` for the corresponding
 result for a single functor). -/
-noncomputable def jointlyReflectsLimit
+private noncomputable def jointlyReflectsLimit
     {c : Cone G} (hc : ∀ i, IsLimit ((F i).mapCone c))
     [HasLimit G] [∀ i, PreservesLimit G (F i)] :
     IsLimit c := by
@@ -56,7 +56,7 @@ for `G` is a colimit if it is so after applying the functors `Fᵢ`
 (see also `reflectsColimit_of_reflectsIsomorphisms` in the file
 `Mathlib/CategoryTheory/Limits/Preserves/Basic.lean` for the corresponding
 result for a single functor) -/
-noncomputable def jointlyReflectsColimit
+private noncomputable def jointlyReflectsColimit
     {c : Cocone G} (hc : ∀ i, IsColimit ((F i).mapCocone c))
     [HasColimit G] [∀ i, PreservesColimit G (F i)] :
     IsColimit c := by

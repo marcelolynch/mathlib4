@@ -158,7 +158,7 @@ theorem ext [T : TopologicalSpace α] {σ : Type*} {F : Ctop α σ} (H₁ : ∀ 
 variable [TopologicalSpace α]
 
 /-- The topological space realizer made of the open sets. -/
-protected def id : Realizer α :=
+private protected def id : Realizer α :=
   ⟨{ x : Set α // IsOpen x },
     { f := Subtype.val
       top := fun _ ↦ ⟨univ, isOpen_univ⟩

@@ -71,21 +71,21 @@ variable {K : SimplicialComplex 𝕜 E} {s t : Finset E} {x : E}
 lemma nonempty_of_mem_faces (hs : s ∈ K.faces) : s.Nonempty :=
   K.isRelLowerSet_faces hs |>.1
 
-theorem empty_notMem : ∅ ∉ K.faces :=
+private theorem empty_notMem : ∅ ∉ K.faces :=
   fun h => by simpa using nonempty_of_mem_faces h
 
 /-- The underlying space of a simplicial complex is the union of its faces. -/
 def space (K : SimplicialComplex 𝕜 E) : Set E :=
   ⋃ s ∈ K.faces, convexHull 𝕜 (s : Set E)
 
-theorem mem_space_iff : x ∈ K.space ↔ ∃ s ∈ K.faces, x ∈ convexHull 𝕜 (s : Set E) := by
+private theorem mem_space_iff : x ∈ K.space ↔ ∃ s ∈ K.faces, x ∈ convexHull 𝕜 (s : Set E) := by
   simp [space]
 
 theorem convexHull_subset_space (hs : s ∈ K.faces) : convexHull 𝕜 s ⊆ K.space := by
   convert subset_biUnion_of_mem hs
   rfl
 
-protected theorem subset_space (hs : s ∈ K.faces) : (s : Set E) ⊆ K.space :=
+private protected theorem subset_space (hs : s ∈ K.faces) : (s : Set E) ⊆ K.space :=
   (subset_convexHull 𝕜 _).trans <| convexHull_subset_space hs
 
 theorem convexHull_inter_convexHull (hs : s ∈ K.faces) (ht : t ∈ K.faces) :
@@ -140,7 +140,7 @@ def ofSubcomplex (K : SimplicialComplex 𝕜 E) (faces : Set (Finset E)) (subset
 def vertices (K : SimplicialComplex 𝕜 E) : Set E :=
   { x | {x} ∈ K.faces }
 
-theorem mem_vertices : x ∈ K.vertices ↔ {x} ∈ K.faces := Iff.rfl
+private theorem mem_vertices : x ∈ K.vertices ↔ {x} ∈ K.faces := Iff.rfl
 
 theorem vertices_eq : K.vertices = ⋃ k ∈ K.faces, (k : Set E) := by
   ext x
@@ -148,7 +148,7 @@ theorem vertices_eq : K.vertices = ⋃ k ∈ K.faces, (k : Set E) := by
   obtain ⟨s, hs, hx⟩ := mem_iUnion₂.1 h
   exact K.down_closed hs (Finset.singleton_subset_iff.2 <| mem_coe.1 hx) (singleton_nonempty _)
 
-theorem vertices_subset_space : K.vertices ⊆ K.space :=
+private theorem vertices_subset_space : K.vertices ⊆ K.space :=
   vertices_eq.subset.trans <| iUnion₂_mono fun x _ => subset_convexHull 𝕜 (x : Set E)
 
 theorem vertex_mem_convexHull_iff (hx : x ∈ K.vertices) (hs : s ∈ K.faces) :
@@ -176,12 +176,12 @@ theorem face_subset_face_iff (hs : s ∈ K.faces) (ht : t ∈ K.faces) :
 def facets (K : SimplicialComplex 𝕜 E) : Set (Finset E) :=
   { s ∈ K.faces | ∀ ⦃t⦄, t ∈ K.faces → s ⊆ t → s = t }
 
-theorem mem_facets : s ∈ K.facets ↔ s ∈ K.faces ∧ ∀ t ∈ K.faces, s ⊆ t → s = t :=
+private theorem mem_facets : s ∈ K.facets ↔ s ∈ K.faces ∧ ∀ t ∈ K.faces, s ⊆ t → s = t :=
   mem_sep_iff
 
 theorem facets_subset : K.facets ⊆ K.faces := fun _ hs => hs.1
 
-theorem not_facet_iff_subface (hs : s ∈ K.faces) : s ∉ K.facets ↔ ∃ t, t ∈ K.faces ∧ s ⊂ t := by
+private theorem not_facet_iff_subface (hs : s ∈ K.faces) : s ∉ K.facets ↔ ∃ t, t ∈ K.faces ∧ s ⊂ t := by
   refine ⟨fun hs' : ¬(_ ∧ _) => ?_, ?_⟩
   · push Not at hs'
     obtain ⟨t, ht⟩ := hs' hs
@@ -230,12 +230,12 @@ instance : Inhabited (SimplicialComplex 𝕜 E) :=
 
 variable {𝕜 E}
 
-theorem faces_bot : (⊥ : SimplicialComplex 𝕜 E).faces = ∅ := rfl
+private theorem faces_bot : (⊥ : SimplicialComplex 𝕜 E).faces = ∅ := rfl
 
-theorem space_bot : (⊥ : SimplicialComplex 𝕜 E).space = ∅ :=
+private theorem space_bot : (⊥ : SimplicialComplex 𝕜 E).space = ∅ :=
   Set.biUnion_empty _
 
-theorem facets_bot : (⊥ : SimplicialComplex 𝕜 E).facets = ∅ :=
+private theorem facets_bot : (⊥ : SimplicialComplex 𝕜 E).facets = ∅ :=
   eq_empty_of_subset_empty facets_subset
 
 end SimplicialComplex

@@ -290,7 +290,7 @@ theorem parallel_empty (S : WSeq (Computation α)) (h : S.head ~> none) : parall
 
 /-- Induction principle for parallel computations.
 The reason this isn't trivial from `exists_of_mem_parallel` is because it eliminates to `Sort`. -/
-def parallelRec {S : WSeq (Computation α)} (C : α → Sort v) (H : ∀ s ∈ S, ∀ a ∈ s, C a) {a}
+private def parallelRec {S : WSeq (Computation α)} (C : α → Sort v) (H : ∀ s ∈ S, ∀ a ∈ s, C a) {a}
     (h : a ∈ parallel S) : C a := by
   let T : WSeq (Computation (α × Computation α)) := S.map fun c => c.map fun a => (a, c)
   have : S = T.map (map fun c => c.1) := by

@@ -180,7 +180,7 @@ protected def ModularForm.copy {Γ' : Subgroup (GL (Fin 2) ℝ)} (f : ModularFor
 
 /-- Copy of a `CuspForm` with a new `toFun` equal to the old one, optionally transporting
 along an equality of subgroups. Useful to fix definitional equalities. -/
-protected def CuspForm.copy {Γ' : Subgroup (GL (Fin 2) ℝ)} (f : CuspForm Γ k) (f' : ℍ → ℂ)
+private protected def CuspForm.copy {Γ' : Subgroup (GL (Fin 2) ℝ)} (f : CuspForm Γ k) (f' : ℍ → ℂ)
     (h : f' = ⇑f) (hΓ : Γ' = Γ := by rfl) : CuspForm Γ' k where
   toFun := f'
   slash_action_eq' A hA := h.symm ▸ f.slash_action_eq' A (hΓ ▸ hA)

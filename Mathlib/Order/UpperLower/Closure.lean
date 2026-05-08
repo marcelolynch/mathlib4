@@ -91,7 +91,7 @@ theorem gc_lowerClosure_coe :
     GaloisConnection (lowerClosure : Set α → LowerSet α) (↑) := fun _s _t ↦ lowerClosure_le
 
 /-- `upperClosure` forms a reversed Galois insertion with the coercion from upper sets to sets. -/
-def giUpperClosureCoe :
+private def giUpperClosureCoe :
     GaloisInsertion (toDual ∘ upperClosure : Set α → (UpperSet α)ᵒᵈ) ((↑) ∘ ofDual) where
   choice s hs := toDual (⟨s, fun a _b hab ha => hs ⟨a, ha, hab⟩⟩ : UpperSet α)
   gc := gc_upperClosure_coe
@@ -99,7 +99,7 @@ def giUpperClosureCoe :
   choice_eq _s hs := ofDual.injective <| SetLike.coe_injective <| subset_upperClosure.antisymm hs
 
 /-- `lowerClosure` forms a Galois insertion with the coercion from lower sets to sets. -/
-def giLowerClosureCoe : GaloisInsertion (lowerClosure : Set α → LowerSet α) (↑) where
+private def giLowerClosureCoe : GaloisInsertion (lowerClosure : Set α → LowerSet α) (↑) where
   choice s hs := ⟨s, fun a _b hba ha => hs ⟨a, ha, hba⟩⟩
   gc := gc_lowerClosure_coe
   le_l_u _ := subset_lowerClosure

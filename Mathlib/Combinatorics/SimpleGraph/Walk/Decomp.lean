@@ -67,7 +67,7 @@ lemma takeUntil_eq_take (p : G.Walk u v) (h : w ∈ p.support) :
   | cons hadj p ih =>
     grind [takeUntil, support, copy_rfl_rfl, take_support_eq_support_take_succ]
 
-lemma length_takeUntil (p : G.Walk u v) (h : w ∈ p.support) :
+private lemma length_takeUntil (p : G.Walk u v) (h : w ∈ p.support) :
     (p.takeUntil w h).length = p.support.idxOf w := by
   simp [takeUntil_eq_take, Nat.le_iff_lt_add_one, ← length_support, List.idxOf_lt_length_of_mem h]
 
@@ -118,14 +118,14 @@ lemma dropUntil_eq_drop (p : G.Walk u v) (h : w ∈ p.support) :
     · rw [drop_cons_eq _ _ _ (by grind), support_copy, dropUntil]
       grind
 
-lemma length_dropUntil (p : G.Walk u v) (h : w ∈ p.support) :
+private lemma length_dropUntil (p : G.Walk u v) (h : w ∈ p.support) :
     (p.dropUntil w h).length = p.length - p.support.idxOf w := by
   simp [dropUntil_eq_drop]
 
-theorem isSubwalk_takeUntil (p : G.Walk u v) (h : w ∈ p.support) : (p.takeUntil w h).IsSubwalk p :=
+private theorem isSubwalk_takeUntil (p : G.Walk u v) (h : w ∈ p.support) : (p.takeUntil w h).IsSubwalk p :=
   ⟨nil, p.dropUntil w h, by simp⟩
 
-theorem isSubwalk_dropUntil (p : G.Walk u v) (h : w ∈ p.support) : (p.dropUntil w h).IsSubwalk p :=
+private theorem isSubwalk_dropUntil (p : G.Walk u v) (h : w ∈ p.support) : (p.dropUntil w h).IsSubwalk p :=
   ⟨p.takeUntil w h, nil, by simp⟩
 
 theorem mem_support_iff_exists_append {V : Type u} {G : SimpleGraph V} {u v w : V}
@@ -148,7 +148,7 @@ theorem count_support_takeUntil_eq_one {u v w : V} (p : G.Walk v w) (h : u ∈ p
     · simp! only
       split_ifs with h' <;> rw [eq_comm] at h' <;> subst_vars <;> simp! [*, List.count_cons]
 
-theorem count_edges_takeUntil_le_one {u v w : V} (p : G.Walk v w) (h : u ∈ p.support) (x : V) :
+private theorem count_edges_takeUntil_le_one {u v w : V} (p : G.Walk v w) (h : u ∈ p.support) (x : V) :
     (p.takeUntil u h).edges.count s(u, x) ≤ 1 := by
   induction p with
   | nil =>
@@ -208,7 +208,7 @@ theorem edges_takeUntil_subset {u v w : V} (p : G.Walk v w) (h : u ∈ p.support
     (p.takeUntil u h).edges ⊆ p.edges :=
   List.map_subset _ (p.darts_takeUntil_subset h)
 
-theorem edges_dropUntil_subset {u v w : V} (p : G.Walk v w) (h : u ∈ p.support) :
+private theorem edges_dropUntil_subset {u v w : V} (p : G.Walk v w) (h : u ∈ p.support) :
     (p.dropUntil u h).edges ⊆ p.edges :=
   List.map_subset _ (p.darts_dropUntil_subset h)
 
@@ -257,7 +257,7 @@ lemma getVert_lt_length_takeUntil_ne {n : ℕ} {p : G.Walk v w} (h : u ∈ p.sup
   have := dropLast_support_concat _ ▸ p.count_support_takeUntil_eq_one h
   grind [List.not_mem_of_count_eq_zero]
 
-theorem getVert_le_length_takeUntil_eq_iff {n : ℕ} {p : G.Walk v w} (h : u ∈ p.support)
+private theorem getVert_le_length_takeUntil_eq_iff {n : ℕ} {p : G.Walk v w} (h : u ∈ p.support)
     (hn : n ≤ (p.takeUntil _ h).length) : p.getVert n = u ↔ n = (p.takeUntil _ h).length := by
   grind [getVert_length_takeUntil, getVert_lt_length_takeUntil_ne]
 

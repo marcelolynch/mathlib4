@@ -99,11 +99,11 @@ lemma map_adj_apply {G : SimpleGraph V} {f : V ↪ W} {a b : V} :
     (G.map f).Adj (f a) (f b) ↔ G.Adj a b := by simp
 
 variable {G} in
-theorem map_adj_apply' {f : V → W} (hadj : G.Adj u v) (hne : f u ≠ f v) :
+private theorem map_adj_apply' {f : V → W} (hadj : G.Adj u v) (hne : f u ≠ f v) :
     (G.map f).Adj (f u) (f v) :=
   ⟨hne, u, v, hadj, rfl, rfl⟩
 
-theorem map_monotone (f : V → W) : Monotone (SimpleGraph.map f) := by
+private theorem map_monotone (f : V → W) : Monotone (SimpleGraph.map f) := by
   rintro G G' h z1 z2 ⟨huv, u, v, ha, rfl, rfl⟩
   exact ⟨huv, _, _, h ha, rfl, rfl⟩
 
@@ -139,7 +139,7 @@ protected def comap (f : V → W) (G : SimpleGraph W) : SimpleGraph V where
 @[simp] lemma comap_comap {G : SimpleGraph X} (f : V → W) (g : W → X) :
     (G.comap g).comap f = G.comap (g ∘ f) := rfl
 
-theorem support_comap_subset (f : V → W) (G : SimpleGraph W) :
+private theorem support_comap_subset (f : V → W) (G : SimpleGraph W) :
     (G.comap f).support ⊆ f ⁻¹' G.support :=
   fun _ ⟨v, h⟩ ↦ ⟨f v, h⟩
 
@@ -154,7 +154,7 @@ lemma comap_symm (G : SimpleGraph V) (e : V ≃ W) :
 lemma map_symm (G : SimpleGraph W) (e : V ≃ W) :
     G.map e.symm.toEmbedding = G.comap e.toEmbedding := by rw [← comap_symm, e.symm_symm]
 
-theorem comap_monotone (f : V ↪ W) : Monotone (SimpleGraph.comap f) :=
+private theorem comap_monotone (f : V ↪ W) : Monotone (SimpleGraph.comap f) :=
   fun _ _ h _ _ ha ↦ h ha
 
 @[simp] lemma comap_bot (f : V → W) : (emptyGraph W).comap f = emptyGraph V := rfl
@@ -171,10 +171,10 @@ theorem leftInverse_comap_map (f : V ↪ W) :
     Function.LeftInverse (SimpleGraph.comap f) (SimpleGraph.map f) :=
   comap_map_eq f
 
-theorem map_injective (f : V ↪ W) : Function.Injective (SimpleGraph.map f) :=
+private theorem map_injective (f : V ↪ W) : Function.Injective (SimpleGraph.map f) :=
   (leftInverse_comap_map f).injective
 
-theorem comap_surjective (f : V ↪ W) : Function.Surjective (SimpleGraph.comap f) :=
+private theorem comap_surjective (f : V ↪ W) : Function.Surjective (SimpleGraph.comap f) :=
   (leftInverse_comap_map f).surjective
 
 theorem map_le_iff_le_comap (f : V ↪ W) (G : SimpleGraph V) (G' : SimpleGraph W) :
@@ -189,7 +189,7 @@ theorem map_comap_le (f : V ↪ W) (G : SimpleGraph W) : (G.comap f).map f ≤ G
 lemma le_comap_of_subsingleton (f : V → W) [Subsingleton V] : G ≤ G'.comap f := by
   intro v w; simp [Subsingleton.elim v w]
 
-lemma map_le_of_subsingleton (f : V ↪ W) [Subsingleton V] : G.map f ≤ G' := by
+private lemma map_le_of_subsingleton (f : V ↪ W) [Subsingleton V] : G.map f ≤ G' := by
   rw [map_le_iff_le_comap]; apply le_comap_of_subsingleton
 
 /-- Given a family of vertex types indexed by `ι`, pulling back from `⊤ : SimpleGraph ι`
@@ -233,13 +233,13 @@ lemma induce_adj {s : Set V} {u v : s} : (G.induce s).Adj u v ↔ G.Adj u v := .
 @[simp] lemma induce_top (s : Set V) : (completeGraph V).induce s = completeGraph s :=
   comap_top Subtype.val_injective
 
-lemma induce_bot (s : Set V) : (⊥ : SimpleGraph V).induce s = ⊥ := by
+private lemma induce_bot (s : Set V) : (⊥ : SimpleGraph V).induce s = ⊥ := by
   dsimp
 
-lemma support_induce_subset_coe_preimage (s : Set V) : (G.induce s).support ⊆ (↑) ⁻¹' s :=
+private lemma support_induce_subset_coe_preimage (s : Set V) : (G.induce s).support ⊆ (↑) ⁻¹' s :=
   fun v _ ↦ v.prop
 
-lemma support_induce_subset_coe_preimage_support (s : Set V) :
+private lemma support_induce_subset_coe_preimage_support (s : Set V) :
     (G.induce s).support ⊆ (↑) ⁻¹' G.support :=
   fun _ ⟨v, hadj⟩ ↦ ⟨v, hadj⟩
 
@@ -256,7 +256,7 @@ theorem support_spanningCoe {s : Set V} (G : SimpleGraph s) :
     G.spanningCoe.support = (↑) '' G.support :=
   G.support_map _
 
-theorem induce_spanningCoe {s : Set V} {G : SimpleGraph s} : G.spanningCoe.induce s = G :=
+private theorem induce_spanningCoe {s : Set V} {G : SimpleGraph s} : G.spanningCoe.induce s = G :=
   comap_map_eq _ _
 
 theorem spanningCoe_induce_le (s : Set V) : (G.induce s).spanningCoe ≤ G :=
@@ -278,7 +278,7 @@ theorem spanningCoe_induce_univ : (G.induce .univ).spanningCoe = G :=
   G.spanningCoe_induce_eq_self _ |>.mpr G.support.subset_univ
 
 open Set.Notation in
-theorem IsCompleteBetween.induce {s t : Set V} (h : G.IsCompleteBetween s t) (u : Set V) :
+private theorem IsCompleteBetween.induce {s t : Set V} (h : G.IsCompleteBetween s t) (u : Set V) :
     (G.induce u).IsCompleteBetween (u ↓∩ s) (u ↓∩ t) := by
   intro _ hs _ ht
   rw [comap_adj, Embedding.coe_subtype]
@@ -344,7 +344,7 @@ theorem map_mem_edgeSet {e : Sym2 V} (h : e ∈ G.edgeSet) : e.map f ∈ G'.edge
 theorem subset_preimage_edgeSet : G.edgeSet ⊆ Sym2.map f ⁻¹' G'.edgeSet :=
   fun _ ↦ f.map_mem_edgeSet
 
-theorem image_edgeSet_subset : Sym2.map f '' G.edgeSet ⊆ G'.edgeSet :=
+private theorem image_edgeSet_subset : Sym2.map f '' G.edgeSet ⊆ G'.edgeSet :=
   Set.image_subset_iff.mpr f.subset_preimage_edgeSet
 
 theorem apply_mem_neighborSet {v w : V} (h : w ∈ G.neighborSet v) : f w ∈ G'.neighborSet (f v) :=
@@ -355,7 +355,7 @@ theorem subset_preimage_neighborSet : G.neighborSet v ⊆ f ⁻¹' G'.neighborSe
   fun _ ↦ f.apply_mem_neighborSet
 
 variable (v) in
-theorem image_neighborSet_subset : f '' G.neighborSet v ⊆ G'.neighborSet (f v) :=
+private theorem image_neighborSet_subset : f '' G.neighborSet v ⊆ G'.neighborSet (f v) :=
   Set.image_subset_iff.mpr <| f.subset_preimage_neighborSet v
 
 /-- The map between edge sets induced by a homomorphism.
@@ -411,7 +411,7 @@ protected def comap (f : V → W) (G : SimpleGraph W) : G.comap f →g G where
 theorem le_comap (f : H →g G) : H ≤ G.comap f :=
   fun _ _ ↦ f.map_adj
 
-theorem nonempty_hom_iff_exists_le_comap : Nonempty (H →g G) ↔ ∃ f, H ≤ G.comap f :=
+private theorem nonempty_hom_iff_exists_le_comap : Nonempty (H →g G) ↔ ∃ f, H ≤ G.comap f :=
   ⟨fun ⟨f⟩ ↦ ⟨f, f.le_comap⟩, fun ⟨f, h⟩ ↦ ⟨f, (h ·)⟩⟩
 
 variable {G'' : SimpleGraph X}
@@ -567,7 +567,7 @@ def induceHom : G.induce s →g G'.induce t where
   ext x
   rfl
 
-lemma induceHom_injective (hi : Set.InjOn φ s) :
+private lemma induceHom_injective (hi : Set.InjOn φ s) :
     Function.Injective (induceHom φ φst) := by
   simpa [Set.MapsTo.restrict_inj]
 
@@ -619,7 +619,7 @@ theorem map_mem_edgeSet_iff {e : Sym2 V} : e.map f ∈ G'.edgeSet ↔ e ∈ G.ed
 theorem apply_mem_neighborSet_iff {v w : V} : f w ∈ G'.neighborSet (f v) ↔ w ∈ G.neighborSet v :=
   map_adj_iff f
 
-theorem image_neighborSet : f '' G.neighborSet v = G'.neighborSet (f v) := by
+private theorem image_neighborSet : f '' G.neighborSet v = G'.neighborSet (f v) := by
   rw [← f.toEmbedding.preimage_neighborSet]
   apply Equiv.image_preimage
 
@@ -699,7 +699,7 @@ lemma map_symm_apply (f : V ≃ W) (G : SimpleGraph V) (w : W) :
 protected def completeGraph {α β : Type*} (f : α ≃ β) : completeGraph α ≃g completeGraph β :=
   { f with map_rel_iff' := by simp }
 
-theorem toEmbedding_completeGraph {α β : Type*} (f : α ≃ β) :
+private theorem toEmbedding_completeGraph {α β : Type*} (f : α ≃ β) :
     (Iso.completeGraph f).toEmbedding = Embedding.completeGraph f.toEmbedding :=
   rfl
 
@@ -719,11 +719,11 @@ theorem neighborSet_comap (f : V → W) (v : V) :
     (G'.comap f).neighborSet v = f ⁻¹' G'.neighborSet (f v) :=
   rfl
 
-theorem neighborSet_induce (s : Set V) (v : s) :
+private theorem neighborSet_induce (s : Set V) (v : s) :
     (G.induce s).neighborSet v = (↑) ⁻¹' G.neighborSet v :=
   G.neighborSet_comap _ v
 
-theorem neighborSet_map_equiv (e : V ≃ W) (w : W) :
+private theorem neighborSet_map_equiv (e : V ≃ W) (w : W) :
     (G.map e).neighborSet w = e.symm ⁻¹' G.neighborSet (e.symm w) :=
   Iso.map e G |>.symm.toEmbedding.preimage_neighborSet w |>.symm
 

@@ -200,7 +200,7 @@ namespace ShortExact
 
 /-- A choice of splitting for a short exact short complex `S` in a balanced category
 such that `S.X₁` is injective. -/
-noncomputable def splittingOfInjective {S : ShortComplex C} (hS : S.ShortExact)
+private noncomputable def splittingOfInjective {S : ShortComplex C} (hS : S.ShortExact)
     [Injective S.X₁] [Balanced C] :
     S.Splitting :=
   have := hS.mono_f
@@ -208,7 +208,7 @@ noncomputable def splittingOfInjective {S : ShortComplex C} (hS : S.ShortExact)
 
 /-- A choice of splitting for a short exact short complex `S` in a balanced category
 such that `S.X₃` is projective. -/
-noncomputable def splittingOfProjective {S : ShortComplex C} (hS : S.ShortExact)
+private noncomputable def splittingOfProjective {S : ShortComplex C} (hS : S.ShortExact)
     [Projective S.X₃] [Balanced C] :
     S.Splitting :=
   have := hS.epi_g

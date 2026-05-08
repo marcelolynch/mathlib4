@@ -132,7 +132,7 @@ theorem card [Finite Q] : Nat.card (D ≀ᵣ Q) = Nat.card D ^ Nat.card Q * Nat.
 
 /-- Define an isomorphism from `D₁ ≀ᵣ Q₁` to `D₂ ≀ᵣ Q₂`
 given isomorphisms `D₁ ≀ᵣ Q₁` and `Q₁ ≃* Q₂`. -/
-def congr {D₁ Q₁ D₂ Q₂ : Type*} [Group D₁] [Group Q₁] [Group D₂] [Group Q₂]
+private def congr {D₁ Q₁ D₂ Q₂ : Type*} [Group D₁] [Group Q₁] [Group D₂] [Group Q₂]
     (f : D₁ ≃* D₂) (g : Q₁ ≃* Q₂) :
     D₁ ≀ᵣ Q₁ ≃* D₂ ≀ᵣ Q₂ where
   toFun x := ⟨f ∘ (x.left ∘ g.symm), g x.right⟩
@@ -239,7 +239,7 @@ lemma iteratedWreathToPermHomInj (G : Type*) [Group G] :
         (RegularWreathProduct.toPermInj (IteratedWreathProduct G n) G (Fin n → G))
 
 /-- The encoding of the Sylow `p`-subgroups of `Perm α` as an iterated wreath product. -/
-noncomputable def Sylow.mulEquivIteratedWreathProduct (p : ℕ) [hp : Fact (Nat.Prime p)] (n : ℕ)
+private noncomputable def Sylow.mulEquivIteratedWreathProduct (p : ℕ) [hp : Fact (Nat.Prime p)] (n : ℕ)
     (α : Type*) [Finite α] (hα : Nat.card α = p ^ n)
     (G : Type*) [Group G] [Finite G] (hG : Nat.card G = p)
     (P : Sylow p (Equiv.Perm α)) :

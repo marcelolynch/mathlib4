@@ -188,7 +188,7 @@ variable (f₁) {f₂ f₂'} in
 open mapBifunctorMapHomotopy in
 /-- The homotopy between `mapBifunctorMap f₁ f₂ F c` and `mapBifunctorMap f₁ f₂' F c` that
 is induced by a homotopy between `f₂` and `f₂'`. -/
-noncomputable def mapBifunctorMapHomotopy₂ :
+private noncomputable def mapBifunctorMapHomotopy₂ :
     Homotopy (mapBifunctorMap f₁ f₂ F c) (mapBifunctorMap f₁ f₂' F c) :=
   letI : TotalComplexShape c₂ c₁ c := TotalComplexShape.symm c₁ c₂ c
   letI : TotalComplexShapeSymmetry c₁ c₂ c := TotalComplexShape.symmSymmetry c₁ c₂ c

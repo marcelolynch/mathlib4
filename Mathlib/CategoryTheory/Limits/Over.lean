@@ -94,7 +94,7 @@ the cocone `c` also lifts to the diagram on `Over`. -/
   ι.app j := Over.homMk (c.ι.app j)
 
 /-- `Over.liftCocone` is limiting if the original cocone is. -/
-noncomputable def isColimitLiftCocone {F : J ⥤ C} (c : Cocone F) {X : C} (f : c.pt ⟶ X)
+private noncomputable def isColimitLiftCocone {F : J ⥤ C} (c : Cocone F) {X : C} (f : c.pt ⟶ X)
     (hc : IsColimit c) : IsColimit (liftCocone c f) :=
   isColimitOfReflects (Over.forget _) hc
 

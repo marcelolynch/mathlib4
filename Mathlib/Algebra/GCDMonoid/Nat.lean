@@ -149,7 +149,7 @@ theorem gcd_eq_natAbs {a b : ℤ} : Int.gcd a b = Nat.gcd a.natAbs b.natAbs :=
 end Int
 
 /-- Maps an associate class of integers consisting of `-n, n` to `n : ℕ` -/
-def associatesIntEquivNat : Associates ℤ ≃ ℕ := by
+private def associatesIntEquivNat : Associates ℤ ≃ ℕ := by
   refine ⟨(·.out.natAbs), (Associates.mk ·), ?_, fun n ↦ ?_⟩
   · refine Associates.forall_associated.2 fun a ↦ ?_
     refine Associates.mk_eq_mk_iff_associated.2 <| Associated.symm <| ⟨normUnit a, ?_⟩

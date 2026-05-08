@@ -96,7 +96,7 @@ namespace StrictSegal
 
 /-- Given `IsStrictSegal X`, a choice of inverse to `spine X m` for all
 `m ≤ n + 1` determines an inhabitant of `StrictSegal X`. -/
-noncomputable def ofIsStrictSegal [IsStrictSegal X] : StrictSegal X where
+private noncomputable def ofIsStrictSegal [IsStrictSegal X] : StrictSegal X where
   spineToSimplex m h :=
     Equiv.ofBijective (X.spine m) (X.spine_bijective m h) |>.invFun
   spine_spineToSimplex m _ :=

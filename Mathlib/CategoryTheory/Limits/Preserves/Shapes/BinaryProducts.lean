@@ -54,7 +54,7 @@ def mapIsLimitOfPreservesOfIsLimit [PreservesLimit (pair X Y) G] (l : IsLimit (B
   isLimitMapConeBinaryFanEquiv G f g (isLimitOfPreserves G l)
 
 /-- The property of reflecting products expressed in terms of binary fans. -/
-def isLimitOfReflectsOfMapIsLimit [ReflectsLimit (pair X Y) G]
+private def isLimitOfReflectsOfMapIsLimit [ReflectsLimit (pair X Y) G]
     (l : IsLimit (BinaryFan.mk (G.map f) (G.map g))) : IsLimit (BinaryFan.mk f g) :=
   isLimitOfReflects G ((isLimitMapConeBinaryFanEquiv G f g).symm l)
 
@@ -148,7 +148,7 @@ def mapIsColimitOfPreservesOfIsColimit [PreservesColimit (pair X Y) G]
   isColimitMapCoconeBinaryCofanEquiv G f g (isColimitOfPreserves G l)
 
 /-- The property of reflecting coproducts expressed in terms of binary cofans. -/
-def isColimitOfReflectsOfMapIsColimit [ReflectsColimit (pair X Y) G]
+private def isColimitOfReflectsOfMapIsColimit [ReflectsColimit (pair X Y) G]
     (l : IsColimit (BinaryCofan.mk (G.map f) (G.map g))) : IsColimit (BinaryCofan.mk f g) :=
   isColimitOfReflects G ((isColimitMapCoconeBinaryCofanEquiv G f g).symm l)
 

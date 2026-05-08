@@ -35,7 +35,7 @@ def circulantGraph {G : Type*} [AddGroup G] (s : Set G) : SimpleGraph G :=
 
 variable {G : Type*} [AddGroup G] (s : Set G)
 
-theorem circulantGraph_eq_erase_zero : circulantGraph s = circulantGraph (s \ {0}) := by
+private theorem circulantGraph_eq_erase_zero : circulantGraph s = circulantGraph (s \ {0}) := by
   ext (u v : G)
   simp only [circulantGraph, fromRel_adj, and_congr_right_iff]
   intro (h : u ≠ v)
@@ -49,7 +49,7 @@ theorem circulantGraph_eq_erase_zero : circulantGraph s = circulantGraph (s \ {0
       | inl h1 => exact Or.inl h1.left
       | inr h1 => exact Or.inr h1.left
 
-theorem circulantGraph_eq_symm : circulantGraph s = circulantGraph (s ∪ (-s)) := by
+private theorem circulantGraph_eq_symm : circulantGraph s = circulantGraph (s ∪ (-s)) := by
   ext
   simp only [circulantGraph_adj, Set.mem_union, Set.mem_neg, neg_sub]
   grind
@@ -57,7 +57,7 @@ theorem circulantGraph_eq_symm : circulantGraph s = circulantGraph (s ∪ (-s)) 
 instance [DecidableEq G] [DecidablePred (· ∈ s)] : DecidableRel (circulantGraph s).Adj :=
   fun _ _ => inferInstanceAs (Decidable (_ ∧ _))
 
-theorem circulantGraph_adj_translate {s : Set G} {u v d : G} :
+private theorem circulantGraph_adj_translate {s : Set G} {u v d : G} :
     (circulantGraph s).Adj (u + d) (v + d) ↔ (circulantGraph s).Adj u v := by simp
 
 /-- Cycle graph over `Fin n` -/
@@ -73,23 +73,23 @@ instance : (n : ℕ) → DecidableRel (cycleGraph n).Adj
   | 0 | 1 => fun _ _ => inferInstanceAs (Decidable False)
   | _ + 2 => by unfold cycleGraph; infer_instance
 
-theorem cycleGraph_eq_circulantGraph (n : ℕ) : cycleGraph (n + 1) = circulantGraph {1} := by
+private theorem cycleGraph_eq_circulantGraph (n : ℕ) : cycleGraph (n + 1) = circulantGraph {1} := by
   cases n
   · exact edgeFinset_inj.mp rfl
   · aesop
 
-theorem cycleGraph_zero_adj {u v : Fin 0} : ¬(cycleGraph 0).Adj u v := id
+private theorem cycleGraph_zero_adj {u v : Fin 0} : ¬(cycleGraph 0).Adj u v := id
 
-theorem cycleGraph_zero_eq_bot : cycleGraph 0 = ⊥ := Subsingleton.elim _ _
+private theorem cycleGraph_zero_eq_bot : cycleGraph 0 = ⊥ := Subsingleton.elim _ _
 theorem cycleGraph_one_eq_bot : cycleGraph 1 = ⊥ := Subsingleton.elim _ _
-theorem cycleGraph_zero_eq_top : cycleGraph 0 = ⊤ := Subsingleton.elim _ _
-theorem cycleGraph_one_eq_top : cycleGraph 1 = ⊤ := Subsingleton.elim _ _
+private theorem cycleGraph_zero_eq_top : cycleGraph 0 = ⊤ := Subsingleton.elim _ _
+private theorem cycleGraph_one_eq_top : cycleGraph 1 = ⊤ := Subsingleton.elim _ _
 
-theorem cycleGraph_two_eq_top : cycleGraph 2 = ⊤ := by
+private theorem cycleGraph_two_eq_top : cycleGraph 2 = ⊤ := by
   simp only [SimpleGraph.ext_iff, funext_iff]
   decide
 
-theorem cycleGraph_three_eq_top : cycleGraph 3 = ⊤ := by
+private theorem cycleGraph_three_eq_top : cycleGraph 3 = ⊤ := by
   simp only [SimpleGraph.ext_iff, funext_iff]
   decide
 
@@ -120,7 +120,7 @@ theorem cycleGraph_degree_two_le {n : ℕ} {v : Fin (n + 2)} :
     (cycleGraph (n + 2)).degree v = Finset.card {v - 1, v + 1} := by
   rw [SimpleGraph.degree, cycleGraph_neighborFinset]
 
-theorem cycleGraph_degree_three_le {n : ℕ} {v : Fin (n + 3)} :
+private theorem cycleGraph_degree_three_le {n : ℕ} {v : Fin (n + 3)} :
     (cycleGraph (n + 3)).degree v = 2 := by
   rw [cycleGraph_degree_two_le, Finset.card_pair]
   simp only [ne_eq, sub_eq_iff_eq_add, add_assoc v, left_eq_add]
@@ -137,10 +137,10 @@ theorem pathGraph_le_cycleGraph {n : ℕ} : pathGraph n ≤ cycleGraph n := by
     | inl h | inr h =>
       simp [Fin.coe_sub_iff_le.mpr (Nat.lt_of_succ_le h.le).le, Nat.eq_sub_of_add_eq' h]
 
-theorem cycleGraph_preconnected {n : ℕ} : (cycleGraph n).Preconnected :=
+private theorem cycleGraph_preconnected {n : ℕ} : (cycleGraph n).Preconnected :=
   (pathGraph_preconnected n).mono pathGraph_le_cycleGraph
 
-theorem cycleGraph_connected {n : ℕ} : (cycleGraph (n + 1)).Connected :=
+private theorem cycleGraph_connected {n : ℕ} : (cycleGraph (n + 1)).Connected :=
   (pathGraph_connected n).mono pathGraph_le_cycleGraph
 
 section cycle
@@ -203,7 +203,7 @@ theorem cycleGraph.isPath_tail_cycle : (cycleGraph.cycle n).tail.IsPath := by
   simp only [List.get_eq_getElem, support_getElem_eq_getVert, getVert_tail] at hij
   grind [← Nat.mod_eq_of_lt, cycleGraph.getVert_cycle]
 
-theorem cycleGraph.isCycle_cycle : (cycleGraph.cycle n).IsCycle :=
+private theorem cycleGraph.isCycle_cycle : (cycleGraph.cycle n).IsCycle :=
   isCycle_iff_isPath_tail_and_le_length.mpr ⟨cycleGraph.isPath_tail_cycle, by simp⟩
 
 end cycle

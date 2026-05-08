@@ -574,7 +574,7 @@ noncomputable def representableBy : F.RepresentableBy F.reprX :=
   hF.has_representation.choose_spec.some
 
 /-- Any representing object for a representable functor `F` is isomorphic to `reprX F`. -/
-noncomputable def RepresentableBy.isoReprX {Y : C} (e : F.RepresentableBy Y) :
+private noncomputable def RepresentableBy.isoReprX {Y : C} (e : F.RepresentableBy Y) :
     Y ≅ F.reprX :=
   RepresentableBy.uniqueUpToIso e (representableBy F)
 
@@ -623,7 +623,7 @@ noncomputable def corepresentableBy : F.CorepresentableBy F.coreprX :=
 
 variable {F} in
 /-- Any corepresenting object for a corepresentable functor `F` is isomorphic to `coreprX F`. -/
-noncomputable def CorepresentableBy.isoCoreprX {Y : C} (e : F.CorepresentableBy Y) :
+private noncomputable def CorepresentableBy.isoCoreprX {Y : C} (e : F.CorepresentableBy Y) :
     Y ≅ F.coreprX :=
   CorepresentableBy.uniqueUpToIso e (corepresentableBy F)
 
@@ -845,7 +845,7 @@ variable {C}
 
 /- Porting note: this used to be two calls to `tidy` -/
 /-- The curried version of yoneda lemma when `C` is small. -/
-def curriedYonedaLemma {C : Type u₁} [SmallCategory C] :
+private def curriedYonedaLemma {C : Type u₁} [SmallCategory C] :
     (yoneda.op ⋙ coyoneda : Cᵒᵖ ⥤ (Cᵒᵖ ⥤ Type u₁) ⥤ Type u₁) ≅
       evaluation Cᵒᵖ (Type u₁) :=
   NatIso.ofComponents (fun X ↦ NatIso.ofComponents (fun _ ↦ Equiv.toIso yonedaEquiv)) (by
@@ -875,7 +875,7 @@ def yonedaOpCompYonedaObj {C : Type u₁} [Category.{v₁} C] (P : Cᵒᵖ ⥤ T
   isoWhiskerRight largeCurriedYonedaLemma ((evaluation _ _).obj P)
 
 /-- The curried version of yoneda lemma when `C` is small. -/
-def curriedYonedaLemma' {C : Type u₁} [SmallCategory C] :
+private def curriedYonedaLemma' {C : Type u₁} [SmallCategory C] :
     yoneda ⋙ (whiskeringLeft Cᵒᵖ (Cᵒᵖ ⥤ Type u₁)ᵒᵖ (Type u₁)).obj yoneda.op
       ≅ 𝟭 (Cᵒᵖ ⥤ Type u₁) :=
   NatIso.ofComponents (fun F ↦ NatIso.ofComponents (fun _ ↦ Equiv.toIso yonedaEquiv) (by
@@ -1076,7 +1076,7 @@ variable {C}
 
 /- Porting note: this used to be two calls to `tidy` -/
 /-- The curried version of coyoneda lemma when `C` is small. -/
-def curriedCoyonedaLemma {C : Type u₁} [SmallCategory C] :
+private def curriedCoyonedaLemma {C : Type u₁} [SmallCategory C] :
     coyoneda.rightOp ⋙ coyoneda ≅ evaluation C (Type u₁) :=
   NatIso.ofComponents (fun X ↦ NatIso.ofComponents (fun _ ↦ Equiv.toIso coyonedaEquiv)) (by
     intro X Y f
@@ -1103,12 +1103,12 @@ def largeCurriedCoyonedaLemma {C : Type u₁} [Category.{v₁} C] :
       simpa using (coyonedaEquiv_naturality _ _).symm)
 
 /-- Version of the Coyoneda lemma where the presheaf is fixed but the argument varies. -/
-def coyonedaCompYonedaObj {C : Type u₁} [Category.{v₁} C] (P : C ⥤ Type v₁) :
+private def coyonedaCompYonedaObj {C : Type u₁} [Category.{v₁} C] (P : C ⥤ Type v₁) :
     coyoneda.rightOp ⋙ yoneda.obj P ≅ P ⋙ uliftFunctor.{u₁} :=
   isoWhiskerRight largeCurriedCoyonedaLemma ((evaluation _ _).obj P)
 
 /-- The curried version of coyoneda lemma when `C` is small. -/
-def curriedCoyonedaLemma' {C : Type u₁} [SmallCategory C] :
+private def curriedCoyonedaLemma' {C : Type u₁} [SmallCategory C] :
     yoneda ⋙ (whiskeringLeft C (C ⥤ Type u₁)ᵒᵖ (Type u₁)).obj coyoneda.rightOp
       ≅ 𝟭 (C ⥤ Type u₁) :=
   NatIso.ofComponents (fun F ↦ NatIso.ofComponents (fun _ ↦ Equiv.toIso coyonedaEquiv) (by
@@ -1187,7 +1187,7 @@ lemma hom_ext_uliftCoyoneda {P Q : C ⥤ Type (max w v₁)} {f g : P ⟶ Q}
 
 set_option backward.isDefEq.respectTransparency false in
 /-- A variant of the curried version of the Coyoneda lemma with a raise in the universe level. -/
-def uliftCoyonedaRightOpCompCoyoneda {C : Type u₁} [Category.{v₁} C] :
+private def uliftCoyonedaRightOpCompCoyoneda {C : Type u₁} [Category.{v₁} C] :
     uliftCoyoneda.{w}.rightOp ⋙ coyoneda ≅
       evaluation C (Type (max v₁ w)) ⋙ (whiskeringRight _ _ _).obj uliftFunctor.{u₁} :=
   NatIso.ofComponents

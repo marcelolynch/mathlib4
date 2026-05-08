@@ -215,7 +215,7 @@ theorem toGL_mul (A B : unitaryGroup n α) : toGL (A * B) = toGL A * toGL B := U
 
 /-- `Matrix.unitaryGroup.embeddingGL` is the embedding from `Matrix.unitaryGroup n α` to
 `LinearMap.GeneralLinearGroup n α`. -/
-def embeddingGL : unitaryGroup n α →* GeneralLinearGroup α (n → α) :=
+private def embeddingGL : unitaryGroup n α →* GeneralLinearGroup α (n → α) :=
   ⟨⟨fun A => toGL A, toGL_one⟩, toGL_mul⟩
 
 theorem _root_.Matrix.transpose_mem_unitaryGroup_iff {U : Matrix n n α} :

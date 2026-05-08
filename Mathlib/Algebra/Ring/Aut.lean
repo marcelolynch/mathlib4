@@ -49,13 +49,13 @@ instance : Inhabited (RingAut R) :=
   ⟨1⟩
 
 /-- Monoid homomorphism from ring automorphisms to additive automorphisms. -/
-def toAddAut : RingAut R →* AddAut R where
+private def toAddAut : RingAut R →* AddAut R where
   toFun := RingEquiv.toAddEquiv
   map_one' := rfl
   map_mul' _ _ := rfl
 
 /-- Monoid homomorphism from ring automorphisms to multiplicative automorphisms. -/
-def toMulAut : RingAut R →* MulAut R where
+private def toMulAut : RingAut R →* MulAut R where
   toFun := RingEquiv.toMulEquiv
   map_one' := rfl
   map_mul' _ _ := rfl

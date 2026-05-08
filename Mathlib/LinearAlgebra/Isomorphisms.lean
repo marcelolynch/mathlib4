@@ -169,7 +169,7 @@ theorem quotientQuotientEquivQuotientAux_mk (x : M ⧸ S) :
   liftQ_apply _ _ _
 
 -- @[simp] /- adaption note for https://github.com/leanprover/lean4/pull/8419: the simpNF complained -/
-theorem quotientQuotientEquivQuotientAux_mk_mk (x : M) :
+private theorem quotientQuotientEquivQuotientAux_mk_mk (x : M) :
     quotientQuotientEquivQuotientAux S T h (Quotient.mk (Quotient.mk x)) = Quotient.mk x := rfl
 
 /-- **Noether's third isomorphism theorem** for modules: `(M / S) / (T / S) ≃ M / T`. -/

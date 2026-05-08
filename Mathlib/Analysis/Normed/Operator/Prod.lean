@@ -63,7 +63,7 @@ theorem opNNNorm_prod (f : E →L[𝕜] F) (g : E →L[𝕜] G) : ‖f.prod g‖
 
 
 /-- `ContinuousLinearMap.prod` as a `LinearIsometryEquiv`. -/
-noncomputable def prodₗᵢ (R : Type*)
+private noncomputable def prodₗᵢ (R : Type*)
     [Semiring R] [Module R F] [Module R G] [ContinuousConstSMul R F]
     [ContinuousConstSMul R G] [SMulCommClass 𝕜 R F] [SMulCommClass 𝕜 R G] :
     (E →L[𝕜] F) × (E →L[𝕜] G) ≃ₗᵢ[R] E →L[𝕜] F × G :=

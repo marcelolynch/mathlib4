@@ -241,7 +241,7 @@ instance (n : ℤ) : (singleFunctor C n).Additive := by
 /-- The isomorphism
 `DerivedCategory.singleFunctors C ≅ (HomotopyCategory.singleFunctors C).postcomp Qh` given
 by the definition of `DerivedCategory.singleFunctors`. -/
-def singleFunctorsPostcompQhIso :
+private def singleFunctorsPostcompQhIso :
     singleFunctors C ≅ (HomotopyCategory.singleFunctors C).postcomp Qh :=
   Iso.refl _
 

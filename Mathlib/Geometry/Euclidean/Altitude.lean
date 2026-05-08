@@ -102,7 +102,7 @@ lemma altitude_map {n : ℕ} (s : Simplex ℝ P n) (f : P →ᵃⁱ[ℝ] P₂) (
   rw [eq_comm]
   convert (s.restrict S hS).altitude_map S.subtypeₐᵢ i
 
-lemma altitude_restrict_eq_comap_subtype {n : ℕ} (s : Simplex ℝ P n) (S : AffineSubspace ℝ P)
+private lemma altitude_restrict_eq_comap_subtype {n : ℕ} (s : Simplex ℝ P n) (S : AffineSubspace ℝ P)
     (hS : affineSpan ℝ (Set.range s.points) ≤ S) (i : Fin (n + 1)) :
     haveI := Nonempty.map (AffineSubspace.inclusion hS) inferInstance
     (s.restrict S hS).altitude i = (s.altitude i).comap S.subtype := by
@@ -222,7 +222,7 @@ lemma affineSpan_pair_altitudeFoot_eq_altitude
   simp_rw [range_faceOpposite_points]
   exact orthogonalProjection_vsub_mem_direction_orthogonal _ _
 
-lemma altitudeFoot_mem_altitude {n : ℕ} [NeZero n] (s : Simplex ℝ P n) (i : Fin (n + 1)) :
+private lemma altitudeFoot_mem_altitude {n : ℕ} [NeZero n] (s : Simplex ℝ P n) (i : Fin (n + 1)) :
     s.altitudeFoot i ∈ s.altitude i := by
   rw [← affineSpan_pair_altitudeFoot_eq_altitude]
   exact left_mem_affineSpan_pair _ _ _
@@ -374,7 +374,7 @@ lemma neg_mul_lt_inner_vsub_altitudeFoot (i j : Fin (n + 1)) :
   rw [abs_neg]
   exact abs_inner_vsub_altitudeFoot_lt_mul s hij
 
-lemma abs_inner_vsub_altitudeFoot_div_lt_one {i j : Fin (n + 1)} (hij : i ≠ j) :
+private lemma abs_inner_vsub_altitudeFoot_div_lt_one {i j : Fin (n + 1)} (hij : i ≠ j) :
     |⟪s.points i -ᵥ s.altitudeFoot i, s.points j -ᵥ s.altitudeFoot j⟫
             / (s.height i * s.height j)| < 1 := by
   rw [abs_div, div_lt_one (by simp [height])]

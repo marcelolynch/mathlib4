@@ -308,7 +308,7 @@ lemma map_SpecMap {R S : CommRingCat.{max u v}} (φ : R ⟶ S) :
 
 /-- The map between affine spaces over affine bases is
 isomorphic to the natural map between polynomial rings. -/
-def mapSpecMap {R S : CommRingCat.{max u v}} (φ : R ⟶ S) :
+private def mapSpecMap {R S : CommRingCat.{max u v}} (φ : R ⟶ S) :
     Arrow.mk (map n (Spec.map φ)) ≅
       Arrow.mk (Spec.map (CommRingCat.ofHom (MvPolynomial.map (σ := n) φ.hom))) :=
   Arrow.isoMk (SpecIso n S) (SpecIso n R) (by have := (SpecIso n R).inv_hom_id; simp [map_SpecMap])

@@ -81,7 +81,7 @@ def nerveEquiv {C : Type u} [Category.{v} C] : ComposableArrows C 0 ≃ C where
 namespace nerve
 
 /-- Nerves of finite non-empty ordinals are representable functors. -/
-def representableBy {n : ℕ} (α : Type u) [Preorder α] (e : α ≃o Fin (n + 1)) :
+private def representableBy {n : ℕ} (α : Type u) [Preorder α] (e : α ≃o Fin (n + 1)) :
     (nerve α).RepresentableBy ⦋n⦌ where
   homEquiv := SimplexCategory.homEquivFunctor.trans
     { toFun F := F ⋙ e.symm.monotone.functor

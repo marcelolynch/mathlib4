@@ -121,7 +121,7 @@ lemma map_self : IsCocartesian.map p f φ φ = 𝟙 b := by
 
 /-- The canonical isomorphism between the codomains of two co-Cartesian morphisms
 lying over the same object. -/
-noncomputable def codomainUniqueUpToIso {b' : 𝒳} (φ' : a ⟶ b') [IsCocartesian p f φ'] :
+private noncomputable def codomainUniqueUpToIso {b' : 𝒳} (φ' : a ⟶ b') [IsCocartesian p f φ'] :
     b ≅ b' where
   hom := IsCocartesian.map p f φ φ'
   inv := IsCocartesian.map p f φ' φ
@@ -359,7 +359,7 @@ end
 
 /-- The canonical isomorphism between the codomains of two strongly co-Cartesian arrows lying over
 isomorphic objects. -/
-noncomputable def codomainIsoOfBaseIso {R S S' : 𝒮} {a b b' : 𝒳} {f : R ⟶ S} {f' : R ⟶ S'}
+private noncomputable def codomainIsoOfBaseIso {R S S' : 𝒮} {a b b' : 𝒳} {f : R ⟶ S} {f' : R ⟶ S'}
     {g : S ≅ S'} (h : f' = f ≫ g.hom) (φ : a ⟶ b) (φ' : a ⟶ b') [IsStronglyCocartesian p f φ]
     [IsStronglyCocartesian p f' φ'] : b ≅ b' where
   hom := map p f φ h φ'

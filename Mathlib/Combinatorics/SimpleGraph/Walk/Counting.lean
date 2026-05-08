@@ -32,7 +32,7 @@ namespace SimpleGraph
 
 variable {V : Type u} (G : SimpleGraph V)
 
-theorem set_walk_self_length_zero_eq (u : V) : {p : G.Walk u u | p.length = 0} = {Walk.nil} := by
+private theorem set_walk_self_length_zero_eq (u : V) : {p : G.Walk u u | p.length = 0} = {Walk.nil} := by
   simp
 
 theorem set_walk_length_zero_eq_of_ne {u v : V} (h : u ≠ v) :
@@ -127,7 +127,7 @@ instance fintypeSetWalkLength (u v : V) (n : ℕ) : Fintype {p : G.Walk u v | p.
 instance fintypeSubtypeWalkLength (u v : V) (n : ℕ) : Fintype {p : G.Walk u v // p.length = n} :=
   inferInstanceAs <| Fintype {p : G.Walk u v | p.length = n}
 
-theorem set_walk_length_toFinset_eq (n : ℕ) (u v : V) :
+private theorem set_walk_length_toFinset_eq (n : ℕ) (u v : V) :
     {p : G.Walk u v | p.length = n}.toFinset = G.finsetWalkLength n u v := by
   simp [← coe_finsetWalkLength_eq]
 

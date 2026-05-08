@@ -275,7 +275,7 @@ noncomputable def sheafFiber : Sheaf J A ⥤ A :=
   sheafToPresheaf J A ⋙ Φ.presheafFiber
 
 /-- The fiber functor on sheaves is induced by the fiber functor on presheaves. -/
-noncomputable def sheafToPresheafCompPresheafFiberIso :
+private noncomputable def sheafToPresheafCompPresheafFiberIso :
     sheafToPresheaf J A ⋙ Φ.presheafFiber ≅ Φ.sheafFiber :=
   Iso.refl _
 

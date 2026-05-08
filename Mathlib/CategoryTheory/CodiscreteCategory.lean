@@ -101,7 +101,7 @@ def functorOfFun {A B : Type*} (f : A → B) : Codiscrete A ⥤ Codiscrete B :=
 open Opposite
 
 /-- A codiscrete category is equivalent to its opposite category. -/
-def oppositeEquivalence (A : Type*) : (Codiscrete A)ᵒᵖ ≌ Codiscrete A where
+private def oppositeEquivalence (A : Type*) : (Codiscrete A)ᵒᵖ ≌ Codiscrete A where
   functor := functor (fun x ↦ Codiscrete.as x.unop)
   inverse := (functor (fun x ↦ Codiscrete.as x.unop)).rightOp
   unitIso := NatIso.ofComponents (fun _ => by exact Iso.refl _)

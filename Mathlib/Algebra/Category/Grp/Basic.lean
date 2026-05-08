@@ -578,7 +578,7 @@ def isoPerm {α : Type u} : GrpCat.of (Aut α) ≅ GrpCat.of (Equiv.Perm α) whe
 
 /-- The (unbundled) group of automorphisms of a type is `MulEquiv` to the (unbundled) group
 of permutations. -/
-def mulEquivPerm {α : Type u} : Aut α ≃* Equiv.Perm α :=
+private def mulEquivPerm {α : Type u} : Aut α ≃* Equiv.Perm α :=
   isoPerm.groupIsoToMulEquiv
 
 end CategoryTheory.Aut

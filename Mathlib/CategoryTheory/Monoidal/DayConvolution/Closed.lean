@@ -177,7 +177,7 @@ lemma unit_app_ev_app_app (x y : C) :
   simp [this, ev_app]
 
 set_option backward.isDefEq.respectTransparency false in
-lemma ev_naturality_app {G' H' : C ⥤ V} (ℌ' : DayConvolutionInternalHom F G' H')
+private lemma ev_naturality_app {G' H' : C ⥤ V} (ℌ' : DayConvolutionInternalHom F G' H')
     [DayConvolution F H'] (η : G ⟶ G') :
     DayConvolution.map (𝟙 F) (ℌ.map η ℌ') ≫ ℌ'.ev_app = ℌ.ev_app ≫ η := by
   apply DayConvolution.corepresentableBy F H |>.homEquiv.injective
@@ -243,7 +243,7 @@ lemma coev_app_π (c j : C) :
     Wedge.IsLimit.lift_ι]
 
 set_option backward.isDefEq.respectTransparency false in
-lemma coev_naturality_app {G' H' : C ⥤ V} [DayConvolution F G'] (η : G ⟶ G')
+private lemma coev_naturality_app {G' H' : C ⥤ V} [DayConvolution F G'] (η : G ⟶ G')
     (ℌ' : DayConvolutionInternalHom F (F ⊛ G') H') :
     η ≫ ℌ'.coev_app =
     ℌ.coev_app ≫ ℌ.map (DayConvolution.map (𝟙 _) η) ℌ' := by
@@ -262,7 +262,7 @@ lemma coev_naturality_app {G' H' : C ⥤ V} [DayConvolution F G'] (η : G ⟶ G'
 end coev
 
 set_option backward.isDefEq.respectTransparency false in
-theorem left_triangle_components (G : C ⥤ V) [DayConvolution F G]
+private theorem left_triangle_components (G : C ⥤ V) [DayConvolution F G]
     (ℌ : DayConvolutionInternalHom F (F ⊛ G) H) [DayConvolution F H] :
     DayConvolution.map (𝟙 F) ℌ.coev_app ≫ ℌ.ev_app = 𝟙 (F ⊛ G) := by
   apply DayConvolution.corepresentableBy F G |>.homEquiv.injective
@@ -272,7 +272,7 @@ theorem left_triangle_components (G : C ⥤ V) [DayConvolution F G]
   simp [MonoidalClosed.curry_natural_left]
 
 set_option backward.isDefEq.respectTransparency false in
-theorem right_triangle_components (G : C ⥤ V) [DayConvolution F H]
+private theorem right_triangle_components (G : C ⥤ V) [DayConvolution F H]
     (ℌ : DayConvolutionInternalHom F G H) {H' : C ⥤ V}
     (ℌ' : DayConvolutionInternalHom F (F ⊛ H) H') :
     ℌ'.coev_app ≫ ℌ'.map ℌ.ev_app ℌ = 𝟙 H := by

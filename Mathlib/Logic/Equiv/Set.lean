@@ -206,11 +206,11 @@ protected def univ (α) : @univ α ≃ α :=
   ⟨Subtype.val, fun a => ⟨a, trivial⟩, fun ⟨_, _⟩ => rfl, fun _ => rfl⟩
 
 /-- An empty set is equivalent to the `Empty` type. -/
-protected def empty (α) : (∅ : Set α) ≃ Empty :=
+private protected def empty (α) : (∅ : Set α) ≃ Empty :=
   equivEmpty _
 
 /-- An empty set is equivalent to a `PEmpty` type. -/
-protected def pempty (α) : (∅ : Set α) ≃ PEmpty :=
+private protected def pempty (α) : (∅ : Set α) ≃ PEmpty :=
   equivPEmpty _
 
 /-- If sets `s` and `t` are separated by a decidable predicate, then `s ∪ t` is equivalent to
@@ -373,7 +373,7 @@ protected def unionSumInter {α : Type u} (s t : Set α) [DecidablePred (· ∈ 
 /-- Given an equivalence `e₀` between sets `s : Set α` and `t : Set β`, the set of equivalences
 `e : α ≃ β` such that `e ↑x = ↑(e₀ x)` for each `x : s` is equivalent to the set of equivalences
 between `sᶜ` and `tᶜ`. -/
-protected def compl {α : Type u} {β : Type v} {s : Set α} {t : Set β} [DecidablePred (· ∈ s)]
+private protected def compl {α : Type u} {β : Type v} {s : Set α} {t : Set β} [DecidablePred (· ∈ s)]
     [DecidablePred (· ∈ t)] (e₀ : s ≃ t) :
     { e : α ≃ β // ∀ x : s, e x = e₀ x } ≃ ((sᶜ : Set α) ≃ (tᶜ : Set β)) where
   toFun e :=

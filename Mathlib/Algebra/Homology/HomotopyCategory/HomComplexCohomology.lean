@@ -211,7 +211,7 @@ noncomputable def leftHomologyData :
   leftHomologyData' K L _ n _ (by simp) (by simp)
 
 /-- The homology of `HomComplex K L` in degree `n` identifies to `CohomologyClass K L n`. -/
-noncomputable def homologyAddEquiv :
+private noncomputable def homologyAddEquiv :
     (HomComplex K L).homology n ≃+ CohomologyClass K L n :=
   (leftHomologyData K L n).homologyIso.addCommGroupIsoToAddEquiv
 

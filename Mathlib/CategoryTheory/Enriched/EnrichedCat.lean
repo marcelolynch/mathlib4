@@ -43,7 +43,7 @@ instance str (C : EnrichedCat.{w, v, u} V) : EnrichedCategory.{w, v, u} V C :=
   Bundled.str C
 
 /-- Construct a bundled `EnrichedCat` from the underlying type and the typeclass. -/
-def of (C : Type u) [EnrichedCategory.{w} V C] : EnrichedCat.{w, v, u} V :=
+private def of (C : Type u) [EnrichedCategory.{w} V C] : EnrichedCat.{w, v, u} V :=
   Bundled.of C
 
 open EnrichedCategory ForgetEnrichment

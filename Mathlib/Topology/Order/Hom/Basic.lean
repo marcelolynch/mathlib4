@@ -86,7 +86,7 @@ section Preorder
 variable [Preorder β] [TopologicalSpace γ] [Preorder γ] [TopologicalSpace δ] [Preorder δ]
 
 /-- Reinterpret a `ContinuousOrderHom` as a `ContinuousMap`. -/
-def toContinuousMap (f : α →Co β) : C(α, β) :=
+private def toContinuousMap (f : α →Co β) : C(α, β) :=
   { f with }
 
 instance instFunLike : FunLike (α →Co β) α β where

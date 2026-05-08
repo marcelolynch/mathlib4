@@ -171,7 +171,7 @@ variable {E' H' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E'] [Topologic
 
 variable (M I) in
 /-- If `M` is a closed `C^k` manifold, it is a singular manifold over itself. -/
-noncomputable def refl : SingularManifold M k I where
+private noncomputable def refl : SingularManifold M k I where
   M := M
   f := id
   hf := continuous_id
@@ -213,7 +213,7 @@ instance [IsEmpty M] : IsEmpty (SingularManifold.empty X M I (k := k)).M :=
 
 variable (M I) in
 /-- A smooth manifold induces a singular manifold on the one-point space. -/
-def toPUnit : SingularManifold PUnit k I where
+private def toPUnit : SingularManifold PUnit k I where
   M := M
   f := fun _ ↦ PUnit.unit
   hf := continuous_const
@@ -235,7 +235,7 @@ with its induced map into `X`.
 arbitrarily small perturbation `f'` so `f'` and `g` are transverse. One can prove that different
 perturbations yield bordant manifolds.)
 -/
-def prod (s : SingularManifold PUnit k I) (t : SingularManifold PUnit k I') :
+private def prod (s : SingularManifold PUnit k I) (t : SingularManifold PUnit k I') :
     SingularManifold PUnit k (I.prod I') where
   M := s.M × t.M
   f := fun _ ↦ PUnit.unit

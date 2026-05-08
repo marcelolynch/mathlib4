@@ -206,7 +206,7 @@ structure Uniformizer where
 namespace Uniformizer
 
 /-- A constructor for `Uniformizer`. -/
-def mk' {x : A} (hx : v.IsUniformizer x) : v.Uniformizer where
+private def mk' {x : A} (hx : v.IsUniformizer x) : v.Uniformizer where
   val := ⟨x, le_of_lt hx.val_lt_one⟩
   valuation_gt_one := hx
 
@@ -534,7 +534,7 @@ theorem map_algebraMap_eq_valuationSubring : Subring.map (algebraMap A K) ⊤ =
 
 /-- The ring isomorphism between a DVR `A` and the valuation subring of a field of fractions
   of `A` endowed with the adic valuation of the maximal ideal. -/
-noncomputable def equivValuationSubring :
+private noncomputable def equivValuationSubring :
     A ≃+* ((maximalIdeal A).valuation K).valuationSubring :=
   (topEquiv.symm.trans (equivMapOfInjective ⊤ (algebraMap A K)
     (IsFractionRing.injective A _))).trans

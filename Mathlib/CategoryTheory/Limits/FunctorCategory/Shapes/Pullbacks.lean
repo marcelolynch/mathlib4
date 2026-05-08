@@ -45,7 +45,7 @@ def PullbackCone.combine (f : F ⟶ H) (g : G ⟶ H) (c : ∀ X, PullbackCone (f
 /--
 The pullback cone `combinePullbackCones` is limiting.
 -/
-def PullbackCone.combineIsLimit (f : F ⟶ H) (g : G ⟶ H)
+private def PullbackCone.combineIsLimit (f : F ⟶ H) (g : G ⟶ H)
     (c : ∀ X, PullbackCone (f.app X) (g.app X)) (hc : ∀ X, IsLimit (c X)) :
     IsLimit (combine f g c hc) :=
   evaluationJointlyReflectsLimits _ fun k ↦ by

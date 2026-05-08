@@ -330,7 +330,7 @@ structure IndexedPartition {ι α : Type*} (s : ι → Set α) where
 open scoped Function -- required for scoped `on` notation
 
 /-- The non-constructive constructor for `IndexedPartition`. -/
-noncomputable def IndexedPartition.mk' {ι α : Type*} (s : ι → Set α)
+private noncomputable def IndexedPartition.mk' {ι α : Type*} (s : ι → Set α)
     (dis : Pairwise (Disjoint on s)) (nonempty : ∀ i, (s i).Nonempty)
     (ex : ∀ x, ∃ i, x ∈ s i) : IndexedPartition s where
   eq_of_mem {_x _i _j} hxi hxj := by_contradiction fun h => (dis h).le_bot ⟨hxi, hxj⟩

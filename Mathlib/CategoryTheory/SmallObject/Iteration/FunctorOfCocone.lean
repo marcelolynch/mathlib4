@@ -145,7 +145,7 @@ def restrictionLTOfCoconeIso :
 set_option backward.isDefEq.respectTransparency false in
 variable {c} in
 /-- If `c` is a colimit cocone, then so is `coconeOfLE (ofCocone c) (le_refl j)`. -/
-def isColimitCoconeOfLEOfCocone (hc : IsColimit c) :
+private def isColimitCoconeOfLEOfCocone (hc : IsColimit c) :
     IsColimit (coconeOfLE (ofCocone c) (le_refl j)) :=
   (IsColimit.precomposeInvEquiv (restrictionLTOfCoconeIso c) _).1
     (IsColimit.ofIsoColimit hc

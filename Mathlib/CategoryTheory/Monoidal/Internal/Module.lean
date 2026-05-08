@@ -174,7 +174,7 @@ open MonModuleEquivalenceAlgebra
 /-- The category of internal monoid objects in `ModuleCat R`
 is equivalent to the category of "native" bundled `R`-algebras.
 -/
-def monModuleEquivalenceAlgebra : Mon (ModuleCat.{u} R) ≌ AlgCat R where
+private def monModuleEquivalenceAlgebra : Mon (ModuleCat.{u} R) ≌ AlgCat R where
   functor := functor
   inverse := inverse
   unitIso :=
@@ -218,7 +218,7 @@ def monModuleEquivalenceAlgebra : Mon (ModuleCat.{u} R) ≌ AlgCat R where
 /-- The equivalence `Mon (ModuleCat R) ≌ AlgCat R`
 is naturally compatible with the forgetful functors to `ModuleCat R`.
 -/
-def monModuleEquivalenceAlgebraForget :
+private def monModuleEquivalenceAlgebraForget :
     MonModuleEquivalenceAlgebra.functor ⋙ forget₂ (AlgCat.{u} R) (ModuleCat.{u} R) ≅
       Mon.forget (ModuleCat.{u} R) :=
   NatIso.ofComponents

@@ -158,7 +158,7 @@ instance sk_coreflective (n) : IsIso (skAdj n).unit :=
   SimplicialObject.Truncated.sk_coreflective n
 
 /-- Since `Truncated.inclusion` is fully faithful, so is right Kan extension along it. -/
-noncomputable def cosk.fullyFaithful (n) :
+private noncomputable def cosk.fullyFaithful (n) :
     (Truncated.cosk n).FullyFaithful :=
   SimplicialObject.Truncated.cosk.fullyFaithful n
 
@@ -172,7 +172,7 @@ noncomputable instance coskAdj.reflective (n) : Reflective (Truncated.cosk n) :=
   SimplicialObject.Truncated.coskAdj.reflective n
 
 /-- Since `Truncated.inclusion` is fully faithful, so is left Kan extension along it. -/
-noncomputable def sk.fullyFaithful (n) :
+private noncomputable def sk.fullyFaithful (n) :
     (Truncated.sk n).FullyFaithful := SimplicialObject.Truncated.sk.fullyFaithful n
 
 instance sk.full (n) : (Truncated.sk n).Full := SimplicialObject.Truncated.sk.full n

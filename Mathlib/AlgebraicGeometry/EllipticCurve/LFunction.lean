@@ -81,7 +81,7 @@ noncomputable def LFunction : ArithmeticFunction ℤ :=
       (W.baseChange (p.adicCompletion K)).localEulerFactor (p.adicCompletionIntegers K)
 
 /-- The L-series of a Weierstrass curve over a number field. -/
-protected noncomputable def LSeries (W : WeierstrassCurve K) (s : ℂ) :=
+private protected noncomputable def LSeries (W : WeierstrassCurve K) (s : ℂ) :=
   LSeries ((↑) ∘ W.LFunction) s
 
 end NumberField

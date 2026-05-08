@@ -644,7 +644,7 @@ theorem norm_restrictScalars (f : ContinuousMultilinearMap 𝕜 E G) :
 variable (𝕜')
 
 /-- `ContinuousMultilinearMap.restrictScalars` as a `LinearIsometry`. -/
-def restrictScalarsₗᵢ : ContinuousMultilinearMap 𝕜 E G →ₗᵢ[𝕜'] ContinuousMultilinearMap 𝕜' E G where
+private def restrictScalarsₗᵢ : ContinuousMultilinearMap 𝕜 E G →ₗᵢ[𝕜'] ContinuousMultilinearMap 𝕜' E G where
   toFun := restrictScalars 𝕜'
   map_add' _ _ := rfl
   map_smul' _ _ := rfl

@@ -46,7 +46,7 @@ lemma piRightHom_mul (x y : A ⊗[R] ∀ i, B i) :
 
 /-- The canonical map `A ⊗[R] (∀ i, B i) →ₐ[S] ∀ i, A ⊗[R] B i`. This is an isomorphism
 if `ι` is finite (see `Algebra.TensorProduct.piRight`). -/
-def piRightHom : A ⊗[R] (∀ i, B i) →ₐ[S] ∀ i, A ⊗[R] B i :=
+private def piRightHom : A ⊗[R] (∀ i, B i) →ₐ[S] ∀ i, A ⊗[R] B i :=
   AlgHom.ofLinearMap (_root_.TensorProduct.piRightHom R S A B) (by simp) (by simp)
 
 variable [Fintype ι] [DecidableEq ι]

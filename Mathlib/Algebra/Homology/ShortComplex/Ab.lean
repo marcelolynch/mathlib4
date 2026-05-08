@@ -95,7 +95,7 @@ lemma abCyclesIso_inv_apply_iCycles (x : AddMonoidHom.ker S.g.hom) :
 the abstract `S.homology` of the homology API and the more explicit
 quotient of `AddMonoidHom.ker S.g` by the image of
 `S.abToCycles : S.X₁ →+ AddMonoidHom.ker S.g`. -/
-noncomputable def abHomologyIso : S.homology ≅
+private noncomputable def abHomologyIso : S.homology ≅
     AddCommGrpCat.of ((AddMonoidHom.ker S.g.hom) ⧸ AddMonoidHom.range S.abToCycles) :=
   S.abLeftHomologyData.homologyIso
 

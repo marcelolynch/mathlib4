@@ -63,5 +63,5 @@ instance : WellPowered.{u} (Type u) :=
 
 /-- For `α : Type u`, `Subobject α` is order isomorphic to `Set α`.
 -/
-noncomputable def Types.subobjectEquivSet (α : Type u) : Subobject α ≃o Set α :=
+private noncomputable def Types.subobjectEquivSet (α : Type u) : Subobject α ≃o Set α :=
   (Types.monoOverEquivalenceSet α).thinSkeletonOrderIso

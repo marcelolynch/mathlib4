@@ -81,7 +81,7 @@ the presence of a natural isomorphism `i ⋙ exp A ⋙ leftAdjoint i ⋙ i ≅ i
 `(A ⟹ iB) ≅ i L (A ⟹ iB)`, naturally in `B`.
 The converse is given in `ExponentialIdeal.mk_of_iso`.
 -/
-def exponentialIdealReflective (A : C) [Reflective i] [ExponentialIdeal i] :
+private def exponentialIdealReflective (A : C) [Reflective i] [ExponentialIdeal i] :
     i ⋙ ihom A ⋙ reflector i ⋙ i ≅ i ⋙ ihom A := by
   symm
   apply NatIso.ofComponents _ _

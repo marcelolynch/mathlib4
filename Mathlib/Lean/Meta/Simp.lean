@@ -52,7 +52,7 @@ def Result.ofTrue (r : Simp.Result) : MetaM (Option Expr) :=
     pure none
 
 /-- Return all propositions in the local context. -/
-def getPropHyps : MetaM (Array FVarId) := do
+private def getPropHyps : MetaM (Array FVarId) := do
   let mut result := #[]
   for localDecl in (← getLCtx) do
     unless localDecl.isAuxDecl do

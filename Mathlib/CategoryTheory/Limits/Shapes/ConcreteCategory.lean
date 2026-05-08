@@ -108,14 +108,14 @@ noncomputable def uniqueOfTerminalOfPreserves [PreservesLimit (Functor.empty.{0}
   Types.isTerminalEquivUnique (ToType X) <| IsTerminal.isTerminalObj (forget C) X h
 
 /-- If `forget C` reflects terminals and `ToType X` is a singleton, then `X` is terminal. -/
-noncomputable def terminalOfUniqueOfReflects [ReflectsLimit (Functor.empty.{0} C) (forget C)]
+private noncomputable def terminalOfUniqueOfReflects [ReflectsLimit (Functor.empty.{0} C) (forget C)]
     (X : C) (h : Unique (ToType X)) : IsTerminal X :=
   IsTerminal.isTerminalOfObj (forget C) X <|
     (Types.isTerminalEquivUnique (ToType X)).symm h
 
 /-- The equivalence `IsTerminal X ≃ Unique (ToType X)` if the forgetful functor
 preserves and reflects terminals. -/
-noncomputable def terminalIffUnique [PreservesLimit (Functor.empty.{0} C) (forget C)]
+private noncomputable def terminalIffUnique [PreservesLimit (Functor.empty.{0} C) (forget C)]
     [ReflectsLimit (Functor.empty.{0} C) (forget C)] (X : C) :
     IsTerminal X ≃ Unique (ToType X) :=
   (IsTerminal.isTerminalIffObj (forget C) X).trans <| Types.isTerminalEquivUnique _

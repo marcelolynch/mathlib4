@@ -75,7 +75,7 @@ theorem isAdmissible_cons_cons_iff : IsAdmissible m (a :: b :: L) ↔
     a < b ∧ IsAdmissible (m + 1) (b :: L) ∧ a ≤ m :=
   ⟨fun | .cons_cons hab hbL ha => ⟨hab, hbL, ha⟩, by grind⟩
 
-theorem isAdmissible_cons_iff : IsAdmissible m (a :: L) ↔
+private theorem isAdmissible_cons_iff : IsAdmissible m (a :: L) ↔
     a ≤ m ∧ ((_ : 0 < L.length) → a < L[0]) ∧ IsAdmissible (m + 1) L := by
   cases L <;> grind
 
@@ -90,7 +90,7 @@ theorem isAdmissible_iff_isChain_and_le : IsAdmissible m L ↔
     exact fun _ _ => ⟨fun h => by grind,
       fun h => ⟨h 0 (by grind), fun k _ => (h (k + 1) (by grind)).trans (by grind)⟩⟩
 
-theorem isAdmissible_iff_pairwise_and_le : IsAdmissible m L ↔
+private theorem isAdmissible_iff_pairwise_and_le : IsAdmissible m L ↔
     L.Pairwise (· < ·) ∧ ∀ k, (h : k < L.length) → L[k] ≤ m + k := by
   rw [isAdmissible_iff_isChain_and_le, List.isChain_iff_pairwise]
 
@@ -110,7 +110,7 @@ namespace IsAdmissible
 @[grind →] lemma of_cons {m a L} (h : IsAdmissible m (a :: L)) :
     IsAdmissible (m + 1) L := by cases L <;> grind
 
-lemma cons {m a L} (hL : IsAdmissible (m + 1) L) (ha : a ≤ m)
+private lemma cons {m a L} (hL : IsAdmissible (m + 1) L) (ha : a ≤ m)
     (ha' : (_ : 0 < L.length) → a < L[0]) : IsAdmissible m (a :: L) := by cases L <;> grind
 
 theorem sortedLT {m L} (hL : IsAdmissible m L) : L.SortedLT :=
@@ -141,7 +141,7 @@ def getElemAsFin {m L} (hl : IsAdmissible m L) (k : ℕ)
 def head {m a L} (hl : IsAdmissible m (a :: L)) : Fin (m + 1) :=
   hl.getElemAsFin 0 (by grind)
 
-theorem mono {n} (hmn : m ≤ n) (hL : IsAdmissible m L) : IsAdmissible n L :=
+private theorem mono {n} (hmn : m ≤ n) (hL : IsAdmissible m L) : IsAdmissible n L :=
   isAdmissible_of_isChain_of_forall_getElem_le (by grind) (by grind)
 
 end IsAdmissible
@@ -240,7 +240,7 @@ variable {m}
 set_option backward.isDefEq.respectTransparency false in
 /- We prove that `simplicialEvalσ` is indeed a lift of
 `(toSimplexCategory.map (standardσ m L _ _)).toOrderHom` when the list is admissible. -/
-lemma simplicialEvalσ_of_isAdmissible
+private lemma simplicialEvalσ_of_isAdmissible
     (m₁ m₂ : ℕ) (hL : IsAdmissible m₂ L) (hk : m₂ + L.length = m₁)
     (j : ℕ) (hj : j < m₁ + 1) :
     (toSimplexCategory.map <| standardσ L hk).toOrderHom ⟨j, hj⟩ =

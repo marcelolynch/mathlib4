@@ -69,7 +69,7 @@ instance algebra :
 
 /-- A ring equivalence between the integral closure of the valuation subring of `K` in `L`
   and a ring `R` satisfying `isIntegralClosure R v.valuationSubring L`. -/
-protected noncomputable def equiv (R : Type*) [CommRing R] [Algebra v.valuationSubring R]
+private protected noncomputable def equiv (R : Type*) [CommRing R] [Algebra v.valuationSubring R]
     [Algebra R L] [IsScalarTower v.valuationSubring R L]
     [IsIntegralClosure R v.valuationSubring L] : integralClosure v.valuationSubring L ≃+* R :=
   (IsIntegralClosure.equiv v.valuationSubring R L

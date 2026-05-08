@@ -139,7 +139,7 @@ lemma isIso_π_of_isLimit' {c : Cone F} (hc : IsLimit c) (j : J) (π : j ⟶ i�
 
 /-- Given a cone `c` on a cofiltered diagram `F` which `IsEventuallyConstantTo i₀`, such that
 `c.π.app i₀` is an isomorphism, `c` a limit cone. -/
-noncomputable def isLimitOfIsIso (c : Cone F) [IsIso (c.π.app i₀)] : IsLimit c :=
+private noncomputable def isLimitOfIsIso (c : Cone F) [IsIso (c.π.app i₀)] : IsLimit c :=
   IsLimit.ofIsoLimit h.isLimitCone (by
     refine Cone.ext (asIso (c.π.app i₀)).symm (fun j ↦ ?_)
     let i := IsCofiltered.min i₀ j

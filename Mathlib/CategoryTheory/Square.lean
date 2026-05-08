@@ -318,7 +318,7 @@ def unopFunctor : (Square Cᵒᵖ)ᵒᵖ ⥤ Square C where
 
 set_option backward.isDefEq.respectTransparency false in
 /-- The equivalence `(Square C)ᵒᵖ ≌ Square Cᵒᵖ`. -/
-def opEquivalence : (Square C)ᵒᵖ ≌ Square Cᵒᵖ where
+private def opEquivalence : (Square C)ᵒᵖ ≌ Square Cᵒᵖ where
   functor := opFunctor
   inverse := unopFunctor.rightOp
   unitIso := Iso.refl _

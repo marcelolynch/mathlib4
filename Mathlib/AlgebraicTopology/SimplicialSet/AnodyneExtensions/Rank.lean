@@ -130,7 +130,7 @@ structure WeakRankFunction where
 
 /-- Rank functions for `h : A.PairingCore` correspond to
 rank functions for `h.pairing : A.Pairing`. -/
-noncomputable def rankFunctionEquiv :
+private noncomputable def rankFunctionEquiv :
     h.RankFunction α ≃ h.pairing.RankFunction α where
   toFun f :=
     { rank s := f.rank (h.equivII.symm s)
@@ -149,7 +149,7 @@ noncomputable def rankFunctionEquiv :
 
 /-- Weak rank functions for `h : A.PairingCore` correspond to
 weak rank functions for `h.pairing : A.Pairing`. -/
-noncomputable def weakRankFunctionEquiv :
+private noncomputable def weakRankFunctionEquiv :
     h.WeakRankFunction α ≃ h.pairing.WeakRankFunction α where
   toFun f :=
     { rank s := f.rank (h.equivII.symm s)

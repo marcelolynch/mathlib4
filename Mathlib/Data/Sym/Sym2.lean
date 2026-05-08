@@ -684,7 +684,7 @@ alias ⟨_, toRel_mono⟩ := toRel_mono_iff
 
 variable (α) in
 /-- `ToRel` induces an order embedding from `Sym2` sets to relations -/
-def toRelOrderEmbedding : Set (Sym2 α) ↪o (α → α → Prop) :=
+private def toRelOrderEmbedding : Set (Sym2 α) ↪o (α → α → Prop) :=
   .ofMapLEIff ToRel toRel_mono_iff
 
 variable (α) in
@@ -847,7 +847,7 @@ def equivSym (α : Type*) : Sym2 α ≃ Sym α 2 :=
 /-- The symmetric square is equivalent to multisets of cardinality
 two. (This is currently a synonym for `equivSym`, but it's provided
 in case the definition for `Sym` changes.) -/
-def equivMultiset (α : Type*) : Sym2 α ≃ { s : Multiset α // Multiset.card s = 2 } :=
+private def equivMultiset (α : Type*) : Sym2 α ≃ { s : Multiset α // Multiset.card s = 2 } :=
   equivSym α
 
 end SymEquiv

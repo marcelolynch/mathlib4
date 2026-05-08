@@ -86,15 +86,15 @@ theorem incMatrix_apply_mul_incMatrix_apply_of_not_adj (hab : a ≠ b) (h : ¬G.
 theorem incMatrix_of_notMem_incidenceSet (h : e ∉ G.incidenceSet a) : G.incMatrix R a e = 0 := by
   rw [incMatrix_apply, Set.indicator_of_notMem h]
 
-theorem incMatrix_of_mem_incidenceSet (h : e ∈ G.incidenceSet a) : G.incMatrix R a e = 1 := by
+private theorem incMatrix_of_mem_incidenceSet (h : e ∈ G.incidenceSet a) : G.incMatrix R a e = 1 := by
   rw [incMatrix_apply, Set.indicator_of_mem h, Pi.one_apply]
 
 variable [Nontrivial R]
 
-theorem incMatrix_apply_eq_zero_iff : G.incMatrix R a e = 0 ↔ e ∉ G.incidenceSet a := by
+private theorem incMatrix_apply_eq_zero_iff : G.incMatrix R a e = 0 ↔ e ∉ G.incidenceSet a := by
   simp only [incMatrix_apply, Set.indicator_apply_eq_zero, Pi.one_apply, one_ne_zero]
 
-theorem incMatrix_apply_eq_one_iff : G.incMatrix R a e = 1 ↔ e ∈ G.incidenceSet a := by
+private theorem incMatrix_apply_eq_one_iff : G.incMatrix R a e = 1 ↔ e ∈ G.incidenceSet a := by
   convert one_ne_zero.ite_eq_left_iff
   infer_instance
 
@@ -114,7 +114,7 @@ theorem incMatrix_mul_transpose_diag [Fintype (Sym2 α)] [Fintype (neighborSet G
   simp only [mul_apply, incMatrix_apply', transpose_apply, mul_ite, mul_one, mul_zero]
   simp_all only [ite_true, sum_boole]
 
-theorem sum_incMatrix_apply_of_mem_edgeSet [Fintype α] :
+private theorem sum_incMatrix_apply_of_mem_edgeSet [Fintype α] :
     e ∈ G.edgeSet → ∑ a, G.incMatrix R a e = 2 := by
   refine e.ind ?_
   intro a b h
@@ -125,11 +125,11 @@ theorem sum_incMatrix_apply_of_mem_edgeSet [Fintype α] :
   ext e
   simp
 
-theorem sum_incMatrix_apply_of_notMem_edgeSet [Fintype α] (h : e ∉ G.edgeSet) :
+private theorem sum_incMatrix_apply_of_notMem_edgeSet [Fintype α] (h : e ∉ G.edgeSet) :
     ∑ a, G.incMatrix R a e = 0 :=
   sum_eq_zero fun _ _ => G.incMatrix_of_notMem_incidenceSet fun he => h he.1
 
-theorem incMatrix_transpose_mul_diag [Fintype α] [Decidable (e ∈ G.edgeSet)] :
+private theorem incMatrix_transpose_mul_diag [Fintype α] [Decidable (e ∈ G.edgeSet)] :
     ((G.incMatrix R)ᵀ * G.incMatrix R) e e = if e ∈ G.edgeSet then 2 else 0 := by
   simp only [Matrix.mul_apply, incMatrix_apply', transpose_apply, ite_zero_mul_ite_zero, one_mul,
     sum_boole, and_self_iff]
@@ -162,7 +162,7 @@ theorem incMatrix_mul_transpose_apply_of_adj (h : G.Adj a b) :
   rw [← coe_eq_singleton, coe_filter_univ]
   exact G.incidenceSet_inter_incidenceSet_of_adj h
 
-theorem incMatrix_mul_transpose [∀ a, Fintype (neighborSet G a)] :
+private theorem incMatrix_mul_transpose [∀ a, Fintype (neighborSet G a)] :
     G.incMatrix R * (G.incMatrix R)ᵀ =
       of fun a b => if a = b then (G.degree a : R) else if G.Adj a b then 1 else 0 := by
   ext a b

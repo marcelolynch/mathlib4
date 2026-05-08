@@ -185,7 +185,7 @@ The simplicial nerve of a simplicial category `C` is defined as the simplicial s
 `n`-simplices are given by the set of simplicial functors from the simplicial thickening of
 the linear order `Fin (n + 1)` to `C`
 -/
-def SimplicialNerve (C : Type u) [Category.{v} C] [SimplicialCategory C] :
+private def SimplicialNerve (C : Type u) [Category.{v} C] [SimplicialCategory C] :
     SSet.{max u v} where
   obj n := EnrichedFunctor SSet (SimplicialThickening (ULift (Fin (n.unop.len + 1)))) C
   map f := ↾((SimplicialThickening.functor f.unop.toOrderHom.uliftMap).comp

@@ -132,7 +132,7 @@ theorem mkDerivation_monomial (f : σ → A) (s : σ →₀ ℕ) (r : R) :
   mkDerivationₗ_monomial f s r
 
 /-- `MvPolynomial.mkDerivation` as a linear equivalence. -/
-def mkDerivationEquiv : (σ → A) ≃ₗ[R] Derivation R (MvPolynomial σ R) A :=
+private def mkDerivationEquiv : (σ → A) ≃ₗ[R] Derivation R (MvPolynomial σ R) A :=
   LinearEquiv.symm <|
     { invFun := mkDerivation R
       toFun := fun D i => D (X i)

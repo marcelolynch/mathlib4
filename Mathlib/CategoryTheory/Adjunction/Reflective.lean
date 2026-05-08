@@ -198,7 +198,7 @@ instance [Coreflective j] : j.IsLeftAdjoint := ⟨_, ⟨coreflectorAdjunction j�
 instance [Coreflective j] : (coreflector j).IsRightAdjoint := ⟨_, ⟨coreflectorAdjunction j⟩⟩
 
 /-- A coreflective functor is fully faithful. -/
-def Functor.fullyFaithfulOfCoreflective [Coreflective j] : j.FullyFaithful :=
+private def Functor.fullyFaithfulOfCoreflective [Coreflective j] : j.FullyFaithful :=
   (coreflectorAdjunction j).fullyFaithfulLOfIsIsoUnit
 
 set_option backward.isDefEq.respectTransparency false in

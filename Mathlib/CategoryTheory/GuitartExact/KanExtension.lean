@@ -103,7 +103,7 @@ noncomputable def isPointwiseLeftKanExtensionOfCompTwoSquare
 and `E` is a left extension of `F` along `R`, then `E` is a pointwise left Kan extension
 of `F` along `R` iff `E.compTwoSquare w` is a pointwise left Kan extension
 of `T ⋙ F` along `L`. -/
-noncomputable def isPointwiseLeftKanExtensionEquivOfGuitartExact
+private noncomputable def isPointwiseLeftKanExtensionEquivOfGuitartExact
     (w : TwoSquare T L R B) [w.GuitartExact] [B.EssSurj] :
     (E.compTwoSquare w).IsPointwiseLeftKanExtension ≃
       E.IsPointwiseLeftKanExtension where

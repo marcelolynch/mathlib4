@@ -61,7 +61,7 @@ def valueMulHom {X E : Type*} [Monoid E] [TopologicalSpace X] {x : X} : Germ (�
   map_mul' φ ψ := Germ.inductionOn φ fun _ ↦ Germ.inductionOn ψ fun _ ↦ rfl
 
 /-- The map `Germ (𝓝 x) E → E` into a `𝕜`-module `E` as a `𝕜`-linear map -/
-def valueₗ {X 𝕜 E : Type*} [Semiring 𝕜] [AddCommMonoid E] [Module 𝕜 E] [TopologicalSpace X]
+private def valueₗ {X 𝕜 E : Type*} [Semiring 𝕜] [AddCommMonoid E] [Module 𝕜 E] [TopologicalSpace X]
     {x : X} : Germ (𝓝 x) E →ₗ[𝕜] E where
   __ := Filter.Germ.valueAddHom
   map_smul' := fun _ φ ↦ Germ.inductionOn φ fun _ ↦ rfl
@@ -71,7 +71,7 @@ def valueRingHom {X E : Type*} [Semiring E] [TopologicalSpace X] {x : X} : Germ 
   { Filter.Germ.valueMulHom, Filter.Germ.valueAddHom with }
 
 /-- The map `Germ (𝓝 x) E → E` as a monotone ring homomorphism -/
-def valueOrderRingHom {X E : Type*} [Semiring E] [PartialOrder E] [TopologicalSpace X] {x : X} :
+private def valueOrderRingHom {X E : Type*} [Semiring E] [PartialOrder E] [TopologicalSpace X] {x : X} :
     Germ (𝓝 x) E →+*o E where
   __ := Filter.Germ.valueRingHom
   monotone' := fun φ ψ ↦

@@ -31,7 +31,7 @@ open InnerProductSpace TensorProduct
 variable (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
 /-- The canonical contravariant tensor corresponding to the inner product -/
-noncomputable def InnerProductSpace.canonicalContravariantTensor :
+private noncomputable def InnerProductSpace.canonicalContravariantTensor :
     E ⊗[ℝ] E →ₗ[ℝ] ℝ := lift (innerₗ E)
 
 /--

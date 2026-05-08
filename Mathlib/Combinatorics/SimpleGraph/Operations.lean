@@ -157,7 +157,7 @@ instance : DecidableRel (edge s t).Adj := fun _ _ ↦ by
 lemma edge_self_eq_bot : edge s s = ⊥ := by
   ext; rw [edge_adj]; simp_all
 
-lemma sup_edge_self : G ⊔ edge s s = G := by simp
+private lemma sup_edge_self : G ⊔ edge s s = G := by simp
 
 lemma lt_sup_edge (hne : s ≠ t) (hn : ¬ G.Adj s t) : G < G ⊔ edge s t :=
   left_lt_sup.2 fun h ↦ hn <| h <| (edge_adj ..).mpr ⟨Or.inl ⟨rfl, rfl⟩, hne⟩
@@ -171,7 +171,7 @@ lemma edge_le_iff {v w : V} : edge v w ≤ G ↔ v = w ∨ G.Adj v w := by
 @[simp]
 lemma edgeSet_edge (v w : V) : (edge v w).edgeSet = {s(v, w)} \ Sym2.diagSet := by simp [edge]
 
-lemma edgeSet_edge_subset {v w : V} : (edge v w).edgeSet ⊆ {s(v, w)} := by simp [edge]
+private lemma edgeSet_edge_subset {v w : V} : (edge v w).edgeSet ⊆ {s(v, w)} := by simp [edge]
 
 variable {s t}
 

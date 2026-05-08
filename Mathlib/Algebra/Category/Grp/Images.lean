@@ -100,7 +100,7 @@ noncomputable def isImage : IsImage (monoFactorisation f) where
 /-- The categorical image of a morphism in `AddCommGrpCat`
 agrees with the usual group-theoretical range.
 -/
-noncomputable def imageIsoRange {G H : AddCommGrpCat.{0}} (f : G ⟶ H) :
+private noncomputable def imageIsoRange {G H : AddCommGrpCat.{0}} (f : G ⟶ H) :
     Limits.image f ≅ AddCommGrpCat.of f.hom.range :=
   IsImage.isoExt (Image.isImage f) (isImage f)
 

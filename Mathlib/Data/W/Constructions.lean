@@ -162,7 +162,7 @@ theorem rightInverse_list : Function.RightInverse (ofList γ) (toList _)
   | List.cons hd tl => by simp [rightInverse_list tl]
 
 /-- Lists are equivalent to their associated `WType` -/
-def equivList : WType (Listβ γ) ≃ List γ where
+private def equivList : WType (Listβ γ) ≃ List γ where
   toFun := toList _
   invFun := ofList _
   left_inv := leftInverse_list _
@@ -171,7 +171,7 @@ def equivList : WType (Listβ γ) ≃ List γ where
 /-- `WType.Listα` is equivalent to `γ` with an extra point.
 This is useful when considering the associated polynomial endofunctor
 -/
-def ListαEquivPUnitSum : Listα γ ≃ PUnit.{v + 1} ⊕ γ where
+private def ListαEquivPUnitSum : Listα γ ≃ PUnit.{v + 1} ⊕ γ where
   toFun c :=
     match c with
     | Listα.nil => Sum.inl PUnit.unit

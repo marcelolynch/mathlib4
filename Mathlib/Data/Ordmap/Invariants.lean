@@ -231,13 +231,13 @@ theorem rotateR_nil (y : α) (r : Ordnode α) : rotateR nil y r = node' nil y r 
 -- should not happen
 /-- A left balance operation. This will rebalance a concatenation, assuming the original nodes are
 not too far from balanced. -/
-def balanceL' (l : Ordnode α) (x : α) (r : Ordnode α) : Ordnode α :=
+private def balanceL' (l : Ordnode α) (x : α) (r : Ordnode α) : Ordnode α :=
   if size l + size r ≤ 1 then node' l x r
   else if size l > delta * size r then rotateR l x r else node' l x r
 
 /-- A right balance operation. This will rebalance a concatenation, assuming the original nodes are
 not too far from balanced. -/
-def balanceR' (l : Ordnode α) (x : α) (r : Ordnode α) : Ordnode α :=
+private def balanceR' (l : Ordnode α) (x : α) (r : Ordnode α) : Ordnode α :=
   if size l + size r ≤ 1 then node' l x r
   else if size r > delta * size l then rotateL l x r else node' l x r
 

@@ -436,7 +436,7 @@ variable [TopologicalSpace B] [TopologicalSpace F] (Z : FiberBundleCore ι B F)
 
 /-- The index set of a fiber bundle core, as a convenience function for dot notation -/
 @[nolint unusedArguments]
-def Index (_Z : FiberBundleCore ι B F) := ι
+private def Index (_Z : FiberBundleCore ι B F) := ι
 
 /-- The base space of a fiber bundle core, as a convenience function for dot notation -/
 @[nolint unusedArguments, reducible]

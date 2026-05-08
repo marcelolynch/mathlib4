@@ -153,14 +153,14 @@ structure AbstractSimplicialComplex extends PreAbstractSimplicialComplex ι wher
 
 /-- Convert a `PreAbstractSimplicialComplex` satisfying `IsAbstract` to an
 `AbstractSimplicialComplex`. -/
-def PreAbstractSimplicialComplex.toAbstractSimplicialComplex
+private def PreAbstractSimplicialComplex.toAbstractSimplicialComplex
     (K : PreAbstractSimplicialComplex ι) (h : ∀ v : ι, {v} ∈ K.faces) :
     AbstractSimplicialComplex ι :=
   { K with singleton_mem := h }
 
 /-- The closure of a `PreAbstractSimplicialComplex` to an `AbstractSimplicialComplex` by adding
 all singletons. -/
-def PreAbstractSimplicialComplex.addSingletons
+private def PreAbstractSimplicialComplex.addSingletons
     (K : PreAbstractSimplicialComplex ι) :
     AbstractSimplicialComplex ι :=
   { faces := K.faces ∪ { s | ∃ v, s = {v} }
@@ -207,7 +207,7 @@ instance : IsConcreteLE (AbstractSimplicialComplex ι) (Finset ι) where
 instance : PartialOrder (AbstractSimplicialComplex ι) :=
   PartialOrder.lift (fun K => K.faces) (fun _ _ => AbstractSimplicialComplex.ext)
 
-theorem toPreAbstractSimplicialComplex_injective :
+private theorem toPreAbstractSimplicialComplex_injective :
     Function.Injective (toPreAbstractSimplicialComplex (ι := ι)) :=
   fun _ _ h => AbstractSimplicialComplex.ext (congrArg PreAbstractSimplicialComplex.faces h)
 
@@ -249,7 +249,7 @@ instance : Top (AbstractSimplicialComplex ι) where
     { (⊤ : PreAbstractSimplicialComplex ι) with
       singleton_mem _ := Finset.singleton_nonempty _ }
 
-lemma top_toPreAbstractSimplicialComplex :
+private lemma top_toPreAbstractSimplicialComplex :
     (⊤ : AbstractSimplicialComplex ι).toPreAbstractSimplicialComplex = ⊤ :=
   rfl
 

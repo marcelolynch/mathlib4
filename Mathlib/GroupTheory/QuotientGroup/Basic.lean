@@ -322,7 +322,7 @@ theorem quotientQuotientEquivQuotientAux_mk (x : G ⧸ N) :
   QuotientGroup.lift_mk' _ _ x
 
 @[to_additive]
-theorem quotientQuotientEquivQuotientAux_mk_mk (x : G) :
+private theorem quotientQuotientEquivQuotientAux_mk_mk (x : G) :
     quotientQuotientEquivQuotientAux N M h (x : G ⧸ N) = x :=
   QuotientGroup.lift_mk' (M.map (mk' N)) _ x
 

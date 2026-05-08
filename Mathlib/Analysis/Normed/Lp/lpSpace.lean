@@ -1246,7 +1246,7 @@ def evalₗ (i : α) : lp E p →ₗ[𝕜] E i where
 
 variable (𝕜 E p) in
 /-- Evaluation at a single coordinate, as a continuous linear map on `lp E p`. -/
-def evalCLM [Fact (1 ≤ p)] (i : α) : lp E p →L[𝕜] E i :=
+private def evalCLM [Fact (1 ≤ p)] (i : α) : lp E p →L[𝕜] E i :=
   (evalₗ E p i).mkContinuous 1 fun x ↦ by
     have hp : p ≠ 0 := zero_lt_one.trans_le Fact.out |>.ne'
     simpa only [evalₗ_apply, one_mul, ge_iff_le] using norm_apply_le_norm hp x i

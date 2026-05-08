@@ -39,7 +39,7 @@ instance (X : Type u) : Projective ((free R).obj X) where
 set_option backward.isDefEq.respectTransparency false in
 /-- An `R`-module `M` can be functorially written as a quotient of a
 projective `R`-module. -/
-noncomputable def projectiveResolution :
+private noncomputable def projectiveResolution :
     LeftResolution (ObjectProperty.ι (isProjective (ModuleCat.{u} R))) where
   F := ObjectProperty.lift _ (forget _ ⋙ free R) (by dsimp; infer_instance)
   π := (adj R).counit

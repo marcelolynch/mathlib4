@@ -514,7 +514,7 @@ instance (f : M ↪[L] N) : (constantsOn A).Structure (f.withConstants A) :=
 instance : L[[A]].Structure (f.withConstants A) := inferInstance
 
 /-- Lifts an embedding to the expanded language with constants. -/
-def Embedding.liftWithConstants :
+private def Embedding.liftWithConstants :
     M ↪[L[[A]]] f.withConstants A := by
   refine ⟨f.toEmbedding, ?_, ?_⟩
   · intro n g x

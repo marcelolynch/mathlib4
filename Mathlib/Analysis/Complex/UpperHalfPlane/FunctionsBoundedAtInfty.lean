@@ -55,11 +55,11 @@ theorem zero_form_isBoundedAtImInfty {α : Type*} [NormedField α] :
   const_boundedAtFilter atImInfty (0 : α)
 
 /-- Module of functions that are zero at infinity. -/
-def zeroAtImInftySubmodule (α : Type*) [NormedField α] : Submodule α (ℍ → α) :=
+private def zeroAtImInftySubmodule (α : Type*) [NormedField α] : Submodule α (ℍ → α) :=
   zeroAtFilterSubmodule _ atImInfty
 
 /-- Subalgebra of functions that are bounded at infinity. -/
-def boundedAtImInftySubalgebra (α : Type*) [NormedField α] : Subalgebra α (ℍ → α) :=
+private def boundedAtImInftySubalgebra (α : Type*) [NormedField α] : Subalgebra α (ℍ → α) :=
   boundedFilterSubalgebra _ atImInfty
 
 theorem isBoundedAtImInfty_iff {α : Type*} [Norm α] {f : ℍ → α} :

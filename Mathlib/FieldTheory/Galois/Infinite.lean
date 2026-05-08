@@ -205,7 +205,7 @@ def IntermediateFieldEquivClosedSubgroup [IsGalois k K] :
     rfl
 
 /-- The Galois correspondence as a `GaloisInsertion` -/
-def GaloisInsertionIntermediateFieldClosedSubgroup [IsGalois k K] :
+private def GaloisInsertionIntermediateFieldClosedSubgroup [IsGalois k K] :
     GaloisInsertion (OrderDual.toDual ∘ fun (E : IntermediateField k K) ↦
       (⟨E.fixingSubgroup, fixingSubgroup_isClosed E⟩ : ClosedSubgroup Gal(K/k)))
       ((fun (H : ClosedSubgroup Gal(K/k)) ↦ IntermediateField.fixedField H) ∘
@@ -213,7 +213,7 @@ def GaloisInsertionIntermediateFieldClosedSubgroup [IsGalois k K] :
   OrderIso.toGaloisInsertion IntermediateFieldEquivClosedSubgroup
 
 /-- The Galois correspondence as a `GaloisCoinsertion` -/
-def GaloisCoinsertionIntermediateFieldSubgroup [IsGalois k K] :
+private def GaloisCoinsertionIntermediateFieldSubgroup [IsGalois k K] :
     GaloisCoinsertion (OrderDual.toDual ∘ fun (E : IntermediateField k K) ↦ E.fixingSubgroup)
       ((fun (H : Subgroup Gal(K/k)) ↦ IntermediateField.fixedField H) ∘ OrderDual.toDual) where
   choice H _ := IntermediateField.fixedField H

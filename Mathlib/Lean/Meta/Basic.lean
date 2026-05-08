@@ -20,7 +20,7 @@ Likely these already exist somewhere. Pointers welcome.
 /--
 Restore the metavariable context after execution.
 -/
-def Lean.Meta.preservingMCtx {α : Type} (x : MetaM α) : MetaM α := do
+private def Lean.Meta.preservingMCtx {α : Type} (x : MetaM α) : MetaM α := do
   let mctx ← getMCtx
   try x finally setMCtx mctx
 
@@ -65,7 +65,7 @@ def Lean.Meta.pureIsDefEq (e₁ e₂ : Expr) : MetaM Bool :=
   withNewMCtxDepth <| isDefEq e₁ e₂
 
 /-- `mkRel n lhs rhs` is `mkAppM n #[lhs, rhs]`, but with optimizations for `Eq` and `Iff`. -/
-def Lean.Meta.mkRel (n : Name) (lhs rhs : Expr) : MetaM Expr :=
+private def Lean.Meta.mkRel (n : Name) (lhs rhs : Expr) : MetaM Expr :=
   if n == ``Eq then
     mkEq lhs rhs
   else if n == ``Iff then
@@ -102,7 +102,7 @@ def Lean.Meta.withEnsuringLocalInstance {α : Type} (inst : MVarId) (k : MetaM (
 /-- Checks that `e` has type `expectedType` (i.e. that its type is defeq to `expectedType`
 at the current transparency). If not, coerces `e` to this type
 or fails with a descriptive error. -/
-def Lean.Meta.ensureHasType (e expectedType : Expr) : MetaM Expr := do
+private def Lean.Meta.ensureHasType (e expectedType : Expr) : MetaM Expr := do
   let ty ← inferType e
   if ← withNewMCtxDepth (isDefEq ty expectedType) then return e else
     (← coerceSimple? e expectedType).toOption.getDM <|
@@ -118,7 +118,7 @@ def Lean.Meta.ensureIsFunction (e : Expr) : MetaM Expr := do
 
 /-- Checks that `e` is a type (i.e. that its type is a `Sort` after `instantiateMVars` and
 `whnf`). If not, coerces `e` to a Sort or fails with a descriptive error. -/
-def Lean.Meta.ensureIsSort (e : Expr) : MetaM Expr := do
+private def Lean.Meta.ensureIsSort (e : Expr) : MetaM Expr := do
   let ty ← whnf <| ← instantiateMVars <| ← inferType e
   if ty.isSort then return e else (← coerceToSort? e).getDM <|
     throwError "Expected{indentD e}\nof type{indentD ty}\nto be a Sort, or to be coercible to \

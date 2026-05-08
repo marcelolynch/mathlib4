@@ -526,7 +526,7 @@ noncomputable def ofBijectiveAlgebraMap (h : Function.Bijective (algebraMap R S)
     exact isUnit_one
 
 /-- The canonical submersive `R`-presentation of `R` with no generators and no relations. -/
-noncomputable def id : SubmersivePresentation R R PEmpty.{w + 1} PEmpty.{t + 1} :=
+private noncomputable def id : SubmersivePresentation R R PEmpty.{w + 1} PEmpty.{t + 1} :=
   ofBijectiveAlgebraMap Function.bijective_id
 
 section Composition

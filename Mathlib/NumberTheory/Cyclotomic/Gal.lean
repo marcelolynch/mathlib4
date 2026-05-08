@@ -136,7 +136,7 @@ variable [Field L] [Algebra K L] [IsCyclotomicExtension {n} K L]
 /-- `IsCyclotomicExtension.autEquivPow` repackaged in terms of `Gal`.
 Asserts that the Galois group of `cyclotomic n K` is equivalent to `(ZMod n)ˣ`
 if `cyclotomic n K` is irreducible in the base field. -/
-noncomputable def galCyclotomicEquivUnitsZMod : (cyclotomic n K).Gal ≃* (ZMod n)ˣ :=
+private noncomputable def galCyclotomicEquivUnitsZMod : (cyclotomic n K).Gal ≃* (ZMod n)ˣ :=
   (AlgEquiv.autCongr
           (IsSplittingField.algEquiv L _ : L ≃ₐ[K] (cyclotomic n K).SplittingField)).symm.trans
     (IsCyclotomicExtension.autEquivPow L h)
@@ -144,7 +144,7 @@ noncomputable def galCyclotomicEquivUnitsZMod : (cyclotomic n K).Gal ≃* (ZMod 
 /-- `IsCyclotomicExtension.autEquivPow` repackaged in terms of `Gal`.
 Asserts that the Galois group of `X ^ n - 1` is equivalent to `(ZMod n)ˣ`
 if `cyclotomic n K` is irreducible in the base field. -/
-noncomputable def galXPowEquivUnitsZMod : (X ^ n - 1 : K[X]).Gal ≃* (ZMod n)ˣ :=
+private noncomputable def galXPowEquivUnitsZMod : (X ^ n - 1 : K[X]).Gal ≃* (ZMod n)ˣ :=
   (AlgEquiv.autCongr
       (IsSplittingField.algEquiv L _ : L ≃ₐ[K] (X ^ n - 1 : K[X]).SplittingField)).symm.trans
     (IsCyclotomicExtension.autEquivPow L h)

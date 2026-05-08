@@ -133,12 +133,12 @@ instance : MonoidalCategoryStruct AugmentedSimplexCategory where
   whiskerRight f x := tensorHom f (𝟙 x)
 
 @[local simp]
-lemma id_tensorHom (x : AugmentedSimplexCategory) {y₁ y₂ : AugmentedSimplexCategory}
+private lemma id_tensorHom (x : AugmentedSimplexCategory) {y₁ y₂ : AugmentedSimplexCategory}
     (f : y₁ ⟶ y₂) : 𝟙 x ⊗ₘ f = x ◁ f :=
   rfl
 
 @[local simp]
-lemma tensorHom_id {x₁ x₂ : AugmentedSimplexCategory} (y : AugmentedSimplexCategory)
+private lemma tensorHom_id {x₁ x₂ : AugmentedSimplexCategory} (y : AugmentedSimplexCategory)
     (f : x₁ ⟶ x₂) : f ⊗ₘ 𝟙 y = f ▷ y :=
   rfl
 

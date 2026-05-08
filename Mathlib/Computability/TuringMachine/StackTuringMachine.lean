@@ -176,7 +176,7 @@ attribute [simp] stepAux.eq_1 stepAux.eq_2 stepAux.eq_3
   stepAux.eq_4 stepAux.eq_5 stepAux.eq_6 stepAux.eq_7 step.eq_1 step.eq_2
 
 /-- The (reflexive) reachability relation for the TM2 model. -/
-def Reaches (M : Λ → Stmt Γ Λ σ) : Cfg Γ Λ σ → Cfg Γ Λ σ → Prop :=
+private def Reaches (M : Λ → Stmt Γ Λ σ) : Cfg Γ Λ σ → Cfg Γ Λ σ → Prop :=
   ReflTransGen fun a b ↦ b ∈ step M a
 
 end

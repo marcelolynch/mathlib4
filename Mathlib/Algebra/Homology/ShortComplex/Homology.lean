@@ -329,7 +329,7 @@ def ofIsLimitKernelFork (φ : S₁ ⟶ S₂)
 /-- When both maps `S.f` and `S.g` of a short complex `S` are zero, this is the homology map
 data (for the identity of `S`) which relates the homology data `ofZeros` and
 `ofIsColimitCokernelCofork`. -/
-noncomputable def compatibilityOfZerosOfIsColimitCokernelCofork (hf : S.f = 0) (hg : S.g = 0)
+private noncomputable def compatibilityOfZerosOfIsColimitCokernelCofork (hf : S.f = 0) (hg : S.g = 0)
     (c : CokernelCofork S.f) (hc : IsColimit c) :
     HomologyMapData (𝟙 S) (HomologyData.ofZeros S hf hg)
       (HomologyData.ofIsColimitCokernelCofork S hg c hc) where
@@ -350,7 +350,7 @@ noncomputable def compatibilityOfZerosOfIsLimitKernelFork (hf : S.f = 0) (hg : S
 
 /-- This homology map data expresses compatibilities of the homology data
 constructed by `HomologyData.ofEpiOfIsIsoOfMono` -/
-noncomputable def ofEpiOfIsIsoOfMono (φ : S₁ ⟶ S₂) (h : HomologyData S₁)
+private noncomputable def ofEpiOfIsIsoOfMono (φ : S₁ ⟶ S₂) (h : HomologyData S₁)
     [Epi φ.τ₁] [IsIso φ.τ₂] [Mono φ.τ₃] :
     HomologyMapData φ h (HomologyData.ofEpiOfIsIsoOfMono φ h) where
   left := LeftHomologyMapData.ofEpiOfIsIsoOfMono φ h.left
@@ -358,7 +358,7 @@ noncomputable def ofEpiOfIsIsoOfMono (φ : S₁ ⟶ S₂) (h : HomologyData S₁
 
 /-- This homology map data expresses compatibilities of the homology data
 constructed by `HomologyData.ofEpiOfIsIsoOfMono'` -/
-noncomputable def ofEpiOfIsIsoOfMono' (φ : S₁ ⟶ S₂) (h : HomologyData S₂)
+private noncomputable def ofEpiOfIsIsoOfMono' (φ : S₁ ⟶ S₂) (h : HomologyData S₂)
     [Epi φ.τ₁] [IsIso φ.τ₂] [Mono φ.τ₃] :
     HomologyMapData φ (HomologyData.ofEpiOfIsIsoOfMono' φ h) h where
   left := LeftHomologyMapData.ofEpiOfIsIsoOfMono' φ h.left
@@ -941,14 +941,14 @@ lemma homology_π_ι :
 
 /-- The homology of a short complex `S` identifies to the kernel of the induced morphism
 `cokernel S.f ⟶ S.X₃`. -/
-noncomputable def homologyIsoKernelDesc [HasCokernel S.f]
+private noncomputable def homologyIsoKernelDesc [HasCokernel S.f]
     [HasKernel (cokernel.desc S.f S.g S.zero)] :
     S.homology ≅ kernel (cokernel.desc S.f S.g S.zero) :=
   S.rightHomologyIso.symm ≪≫ S.rightHomologyIsoKernelDesc
 
 /-- The homology of a short complex `S` identifies to the cokernel of the induced morphism
 `S.X₁ ⟶ kernel S.g`. -/
-noncomputable def homologyIsoCokernelLift [HasKernel S.g]
+private noncomputable def homologyIsoCokernelLift [HasKernel S.g]
     [HasCokernel (kernel.lift S.g S.f S.zero)] :
     S.homology ≅ cokernel (kernel.lift S.g S.f S.zero) :=
   S.leftHomologyIso.symm ≪≫ S.leftHomologyIsoCokernelLift
@@ -1071,7 +1071,7 @@ variable (C)
 
 /-- The natural isomorphism `(homologyFunctor C).op ≅ opFunctor C ⋙ homologyFunctor Cᵒᵖ`
 which relates the homology in `C` and in `Cᵒᵖ`. -/
-noncomputable def homologyFunctorOpNatIso [CategoryWithHomology C] :
+private noncomputable def homologyFunctorOpNatIso [CategoryWithHomology C] :
     (homologyFunctor C).op ≅ opFunctor C ⋙ homologyFunctor Cᵒᵖ :=
   NatIso.ofComponents (fun S => S.unop.homologyOpIso.symm)
     (fun _ ↦ homologyOpIso_inv_naturality _)

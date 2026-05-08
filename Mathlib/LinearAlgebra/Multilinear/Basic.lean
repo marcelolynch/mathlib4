@@ -1069,7 +1069,7 @@ The sum is parameterized by the embeddings of `Fin k` in the index type `ι` (or
 by the subsets `s` of `ι` of cardinality `k` and then the bijections between `Fin k` and `s`).
 
 For the continuous version, see `ContinuousMultilinearMap.iteratedFDeriv`. -/
-protected noncomputable def iteratedFDeriv [Fintype ι]
+private protected noncomputable def iteratedFDeriv [Fintype ι]
     (f : MultilinearMap R M₁ M₂) (k : ℕ) (x : (i : ι) → M₁ i) :
     MultilinearMap R (fun (_ : Fin k) ↦ (∀ i, M₁ i)) M₂ :=
   ∑ e : Fin k ↪ ι, iteratedFDerivComponent f e.toEquivRange (fun i ↦ x i)
@@ -1438,7 +1438,7 @@ theorem map_nonempty [Nonempty ι] (f : MultilinearMap R M₁ M₂) (p : ∀ i, 
   ⟨f 0, 0, fun i => (p i).zero_mem, rfl⟩
 
 /-- The range of a multilinear map, closed under scalar multiplication. -/
-def range [Nonempty ι] (f : MultilinearMap R M₁ M₂) : SubMulAction R M₂ :=
+private def range [Nonempty ι] (f : MultilinearMap R M₁ M₂) : SubMulAction R M₂ :=
   f.map fun _ => ⊤
 
 end Submodule

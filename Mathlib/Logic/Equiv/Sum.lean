@@ -95,7 +95,7 @@ def sumPSum {α₁ β₁} (ea : α₁ ≃ α₂) (eb : β₁ ≃ β₂) :
   (ea.symm.psumSum eb.symm).symm
 
 /-- A subtype of a sum is equivalent to a sum of subtypes. -/
-def subtypeSum {α β} {p : α ⊕ β → Prop} :
+private def subtypeSum {α β} {p : α ⊕ β → Prop} :
     {c // p c} ≃ {a // p (Sum.inl a)} ⊕ {b // p (Sum.inr b)} where
   toFun
     | ⟨.inl a, h⟩ => .inl ⟨a, h⟩
@@ -238,7 +238,7 @@ def sigmaFiberEquiv {α β : Type*} (f : α → β) : (Σ y : β, { x // f x = y
 
 /-- Inhabited types are equivalent to `Option β` for some `β` by identifying `default` with `none`.
 -/
-def sigmaEquivOptionOfInhabited (α : Type u) [Inhabited α] [DecidableEq α] :
+private def sigmaEquivOptionOfInhabited (α : Type u) [Inhabited α] [DecidableEq α] :
     Σ β : Type u, α ≃ Option β where
   fst := {a // a ≠ default}
   snd.toFun a := if h : a = default then none else some ⟨a, h⟩

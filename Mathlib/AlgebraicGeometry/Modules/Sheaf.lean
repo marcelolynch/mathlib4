@@ -232,7 +232,7 @@ def pushforwardCongr {f g : X ⟶ Y} (hf : f = g) : pushforward f ≅ pushforwar
     ((pushforwardCongr hf).inv.app M).app U = M.presheaf.map (eqToHom (hf ▸ rfl)).op := rfl
 
 /-- Inverse images along equal morphisms are isomorphic. -/
-def pullbackCongr {f g : X ⟶ Y} (hf : f = g) : pullback f ≅ pullback g :=
+private def pullbackCongr {f g : X ⟶ Y} (hf : f = g) : pullback f ≅ pullback g :=
   eqToIso (hf ▸ rfl)
 
 lemma conjugateEquiv_pullbackComp_inv :
@@ -368,7 +368,7 @@ lemma restrictAdjunction_counit_app_app (M : X.Modules) (U : X.Opens) :
       M.presheaf.map (eqToHom (f.preimage_image_eq U).symm).op := rfl
 
 /-- Restriction is naturally isomorphic to the inverse image. -/
-def restrictFunctorIsoPullback : restrictFunctor f ≅ pullback f :=
+private def restrictFunctorIsoPullback : restrictFunctor f ≅ pullback f :=
   (restrictAdjunction f).leftAdjointUniq (pullbackPushforwardAdjunction f)
 
 /-- Restriction along the identity is isomorphic to the identity. -/

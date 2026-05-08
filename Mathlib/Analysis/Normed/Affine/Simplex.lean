@@ -83,7 +83,7 @@ lemma Scalene.dist_ne {s : Simplex R P n} (hs : s.Scalene) {i₁ i₂ i₃ i₄ 
 def Equilateral (s : Simplex R P n) : Prop :=
   ∃ r : ℝ, ∀ i j, i ≠ j → dist (s.points i) (s.points j) = r
 
-lemma Equilateral.dist_eq {s : Simplex R P n} (he : s.Equilateral) {i₁ i₂ i₃ i₄ : Fin (n + 1)}
+private lemma Equilateral.dist_eq {s : Simplex R P n} (he : s.Equilateral) {i₁ i₂ i₃ i₄ : Fin (n + 1)}
     (h₁₂ : i₁ ≠ i₂) (h₃₄ : i₃ ≠ i₄) :
     dist (s.points i₁) (s.points i₂) = dist (s.points i₃) (s.points i₄) := by
   rcases he with ⟨r, hr⟩
@@ -111,7 +111,7 @@ def Regular (s : Simplex R P n) : Prop :=
     ext i
     simpa using congrFun hx (e.symm i)
 
-lemma Regular.equilateral {s : Simplex R P n} (hr : s.Regular) : s.Equilateral := by
+private lemma Regular.equilateral {s : Simplex R P n} (hr : s.Regular) : s.Equilateral := by
   refine ⟨dist (s.points 0) (s.points 1), fun i j hij ↦ ?_⟩
   have hn : n ≠ 0 := by lia
   by_cases hi : i = 1

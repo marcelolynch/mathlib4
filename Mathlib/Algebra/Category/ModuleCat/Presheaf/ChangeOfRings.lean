@@ -67,7 +67,7 @@ instance (α : R ⟶ R') : (restrictScalars α).Faithful where
 
 /-- The isomorphism `restrictScalars α ⋙ toPresheaf R ≅ toPresheaf R'` for any
 morphism of presheaves of rings `α : R ⟶ R'`. -/
-noncomputable def restrictScalarsCompToPresheaf (α : R ⟶ R') :
+private noncomputable def restrictScalarsCompToPresheaf (α : R ⟶ R') :
     restrictScalars.{v} α ⋙ toPresheaf R ≅ toPresheaf R' := Iso.refl _
 
 end PresheafOfModules

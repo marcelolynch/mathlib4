@@ -85,7 +85,7 @@ def swapFactorsAux :
 /-- `swapFactors` represents a permutation as a product of a list of transpositions.
 The representation is nonunique and depends on the linear order structure.
 For types without linear order `truncSwapFactors` can be used. -/
-def swapFactors [Fintype α] [LinearOrder α] (f : Perm α) :
+private def swapFactors [Fintype α] [LinearOrder α] (f : Perm α) :
     { l : List (Perm α) // l.prod = f ∧ ∀ g ∈ l, IsSwap g } :=
   swapFactorsAux ((@univ α _).sort) f fun {_ _} => (mem_sort _).2 (mem_univ _)
 

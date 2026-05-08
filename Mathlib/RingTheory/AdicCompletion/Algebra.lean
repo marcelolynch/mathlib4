@@ -65,7 +65,7 @@ theorem transitionMap_map_pow {m n a : ℕ} (hmn : m ≤ n) (x : R ⧸ (I ^ n �
   Quotient.inductionOn' x (fun _ ↦ rfl)
 
 /-- `AdicCompletion.transitionMap` as an algebra homomorphism. -/
-def transitionMapₐ {m n : ℕ} (hmn : m ≤ n) :
+private def transitionMapₐ {m n : ℕ} (hmn : m ≤ n) :
     R ⧸ (I ^ n • ⊤ : Ideal R) →ₐ[R] R ⧸ (I ^ m • ⊤ : Ideal R) :=
   AlgHom.ofLinearMap (transitionMap I R hmn) rfl (transitionMap_map_mul I hmn)
 
@@ -75,7 +75,7 @@ def subalgebra : Subalgebra R (∀ n, R ⧸ (I ^ n • ⊤ : Ideal R)) :=
     (fun x y hx hy m n hmn ↦ by simp [hx hmn, hy hmn, transitionMap_map_mul I hmn])
 
 /-- `AdicCompletion I R` is a subring of `∀ n, R ⧸ (I ^ n • ⊤ : Ideal R)`. -/
-def subring : Subring (∀ n, R ⧸ (I ^ n • ⊤ : Ideal R)) :=
+private def subring : Subring (∀ n, R ⧸ (I ^ n • ⊤ : Ideal R)) :=
   Subalgebra.toSubring (subalgebra I)
 
 instance : Mul (AdicCompletion I R) where
@@ -195,7 +195,7 @@ def AdicCauchySequence.subalgebra : Subalgebra R (ℕ → R) :=
       exact SModEq.mul (hx hmn) (hy hmn))
 
 /-- `AdicCauchySequence I R` is a subring of `ℕ → R`. -/
-def AdicCauchySequence.subring : Subring (ℕ → R) :=
+private def AdicCauchySequence.subring : Subring (ℕ → R) :=
   Subalgebra.toSubring (AdicCauchySequence.subalgebra I)
 
 instance : Mul (AdicCauchySequence I R) where

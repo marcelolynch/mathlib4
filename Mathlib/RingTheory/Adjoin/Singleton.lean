@@ -58,7 +58,7 @@ instance : IsScalarTower A[b] A[(algebraMap B C) b] C :=
   IsScalarTower.of_algebraMap_eq' (by rfl)
 
 /-- If the `algebraMap` injective then we have a Ring isomorphism between A[b] and A[↑b]. -/
-noncomputable def RingHom.adjoinAlgebraMapEquiv [FaithfulSMul B C] :
+private noncomputable def RingHom.adjoinAlgebraMapEquiv [FaithfulSMul B C] :
     A[b] ≃+* A[(algebraMap B C) b] := by
   apply RingEquiv.ofBijective (RingHom.adjoinAlgebraMap b)
      ((Function.bijective_iff_existsUnique (adjoinAlgebraMap b)).mpr (fun y ↦ ?_))

@@ -405,7 +405,7 @@ For the pullback stability condition, we need the right Ore condition to hold.
 
 See https://ncatlab.org/nlab/show/atomic+site, or [MM92] Chapter III, Section 2, example (f).
 -/
-def atomic (hro : RightOreCondition C) : GrothendieckTopology C where
+private def atomic (hro : RightOreCondition C) : GrothendieckTopology C where
   sieves X := {S | ∃ (Y : _) (f : Y ⟶ X), S f}
   top_mem' _ := ⟨_, 𝟙 _, ⟨⟩⟩
   pullback_stable' := by
@@ -541,7 +541,7 @@ def bind {X : C} (S : J.Cover X) (T : ∀ I : S.Arrow, J.Cover I.Y) : J.Cover X 
     J.bind_covering S.condition fun _ _ _ => (T { Y := _, f := _, hf := _ }).condition⟩
 
 /-- The canonical morphism from `S.bind T` to `T`. -/
-def bindToBase {X : C} (S : J.Cover X) (T : ∀ I : S.Arrow, J.Cover I.Y) : S.bind T ⟶ S :=
+private def bindToBase {X : C} (S : J.Cover X) (T : ∀ I : S.Arrow, J.Cover I.Y) : S.bind T ⟶ S :=
   homOfLE <| by
     rintro Y f ⟨Z, e1, e2, h1, _, h3⟩
     rw [← h3]

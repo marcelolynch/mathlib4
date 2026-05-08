@@ -185,7 +185,7 @@ lemma chainComplexMap_comp :
 /-- Given `ι : C ⥤ A`, `Λ : LeftResolution ι`, this is a
 functor `A ⥤ ChainComplex C ℕ` which sends `X : A` to a resolution consisting
 of objects in `C`. -/
-noncomputable def chainComplexFunctor : A ⥤ ChainComplex C ℕ where
+private noncomputable def chainComplexFunctor : A ⥤ ChainComplex C ℕ where
   obj X := Λ.chainComplex X
   map f := Λ.chainComplexMap f
 

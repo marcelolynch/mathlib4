@@ -67,7 +67,7 @@ theorem isClique_iff_induce_eq : G.IsClique s ↔ G.induce s = ⊤ := by
     simp only [top_adj, ne_eq, Subtype.mk.injEq, eq_iff_iff] at h2
     exact h2.1 hne
 
-theorem isClique_iff_isChain_adj : G.IsClique s ↔ IsChain G.Adj s := by
+private theorem isClique_iff_isChain_adj : G.IsClique s ↔ IsChain G.Adj s := by
   simp [IsChain, G.symm.iff]
 
 instance [DecidableEq α] [DecidableRel G.Adj] {s : Finset α} : Decidable (G.IsClique s) :=
@@ -75,20 +75,20 @@ instance [DecidableEq α] [DecidableRel G.Adj] {s : Finset α} : Decidable (G.Is
 
 variable {G H} {a b : α}
 
-lemma isClique_empty : G.IsClique ∅ := by simp
+private lemma isClique_empty : G.IsClique ∅ := by simp
 
-lemma isClique_singleton (a : α) : G.IsClique {a} := by simp
+private lemma isClique_singleton (a : α) : G.IsClique {a} := by simp
 
 theorem IsClique.of_subsingleton {G : SimpleGraph α} (hs : s.Subsingleton) : G.IsClique s :=
   hs.pairwise G.Adj
 
-lemma isClique_pair : G.IsClique {a, b} ↔ a ≠ b → G.Adj a b := Set.pairwise_pair_of_symmetric G.symm
+private lemma isClique_pair : G.IsClique {a, b} ↔ a ≠ b → G.Adj a b := Set.pairwise_pair_of_symmetric G.symm
 
 @[simp]
 lemma isClique_insert : G.IsClique (insert a s) ↔ G.IsClique s ∧ ∀ b ∈ s, a ≠ b → G.Adj a b :=
   Set.pairwise_insert_of_symmetric G.symm
 
-lemma isClique_insert_of_notMem (ha : a ∉ s) :
+private lemma isClique_insert_of_notMem (ha : a ∉ s) :
     G.IsClique (insert a s) ↔ G.IsClique s ∧ ∀ b ∈ s, G.Adj a b :=
   Set.pairwise_insert_of_symmetric_of_notMem G.symm ha
 
@@ -157,7 +157,7 @@ theorem isClique_map_finset_iff :
   · simp [ht]
   exact Finset.one_lt_card_iff_nontrivial.mp ht
 
-protected theorem IsClique.finsetMap {f : α ↪ β} {s : Finset α} (h : G.IsClique s) :
+private protected theorem IsClique.finsetMap {f : α ↪ β} {s : Finset α} (h : G.IsClique s) :
     (G.map f).IsClique (s.map f) := by
   simpa
 
@@ -184,7 +184,7 @@ lemma isClique_sup_edge_of_ne_sdiff {v w : α} {s : Set α} (h : v ≠ w) (hv : 
     · exact hw.mono le_sup_left hx hy hxy
   · exact Or.inr ⟨by by_cases x = v <;> aesop, hxy⟩
 
-lemma isClique_sup_edge_of_ne_iff {v w : α} {s : Set α} (h : v ≠ w) :
+private lemma isClique_sup_edge_of_ne_iff {v w : α} {s : Set α} (h : v ≠ w) :
     (G ⊔ edge v w).IsClique s ↔ G.IsClique (s \ {v}) ∧ G.IsClique (s \ {w}) :=
   ⟨fun h' ↦ ⟨h'.sdiff_of_sup_edge, (edge_comm .. ▸ h').sdiff_of_sup_edge⟩,
     fun h' ↦ isClique_sup_edge_of_ne_sdiff h h'.1 h'.2⟩
@@ -297,7 +297,7 @@ theorem is3Clique_iff :
 
 end DecidableEq
 
-theorem is3Clique_iff_exists_cycle_length_three :
+private theorem is3Clique_iff_exists_cycle_length_three :
     (∃ s : Finset α, G.IsNClique 3 s) ↔ ∃ (u : α) (w : G.Walk u u), w.IsCycle ∧ w.length = 3 := by
   classical
   simp_rw [is3Clique_iff, isCycle_def]
@@ -456,7 +456,7 @@ theorem not_cliqueFree_of_infinite [Infinite ι] (f : ∀ (i : ι), V i) :
   (topEmbedding V f |>.comp <| .completeGraph <| Fin.valEmbedding.trans <| Infinite.natEmbedding ι)
     |>.isContained.not_cliqueFree
 
-theorem not_cliqueFree_of_le_enatCard (f : ∀ (i : ι), V i) (hc : n ≤ ENat.card ι) :
+private theorem not_cliqueFree_of_le_enatCard (f : ∀ (i : ι), V i) (hc : n ≤ ENat.card ι) :
     ¬ (completeMultipartiteGraph V).CliqueFree n := by
   by_cases h : Infinite ι
   · exact not_cliqueFree_of_infinite V f
@@ -541,15 +541,15 @@ variable {s s₁ s₂ : Set α} {a : α} {m n : ℕ}
 def CliqueFreeOn (G : SimpleGraph α) (s : Set α) (n : ℕ) : Prop :=
   ∀ ⦃t⦄, ↑t ⊆ s → ¬G.IsNClique n t
 
-theorem CliqueFreeOn.subset (hs : s₁ ⊆ s₂) (h₂ : G.CliqueFreeOn s₂ n) : G.CliqueFreeOn s₁ n :=
+private theorem CliqueFreeOn.subset (hs : s₁ ⊆ s₂) (h₂ : G.CliqueFreeOn s₂ n) : G.CliqueFreeOn s₁ n :=
   fun _t hts => h₂ <| hts.trans hs
 
-theorem CliqueFreeOn.mono (hmn : m ≤ n) (hG : G.CliqueFreeOn s m) : G.CliqueFreeOn s n := by
+private theorem CliqueFreeOn.mono (hmn : m ≤ n) (hG : G.CliqueFreeOn s m) : G.CliqueFreeOn s n := by
   rintro t hts ht
   obtain ⟨u, hut, hu⟩ := exists_subset_card_eq (hmn.trans ht.card_eq.ge)
   exact hG ((coe_subset.2 hut).trans hts) ⟨ht.isClique.subset hut, hu⟩
 
-theorem CliqueFreeOn.anti (hGH : G ≤ H) (hH : H.CliqueFreeOn s n) : G.CliqueFreeOn s n :=
+private theorem CliqueFreeOn.anti (hGH : G ≤ H) (hH : H.CliqueFreeOn s n) : G.CliqueFreeOn s n :=
   fun _t hts ht => hH hts <| ht.mono hGH
 
 @[simp]
@@ -565,10 +565,10 @@ theorem cliqueFreeOn_singleton : G.CliqueFreeOn {a} n ↔ 1 < n := by
 theorem cliqueFreeOn_univ : G.CliqueFreeOn Set.univ n ↔ G.CliqueFree n := by
   simp [CliqueFree, CliqueFreeOn]
 
-protected theorem CliqueFree.cliqueFreeOn (hG : G.CliqueFree n) : G.CliqueFreeOn s n :=
+private protected theorem CliqueFree.cliqueFreeOn (hG : G.CliqueFree n) : G.CliqueFreeOn s n :=
   fun _t _ ↦ hG _
 
-theorem cliqueFreeOn_of_card_lt {s : Finset α} (h : #s < n) : G.CliqueFreeOn s n :=
+private theorem cliqueFreeOn_of_card_lt {s : Finset α} (h : #s < n) : G.CliqueFreeOn s n :=
   fun _t hts ht => h.not_ge <| ht.2.symm.trans_le <| card_mono hts
 
 -- TODO: Restate using `SimpleGraph.IndepSet` once we have it
@@ -583,7 +583,7 @@ theorem cliqueFreeOn_two : G.CliqueFreeOn s 2 ↔ s.Pairwise (G.Adjᶜ) := by
   simp only [coe_insert, coe_singleton, Set.insert_subset_iff, Set.singleton_subset_iff] at hst
   refine h hst.1 hst.2 hab (ht ?_ ?_ hab) <;> simp
 
-theorem CliqueFreeOn.of_succ (hs : G.CliqueFreeOn s (n + 1)) (ha : a ∈ s) :
+private theorem CliqueFreeOn.of_succ (hs : G.CliqueFreeOn s (n + 1)) (ha : a ∈ s) :
     G.CliqueFreeOn (s ∩ G.neighborSet a) n := by
   classical
   refine fun t hts ht => hs ?_ (ht.insert fun b hb => (hts hb).2)
@@ -619,7 +619,7 @@ protected alias ⟨_, CliqueFree.cliqueSet⟩ := cliqueSet_eq_empty_iff
 theorem cliqueSet_mono (h : G ≤ H) : G.cliqueSet n ⊆ H.cliqueSet n :=
   fun _ ↦ IsNClique.mono h
 
-theorem cliqueSet_mono' (h : G ≤ H) : G.cliqueSet ≤ H.cliqueSet :=
+private theorem cliqueSet_mono' (h : G ≤ H) : G.cliqueSet ≤ H.cliqueSet :=
   fun _ ↦ cliqueSet_mono h
 
 @[simp]
@@ -895,7 +895,7 @@ def IndepSetFree (n : ℕ) : Prop :=
   simp [IndepSetFree, CliqueFree]
 
 /-- `G.IndepSetFreeOn s n` means that `G` has no `n`-independent sets contained in `s`. -/
-def IndepSetFreeOn (G : SimpleGraph α) (s : Set α) (n : ℕ) : Prop :=
+private def IndepSetFreeOn (G : SimpleGraph α) (s : Set α) (n : ℕ) : Prop :=
   ∀ ⦃t⦄, ↑t ⊆ s → ¬G.IsNIndepSet n t
 
 end IndepSetFree
@@ -935,13 +935,13 @@ noncomputable def indepNum (G : SimpleGraph α) : ℕ := sSup {n | ∃ s, G.IsNI
 @[simp] lemma indepNum_compl : Gᶜ.indepNum = G.cliqueNum := by
   simp [indepNum, cliqueNum]
 
-theorem IsIndepSet.card_le_indepNum
+private theorem IsIndepSet.card_le_indepNum
     [Finite α] {t : Finset α} (tc : G.IsIndepSet t) : #t ≤ G.indepNum := by
   rw [← isClique_compl] at tc
   simp_rw [indepNum, ← isNClique_compl]
   exact tc.card_le_cliqueNum
 
-lemma exists_isNIndepSet_indepNum : ∃ s, G.IsNIndepSet G.indepNum s := by
+private lemma exists_isNIndepSet_indepNum : ∃ s, G.IsNIndepSet G.indepNum s := by
   simp_rw [indepNum, ← isNClique_compl]
   exact exists_isNClique_cliqueNum
 
@@ -973,19 +973,19 @@ theorem isMaximalIndepSet_iff {s : Set α} :
     Maximal Gᶜ.IsIndepSet s ↔ Maximal G.IsClique s := by
   simp [isMaximalIndepSet_iff, isMaximalClique_iff]
 
-lemma IsMaximumIndepSet.isMaximalIndepSet
+private lemma IsMaximumIndepSet.isMaximalIndepSet
     [Finite α] (s : Finset α) (M : G.IsMaximumIndepSet s) : Maximal G.IsIndepSet s := by
   rw [← isMaximalClique_compl]
   rw [← isMaximumClique_compl] at M
   exact IsMaximumClique.isMaximalClique s M
 
-theorem maximumIndepSet_card_eq_indepNum
+private theorem maximumIndepSet_card_eq_indepNum
     [Finite α] (t : Finset α) (tmc : G.IsMaximumIndepSet t) : #t = G.indepNum := by
   rw [← isMaximumClique_compl] at tmc
   simp_rw [indepNum, ← isNClique_compl]
   exact Gᶜ.maximumClique_card_eq_cliqueNum t tmc
 
-lemma maximumIndepSet_exists [Finite α] : ∃ (s : Finset α), G.IsMaximumIndepSet s := by
+private lemma maximumIndepSet_exists [Finite α] : ∃ (s : Finset α), G.IsMaximumIndepSet s := by
   simp [← isMaximumClique_compl, maximumClique_exists]
 
 end IndepNumber

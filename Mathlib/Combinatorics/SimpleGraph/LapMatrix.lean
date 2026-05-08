@@ -75,7 +75,7 @@ theorem isHermitian_degMatrix [NonAssocSemiring R] [StarRing R] : (G.degMatrix R
 theorem isSymm_lapMatrix [AddGroupWithOne R] : (G.lapMatrix R).IsSymm :=
   G.isSymm_degMatrix R |>.sub G.isSymm_adjMatrix
 
-theorem isHermitian_lapMatrix [NonAssocRing R] [StarRing R] : (G.lapMatrix R).IsHermitian :=
+private theorem isHermitian_lapMatrix [NonAssocRing R] [StarRing R] : (G.lapMatrix R).IsHermitian :=
   G.isHermitian_degMatrix R |>.sub <| G.isHermitian_adjMatrix R
 
 variable {R}
@@ -88,7 +88,7 @@ theorem lapMatrix_mulVec_apply [NonAssocRing R] (v : V) (vec : V → R) :
     (G.lapMatrix R *ᵥ vec) v = G.degree v * vec v - ∑ u ∈ G.neighborFinset v, vec u := by
   simp_rw [lapMatrix, sub_mulVec, Pi.sub_apply, degMatrix_mulVec_apply, adjMatrix_mulVec_apply]
 
-theorem lapMatrix_mulVec_const_eq_zero [NonAssocRing R] :
+private theorem lapMatrix_mulVec_const_eq_zero [NonAssocRing R] :
     mulVec (G.lapMatrix R) (fun _ ↦ 1) = 0 := by
   ext1 i
   rw [lapMatrix_mulVec_apply]

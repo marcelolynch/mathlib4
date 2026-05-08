@@ -204,7 +204,7 @@ protected def Iic [Lattice α] [Lattice β] (e : α ≃o β) (x : α) :
 
 /-- An order isomorphism between lattices induces an order isomorphism between corresponding
 interval sublattices. -/
-protected def Ici [Lattice α] [Lattice β] (e : α ≃o β) (x : α) :
+private protected def Ici [Lattice α] [Lattice β] (e : α ≃o β) (x : α) :
     Ici x ≃o Ici (e x) where
   toFun y := ⟨e y, (map_le_map_iff _).mpr y.property⟩
   invFun y := ⟨e.symm y, e.le_symm_apply.mpr y.property⟩
@@ -214,7 +214,7 @@ protected def Ici [Lattice α] [Lattice β] (e : α ≃o β) (x : α) :
 
 /-- An order isomorphism between lattices induces an order isomorphism between corresponding
 interval sublattices. -/
-protected def Icc [Lattice α] [Lattice β] (e : α ≃o β) (x y : α) :
+private protected def Icc [Lattice α] [Lattice β] (e : α ≃o β) (x y : α) :
     Icc x y ≃o Icc (e x) (e y) where
   toFun z := ⟨e z, by simp only [mem_Icc, map_le_map_iff]; exact z.property⟩
   invFun z := ⟨e.symm z, by simp only [mem_Icc, e.le_symm_apply, e.symm_apply_le]; exact z.property⟩

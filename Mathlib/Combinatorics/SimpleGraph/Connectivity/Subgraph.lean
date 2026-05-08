@@ -89,7 +89,7 @@ protected lemma Connected.mono {H H' : G.Subgraph} (hle : H ≤ H') (hv : H.vert
   rintro ⟨v, hv⟩ ⟨w, hw⟩ hvw
   exact hle.2 hvw
 
-protected lemma Connected.mono' {H H' : G.Subgraph}
+private protected lemma Connected.mono' {H H' : G.Subgraph}
     (hle : ∀ v w, H.Adj v w → H'.Adj v w) (hv : H.verts = H'.verts)
     (h : H.Connected) : H'.Connected := by
   exact h.mono ⟨hv.le, hle⟩ hv
@@ -110,13 +110,13 @@ protected lemma Connected.sup {H K : G.Subgraph}
     (H ⊔ K).Connected :=
   Subgraph.connected_sup hH.preconnected hK.preconnected hn
 
-lemma Preconnected.degree_zero_iff {H : G.Subgraph} (h : H.Preconnected) (v : H.verts)
+private lemma Preconnected.degree_zero_iff {H : G.Subgraph} (h : H.Preconnected) (v : H.verts)
     [Fintype (H.neighborSet v)] : H.degree v = 0 ↔ H.verts.Subsingleton := by
   refine ⟨fun hv ↦ Set.not_nontrivial_iff.mp fun hn ↦ ?_, (degree_eq_zero_of_subsingleton H _ ·)⟩
   have := hn.coe_sort
   simpa [hv] using h.coe.degree_pos_of_nontrivial v
 
-lemma Preconnected.exists_adj_of_nontrivial {H : G.Subgraph} [Nontrivial H.verts]
+private lemma Preconnected.exists_adj_of_nontrivial {H : G.Subgraph} [Nontrivial H.verts]
     (h : H.Preconnected) (v : H.verts) : ∃ u, H.Adj v u := by
   have := h.coe.exists_adj_of_nontrivial v
   tauto
@@ -163,7 +163,7 @@ theorem maximal_connected_toSubgraph (C : G.ConnectedComponent) :
   refine le_trans Subgraph.le_induce_top_verts <| Subgraph.induce_mono_right fun u hu ↦ ?_
   exact ConnectedComponent.sound <| hconn.coe.preconnected ⟨u, hu⟩ ⟨v, hle.left rfl⟩ |>.map G'.hom
 
-theorem maximal_subgraph_connected_iff (G' : G.Subgraph) :
+private theorem maximal_subgraph_connected_iff (G' : G.Subgraph) :
     Maximal Subgraph.Connected G' ↔ ∃ C : G.ConnectedComponent, C.toSubgraph = G' := by
   refine ⟨fun ⟨hconn, h⟩ ↦ ?_, fun ⟨C, h⟩ ↦ ?_⟩
   · have ⟨v, hv⟩ := hconn.nonempty
@@ -187,7 +187,7 @@ protected def toSubgraph {u v : V} : G.Walk u v → G.Subgraph
   | nil => G.singletonSubgraph u
   | cons h p => G.subgraphOfAdj h ⊔ p.toSubgraph
 
-theorem toSubgraph_cons_nil_eq_subgraphOfAdj (h : G.Adj u v) :
+private theorem toSubgraph_cons_nil_eq_subgraphOfAdj (h : G.Adj u v) :
     (cons h nil).toSubgraph = G.subgraphOfAdj h := by simp
 
 theorem mem_verts_toSubgraph (p : G.Walk u v) : w ∈ p.toSubgraph.verts ↔ w ∈ p.support := by
@@ -199,7 +199,7 @@ theorem mem_verts_toSubgraph (p : G.Walk u v) : w ∈ p.toSubgraph.verts ↔ w �
       ⟨by rintro (rfl | h) <;> simp [*], by simp +contextual⟩
     simp [ih, or_assoc, this]
 
-lemma not_nil_of_adj_toSubgraph {u v} {x : V} {p : G.Walk u v} (hadj : p.toSubgraph.Adj w x) :
+private lemma not_nil_of_adj_toSubgraph {u v} {x : V} {p : G.Walk u v} (hadj : p.toSubgraph.Adj w x) :
     ¬p.Nil := by
   cases p <;> simp_all
 
@@ -260,7 +260,7 @@ theorem finite_neighborSet_toSubgraph (p : G.Walk u v) : (p.toSubgraph.neighborS
     refine Set.Finite.subset ?_ (neighborSet_subgraphOfAdj_subset ha)
     apply Set.toFinite
 
-lemma toSubgraph_le_induce_support (p : G.Walk u v) :
+private lemma toSubgraph_le_induce_support (p : G.Walk u v) :
     p.toSubgraph ≤ (⊤ : G.Subgraph).induce {v | v ∈ p.support} := by
   convert Subgraph.le_induce_top_verts
   exact p.verts_toSubgraph.symm
@@ -280,7 +280,7 @@ theorem toSubgraph_adj_getVert {u v} (w : G.Walk u v) {i : ℕ} (hi : i < w.leng
 theorem toSubgraph_adj_snd {u v} (w : G.Walk u v) (h : ¬ w.Nil) : w.toSubgraph.Adj u w.snd := by
   simpa using w.toSubgraph_adj_getVert (not_nil_iff_lt_length.mp h)
 
-theorem toSubgraph_adj_penultimate {u v} (w : G.Walk u v) (h : ¬ w.Nil) :
+private theorem toSubgraph_adj_penultimate {u v} (w : G.Walk u v) (h : ¬ w.Nil) :
     w.toSubgraph.Adj w.penultimate v := by
   rw [not_nil_iff_lt_length] at h
   simpa [show w.length - 1 + 1 = w.length from by lia]
@@ -322,7 +322,7 @@ lemma adj_toSubgraph_iff_mem_edges {u v u' v' : V} {p : G.Walk u v} :
     p.toSubgraph.Adj u' v' ↔ s(u', v') ∈ p.edges := by
   rw [← p.mem_edges_toSubgraph, Subgraph.mem_edgeSet]
 
-theorem toSubgraph_le_iff {w : G.Walk u v} (hnil : ¬w.Nil) {G' : G.Subgraph} :
+private theorem toSubgraph_le_iff {w : G.Walk u v} (hnil : ¬w.Nil) {G' : G.Subgraph} :
     w.toSubgraph ≤ G' ↔ w.edgeSet ⊆ G'.edgeSet := by
   refine ⟨fun hw e he ↦ Subgraph.edgeSet_mono hw <| w.mem_edges_toSubgraph.mpr he, fun hw ↦ ?_⟩
   refine ⟨fun v' hv' ↦ ?_, fun u' v' hadj ↦ hw <| w.mem_edges_toSubgraph.mp (hadj : s(_, _) ∈ _)⟩
@@ -330,7 +330,7 @@ theorem toSubgraph_le_iff {w : G.Walk u v} (hnil : ¬w.Nil) {G' : G.Subgraph} :
   have ⟨e, he, hv'e⟩ := hv'
   exact G'.mem_verts_of_mem_edge (hw he) hv'e
 
-lemma toSubgraph_bypass_le_toSubgraph {u v : V} {p : G.Walk u v} [DecidableEq V] :
+private lemma toSubgraph_bypass_le_toSubgraph {u v : V} {p : G.Walk u v} [DecidableEq V] :
     p.bypass.toSubgraph ≤ p.toSubgraph := by
   constructor
   · simpa using p.support_bypass_subset
@@ -382,7 +382,7 @@ lemma neighborSet_toSubgraph_startpoint {u v} {p : G.Walk u v}
     SimpleGraph.Walk.toSubgraph_adj_iff, Sym2.eq, Sym2.rel_iff', Prod.mk.injEq, Prod.swap_prod_mk]
   grind [getVert_eq_start_iff]
 
-lemma neighborSet_toSubgraph_endpoint {u v} {p : G.Walk u v}
+private lemma neighborSet_toSubgraph_endpoint {u v} {p : G.Walk u v}
     (hp : p.IsPath) (hnp : ¬ p.Nil) : p.toSubgraph.neighborSet v = {p.penultimate} := by
   simpa using IsPath.neighborSet_toSubgraph_startpoint hp.reverse
       (by rw [Walk.not_nil_iff_lt_length, Walk.length_reverse]; exact
@@ -570,7 +570,7 @@ lemma preconnected_iff_forall_exists_walk_subgraph (H : G.Subgraph) :
     exact Reachable.map (Subgraph.inclusion h)
       (p.toSubgraph_connected ⟨_, p.start_mem_verts_toSubgraph⟩ ⟨_, p.end_mem_verts_toSubgraph⟩)
 
-lemma connected_iff_forall_exists_walk_subgraph (H : G.Subgraph) :
+private lemma connected_iff_forall_exists_walk_subgraph (H : G.Subgraph) :
     H.Connected ↔
       H.verts.Nonempty ∧
         ∀ {u v}, u ∈ H.verts → v ∈ H.verts → ∃ p : G.Walk u v, p.toSubgraph ≤ H := by
@@ -598,7 +598,7 @@ lemma induce_union_connected {s t : Set V}
   rw [preconnected_induce_iff] at sconn tconn
   exact Subgraph.induce_union_connected sconn tconn sintert
 
-lemma induce_pair_connected_of_adj {u v : V} (huv : G.Adj u v) :
+private lemma induce_pair_connected_of_adj {u v : V} (huv : G.Adj u v) :
     (G.induce {u, v}).Connected := by
   rw [connected_induce_iff]
   exact Subgraph.top_induce_pair_connected_of_adj huv
@@ -644,7 +644,7 @@ lemma induce_connected_of_patches {s : Set V} (u : V) (hu : u ∈ s)
   obtain ⟨sv, svs, hu', hv', uv⟩ := patches hv
   exact uv.map (induceHomOfLE _ svs).toHom
 
-lemma induce_sUnion_connected_of_pairwise_not_disjoint {S : Set (Set V)} (Sn : S.Nonempty)
+private lemma induce_sUnion_connected_of_pairwise_not_disjoint {S : Set (Set V)} (Sn : S.Nonempty)
     (Snd : ∀ {s t}, s ∈ S → t ∈ S → (s ∩ t).Nonempty)
     (Sc : ∀ {s}, s ∈ S → (G.induce s).Connected) :
     (G.induce (⋃₀ S)).Connected := by
@@ -658,7 +658,7 @@ lemma induce_sUnion_connected_of_pairwise_not_disjoint {S : Set (Set V)} (Sn : S
           Or.inl vs, Or.inr wt,
           induce_union_connected (Sc sS).preconnected (Sc tS).preconnected (Snd sS tS) _ _⟩
 
-lemma extend_finset_to_connected (Gpc : G.Preconnected) {t : Finset V} (tn : t.Nonempty) :
+private lemma extend_finset_to_connected (Gpc : G.Preconnected) {t : Finset V} (tn : t.Nonempty) :
     ∃ (t' : Finset V), t ⊆ t' ∧ (G.induce (t' : Set V)).Connected := by
   classical
   obtain ⟨u, ut⟩ := tn
@@ -689,7 +689,7 @@ protected lemma Preconnected.toSubgraph {H : SimpleGraph V} (h : H ≤ G)
     (hpreconn : H.Preconnected) : (toSubgraph H h).Preconnected :=
   Subgraph.preconnected_iff.mpr (fun u v ↦ (hpreconn u v).coe_toSubgraph h)
 
-protected lemma Connected.toSubgraph {H : SimpleGraph V} (h : H ≤ G) (hconn : H.Connected) :
+private protected lemma Connected.toSubgraph {H : SimpleGraph V} (h : H ≤ G) (hconn : H.Connected) :
     (toSubgraph H h).Connected :=
   Subgraph.connected_iff.mpr ⟨hconn.preconnected.toSubgraph h, by simp [hconn.nonempty]⟩
 
@@ -702,7 +702,7 @@ protected lemma Reachable.coe_subgraphMap {G' : G.Subgraph} {G'' : G'.coe.Subgra
     map_rel' r := Relation.map_apply.mpr (by tauto)
   }
 
-protected lemma Reachable.coe_coeSubgraph {G' : G.Subgraph} (G'' : G'.coe.Subgraph)
+private protected lemma Reachable.coe_coeSubgraph {G' : G.Subgraph} (G'' : G'.coe.Subgraph)
     {u v : G''.verts} (hreachable : G''.coe.Reachable u v) :
     (Subgraph.coeSubgraph G'').coe.Reachable (Subgraph.vert _ u (by simp_all))
       (Subgraph.vert _ v (by simp_all)) :=
@@ -721,11 +721,11 @@ protected lemma Connected.map {G' : G.Subgraph} {G'' : G'.coe.Subgraph}
     (f : G'.coe →g G) (hconn : G''.Connected) : (G''.map f).Connected :=
   Subgraph.connected_iff.mpr ⟨hconn.preconnected.map f, by simp [hconn.nonempty]⟩
 
-protected lemma Preconnected.coeSubgraph {G' : G.Subgraph} (G'' : G'.coe.Subgraph)
+private protected lemma Preconnected.coeSubgraph {G' : G.Subgraph} (G'' : G'.coe.Subgraph)
     (hpreconn : G''.Preconnected) : (Subgraph.coeSubgraph G'').Preconnected :=
   hpreconn.map G'.hom
 
-protected lemma Connected.coeSubgraph {G' : G.Subgraph} (G'' : G'.coe.Subgraph)
+private protected lemma Connected.coeSubgraph {G' : G.Subgraph} (G'' : G'.coe.Subgraph)
     (hconn : G''.Connected) : (Subgraph.coeSubgraph G'').Connected :=
   hconn.map G'.hom
 

@@ -75,7 +75,7 @@ open MonTypeEquivalenceMon
 /-- The category of internal monoid objects in `Type`
 is equivalent to the category of "native" bundled monoids.
 -/
-noncomputable def monTypeEquivalenceMon : Mon (Type u) ≌ MonCat.{u} where
+private noncomputable def monTypeEquivalenceMon : Mon (Type u) ≌ MonCat.{u} where
   functor := functor
   inverse := inverse
   unitIso := Iso.refl _
@@ -86,7 +86,7 @@ noncomputable def monTypeEquivalenceMon : Mon (Type u) ≌ MonCat.{u} where
 /-- The equivalence `Mon (Type u) ≌ MonCat.{u}`
 is naturally compatible with the forgetful functors to `Type u`.
 -/
-noncomputable def monTypeEquivalenceMonForget :
+private noncomputable def monTypeEquivalenceMonForget :
     MonTypeEquivalenceMon.functor ⋙ forget MonCat ≅ Mon.forget (Type u) :=
   NatIso.ofComponents (fun _ => Iso.refl _) (by cat_disch)
 
@@ -123,7 +123,7 @@ open CommMonTypeEquivalenceCommMon
 /-- The category of internal commutative monoid objects in `Type`
 is equivalent to the category of "native" bundled commutative monoids.
 -/
-noncomputable def commMonTypeEquivalenceCommMon : CommMon (Type u) ≌ CommMonCat.{u} where
+private noncomputable def commMonTypeEquivalenceCommMon : CommMon (Type u) ≌ CommMonCat.{u} where
   functor := functor
   inverse := inverse
   unitIso := Iso.refl _
@@ -134,7 +134,7 @@ noncomputable def commMonTypeEquivalenceCommMon : CommMon (Type u) ≌ CommMonCa
 /-- The equivalences `Mon (Type u) ≌ MonCat.{u}` and `CommMon (Type u) ≌ CommMonCat.{u}`
 are naturally compatible with the forgetful functors to `MonCat` and `Mon (Type u)`.
 -/
-noncomputable def commMonTypeEquivalenceCommMonForget :
+private noncomputable def commMonTypeEquivalenceCommMonForget :
     CommMonTypeEquivalenceCommMon.functor ⋙ forget₂ CommMonCat MonCat ≅
       CommMon.forget₂Mon (Type u) ⋙ MonTypeEquivalenceMon.functor :=
   Iso.refl _

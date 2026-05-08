@@ -55,7 +55,7 @@ section
 variable [MvFunctor F] [∀ i, MvFunctor <| G i]
 
 /-- map operation defined on a vector of functors -/
-protected def map' : (fun i : Fin2 n ↦ G i α) ⟹ fun i : Fin2 n ↦ G i β := fun _i ↦ map f
+private protected def map' : (fun i : Fin2 n ↦ G i α) ⟹ fun i : Fin2 n ↦ G i β := fun _i ↦ map f
 
 /-- The composition of functors is itself functorial -/
 protected def map : (Comp F G) α → (Comp F G) β :=

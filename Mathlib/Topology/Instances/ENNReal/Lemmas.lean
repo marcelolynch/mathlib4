@@ -116,7 +116,7 @@ def neTopHomeomorphNNReal : { a | a ≠ ∞ } ≃ₜ ℝ≥0 where
   continuous_invFun := continuous_coe.subtype_mk _
 
 /-- The set of finite `ℝ≥0∞` numbers is homeomorphic to `ℝ≥0`. -/
-def ltTopHomeomorphNNReal : { a | a < ∞ } ≃ₜ ℝ≥0 := by
+private def ltTopHomeomorphNNReal : { a | a < ∞ } ≃ₜ ℝ≥0 := by
   refine (Homeomorph.setCongr ?_).trans neTopHomeomorphNNReal
   simp only [lt_top_iff_ne_top]
 

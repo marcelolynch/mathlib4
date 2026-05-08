@@ -317,14 +317,14 @@ where
 /-- Successfully delaborates only if the resulting expression can be superscripted.
 
 See `Mapping.superscript` in this file for legal superscript characters. -/
-def delabSuperscript : Delab := do
+private def delabSuperscript : Delab := do
   let stx ← delab
   if Superscript.isValid .superscript stx.raw then pure stx else failure
 
 /-- Successfully delaborates only if the resulting expression can be subscripted.
 
 See `Mapping.subscript` in this file for legal subscript characters. -/
-def delabSubscript : Delab := do
+private def delabSubscript : Delab := do
   let stx ← delab
   if Superscript.isValid .subscript stx.raw then pure stx else failure
 

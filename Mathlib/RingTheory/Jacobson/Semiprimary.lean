@@ -36,7 +36,7 @@ theorem IsSemisimpleModule.jacobson_eq_bot [IsSemisimpleModule R M] :
 theorem IsSemisimpleRing.jacobson_eq_bot [IsSemisimpleRing R] : Ring.jacobson R = ⊥ :=
   IsSemisimpleModule.jacobson_eq_bot R R
 
-theorem IsSemisimpleModule.jacobson_le_ker [IsSemisimpleModule R₂ M₂] (f : M →ₛₗ[τ₁₂] M₂) :
+private theorem IsSemisimpleModule.jacobson_le_ker [IsSemisimpleModule R₂ M₂] (f : M →ₛₗ[τ₁₂] M₂) :
     Module.jacobson R M ≤ LinearMap.ker f :=
   (Module.le_comap_jacobson f).trans <| by simp_rw [jacobson_eq_bot, LinearMap.ker, le_rfl]
 

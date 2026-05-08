@@ -142,7 +142,7 @@ theorem pointedToTwoPSnd_comp_forget_to_bipointed :
   rfl
 
 /-- Adding a second point is left adjoint to forgetting the second point. -/
-noncomputable def pointedToTwoPFstForgetCompBipointedToPointedFstAdjunction :
+private noncomputable def pointedToTwoPFstForgetCompBipointedToPointedFstAdjunction :
     pointedToTwoPFst ⊣ forget₂ TwoP Bipointed ⋙ bipointedToPointedFst :=
   Adjunction.mkOfHomEquiv
     { homEquiv := fun X Y =>
@@ -155,7 +155,7 @@ noncomputable def pointedToTwoPFstForgetCompBipointedToPointedFstAdjunction :
       homEquiv_naturality_left_symm := fun f g => by ext (_ | _) : 4 <;> rfl }
 
 /-- Adding a first point is left adjoint to forgetting the first point. -/
-noncomputable def pointedToTwoPSndForgetCompBipointedToPointedSndAdjunction :
+private noncomputable def pointedToTwoPSndForgetCompBipointedToPointedSndAdjunction :
     pointedToTwoPSnd ⊣ forget₂ TwoP Bipointed ⋙ bipointedToPointedSnd :=
   Adjunction.mkOfHomEquiv
     { homEquiv := fun X Y =>

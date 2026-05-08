@@ -411,7 +411,7 @@ private theorem DecEq_eq [DecidableEq α] :
     change (l₁ == l₂) = _
     rw [Bool.eq_iff_iff, @beq_iff_eq _ (_), decide_eq_true_iff]
 
-theorem count_permutations'Aux_self [DecidableEq α] (l : List α) (x : α) :
+private theorem count_permutations'Aux_self [DecidableEq α] (l : List α) (x : α) :
     count (x :: l) (permutations'Aux x l) = length (takeWhile (x = ·) l) + 1 := by
   induction l generalizing x with
   | nil => simp [takeWhile, count]
@@ -431,7 +431,7 @@ theorem length_permutations'Aux (s : List α) (x : α) :
   | nil => simp
   | cons y s IH => simpa using IH
 
-theorem injective_permutations'Aux (x : α) : Function.Injective (permutations'Aux x) := by
+private theorem injective_permutations'Aux (x : α) : Function.Injective (permutations'Aux x) := by
   intro s t h
   apply insertIdx_injective s.length x
   dsimp

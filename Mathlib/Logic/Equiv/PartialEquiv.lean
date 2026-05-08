@@ -270,7 +270,7 @@ theorem copy_eq (e : PartialEquiv α β) (f : α → β) (hf : ⇑e = f) (g : β
   rfl
 
 /-- Associate to a `PartialEquiv` an `Equiv` between the source and the target. -/
-protected def toEquiv : e.source ≃ e.target where
+private protected def toEquiv : e.source ≃ e.target where
   toFun x := ⟨e x, e.map_source x.mem⟩
   invFun y := ⟨e.symm y, e.map_target y.mem⟩
   left_inv := fun ⟨_, hx⟩ => Subtype.ext <| e.left_inv hx

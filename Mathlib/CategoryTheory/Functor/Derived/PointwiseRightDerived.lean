@@ -157,7 +157,7 @@ set_option backward.isDefEq.respectTransparency false in
 of `F : C ⥤ H` along `L` is such that the natural transformation
 `E.hom : F ⟶ L ⋙ E.right` is an isomorphism, then `E` is a pointwise
 left Kan extension. -/
-noncomputable def LeftExtension.isPointwiseLeftKanExtensionOfIsIsoOfIsLocalization
+private noncomputable def LeftExtension.isPointwiseLeftKanExtensionOfIsIsoOfIsLocalization
     (E : LeftExtension L F) [IsIso E.hom] [L.IsLocalization W] :
     E.IsPointwiseLeftKanExtension :=
   Functor.isPointwiseLeftKanExtensionOfIsoOfIsLocalization W (asIso E.hom)

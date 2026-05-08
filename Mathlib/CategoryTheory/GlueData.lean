@@ -435,7 +435,7 @@ open scoped Classical in
 The constructed `GlueData` of a `GlueData'`, where `GlueData'` is a variant of `GlueData` that only
 requires conditions on `V (i, j)` when `i ≠ j`.
 -/
-def GlueData.ofGlueData' (D : GlueData' C) : GlueData C where
+private def GlueData.ofGlueData' (D : GlueData' C) : GlueData C where
   J := D.J
   U := D.U
   V ij := if h : ij.1 = ij.2 then D.U ij.1 else D.V ij.1 ij.2 h

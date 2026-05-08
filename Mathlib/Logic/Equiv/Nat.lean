@@ -52,7 +52,7 @@ def intEquivNat : ℤ ≃ ℕ :=
 
 /-- An equivalence between `α × α` and `α`, given that there is an equivalence between `α` and `ℕ`.
 -/
-def prodEquivOfEquivNat (e : α ≃ ℕ) : α × α ≃ α :=
+private def prodEquivOfEquivNat (e : α ≃ ℕ) : α × α ≃ α :=
   calc
     α × α ≃ ℕ × ℕ := prodCongr e e
     _ ≃ ℕ := pairEquiv

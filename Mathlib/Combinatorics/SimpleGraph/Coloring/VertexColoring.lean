@@ -106,7 +106,7 @@ theorem Coloring.mem_colorClass (v : V) : v ∈ C.colorClass (C v) := rfl
 theorem Coloring.colorClasses_isPartition : Setoid.IsPartition C.colorClasses :=
   Setoid.isPartition_classes (Setoid.ker C)
 
-theorem Coloring.mem_colorClasses {v : V} : C.colorClass (C v) ∈ C.colorClasses :=
+private theorem Coloring.mem_colorClasses {v : V} : C.colorClass (C v) ∈ C.colorClasses :=
   ⟨v, rfl⟩
 
 theorem Coloring.colorClasses_finite [Finite α] : C.colorClasses.Finite :=
@@ -207,7 +207,7 @@ noncomputable def chromaticNumber : ℕ∞ := ⨅ n ∈ setOf G.Colorable, (n : 
 lemma le_chromaticNumber_iff_colorable : n ≤ G.chromaticNumber ↔ ∀ m, G.Colorable m → n ≤ m := by
   simp [chromaticNumber]
 
-lemma le_chromaticNumber_iff_coloring :
+private lemma le_chromaticNumber_iff_coloring :
     n ≤ G.chromaticNumber ↔ ∀ m, G.Coloring (Fin m) → n ≤ m := by
   simp [le_chromaticNumber_iff_colorable, Colorable]
 
@@ -216,10 +216,10 @@ lemma le_chromaticNumber_of_pairwise_adj (hn : n ≤ Nat.card ι) (f : ι → V)
   le_chromaticNumber_iff_colorable.2 fun _m hm ↦ hn.trans <| hm.card_le_of_pairwise_adj f hf
 
 variable (G) in
-lemma chromaticNumber_eq_biInf : G.chromaticNumber = ⨅ n ∈ setOf G.Colorable, (n : ℕ∞) := rfl
+private lemma chromaticNumber_eq_biInf : G.chromaticNumber = ⨅ n ∈ setOf G.Colorable, (n : ℕ∞) := rfl
 
 variable (G) in
-lemma chromaticNumber_eq_iInf : G.chromaticNumber = ⨅ n : {m | G.Colorable m}, (n : ℕ∞) := by
+private lemma chromaticNumber_eq_iInf : G.chromaticNumber = ⨅ n : {m | G.Colorable m}, (n : ℕ∞) := by
   rw [chromaticNumber, iInf_subtype]
 
 lemma Colorable.chromaticNumber_eq_sInf (h : G.Colorable n) :
@@ -284,7 +284,7 @@ theorem Colorable.of_hom {V' : Type*} {G' : SimpleGraph V'} (f : G →g G') {n :
     (h : G'.Colorable n) : G.Colorable n :=
   ⟨(h.toColoring (by simp)).comp f⟩
 
-theorem colorable_iff_exists_bdd_nat_coloring (n : ℕ) :
+private theorem colorable_iff_exists_bdd_nat_coloring (n : ℕ) :
     G.Colorable n ↔ ∃ C : G.Coloring ℕ, ∀ v, C v < n := by
   constructor
   · rintro hc
@@ -347,12 +347,12 @@ theorem colorable_chromaticNumber {m : ℕ} (hc : G.Colorable m) :
   · apply Nat.find_spec
   · exact colorable_set_nonempty_of_colorable hc
 
-theorem colorable_chromaticNumber_of_fintype (G : SimpleGraph V) [Finite V] :
+private theorem colorable_chromaticNumber_of_fintype (G : SimpleGraph V) [Finite V] :
     G.Colorable (ENat.toNat G.chromaticNumber) := by
   cases nonempty_fintype V
   exact colorable_chromaticNumber G.colorable_of_fintype
 
-theorem chromaticNumber_le_one_of_subsingleton (G : SimpleGraph V) [Subsingleton V] :
+private theorem chromaticNumber_le_one_of_subsingleton (G : SimpleGraph V) [Subsingleton V] :
     G.chromaticNumber ≤ 1 := by
   rw [← Nat.cast_one, chromaticNumber_le_iff_colorable]
   refine ⟨Coloring.mk (fun _ => 0) ?_⟩
@@ -379,7 +379,7 @@ theorem colorable_of_chromaticNumber_ne_top (h : G.chromaticNumber ≠ ⊤) :
 theorem chromaticNumber_eq_zero_of_isEmpty [IsEmpty V] : G.chromaticNumber = 0 := by
   rw [← nonpos_iff_eq_zero, ← Nat.cast_zero, chromaticNumber_le_iff_colorable]; exact .of_isEmpty _
 
-theorem isEmpty_of_chromaticNumber_eq_zero (h : G.chromaticNumber = 0) : IsEmpty V := by
+private theorem isEmpty_of_chromaticNumber_eq_zero (h : G.chromaticNumber = 0) : IsEmpty V := by
   have := colorable_of_chromaticNumber_ne_top (h ▸ ENat.zero_ne_top)
   rw [h] at this
   exact G.isEmpty_of_colorable_zero this
@@ -398,7 +398,7 @@ theorem chromaticNumber_le_of_forall_imp {V' : Type*} {G' : SimpleGraph V'}
   rw [← chromaticNumber_le_iff_colorable] at this
   exact this
 
-theorem chromaticNumber_mono (G' : SimpleGraph V)
+private theorem chromaticNumber_mono (G' : SimpleGraph V)
     (h : G ≤ G') : G.chromaticNumber ≤ G'.chromaticNumber :=
   chromaticNumber_le_of_forall_imp fun _ => Colorable.mono_left h
 
@@ -446,7 +446,7 @@ theorem chromaticNumber_top [Fintype V] : (⊤ : SimpleGraph V).chromaticNumber 
   rw [← Finite.injective_iff_surjective]
   exact Hom.injective_of_top_hom C
 
-theorem chromaticNumber_top_eq_top_of_infinite (V : Type*) [Infinite V] :
+private theorem chromaticNumber_top_eq_top_of_infinite (V : Type*) [Infinite V] :
     (⊤ : SimpleGraph V).chromaticNumber = ⊤ := by
   by_contra hc
   rw [← Ne, chromaticNumber_ne_top_iff_exists] at hc
@@ -467,11 +467,11 @@ theorem eq_top_of_chromaticNumber_eq_card [Fintype V]
   have := Fintype.one_lt_card_iff_nontrivial.mpr <| SimpleGraph.nontrivial_iff.mp ⟨_, _, hh⟩
   grind
 
-theorem chromaticNumber_eq_card_iff [Fintype V] :
+private theorem chromaticNumber_eq_card_iff [Fintype V] :
     G.chromaticNumber = Fintype.card V ↔ G = ⊤ :=
   ⟨eq_top_of_chromaticNumber_eq_card, fun h ↦ h ▸ chromaticNumber_top⟩
 
-theorem chromaticNumber_le_card [Fintype V] : G.chromaticNumber ≤ Fintype.card V := by
+private theorem chromaticNumber_le_card [Fintype V] : G.chromaticNumber ≤ Fintype.card V := by
   rw [← chromaticNumber_top]
   exact chromaticNumber_mono_of_hom G.selfColoring
 
@@ -509,7 +509,7 @@ def CompleteBipartiteGraph.bicoloring (V W : Type*) : (completeBipartiteGraph V 
       intro v w
       cases v <;> cases w <;> simp)
 
-theorem CompleteBipartiteGraph.chromaticNumber {V W : Type*} [Nonempty V] [Nonempty W] :
+private theorem CompleteBipartiteGraph.chromaticNumber {V W : Type*} [Nonempty V] [Nonempty W] :
     (completeBipartiteGraph V W).chromaticNumber = 2 := by
   rw [← Nat.cast_two, chromaticNumber_eq_iff_forall_surjective
     (by simpa using (CompleteBipartiteGraph.bicoloring V W).colorable)]
@@ -529,14 +529,14 @@ theorem IsClique.card_le_of_colorable {s : Finset V} (h : G.IsClique s) (hc : G.
     s.card ≤ n := by
   simpa using hc.card_le_of_pairwise_adj (Subtype.val : s → V) <| by simpa [Pairwise] using h
 
-theorem IsClique.card_le_of_coloring {s : Finset V} (h : G.IsClique s) [Fintype α]
+private theorem IsClique.card_le_of_coloring {s : Finset V} (h : G.IsClique s) [Fintype α]
     (C : G.Coloring α) : s.card ≤ Fintype.card α := h.card_le_of_colorable C.colorable
 
 theorem IsClique.card_le_chromaticNumber {s : Finset V} (h : G.IsClique s) :
     s.card ≤ G.chromaticNumber :=
   le_chromaticNumber_of_pairwise_adj (by simp) (Subtype.val : s → V) <| by simpa [Pairwise] using h
 
-theorem cliqueNum_le_chromaticNumber : G.cliqueNum ≤ G.chromaticNumber := by
+private theorem cliqueNum_le_chromaticNumber : G.cliqueNum ≤ G.chromaticNumber := by
   have ⟨s, hs⟩ := G.exists_isNClique_cliqueNum
   exact hs.card_eq ▸ hs.isClique.card_le_chromaticNumber
 
@@ -578,7 +578,7 @@ def coloring : (completeMultipartiteGraph V).Coloring ι := Coloring.mk (fun v �
 lemma colorable [Fintype ι] : (completeMultipartiteGraph V).Colorable (Fintype.card ι) :=
   (coloring V).colorable
 
-theorem chromaticNumber [Fintype ι] (f : ∀ (i : ι), V i) :
+private theorem chromaticNumber [Fintype ι] (f : ∀ (i : ι), V i) :
     (completeMultipartiteGraph V).chromaticNumber = Fintype.card ι := by
   apply le_antisymm (colorable V).chromaticNumber_le
   by_contra! h

@@ -360,7 +360,7 @@ lemma descSigma_ext_iff {φ : F ⟶ G} {K : HomologicalComplex C c}
 set_option backward.isDefEq.respectTransparency false in
 /-- Morphisms `homotopyCofiber φ ⟶ K` are uniquely determined by
 a morphism `α : G ⟶ K` and a homotopy from `φ ≫ α` to `0`. -/
-noncomputable def descEquiv (K : HomologicalComplex C c) (hc : ∀ j, ∃ i, c.Rel i j) :
+private noncomputable def descEquiv (K : HomologicalComplex C c) (hc : ∀ j, ∃ i, c.Rel i j) :
     (Σ (α : G ⟶ K), Homotopy (φ ≫ α) 0) ≃ (homotopyCofiber φ ⟶ K) where
   toFun := fun ⟨α, hα⟩ => desc φ α hα
   invFun f := ⟨inr φ ≫ f, Homotopy.trans (Homotopy.ofEq (by simp))
@@ -532,7 +532,7 @@ noncomputable def homotopyEquiv : HomotopyEquiv K.cylinder K where
   homotopyInvHomId := Homotopy.ofEq (by simp)
 
 /-- The homotopy between `cylinder.ι₀ K` and `cylinder.ι₁ K`. -/
-noncomputable def homotopy₀₁ : Homotopy (ι₀ K) (ι₁ K) :=
+private noncomputable def homotopy₀₁ : Homotopy (ι₀ K) (ι₁ K) :=
   (Homotopy.ofEq (by simp)).trans (((πCompι₀Homotopy K hc).compLeft (ι₁ K)).trans
     (Homotopy.ofEq (by simp)))
 

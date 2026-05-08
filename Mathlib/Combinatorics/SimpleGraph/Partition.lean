@@ -106,7 +106,7 @@ def toColoring : G.Coloring P.parts :=
     exact P.partOfVertex_ne_of_adj hvw
 
 /-- Like `SimpleGraph.Partition.toColoring` but uses `Set V` as the coloring type. -/
-def toColoring' : G.Coloring (Set V) :=
+private def toColoring' : G.Coloring (Set V) :=
   Coloring.mk P.partOfVertex fun hvw ↦ P.partOfVertex_ne_of_adj hvw
 
 theorem colorable [Fintype P.parts] : G.Colorable (Fintype.card P.parts) :=
@@ -132,7 +132,7 @@ instance : Inhabited (Partition G) := ⟨G.selfColoring.toPartition⟩
 end Partition
 
 set_option backward.isDefEq.respectTransparency false in
-theorem partitionable_iff_colorable {n : ℕ} : G.Partitionable n ↔ G.Colorable n := by
+private theorem partitionable_iff_colorable {n : ℕ} : G.Partitionable n ↔ G.Colorable n := by
   constructor
   · rintro ⟨P, hf, hc⟩
     have : Fintype P.parts := hf.fintype

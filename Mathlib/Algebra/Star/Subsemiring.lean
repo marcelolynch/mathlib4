@@ -151,7 +151,7 @@ namespace SubStarSemigroup
 
 /-- The center of magma `A` is the set of elements that commute and associate
 with everything in `A`, here realized as a `SubStarSemigroup`. -/
-def center : SubStarSemigroup A :=
+private def center : SubStarSemigroup A :=
   { Subsemigroup.center A with
     star_mem' := Set.star_mem_center }
 

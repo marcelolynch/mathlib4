@@ -101,7 +101,7 @@ The simplicial complex associated to a simple graph, where vertices of the graph
 are 0-simplices and edges are 1-simplices. The complex is constructed over the
 `𝕜`-module of finitely supported functions on the vertex type.
 -/
-noncomputable def ofSimpleGraph {𝕜 V : Type*} [DecidableEq V] [DecidableEq 𝕜]
+private noncomputable def ofSimpleGraph {𝕜 V : Type*} [DecidableEq V] [DecidableEq 𝕜]
     [Field 𝕜] [LinearOrder 𝕜] [IsStrictOrderedRing 𝕜]
     (G : SimpleGraph V) :
     SimplicialComplex 𝕜 (V →₀ 𝕜) :=

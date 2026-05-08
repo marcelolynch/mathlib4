@@ -180,4 +180,4 @@ instance : LawfulAlternative SetM := Set.instLawfulAlternative
 
 /-- Evaluates the `SetM` monad, yielding a `Set`.
 Implementation note: this is the identity function. -/
-protected def SetM.run {α : Type*} (s : SetM α) : Set α := s
+private protected def SetM.run {α : Type*} (s : SetM α) : Set α := s

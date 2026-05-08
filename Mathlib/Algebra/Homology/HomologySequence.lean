@@ -352,7 +352,7 @@ theorem isIso_δ (hi : IsZero (S.X₂.homology i)) (hj : IsZero (S.X₂.homology
 
 /-- If `c.Rel i j` and `Hᵢ(X₂), Hⱼ(X₂)` are trivial, `δ` defines an isomorphism
 `Hᵢ(X₃) ≅ Hⱼ(X₁)`. -/
-noncomputable def δIso (hi : IsZero (S.X₂.homology i)) (hj : IsZero (S.X₂.homology j)) :
+private noncomputable def δIso (hi : IsZero (S.X₂.homology i)) (hj : IsZero (S.X₂.homology j)) :
     S.X₃.homology i ≅ S.X₁.homology j :=
   @asIso _ _ _ _ (hS.δ i j hij) (hS.isIso_δ i j hij hi hj)
 

@@ -349,7 +349,7 @@ open NonUnitalRingHom NonUnitalSubsemiringClass
 
 /-- The non-unital ring homomorphism associated to an inclusion of
 non-unital subsemirings. -/
-def inclusion {S T : NonUnitalSubsemiring R} (h : S ≤ T) : S →ₙ+* T :=
+private def inclusion {S T : NonUnitalSubsemiring R} (h : S ≤ T) : S →ₙ+* T :=
   codRestrict (subtype S) _ fun x => h x.2
 
 end NonUnitalSubsemiring

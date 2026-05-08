@@ -153,7 +153,7 @@ namespace Symplectic
 
 /-- The symplectic Lie algebra: skew-adjoint matrices with respect to the canonical skew-symmetric
 bilinear form. -/
-def sp [Fintype l] : LieSubalgebra R (Matrix (l ⊕ l) (l ⊕ l) R) :=
+private def sp [Fintype l] : LieSubalgebra R (Matrix (l ⊕ l) (l ⊕ l) R) :=
   skewAdjointMatricesLieSubalgebra (Matrix.J l R)
 
 end Symplectic
@@ -283,7 +283,7 @@ instance invertiblePD [Fintype l] [Invertible (2 : R)] : Invertible (PD l R) :=
   invertibleOfRightInverse _ _ (pd_inv l R)
 
 /-- An equivalence between two possible definitions of the classical Lie algebra of type D. -/
-noncomputable def typeDEquivSo' [Fintype l] [Invertible (2 : R)] : typeD l R ≃ₗ⁅R⁆ so' l l R := by
+private noncomputable def typeDEquivSo' [Fintype l] [Invertible (2 : R)] : typeD l R ≃ₗ⁅R⁆ so' l l R := by
   apply (skewAdjointMatricesLieSubalgebraEquiv (JD l R) (PD l R) (by infer_instance)).trans
   apply LieEquiv.ofEq
   ext A
@@ -359,7 +359,7 @@ theorem indefiniteDiagonal_assoc :
     congr 1
 
 /-- An equivalence between two possible definitions of the classical Lie algebra of type B. -/
-noncomputable def typeBEquivSo' [Invertible (2 : R)] : typeB l R ≃ₗ⁅R⁆ so' (Unit ⊕ l) l R := by
+private noncomputable def typeBEquivSo' [Invertible (2 : R)] : typeB l R ≃ₗ⁅R⁆ so' (Unit ⊕ l) l R := by
   apply (skewAdjointMatricesLieSubalgebraEquiv (JB l R) (PB l R) (by infer_instance)).trans
   symm
   apply

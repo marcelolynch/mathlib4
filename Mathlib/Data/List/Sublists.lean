@@ -106,7 +106,7 @@ theorem sublists_singleton (a : α) : sublists [a] = [[], [a]] :=
 def sublistsAux (a : α) (r : List (List α)) : List (List α) :=
   r.foldl (init := []) fun r l => r ++ [l, a :: l]
 
-theorem sublistsAux_eq_array_foldl :
+private theorem sublistsAux_eq_array_foldl :
     sublistsAux = fun (a : α) (r : List (List α)) =>
       (r.toArray.foldl (init := #[])
         fun r l => (r.push l).push (a :: l)).toList := by
@@ -116,7 +116,7 @@ theorem sublistsAux_eq_array_foldl :
     (g₂ := fun r l => r ++ [l, a :: l]) (l := r) (init := #[]) (by simp)
   simpa using this
 
-theorem sublistsAux_eq_flatMap :
+private theorem sublistsAux_eq_flatMap :
     sublistsAux = fun (a : α) (r : List (List α)) => r.flatMap fun l => [l, a :: l] :=
   funext fun a => funext fun r =>
   List.reverseRecOn r

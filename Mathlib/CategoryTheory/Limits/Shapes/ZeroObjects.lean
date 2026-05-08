@@ -108,11 +108,11 @@ protected def isTerminal (hX : IsZero X) : IsTerminal X :=
   @IsTerminal.ofUnique _ _ X fun Y => (hX.unique_from Y).some
 
 /-- The (unique) isomorphism between any initial object and the zero object. -/
-def isoIsInitial (hX : IsZero X) (hY : IsInitial Y) : X ≅ Y :=
+private def isoIsInitial (hX : IsZero X) (hY : IsInitial Y) : X ≅ Y :=
   IsInitial.uniqueUpToIso hX.isInitial hY
 
 /-- The (unique) isomorphism between any terminal object and the zero object. -/
-def isoIsTerminal (hX : IsZero X) (hY : IsTerminal Y) : X ≅ Y :=
+private def isoIsTerminal (hX : IsZero X) (hY : IsTerminal Y) : X ≅ Y :=
   IsTerminal.uniqueUpToIso hX.isTerminal hY
 
 theorem of_iso (hY : IsZero Y) (e : X ≅ Y) : IsZero X := by

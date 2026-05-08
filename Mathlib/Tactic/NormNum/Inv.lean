@@ -21,7 +21,7 @@ namespace Mathlib.Meta.NormNum
 open Lean.Meta Qq
 
 /-- Helper function to synthesize a typed `CharZero α` expression given `Ring α`. -/
-def inferCharZeroOfRing {α : Q(Type u)} (_i : Q(Ring $α) := by with_reducible assumption) :
+private def inferCharZeroOfRing {α : Q(Type u)} (_i : Q(Ring $α) := by with_reducible assumption) :
     MetaM Q(CharZero $α) :=
   return ← synthInstanceQ q(CharZero $α) <|>
     throwError "not a characteristic zero ring"
@@ -32,7 +32,7 @@ def inferCharZeroOfRing? {α : Q(Type u)} (_i : Q(Ring $α) := by with_reducible
   return (← trySynthInstanceQ q(CharZero $α)).toOption
 
 /-- Helper function to synthesize a typed `CharZero α` expression given `AddMonoidWithOne α`. -/
-def inferCharZeroOfAddMonoidWithOne {α : Q(Type u)}
+private def inferCharZeroOfAddMonoidWithOne {α : Q(Type u)}
     (_i : Q(AddMonoidWithOne $α) := by with_reducible assumption) : MetaM Q(CharZero $α) :=
   return ← synthInstanceQ q(CharZero $α) <|>
     throwError "not a characteristic zero AddMonoidWithOne"

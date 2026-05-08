@@ -228,7 +228,7 @@ def inclusionMapCompAux {a b : B} :
 /-- The inclusion pseudofunctor from the locally discrete bicategory on the path category into the
 free bicategory.
 -/
-def inclusion (B : Type u) [Quiver.{v} B] :
+private def inclusion (B : Type u) [Quiver.{v} B] :
     LocallyDiscrete (Paths B) ⥤ᵖ (FreeBicategory B) :=
   { -- All the conditions for 2-morphisms are trivial thanks to the coherence theorem!
     preinclusion B with

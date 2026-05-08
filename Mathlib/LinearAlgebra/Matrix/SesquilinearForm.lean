@@ -165,7 +165,7 @@ def Matrix.toLinearMap₂' : Matrix n m N₂ ≃ₗ[R] (n → S₁) →ₗ[S₁]
 
 variable {R}
 
-theorem Matrix.toLinearMapₛₗ₂'_aux_eq (M : Matrix n m N₂) :
+private theorem Matrix.toLinearMapₛₗ₂'_aux_eq (M : Matrix n m N₂) :
     Matrix.toLinearMap₂'Aux σ₁ σ₂ M = Matrix.toLinearMapₛₗ₂' R σ₁ σ₂ M :=
   rfl
 

@@ -40,7 +40,7 @@ this definition doesn't contain that `p` is a path, `p.isPath` gives that. -/
 def IsHamiltonian (p : G.Walk a b) : Prop := ∀ a, p.support.count a = 1
 
 variable (f) in
-lemma IsHamiltonian.map (hf : Bijective f) (hp : p.IsHamiltonian) :
+private lemma IsHamiltonian.map (hf : Bijective f) (hp : p.IsHamiltonian) :
     (p.map f).IsHamiltonian := by
   simp [IsHamiltonian, hf.surjective.forall, hf.injective, hp _]
 
@@ -57,10 +57,10 @@ lemma IsPath.isHamiltonian_of_mem (hp : p.IsPath) (hp' : ∀ w, w ∈ p.support)
     p.IsHamiltonian := fun _ ↦
   le_antisymm (List.nodup_iff_count_le_one.1 hp.support_nodup _) (List.count_pos_iff.2 (hp' _))
 
-lemma IsPath.isHamiltonian_iff (hp : p.IsPath) : p.IsHamiltonian ↔ ∀ w, w ∈ p.support :=
+private lemma IsPath.isHamiltonian_iff (hp : p.IsPath) : p.IsHamiltonian ↔ ∀ w, w ∈ p.support :=
   ⟨(·.mem_support), hp.isHamiltonian_of_mem⟩
 
-theorem IsHamiltonian.of_subsingleton [Subsingleton α] : p.IsHamiltonian := by
+private theorem IsHamiltonian.of_subsingleton [Subsingleton α] : p.IsHamiltonian := by
   intro v
   rw [nil_iff_support_eq.mp p.nil_of_subsingleton, Subsingleton.elim v a, List.count_singleton_self]
 
@@ -122,12 +122,12 @@ def IsHamiltonian.getVertEquiv (hp : p.IsHamiltonian) : Fin p.support.length ≃
 theorem isHamiltonian_iff_support_get_bijective : p.IsHamiltonian ↔ p.support.get.Bijective :=
   p.support.get_bijective_iff.symm
 
-theorem IsHamiltonian.getVert_surjective (hp : p.IsHamiltonian) : p.getVert.Surjective :=
+private theorem IsHamiltonian.getVert_surjective (hp : p.IsHamiltonian) : p.getVert.Surjective :=
   .of_comp <| p.getVert_comp_val_eq_get_support ▸
     isHamiltonian_iff_support_get_bijective.mp hp |>.surjective
 
 omit [DecidableEq β] in
-theorem IsHamiltonian.injective_of_isPath_map (hp : p.IsHamiltonian) (h : (p.map f).IsPath) :
+private theorem IsHamiltonian.injective_of_isPath_map (hp : p.IsHamiltonian) (h : (p.map f).IsPath) :
     Function.Injective f := by
   rw [← Set.injOn_univ, ← hp.setOf_support]
   exact h.injOn_support_of_isPath_map
@@ -174,7 +174,7 @@ lemma isHamiltonianCycle_isCycle_and_isHamiltonian_tail :
     p.IsHamiltonianCycle ↔ p.IsCycle ∧ p.tail.IsHamiltonian :=
   ⟨fun ⟨h, h'⟩ ↦ ⟨h, h'⟩, fun ⟨h, h'⟩ ↦ ⟨h, h'⟩⟩
 
-lemma isHamiltonianCycle_iff_isCycle_and_support_count_tail_eq_one :
+private lemma isHamiltonianCycle_iff_isCycle_and_support_count_tail_eq_one :
     p.IsHamiltonianCycle ↔ p.IsCycle ∧ ∀ a, (support p).tail.count a = 1 := by
   simp +contextual [isHamiltonianCycle_isCycle_and_isHamiltonian_tail,
     IsHamiltonian, support_tail_of_not_nil, IsCycle.not_nil]
@@ -192,12 +192,12 @@ lemma IsHamiltonianCycle.length_eq [Fintype α] (hp : p.IsHamiltonianCycle) :
   rw [Nat.succ_le_iff, Fintype.card_pos_iff]
   exact ⟨a⟩
 
-lemma IsHamiltonianCycle.count_support_self (hp : p.IsHamiltonianCycle) :
+private lemma IsHamiltonianCycle.count_support_self (hp : p.IsHamiltonianCycle) :
     p.support.count a = 2 := by
   rw [← cons_tail_support, List.count_cons_self,
     ← support_tail_of_not_nil _ hp.1.not_nil, hp.isHamiltonian_tail]
 
-lemma IsHamiltonianCycle.support_count_of_ne (hp : p.IsHamiltonianCycle) (h : a ≠ b) :
+private lemma IsHamiltonianCycle.support_count_of_ne (hp : p.IsHamiltonianCycle) (h : a ≠ b) :
     p.support.count b = 1 := by
   rw [← cons_support_tail hp.1.not_nil, List.count_cons_of_ne h, hp.isHamiltonian_tail]
 
@@ -235,14 +235,14 @@ lemma IsHamiltonian.exists_isHamiltonianCycle [Nontrivial α] (hG : G.IsHamilton
     ∃ p : G.Walk v v, p.IsHamiltonianCycle := by
   obtain ⟨u, p, hp⟩ := hG Fintype.one_lt_card.ne'; exact ⟨p.rotate v <| hp.mem_support _, by simpa⟩
 
-lemma IsHamiltonian.mono {H : SimpleGraph α} (hGH : G ≤ H) (hG : G.IsHamiltonian) :
+private lemma IsHamiltonian.mono {H : SimpleGraph α} (hGH : G ≤ H) (hG : G.IsHamiltonian) :
     H.IsHamiltonian :=
   fun hα ↦ let ⟨_, p, hp⟩ := hG hα; ⟨_, p.map <| .ofLE hGH, hp.map bijective_id⟩
 
 lemma not_isHamiltonian_of_isEmpty [IsEmpty α] : ¬G.IsHamiltonian :=
   (IsEmpty.exists_iff.mp <| · <| by simp)
 
-lemma IsHamiltonian.connected (hG : G.IsHamiltonian) : G.Connected where
+private lemma IsHamiltonian.connected (hG : G.IsHamiltonian) : G.Connected where
   preconnected a b := by
     obtain rfl | hab := eq_or_ne a b
     · rfl
@@ -256,7 +256,7 @@ lemma IsHamiltonian.connected (hG : G.IsHamiltonian) : G.Connected where
 lemma IsHamiltonian.of_card_eq_one (h : Fintype.card α = 1) : G.IsHamiltonian :=
   (· h |>.elim)
 
-lemma not_isHamiltonian_of_card_eq_two (h : Fintype.card α = 2) : ¬G.IsHamiltonian := by
+private lemma not_isHamiltonian_of_card_eq_two (h : Fintype.card α = 2) : ¬G.IsHamiltonian := by
   intro hG
   have ⟨v, p, hp⟩ := hG <| by lia
   grind [hp.three_le_length, hp.length_eq]
@@ -268,7 +268,7 @@ lemma not_isHamiltonian_bot_of_card_ne_one (h : Fintype.card α ≠ 1) :
   have ⟨v, p, hp⟩ := hG h
   exact p.adj_snd hp.not_nil
 
-lemma IsHamiltonian.of_unique [Unique α] : G.IsHamiltonian :=
+private lemma IsHamiltonian.of_unique [Unique α] : G.IsHamiltonian :=
   of_card_eq_one <| Fintype.card_unique
 
 /-- A finite simple graph with a bridge is not hamiltonian. -/

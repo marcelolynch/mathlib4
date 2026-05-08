@@ -74,18 +74,18 @@ of complex shapes `e` which satisfies `e.IsTruncLE`. -/
 noncomputable def truncLE : HomologicalComplex C c' := (K.op.truncGE e.op).unop
 
 /-- The canonical isomorphism `K.truncLE e ≅ (K.truncLE' e).extend e`. -/
-noncomputable def truncLEIso : K.truncLE e ≅ (K.truncLE' e).extend e :=
+private noncomputable def truncLEIso : K.truncLE e ≅ (K.truncLE' e).extend e :=
   (unopFunctor C c'.symm).mapIso ((K.truncLE' e).extendOpIso e).symm.op
 
 /-- The isomorphism `(K.truncLE e).X i' ≅ K.X i'` when `e.f i = i'`
 and `e.BoundaryLE i` does not hold. -/
-noncomputable def truncLEXIso {i : ι} {i' : ι'} (hi' : e.f i = i') (hi : ¬ e.BoundaryLE i) :
+private noncomputable def truncLEXIso {i : ι} {i' : ι'} (hi' : e.f i = i') (hi : ¬ e.BoundaryLE i) :
     (K.truncLE e).X i' ≅ K.X i' :=
   (K.op.truncGEXIso e.op hi' (by simpa)).unop.symm
 
 /-- The isomorphism `(K.truncLE e).X i' ≅ K.cycles i'` when `e.f i = i'`
 and `e.BoundaryLE i` holds. -/
-noncomputable def truncLEXIsoCycles {i : ι} {i' : ι'} (hi' : e.f i = i') (hi : e.BoundaryLE i) :
+private noncomputable def truncLEXIsoCycles {i : ι} {i' : ι'} (hi' : e.f i = i') (hi : e.BoundaryLE i) :
     (K.truncLE e).X i' ≅ K.cycles i' :=
   (K.op.truncGEXIsoOpcycles e.op hi' (by simpa)).unop.symm ≪≫
     (K.opcyclesOpIso i').unop.symm

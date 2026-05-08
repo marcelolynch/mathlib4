@@ -90,7 +90,7 @@ instance : LieAlgebra R (⨁ i, ℒ i) where
 
 /-- If `L` is graded by `ι` with degree `i` component `ℒ i`, then it is isomorphic as
 a Lie algebra to a direct sum of components. -/
-def decomposeLieEquiv : L ≃ₗ⁅R⁆ ⨁ i, ℒ i :=
+private def decomposeLieEquiv : L ≃ₗ⁅R⁆ ⨁ i, ℒ i :=
   { decomposeLinearEquiv ℒ with
     map_lie' := by simp }
 

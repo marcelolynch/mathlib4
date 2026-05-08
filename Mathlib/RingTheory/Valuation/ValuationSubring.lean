@@ -588,7 +588,7 @@ theorem nonunits_inj {A B : ValuationSubring K} : A.nonunits = B.nonunits ↔ A 
   nonunits_injective.eq_iff
 
 /-- The map on valuation subrings to their nonunits is a dual order embedding. -/
-def nonunitsOrderEmbedding : ValuationSubring K ↪o (NonUnitalSubring K)ᵒᵈ where
+private def nonunitsOrderEmbedding : ValuationSubring K ↪o (NonUnitalSubring K)ᵒᵈ where
   toFun A := A.nonunits
   inj' := nonunits_injective
   map_rel_iff' {_A _B} := nonunits_le_nonunits
@@ -680,7 +680,7 @@ theorem eq_iff_principalUnitGroup {A B : ValuationSubring K} :
   principalUnitGroup_injective.eq_iff.symm
 
 /-- The map on valuation subrings to their principal unit groups is an order embedding. -/
-def principalUnitGroupOrderEmbedding : ValuationSubring K ↪o (Subgroup Kˣ)ᵒᵈ where
+private def principalUnitGroupOrderEmbedding : ValuationSubring K ↪o (Subgroup Kˣ)ᵒᵈ where
   toFun A := A.principalUnitGroup
   inj' := principalUnitGroup_injective
   map_rel_iff' {_A _B} := principalUnitGroup_le_principalUnitGroup

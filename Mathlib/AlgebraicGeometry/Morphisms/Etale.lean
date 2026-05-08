@@ -159,7 +159,7 @@ def Etale.forget : X.Etale ⥤ Over X :=
 deriving Functor.Full, Functor.Faithful
 
 /-- The forgetful functor from schemes étale over `X` to schemes over `X` is fully faithful. -/
-def Etale.forgetFullyFaithful : (Etale.forget X).FullyFaithful :=
+private def Etale.forgetFullyFaithful : (Etale.forget X).FullyFaithful :=
   MorphismProperty.Comma.forgetFullyFaithful _ _ _
 
 end Scheme

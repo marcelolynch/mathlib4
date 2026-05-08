@@ -164,7 +164,7 @@ theorem toWeakDual_continuous : Continuous fun x' : StrongDual 𝕜 E => StrongD
 /-- For a normed space `E`, according to `toWeakDual_continuous` the "identity mapping"
 `StrongDual 𝕜 E → WeakDual 𝕜 E` is continuous. This definition implements it as a continuous linear
 map. -/
-def continuousLinearMapToWeakDual : StrongDual 𝕜 E →L[𝕜] WeakDual 𝕜 E :=
+private def continuousLinearMapToWeakDual : StrongDual 𝕜 E →L[𝕜] WeakDual 𝕜 E :=
   { StrongDual.toWeakDual with cont := toWeakDual_continuous }
 
 /-- The weak-star topology is coarser than the dual-norm topology. -/

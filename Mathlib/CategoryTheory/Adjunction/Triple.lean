@@ -77,7 +77,7 @@ lemma isIso_unit_iff_isIso_counit : IsIso t.adj₁.unit ↔ IsIso t.adj₂.couni
 Given an adjoint triple `F ⊣ G ⊣ H`, the left adjoint `F` is fully faithful if and only if the
 right adjoint `H` is fully faithful.
 -/
-noncomputable def fullyFaithfulEquiv : F.FullyFaithful ≃ H.FullyFaithful where
+private noncomputable def fullyFaithfulEquiv : F.FullyFaithful ≃ H.FullyFaithful where
   toFun h :=
     haveI := h.full
     haveI := h.faithful

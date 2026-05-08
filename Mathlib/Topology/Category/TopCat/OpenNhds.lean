@@ -87,7 +87,7 @@ def infLELeft {x : X} (U V : OpenNhds x) : U ⊓ V ⟶ U :=
   homOfLE inf_le_left
 
 /-- The inclusion `U ⊓ V ⟶ V` as a morphism in the category of open sets. -/
-def infLERight {x : X} (U V : OpenNhds x) : U ⊓ V ⟶ V :=
+private def infLERight {x : X} (U V : OpenNhds x) : U ⊓ V ⟶ V :=
   homOfLE inf_le_right
 
 /-- The inclusion functor from open neighbourhoods of `x`

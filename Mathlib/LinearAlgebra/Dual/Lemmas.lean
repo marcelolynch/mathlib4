@@ -902,7 +902,7 @@ theorem isCompl_dualAnnihilator {W W' : Subspace K V₁} (h : IsCompl W W') :
 
 /-- For finite-dimensional vector spaces, one can distribute duals over quotients by identifying
 `W.dualLift.range` with `W`. Note that this depends on a choice of splitting of `V₁`. -/
-def dualQuotDistrib [FiniteDimensional K V₁] (W : Subspace K V₁) :
+private def dualQuotDistrib [FiniteDimensional K V₁] (W : Subspace K V₁) :
     Module.Dual K (V₁ ⧸ W) ≃ₗ[K] Module.Dual K V₁ ⧸ LinearMap.range W.dualLift :=
   W.dualQuotEquivDualAnnihilator.trans W.quotDualEquivAnnihilator.symm
 
@@ -999,7 +999,7 @@ open OrderDual in
 /-- For any vector space, `dualAnnihilator` and `dualCoannihilator` gives an antitone order
   isomorphism between the finite-codimensional subspaces in the vector space and the
   finite-dimensional subspaces in its dual. -/
-def orderIsoFiniteCodimDim :
+private def orderIsoFiniteCodimDim :
     {W : Subspace K V // FiniteDimensional K (V ⧸ W)} ≃o
     {W : Subspace K (Dual K V) // FiniteDimensional K W}ᵒᵈ where
   toFun W := toDual ⟨W.1.dualAnnihilator, Submodule.finite_dualAnnihilator_iff.mpr W.2⟩
@@ -1013,7 +1013,7 @@ open OrderDual in
 /-- For any finite-dimensional vector space, `dualAnnihilator` and `dualCoannihilator` give
   an antitone order isomorphism between the subspaces in the vector space and the subspaces
   in its dual. -/
-def orderIsoFiniteDimensional [FiniteDimensional K V] :
+private def orderIsoFiniteDimensional [FiniteDimensional K V] :
     Subspace K V ≃o (Subspace K (Dual K V))ᵒᵈ where
   toFun W := toDual W.dualAnnihilator
   invFun W := (ofDual W).dualCoannihilator

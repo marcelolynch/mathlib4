@@ -203,7 +203,7 @@ theorem perm_replace {a : α} {b : β a} {s₁ s₂ : AList β} :
 end
 
 /-- Fold a function over the key-value pairs in the map. -/
-def foldl {δ : Type w} (f : δ → ∀ a, β a → δ) (d : δ) (m : AList β) : δ :=
+private def foldl {δ : Type w} (f : δ → ∀ a, β a → δ) (d : δ) (m : AList β) : δ :=
   m.entries.foldl (fun r a => f r a.1 a.2) d
 
 /-! ### erase -/

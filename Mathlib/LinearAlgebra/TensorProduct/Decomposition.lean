@@ -56,7 +56,7 @@ end Decomposition
 
 namespace IsInternal
 
-theorem baseChange (hm : IsInternal ℳ) : IsInternal fun i ↦ (ℳ i).baseChange S :=
+private theorem baseChange (hm : IsInternal ℳ) : IsInternal fun i ↦ (ℳ i).baseChange S :=
   haveI := hm.chooseDecomposition
   Decomposition.isInternal _
 
@@ -65,7 +65,7 @@ theorem toBaseChange_bijective (hm : IsInternal ℳ) (i : ι) :
   haveI := hm.chooseDecomposition
   DirectSum.toBaseChange_bijective ℳ i
 
-theorem toBaseChange_injective (hm : IsInternal ℳ) (i : ι) :
+private theorem toBaseChange_injective (hm : IsInternal ℳ) (i : ι) :
     Function.Injective ((ℳ i).toBaseChange S) :=
   (toBaseChange_bijective ℳ hm i).injective
 

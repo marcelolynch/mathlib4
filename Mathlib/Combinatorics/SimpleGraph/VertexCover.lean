@@ -52,7 +52,7 @@ theorem IsVertexCover.subset {c d : Set V} (hcd : c ⊆ d) (hc : IsVertexCover G
     IsVertexCover G d := by
   grind [IsVertexCover]
 
-theorem IsVertexCover.mono {c : Set V} (hG : G ≤ G') (hc : IsVertexCover G' c) :
+private theorem IsVertexCover.mono {c : Set V} (hG : G ≤ G') (hc : IsVertexCover G' c) :
     IsVertexCover G c :=
   fun _ _ hadj ↦ hc (hG hadj)
 
@@ -139,7 +139,7 @@ theorem vertexCoverNum_le_card_sub_one : vertexCoverNum G ≤ ENat.card V - 1 :=
 theorem vertexCoverNum_ne_top_of_finite [Finite V] : vertexCoverNum G ≠ ⊤ :=
   ne_top_of_le_ne_top (by simpa) (@vertexCoverNum_le_card_sub_one V G)
 
-theorem vertexCoverNum_lt_card [Nonempty V] [Finite V] : vertexCoverNum G < ENat.card V := by
+private theorem vertexCoverNum_lt_card [Nonempty V] [Finite V] : vertexCoverNum G < ENat.card V := by
   refine (ENat.add_one_le_iff vertexCoverNum_ne_top_of_finite).mp ?_
   grw [vertexCoverNum_le_card_sub_one, ENat.card_eq_coe_natCard]
   enat_to_nat
@@ -199,7 +199,7 @@ theorem vertexCoverNum_le_vertexCoverNum_of_injective (f : G →g H) (hf : Funct
 theorem vertexCoverNum_mono (h : G ≤ G') : vertexCoverNum G ≤ vertexCoverNum G' :=
   (IsContained.of_le h).vertexCoverNum_le_vertexCoverNum
 
-theorem vertexCoverNum_congr (f : G ≃g H) : vertexCoverNum G = vertexCoverNum H :=
+private theorem vertexCoverNum_congr (f : G ≃g H) : vertexCoverNum G = vertexCoverNum H :=
   le_antisymm f.isContained.vertexCoverNum_le_vertexCoverNum
     f.symm.isContained.vertexCoverNum_le_vertexCoverNum
 

@@ -337,7 +337,7 @@ def mkLinarithData (hyps : List Comp) (maxVar : ℕ) : LinarithData :=
   ⟨maxVar, .ofList (hyps.mapIdx fun n cmp => PComp.assump cmp n) _⟩
 
 /-- An oracle that uses Fourier-Motzkin elimination. -/
-def CertificateOracle.fourierMotzkin : CertificateOracle where
+private def CertificateOracle.fourierMotzkin : CertificateOracle where
   produceCertificate hyps maxVar :=  do
     let linarithData := mkLinarithData hyps maxVar
     let result ←

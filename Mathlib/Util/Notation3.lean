@@ -185,7 +185,7 @@ def matchFVar (userName : Name) (matchTy : Matcher) : Matcher := fun s => do
   withType (matchTy s)
 
 /-- Matcher that checks that the type of the expression is matched by `matchTy`. -/
-def matchTypeOf (matchTy : Matcher) : Matcher := fun s => do
+private def matchTypeOf (matchTy : Matcher) : Matcher := fun s => do
   withType (matchTy s)
 
 /-- Matches raw `Nat` literals. -/

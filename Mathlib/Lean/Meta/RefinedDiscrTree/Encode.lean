@@ -279,7 +279,7 @@ def evalLazyEntry (entry : LazyEntry) (eta : Bool) :
     evalLazyEntryAux entry eta
 
 /-- Return all encodings of `e` as a `Array Key`. This is used for testing. -/
-partial def encodeExprWithEta (e : Expr) (labelledStars : Bool) : MetaM (Array (Array Key)) :=
+private partial def encodeExprWithEta (e : Expr) (labelledStars : Bool) : MetaM (Array (Array Key)) :=
   withReducible do
     let entries ← (encodingStepWithEta e true (← mkInitLazyEntry labelledStars)).run { bvars := [] }
     let entries := entries.map fun (key, entry) => (#[key], entry)

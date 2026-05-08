@@ -62,7 +62,7 @@ variable [HasFiniteProducts C] [Preadditive A] {ι : Type w} (U : ι → C)
 cochain complex which in degree `n` consists of the product,
 indexed by `x : Fin (n + 1) → ι`, of the value of `P` on the product of the
 objects `U (x i)` for `i : Fin (n + 1)`. -/
-noncomputable def cechComplexFunctor : (Cᵒᵖ ⥤ A) ⥤ CochainComplex A ℕ :=
+private noncomputable def cechComplexFunctor : (Cᵒᵖ ⥤ A) ⥤ CochainComplex A ℕ :=
   FormalCoproduct.cochainComplexFunctor (FormalCoproduct.mk _ U).cech
 
 end CategoryTheory

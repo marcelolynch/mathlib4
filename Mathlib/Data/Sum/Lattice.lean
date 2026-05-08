@@ -94,13 +94,13 @@ variable [Lattice α] [Lattice β]
 instance instLattice : Lattice (α ⊕ₗ β) := { instSemilatticeSup, instSemilatticeInf with }
 
 /-- `Sum.Lex.inlₗ` as a lattice homomorphism. -/
-def inlLatticeHom : LatticeHom α (α ⊕ₗ β) where
+private def inlLatticeHom : LatticeHom α (α ⊕ₗ β) where
   toFun := inlₗ
   map_sup' _ _ := rfl
   map_inf' _ _ := rfl
 
 /-- `Sum.Lex.inrₗ` as a lattice homomorphism. -/
-def inrLatticeHom : LatticeHom β (α ⊕ₗ β) where
+private def inrLatticeHom : LatticeHom β (α ⊕ₗ β) where
   toFun := inrₗ
   map_sup' _ _ := rfl
   map_inf' _ _ := rfl

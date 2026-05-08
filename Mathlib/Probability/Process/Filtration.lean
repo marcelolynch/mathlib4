@@ -526,7 +526,7 @@ end piFinset
 variable {α : Type*}
 
 /-- The exterior σ-algebras of finite sets of `α` form a cofiltration indexed by `Finset α`. -/
-def cylinderEventsCompl : Filtration (Finset α)ᵒᵈ (.pi (X := fun _ : α ↦ Ω)) where
+private def cylinderEventsCompl : Filtration (Finset α)ᵒᵈ (.pi (X := fun _ : α ↦ Ω)) where
   seq Λ := cylinderEvents (↑(OrderDual.ofDual Λ))ᶜ
   mono' _ _ h := cylinderEvents_mono <| Set.compl_subset_compl_of_subset h
   le' _ := cylinderEvents_le_pi

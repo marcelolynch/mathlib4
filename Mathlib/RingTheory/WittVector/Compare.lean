@@ -196,7 +196,7 @@ theorem fromPadicInt_comp_toPadicInt_ext (x) :
 /-- The ring of Witt vectors over `ZMod p` is isomorphic to the ring of `p`-adic integers. This
 equivalence is witnessed by `WittVector.toPadicInt` with inverse `WittVector.fromPadicInt`.
 -/
-def equiv : 𝕎 (ZMod p) ≃+* ℤ_[p] where
+private def equiv : 𝕎 (ZMod p) ≃+* ℤ_[p] where
   toFun := toPadicInt p
   invFun := fromPadicInt p
   left_inv := fromPadicInt_comp_toPadicInt_ext _

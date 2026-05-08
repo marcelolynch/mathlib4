@@ -472,7 +472,7 @@ lemma ContMDiffCovariantDerivative.finite_affine_combination [IsManifold I 1 M] 
 
 /-- Adding a one-form taking values in the endomorphisms of the vector bundle to a covariant
   derivative gives a covariant derivative. -/
-def addOneForm (cov : CovariantDerivative I F V)
+private def addOneForm (cov : CovariantDerivative I F V)
     (A : Π (x : M), V x →L[𝕜] TangentSpace I x →L[𝕜] V x) : CovariantDerivative I F V where
   toFun := fun σ x ↦ cov σ x + A x (σ x)
   isCovariantDerivativeOnUniv := cov.isCovariantDerivativeOnUniv.add_one_form A
@@ -486,7 +486,7 @@ variable [CompleteSpace 𝕜] [IsManifold I 1 M] [FiniteDimensional 𝕜 F]
 
 /-- The difference of two covariant derivatives, as a one-form taking values in the
 endomorphisms of `V`. -/
-def difference (cov cov' : CovariantDerivative I F V) :
+private def difference (cov cov' : CovariantDerivative I F V) :
     Π (x : M), V x →L[𝕜] TangentSpace I x →L[𝕜] V x :=
   cov.isCovariantDerivativeOnUniv.difference cov'.isCovariantDerivativeOnUniv
 

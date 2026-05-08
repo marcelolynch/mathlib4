@@ -52,7 +52,7 @@ theorem map_eq_bind_pure_comp (m : Type u → Type v) [Monad m] [LawfulMonad m]
   (bind_pure_comp f x).symm
 
 /-- run a `StateT` program and discard the final state -/
-def StateT.eval {m : Type u → Type v} [Functor m] (cmd : StateT σ m α) (s : σ) : m α :=
+private def StateT.eval {m : Type u → Type v} [Functor m] (cmd : StateT σ m α) (s : σ) : m α :=
   Prod.fst <$> cmd.run s
 
 universe u₀ u₁ v₀ v₁

@@ -101,7 +101,7 @@ def commTriangleM? (e : Expr) : MetaM (Option Html) := do
 
 /-- Presenter for a commutative triangle -/
 @[expr_presenter]
-def commutativeTrianglePresenter : ExprPresenter where
+private def commutativeTrianglePresenter : ExprPresenter where
   userName := "Commutative triangle"
   layoutKind := .block
   present type := do
@@ -135,7 +135,7 @@ def commSquareM? (e : Expr) : MetaM (Option Html) := do
 
 /-- Presenter for a commutative square -/
 @[expr_presenter]
-def commutativeSquarePresenter : ExprPresenter where
+private def commutativeSquarePresenter : ExprPresenter where
   userName := "Commutative square"
   layoutKind := .block
   present type := do

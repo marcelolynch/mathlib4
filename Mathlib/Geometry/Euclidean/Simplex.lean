@@ -62,7 +62,7 @@ def AcuteAngled (s : Simplex ℝ P n) : Prop :=
   · convert h (i₁ := e i₁) (i₂ := e i₂) (i₃ := e i₃) ?_ ?_ ?_ using 1 <;> simp [*]
   · convert h (i₁ := e.symm i₁) (i₂ := e.symm i₂) (i₃ := e.symm i₃) ?_ ?_ ?_ using 1 <;> simp [*]
 
-lemma Equilateral.acuteAngled {s : Simplex ℝ P n} (he : s.Equilateral) : s.AcuteAngled := by
+private lemma Equilateral.acuteAngled {s : Simplex ℝ P n} (he : s.Equilateral) : s.AcuteAngled := by
   intro i₁ i₂ i₃ h₁₂ h₁₃ h₂₃
   rw [he.angle_eq_pi_div_three h₁₂ h₁₃ h₂₃]
   linarith [Real.pi_pos]

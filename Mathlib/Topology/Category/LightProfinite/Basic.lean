@@ -187,7 +187,7 @@ theorem isIso_of_bijective (bij : Function.Bijective f) : IsIso f :=
   isIso_of_fully_faithful lightProfiniteToCompHaus _
 
 /-- Any continuous bijection of light profinite spaces induces an isomorphism. -/
-noncomputable def isoOfBijective (bij : Function.Bijective f) : X ≅ Y :=
+private noncomputable def isoOfBijective (bij : Function.Bijective f) : X ≅ Y :=
   letI := LightProfinite.isIso_of_bijective f bij
   asIso f
 

@@ -59,7 +59,7 @@ variable {A}
 
 /-- The `PairingCore` structure induced by a pairing. The opposite construction
 is `PairingCore.pairing`. -/
-noncomputable def Pairing.pairingCore (P : A.Pairing) [P.IsProper] :
+private noncomputable def Pairing.pairingCore (P : A.Pairing) [P.IsProper] :
     A.PairingCore where
   ι := P.II
   dim s := s.val.dim

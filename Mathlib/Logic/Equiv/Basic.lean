@@ -225,7 +225,7 @@ def natEquivNatSumPUnit : ℕ ≃ ℕ ⊕ PUnit where
   right_inv := by rintro (_ | _) <;> rfl
 
 /-- `ℕ ⊕ PUnit` is equivalent to `ℕ`. -/
-def natSumPUnitEquivNat : ℕ ⊕ PUnit ≃ ℕ :=
+private def natSumPUnitEquivNat : ℕ ⊕ PUnit ≃ ℕ :=
   natEquivNatSumPUnit.symm
 
 /-- The type of integer numbers is equivalent to `ℕ ⊕ ℕ`. -/
@@ -361,7 +361,7 @@ def sigmaSubtypeEquivOfSubset {α} (p : α → Type v) (q : α → Prop) (h : �
 
 /-- If a predicate `p : β → Prop` is true on the range of a map `f : α → β`, then
 `Σ y : {y // p y}, {x // f x = y}` is equivalent to `α`. -/
-def sigmaSubtypeFiberEquiv {α β : Type*} (f : α → β) (p : β → Prop) (h : ∀ x, p (f x)) :
+private def sigmaSubtypeFiberEquiv {α β : Type*} (f : α → β) (p : β → Prop) (h : ∀ x, p (f x)) :
     (Σ y : Subtype p, { x : α // f x = y }) ≃ α :=
   calc
     _ ≃ Σ y : β, { x : α // f x = y } := sigmaSubtypeEquivOfSubset _ p fun _ ⟨x, h'⟩ => h' ▸ h x
@@ -369,7 +369,7 @@ def sigmaSubtypeFiberEquiv {α β : Type*} (f : α → β) (p : β → Prop) (h 
 
 /-- If for each `x` we have `p x ↔ q (f x)`, then `Σ y : {y // q y}, f ⁻¹' {y}` is equivalent
 to `{x // p x}`. -/
-def sigmaSubtypeFiberEquivSubtype {α β : Type*} (f : α → β) {p : α → Prop} {q : β → Prop}
+private def sigmaSubtypeFiberEquivSubtype {α β : Type*} (f : α → β) {p : α → Prop} {q : β → Prop}
     (h : ∀ x, p x ↔ q (f x)) : (Σ y : Subtype q, { x : α // f x = y }) ≃ Subtype p :=
   calc
     (Σ y : Subtype q, { x : α // f x = y }) ≃ Σ y :
@@ -1038,7 +1038,7 @@ noncomputable def Equiv.punitOfNonemptyOfSubsingleton [h : Nonempty α] [Subsing
   equivOfSubsingletonOfSubsingleton (fun _ => PUnit.unit) fun _ => h.some
 
 /-- `Unique (Unique α)` is equivalent to `Unique α`. -/
-def uniqueUniqueEquiv : Unique (Unique α) ≃ Unique α :=
+private def uniqueUniqueEquiv : Unique (Unique α) ≃ Unique α :=
   equivOfSubsingletonOfSubsingleton (fun h => h.default) fun h =>
     { default := h, uniq := fun _ => Subsingleton.elim _ _ }
 

@@ -207,7 +207,7 @@ is fully faithful.
 Note: for now, we only have `ℕ∪{∞}` as a light profinite set at universe level 0, which is why we
 can only prove this for the functor `Sequential.{0} ⥤ LightCondSet.{0}`.
 -/
-noncomputable def fullyFaithfulSequentialToLightCondSet :
+private noncomputable def fullyFaithfulSequentialToLightCondSet :
     sequentialToLightCondSet.{0}.FullyFaithful :=
   sequentialAdjunction.fullyFaithfulROfIsIsoCounit
 

@@ -176,7 +176,7 @@ instance : Inhabited (Bimod A A) :=
   ⟨regular A⟩
 
 /-- The forgetful functor from bimodule objects to the ambient category. -/
-def forget : Bimod A B ⥤ C where
+private def forget : Bimod A B ⥤ C where
   obj A := A.X
   map f := f.hom
 

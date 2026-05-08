@@ -146,7 +146,7 @@ instance faithful_ιOfLE (h : P ≤ P') : (ιOfLE h).Faithful := (fullyFaithful�
 
 /-- If `h : P ≤ P'` is an inequality of properties of objects,
 this is the obvious isomorphism `ιOfLE h ⋙ P'.ι ≅ P.ι`. -/
-def ιOfLECompιIso (h : P ≤ P') : ιOfLE h ⋙ P'.ι ≅ P.ι := Iso.refl _
+private def ιOfLECompιIso (h : P ≤ P') : ιOfLE h ⋙ P'.ι ≅ P.ι := Iso.refl _
 
 end
 
@@ -184,7 +184,7 @@ variable {Q}
 
 /-- When `h : P ≤ Q`, this is the canonical isomorphism
 `P.lift F hF ⋙ ιOfLE h ≅ Q.lift F _`. -/
-def liftCompιOfLEIso (h : P ≤ Q) :
+private def liftCompιOfLEIso (h : P ≤ Q) :
     P.lift F hF ⋙ ιOfLE h ≅ Q.lift F (fun X ↦ h _ (hF X)) := Iso.refl _
 
 end lift

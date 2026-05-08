@@ -65,7 +65,7 @@ lemma ι_π : Φ.ι ≫ Φ.π = 0 := cokernel.condition _
 
 /-- The canonical cofork `CokernelCofork.ofπ Φ.π Φ.ι_π` exhibits `Φ.π : 𝟭 C ⟶ Φ.quotient` as the
 cokernel of `Φ.ι : Φ.r ⟶ 𝟭 C`. -/
-noncomputable def isColimitCokernelCofork : IsColimit (CokernelCofork.ofπ _ Φ.ι_π) :=
+private noncomputable def isColimitCokernelCofork : IsColimit (CokernelCofork.ofπ _ Φ.ι_π) :=
   cokernelIsCokernel _
 
 /-- The short complex `Φ.r ⟶ 𝟭 C ⟶ Φ.quotient` in the functor category associated to a preradical
@@ -83,7 +83,7 @@ lemma shortExact_shortComplex : Φ.shortComplex.ShortExact where
 
 /-- The kernel fork `KernelFork.ofι Φ.ι Φ.ι_π` exhibits `Φ.ι : Φ.r ⟶ 𝟭 C` as the kernel
 of the canonical projection `Φ.π : 𝟭 C ⟶ Φ.quotient`. -/
-noncomputable def isLimitKernelFork : IsLimit (KernelFork.ofι _ Φ.ι_π) :=
+private noncomputable def isLimitKernelFork : IsLimit (KernelFork.ofι _ Φ.ι_π) :=
   Φ.shortExact_shortComplex.fIsKernel
 
 set_option backward.isDefEq.respectTransparency false in
@@ -116,7 +116,7 @@ noncomputable def isLimitKernelForkObj (X : C) : IsLimit (KernelFork.ofι _ (Φ.
 
 /-- For `X : C`, the cokernel cofork `CokernelCofork.ofπ (Φ.π.app X) (Φ.ι_π_app X)` exhibits
 `Φ.π.app X : X ⟶ Φ.quotient.obj X` as the cokernel of `Φ.ι.app X : Φ.r.obj X ⟶ X`. -/
-noncomputable def isColimitCokernelCoforkObj (X : C) :
+private noncomputable def isColimitCokernelCoforkObj (X : C) :
     IsColimit (CokernelCofork.ofπ _ (Φ.ι_π_app X)) :=
   (Φ.shortExact_shortComplexObj X).gIsCokernel
 

@@ -177,7 +177,7 @@ Since the field `𝕜` need not have `ℝ` as a subfield, this theorem is not di
 the corresponding theorem about isometries plus a theorem about scalar multiplication.  Likewise
 for the other theorems about homotheties in this file.
 -/
-def ContinuousLinearMap.ofHomothety (f : E →ₛₗ[σ] F) (a : ℝ) (hf : ∀ x, ‖f x‖ = a * ‖x‖) :
+private def ContinuousLinearMap.ofHomothety (f : E →ₛₗ[σ] F) (a : ℝ) (hf : ∀ x, ‖f x‖ = a * ‖x‖) :
     E →SL[σ] F :=
   f.mkContinuous a fun x => le_of_eq (hf x)
 

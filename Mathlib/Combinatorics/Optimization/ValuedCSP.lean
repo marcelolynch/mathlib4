@@ -72,7 +72,7 @@ def ValuedCSP.Instance.evalSolution {Γ : ValuedCSP D C} {ι : Type*}
   (I.map (·.evalSolution x)).sum
 
 /-- Condition for `x` being an optimum solution (min) to given `Γ` instance `I`. -/
-def ValuedCSP.Instance.IsOptimumSolution {Γ : ValuedCSP D C} {ι : Type*}
+private def ValuedCSP.Instance.IsOptimumSolution {Γ : ValuedCSP D C} {ι : Type*}
     (I : Γ.Instance ι) (x : ι → D) : Prop :=
   ∀ y : ι → D, I.evalSolution x ≤ I.evalSolution y
 
@@ -125,7 +125,7 @@ def FractionalOperation.IsSymmetric (ω : FractionalOperation D m) : Prop :=
   ∀ x y : (Fin m → D), List.Perm (List.ofFn x) (List.ofFn y) → ∀ g ∈ ω, g x = g y
 
 /-- Fractional operation is a symmetric fractional polymorphism for given VCSP template. -/
-def FractionalOperation.IsSymmetricFractionalPolymorphismFor
+private def FractionalOperation.IsSymmetricFractionalPolymorphismFor
     (ω : FractionalOperation D m) (Γ : ValuedCSP D C) : Prop :=
   ω.IsFractionalPolymorphismFor Γ ∧ ω.IsSymmetric
 

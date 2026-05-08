@@ -689,7 +689,7 @@ protected theorem cast_trans {α β γ : Type u} {r : α → α → Prop} {s : �
   ext fun x => by subst h₁; rfl
 
 /-- A relation isomorphism is also a relation isomorphism between dual relations. -/
-protected def swap (f : r ≃r s) : swap r ≃r swap s :=
+private protected def swap (f : r ≃r s) : swap r ≃r swap s :=
   ⟨f, f.map_rel_iff⟩
 
 /-- A relation isomorphism is also a relation isomorphism between complemented relations. -/
@@ -850,7 +850,7 @@ def ofUniqueOfIrrefl (r : α → α → Prop) (s : β → β → Prop) [Std.Irre
       (not_rel_of_subsingleton r _ _) ⟩
 
 /-- Two reflexive relations on a unique type are isomorphic. -/
-def ofUniqueOfRefl (r : α → α → Prop) (s : β → β → Prop) [Std.Refl r] [Std.Refl s]
+private def ofUniqueOfRefl (r : α → α → Prop) (s : β → β → Prop) [Std.Refl r] [Std.Refl s]
     [Unique α] [Unique β] : r ≃r s :=
   ⟨Equiv.ofUnique α β, iff_of_true (rel_of_subsingleton s _ _) (rel_of_subsingleton r _ _)⟩
 

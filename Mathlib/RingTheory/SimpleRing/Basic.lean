@@ -80,7 +80,7 @@ lemma iff_injective_ringHom_or_subsingleton_codomain (R : Type u) [NonAssocRing 
     (fun h => le_antisymm le_top fun x _ => I.mem_iff _ |>.2 (Quotient.eq'.1 (h.elim x 0)))
 
 universe u in
-lemma iff_injective_ringHom (R : Type u) [NonAssocRing R] [Nontrivial R] :
+private lemma iff_injective_ringHom (R : Type u) [NonAssocRing R] [Nontrivial R] :
     IsSimpleRing R ↔
     ∀ {S : Type u} [NonAssocSemiring S] [Nontrivial S] (f : R →+* S), Function.Injective f :=
   iff_injective_ringHom_or_subsingleton_codomain R |>.trans <|

@@ -35,7 +35,7 @@ def lineGraph : SimpleGraph G.edgeSet where
   Adj e₁ e₂ := e₁ ≠ e₂ ∧ (e₁ ∩ e₂ : Set V).Nonempty
   symm e₁ e₂ := by intro h; rwa [ne_comm, Set.inter_comm]
 
-lemma lineGraph_adj_iff_exists {e₁ e₂ : G.edgeSet} :
+private lemma lineGraph_adj_iff_exists {e₁ e₂ : G.edgeSet} :
     (G.lineGraph).Adj e₁ e₂ ↔ e₁ ≠ e₂ ∧ ∃ v, v ∈ (e₁ : Sym2 V) ∧ v ∈ (e₂ : Sym2 V) := by
   simp [Set.Nonempty, lineGraph]
 
@@ -51,21 +51,21 @@ def Copy.toLineGraphEmbedding (f : Copy G G') : G.lineGraph ↪g G'.lineGraph wh
     rw [Subtype.mk.injEq, Subtype.mk.injEq]
     exact Sym2.map.injective f.injective |>.eq_iff.not
 
-theorem IsIndContained.lineGraph (h : G ⊴ G') : G.lineGraph ⊴ G'.lineGraph :=
+private theorem IsIndContained.lineGraph (h : G ⊴ G') : G.lineGraph ⊴ G'.lineGraph :=
   ⟨h.some.toCopy.toLineGraphEmbedding⟩
 
-theorem IsContained.isIndContained_lineGraph (h : G ⊑ G') : G.lineGraph ⊴ G'.lineGraph :=
+private theorem IsContained.isIndContained_lineGraph (h : G ⊑ G') : G.lineGraph ⊴ G'.lineGraph :=
   ⟨h.some.toLineGraphEmbedding⟩
 
 /-- Lift a copy between graphs to a copy between their line graphs -/
 def Copy.lineGraph (f : Copy G G') : Copy G.lineGraph G'.lineGraph :=
   f.toLineGraphEmbedding.toCopy
 
-theorem IsContained.lineGraph (h : G ⊑ G') : G.lineGraph ⊑ G'.lineGraph :=
+private theorem IsContained.lineGraph (h : G ⊑ G') : G.lineGraph ⊑ G'.lineGraph :=
   ⟨h.some.lineGraph⟩
 
 /-- Lift an isomorphism between graphs to an isomorphism between their line graphs -/
-def Iso.lineGraph (f : G ≃g G') : G.lineGraph ≃g G'.lineGraph where
+private def Iso.lineGraph (f : G ≃g G') : G.lineGraph ≃g G'.lineGraph where
   toFun := f.toCopy.lineGraph
   invFun := f.symm.toCopy.lineGraph
   left_inv _ := by simp [Copy.lineGraph, Copy.toLineGraphEmbedding, Sym2.map_map]

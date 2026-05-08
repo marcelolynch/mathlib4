@@ -69,7 +69,7 @@ def IsCompleteMultipartite (G : SimpleGraph α) : Prop := IsTrans α (¬ G.Adj �
 theorem bot_isCompleteMultipartite : (⊥ : SimpleGraph α).IsCompleteMultipartite :=
   ⟨by simp⟩
 
-protected lemma IsCompleteMultipartite.induce (hG : G.IsCompleteMultipartite) :
+private protected lemma IsCompleteMultipartite.induce (hG : G.IsCompleteMultipartite) :
     (G.induce s).IsCompleteMultipartite where trans _u _v _w := hG.trans _ _ _
 
 /-- The setoid given by non-adjacency -/
@@ -149,7 +149,7 @@ lemma exists_isPathGraph3Compl_of_not_isCompleteMultipartite (h : ¬ IsCompleteM
   rw [adj_comm] at h1
   exact ⟨_, _, _, h3, h1, h2⟩
 
-lemma not_isCompleteMultipartite_iff_exists_isPathGraph3Compl :
+private lemma not_isCompleteMultipartite_iff_exists_isPathGraph3Compl :
     ¬ IsCompleteMultipartite G ↔ ∃ v w₁ w₂, G.IsPathGraph3Compl v w₁ w₂ :=
   ⟨fun h ↦ G.exists_isPathGraph3Compl_of_not_isCompleteMultipartite h,
    fun ⟨_, _, _, h1, h2, h3⟩ ↦ fun h ↦ h.trans _ _ _ (by rwa [adj_comm] at h2) h3 h1⟩
@@ -194,7 +194,7 @@ lemma not_isCompleteMultipartite_of_pathGraph3ComplEmbedding (e : (pathGraph 3)�
   have h2 : G.Adj (e 0) (e 2) := by simp [pathGraph_adj]
   exact h.trans _ _ _ h0 h1 h2
 
-theorem IsCompleteMultipartite.comap {β : Type*} {H : SimpleGraph β} (f : H ↪g G) :
+private theorem IsCompleteMultipartite.comap {β : Type*} {H : SimpleGraph β} (f : H ↪g G) :
     G.IsCompleteMultipartite → H.IsCompleteMultipartite := by
   intro h; contrapose h
   exact not_isCompleteMultipartite_of_pathGraph3ComplEmbedding
@@ -230,7 +230,7 @@ def completeEquipartiteGraph.completeMultipartiteGraph :
 
 The difference is that the former vertices are a product type whereas the latter vertices are
 not. -/
-def completeEquipartiteGraph.turanGraph :
+private def completeEquipartiteGraph.turanGraph :
     completeEquipartiteGraph r t ≃g turanGraph (r * t) r where
   toFun := by
     refine fun v ↦ ⟨v.2 * r + v.1, ?_⟩
@@ -273,7 +273,7 @@ lemma completeEquipartiteGraph_eq_bot_iff :
     rw [mem_edgeSet, completeEquipartiteGraph_adj]
     exact hv
 
-theorem completeEquipartiteGraph.isCompleteMultipartite :
+private theorem completeEquipartiteGraph.isCompleteMultipartite :
     (completeEquipartiteGraph r t).IsCompleteMultipartite := by
   rcases t.eq_zero_or_pos with ht_eq0 | ht_pos
   · rw [completeEquipartiteGraph_eq_bot_iff.mpr (Or.inr ht_eq0)]
@@ -284,7 +284,7 @@ theorem completeEquipartiteGraph.isCompleteMultipartite :
     exact ⟨const (Fin r) (Fin.pos_iff_nonempty.mp ht_pos),
       ⟨completeEquipartiteGraph.completeMultipartiteGraph⟩⟩
 
-theorem neighborSet_completeEquipartiteGraph (v) :
+private theorem neighborSet_completeEquipartiteGraph (v) :
     (completeEquipartiteGraph r t).neighborSet v = {v.1}ᶜ ×ˢ Set.univ := by
   ext; simp [ne_comm]
 
@@ -297,7 +297,7 @@ theorem degree_completeEquipartiteGraph (v) :
   rw [← card_neighborFinset_eq_degree, neighborFinset_completeEquipartiteGraph v,
     card_product, card_compl, card_singleton, Fintype.card_fin, card_univ, Fintype.card_fin]
 
-theorem card_edgeFinset_completeEquipartiteGraph :
+private theorem card_edgeFinset_completeEquipartiteGraph :
     #(completeEquipartiteGraph r t).edgeFinset = r.choose 2 * t ^ 2 := by
   rw [← mul_right_inj' two_ne_zero, ← sum_degrees_eq_twice_card_edges]
   conv_lhs =>

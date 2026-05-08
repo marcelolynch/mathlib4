@@ -56,7 +56,7 @@ that is a solution to the inequality
 `(p⁻¹ + q⁻¹ + r⁻¹ : ℚ) > 1`.
 
 These solutions are related to the Dynkin diagrams $A_r$. -/
-def A (r : ℕ+) : Multiset ℕ+ :=
+private def A (r : ℕ+) : Multiset ℕ+ :=
   A' 1 r
 
 /-- `D' r := {2,2,r}` is a `Multiset ℕ+`

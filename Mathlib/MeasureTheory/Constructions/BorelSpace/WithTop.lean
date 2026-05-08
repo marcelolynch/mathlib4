@@ -73,7 +73,7 @@ lemma _root_.Measurable.untopA {α} {mα : MeasurableSpace α} [Nonempty ι]
     Measurable (fun x ↦ (f x).untopA) := hf.untopD _
 
 /-- Measurable equivalence between `WithTop ι` and `ι ⊕ Unit`. -/
-def measurableEquivSum : WithTop ι ≃ᵐ ι ⊕ Unit :=
+private def measurableEquivSum : WithTop ι ≃ᵐ ι ⊕ Unit :=
   { Equiv.optionEquivSumPUnit ι with
     measurable_toFun := measurable_of_measurable_comp_coe measurable_inl
     measurable_invFun := measurable_fun_sum measurable_coe (@measurable_const _ Unit _ _ ⊤) }

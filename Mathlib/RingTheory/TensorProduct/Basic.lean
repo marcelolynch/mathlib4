@@ -592,7 +592,7 @@ def moduleAux : A ⊗[R] B →ₗ[R] M →ₗ[R] M :=
         ext
         simp only [RingHom.id_apply, LinearMap.smul_apply, smul_assoc] }
 
-theorem moduleAux_apply (a : A) (b : B) (m : M) : moduleAux (a ⊗ₜ[R] b) m = a • b • m :=
+private theorem moduleAux_apply (a : A) (b : B) (m : M) : moduleAux (a ⊗ₜ[R] b) m = a • b • m :=
   rfl
 
 variable [SMulCommClass A B M]

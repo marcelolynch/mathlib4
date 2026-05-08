@@ -340,7 +340,7 @@ alias _root_.AlgebraicGeometry.Scheme.preservesLocalization_toOpensFunctor :=
 set_option backward.isDefEq.respectTransparency false in
 variable (X) in
 /-- `X` is the colimit of its affine opens. -/
-noncomputable def isColimitCocone : IsColimit (cocone X) :=
+private noncomputable def isColimitCocone : IsColimit (cocone X) :=
   letI D := relativeGluingData (X := X) (.of_isIso (𝟙 _))
   letI F := D.functor
   -- Why doesn't typeclass synthesis work here?

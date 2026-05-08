@@ -235,7 +235,7 @@ instance toNonUnitalCommRing [CommRing R] [NonUnitalCommRing A] [Module R A]
 end
 
 /-- The forgetful map from `NonUnitalSubalgebra` to `Submodule` as an `OrderEmbedding` -/
-def toSubmodule' [CommSemiring R] [NonUnitalNonAssocSemiring A] [Module R A] :
+private def toSubmodule' [CommSemiring R] [NonUnitalNonAssocSemiring A] [Module R A] :
     NonUnitalSubalgebra R A ↪o Submodule R A where
   toEmbedding :=
     { toFun := fun S => S.toSubmodule
@@ -244,7 +244,7 @@ def toSubmodule' [CommSemiring R] [NonUnitalNonAssocSemiring A] [Module R A] :
 
 /-- The forgetful map from `NonUnitalSubalgebra` to `NonUnitalSubsemiring` as an
 `OrderEmbedding` -/
-def toNonUnitalSubsemiring' [CommSemiring R] [NonUnitalNonAssocSemiring A] [Module R A] :
+private def toNonUnitalSubsemiring' [CommSemiring R] [NonUnitalNonAssocSemiring A] [Module R A] :
     NonUnitalSubalgebra R A ↪o NonUnitalSubsemiring A where
   toEmbedding :=
     { toFun := fun S => S.toNonUnitalSubsemiring
@@ -253,7 +253,7 @@ def toNonUnitalSubsemiring' [CommSemiring R] [NonUnitalNonAssocSemiring A] [Modu
 
 /-- The forgetful map from `NonUnitalSubalgebra` to `NonUnitalSubsemiring` as an
 `OrderEmbedding` -/
-def toNonUnitalSubring' [CommRing R] [NonUnitalNonAssocRing A] [Module R A] :
+private def toNonUnitalSubring' [CommRing R] [NonUnitalNonAssocRing A] [Module R A] :
     NonUnitalSubalgebra R A ↪o NonUnitalSubring A where
   toEmbedding :=
     { toFun := fun S => S.toNonUnitalSubring
@@ -332,7 +332,7 @@ theorem toSubring_subtype {R A : Type*} [CommRing R] [Ring A] [Algebra R A]
 
 /-- Linear equivalence between `S : Submodule R A` and `S`. Though these types are equal,
 we define it as a `LinearEquiv` to avoid type equalities. -/
-def toSubmoduleEquiv (S : NonUnitalSubalgebra R A) : S.toSubmodule ≃ₗ[R] S :=
+private def toSubmoduleEquiv (S : NonUnitalSubalgebra R A) : S.toSubmodule ≃ₗ[R] S :=
   LinearEquiv.ofEq _ _ rfl
 
 variable [FunLike F A B] [NonUnitalAlgHomClass F R A B]

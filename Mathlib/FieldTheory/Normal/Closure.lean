@@ -129,7 +129,7 @@ noncomputable def IsNormalClosure.lift [h : IsNormalClosure F K L] {L'} [Field L
   · simp [minpoly.eq_zero iy] at hx
 
 /-- Normal closures of `K/F` are unique up to F-algebra isomorphisms. -/
-noncomputable def IsNormalClosure.equiv {L'} [Field L'] [Algebra F L']
+private noncomputable def IsNormalClosure.equiv {L'} [Field L'] [Algebra F L']
     [h : IsNormalClosure F K L] [h' : IsNormalClosure F K L'] : L ≃ₐ[F] L' :=
   have := h.normal
   AlgEquiv.ofBijective _ <| And.left <|

@@ -101,7 +101,7 @@ protected theorem target : γ 1 = y :=
 
 /-- See Note [custom simps projection]. We need to specify this projection explicitly in this case,
 because it is a composition of multiple projections. -/
-def simps.apply : I → X :=
+private def simps.apply : I → X :=
   γ
 
 initialize_simps_projections Path (toFun → simps.apply, -toContinuousMap)

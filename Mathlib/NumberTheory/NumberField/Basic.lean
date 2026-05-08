@@ -335,7 +335,7 @@ def restrict (f : M → K) (h : ∀ x, IsIntegral ℤ (f x)) (x : M) : 𝓞 K :=
 
 /-- Given `f : M →+ K` such that `∀ x, IsIntegral ℤ (f x)`, the corresponding function
 `M →+ 𝓞 K`. -/
-def restrict_addMonoidHom [AddZeroClass M] (f : M →+ K) (h : ∀ x, IsIntegral ℤ (f x)) :
+private def restrict_addMonoidHom [AddZeroClass M] (f : M →+ K) (h : ∀ x, IsIntegral ℤ (f x)) :
     M →+ 𝓞 K where
   toFun := restrict f h
   map_zero' := by simp only [restrict, map_zero]; rfl
@@ -359,7 +359,7 @@ instance : IsIntegralClosure (𝓞 L) (𝓞 K) L :=
   IsIntegralClosure.tower_top (R := ℤ)
 
 /-- The ring of integers of `L` is isomorphic to any integral closure of `𝓞 K` in `L` -/
-protected noncomputable def algEquiv (R : Type*) [CommRing R] [Algebra (𝓞 K) R] [Algebra R L]
+private protected noncomputable def algEquiv (R : Type*) [CommRing R] [Algebra (𝓞 K) R] [Algebra R L]
     [IsScalarTower (𝓞 K) R L] [IsIntegralClosure R (𝓞 K) L] : 𝓞 L ≃ₐ[𝓞 K] R :=
   (IsIntegralClosure.equiv (𝓞 K) R L _).symm
 

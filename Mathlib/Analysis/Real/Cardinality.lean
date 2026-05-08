@@ -74,7 +74,7 @@ theorem cantorFunctionAux_nonneg (h : 0 ≤ c) : 0 ≤ cantorFunctionAux c f n :
   · simp [h']
   · simpa [h'] using pow_nonneg h _
 
-theorem cantorFunctionAux_eq (h : f n = g n) :
+private theorem cantorFunctionAux_eq (h : f n = g n) :
     cantorFunctionAux c f n = cantorFunctionAux c g n := by simp [cantorFunctionAux, h]
 
 theorem cantorFunctionAux_zero (f : ℕ → Bool) : cantorFunctionAux c f 0 = cond (f 0) 1 0 := by

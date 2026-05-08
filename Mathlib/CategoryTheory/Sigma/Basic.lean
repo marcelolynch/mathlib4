@@ -237,7 +237,7 @@ variable {F G : ∀ i, C i ⥤ D i}
 
 /-- Assemble an `I`-indexed family of natural transformations into a single natural transformation.
 -/
-def sigma (α : ∀ i, F i ⟶ G i) : Functor.sigma F ⟶ Functor.sigma G where
+private def sigma (α : ∀ i, F i ⟶ G i) : Functor.sigma F ⟶ Functor.sigma G where
   app f := SigmaHom.mk ((α f.1).app _)
   naturality := by
     rintro ⟨i, X⟩ ⟨_, _⟩ ⟨f⟩

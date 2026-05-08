@@ -64,7 +64,7 @@ theorem ComponentCompl.mem_supp_iff {v : V} {C : ComponentCompl G K} :
 theorem componentComplMk_mem (G : SimpleGraph V) {v : V} (vK : v ∉ K) : v ∈ G.componentComplMk vK :=
   ⟨vK, rfl⟩
 
-theorem componentComplMk_eq_of_adj (G : SimpleGraph V) {v w : V} (vK : v ∉ K) (wK : w ∉ K)
+private theorem componentComplMk_eq_of_adj (G : SimpleGraph V) {v w : V} (vK : v ∉ K) (wK : w ∉ K)
     (a : G.Adj v w) : G.componentComplMk vK = G.componentComplMk wK := by
   rw [ConnectedComponent.eq]
   apply Adj.reachable
@@ -81,7 +81,7 @@ namespace ComponentCompl
 /-- A `ComponentCompl` specialization of `Quot.lift`, where soundness has to be proved only
 for adjacent vertices.
 -/
-protected def lift {β : Sort*} (f : ∀ ⦃v⦄ (_ : v ∉ K), β)
+private protected def lift {β : Sort*} (f : ∀ ⦃v⦄ (_ : v ∉ K), β)
     (h : ∀ ⦃v w⦄ (hv : v ∉ K) (hw : w ∉ K), G.Adj v w → f hv = f hw) : G.ComponentCompl K → β :=
   ConnectedComponent.lift (fun vv => f vv.prop) fun v w p => by
     induction p with
@@ -98,14 +98,14 @@ protected theorem ind {β : G.ComponentCompl K → Prop}
 protected abbrev coeGraph (C : ComponentCompl G K) : SimpleGraph C :=
   G.induce (C : Set V)
 
-theorem coe_inj {C D : G.ComponentCompl K} : (C : Set V) = (D : Set V) ↔ C = D :=
+private theorem coe_inj {C D : G.ComponentCompl K} : (C : Set V) = (D : Set V) ↔ C = D :=
   SetLike.coe_set_eq
 
 @[simp]
 protected theorem nonempty (C : G.ComponentCompl K) : (C : Set V).Nonempty :=
   C.ind fun v vnK => ⟨v, vnK, rfl⟩
 
-protected theorem exists_eq_mk (C : G.ComponentCompl K) :
+private protected theorem exists_eq_mk (C : G.ComponentCompl K) :
     ∃ (v : _) (h : v ∉ K), G.componentComplMk h = C :=
   C.nonempty
 
@@ -113,7 +113,7 @@ protected theorem disjoint_right (C : G.ComponentCompl K) : Disjoint K C := by
   rw [Set.disjoint_iff]
   exact fun v ⟨vK, vC⟩ => vC.choose vK
 
-theorem notMem_of_mem {C : G.ComponentCompl K} {c : V} (cC : c ∈ C) : c ∉ K := fun cK =>
+private theorem notMem_of_mem {C : G.ComponentCompl K} {c : V} (cC : c ∈ C) : c ∉ K := fun cK =>
   Set.disjoint_iff.mp C.disjoint_right ⟨cK, cC⟩
 
 protected theorem pairwise_disjoint :
@@ -169,7 +169,7 @@ theorem hom_eq_iff_le (C : G.ComponentCompl L) (h : K ⊆ L) (D : G.ComponentCom
     C.hom h = D ↔ (C : Set V) ⊆ (D : Set V) :=
   ⟨fun h' => h' ▸ C.subset_hom h, C.ind fun _ vnL vD => (vD ⟨vnL, rfl⟩).choose_spec⟩
 
-theorem hom_eq_iff_not_disjoint (C : G.ComponentCompl L) (h : K ⊆ L) (D : G.ComponentCompl K) :
+private theorem hom_eq_iff_not_disjoint (C : G.ComponentCompl L) (h : K ⊆ L) (D : G.ComponentCompl K) :
     C.hom h = D ↔ ¬Disjoint (C : Set V) (D : Set V) := by
   rw [Set.not_disjoint_iff]
   constructor
@@ -195,7 +195,7 @@ theorem hom_mk {v : V} (vnL : v ∉ L) (h : K ⊆ L) :
     (G.componentComplMk vnL).hom h = G.componentComplMk (Set.notMem_subset h vnL) :=
   rfl
 
-theorem hom_infinite (C : G.ComponentCompl L) (h : K ⊆ L) (Cinf : (C : Set V).Infinite) :
+private theorem hom_infinite (C : G.ComponentCompl L) (h : K ⊆ L) (Cinf : (C : Set V).Infinite) :
     (C.hom h : Set V).Infinite :=
   Set.Infinite.mono (C.subset_hom h) Cinf
 
@@ -269,13 +269,13 @@ def componentComplFunctor : (Finset V)ᵒᵖ ⥤ Type u where
 protected def «end» :=
   (componentComplFunctor G).sections
 
-theorem end_hom_mk_of_mk {s} (sec : s ∈ G.end) {K L : (Finset V)ᵒᵖ} (h : L ⟶ K) {v : V}
+private theorem end_hom_mk_of_mk {s} (sec : s ∈ G.end) {K L : (Finset V)ᵒᵖ} (h : L ⟶ K) {v : V}
     (vnL : v ∉ L.unop) (hs : s L = G.componentComplMk vnL) :
     s K = G.componentComplMk (Set.notMem_subset (le_of_op_hom h : _ ⊆ _) vnL) := by
   rw [← sec h, hs]
   apply ComponentCompl.hom_mk _ (le_of_op_hom h : _ ⊆ _)
 
-theorem infinite_iff_in_eventualRange {K : (Finset V)ᵒᵖ} (C : G.componentComplFunctor.obj K) :
+private theorem infinite_iff_in_eventualRange {K : (Finset V)ᵒᵖ} (C : G.componentComplFunctor.obj K) :
     C.supp.Infinite ↔ C ∈ G.componentComplFunctor.eventualRange K := by
   simp only [C.infinite_iff_in_all_ranges, CategoryTheory.Functor.eventualRange, Set.mem_iInter,
     Set.mem_range, componentComplFunctor_map]

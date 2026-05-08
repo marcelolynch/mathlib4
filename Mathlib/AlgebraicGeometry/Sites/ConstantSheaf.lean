@@ -86,7 +86,7 @@ lemma isSheaf_fpqcTopology_continuousMapPresheaf :
 
 /-- `continuousMapPresheaf` is `U ↦ C(ConnectedComponents U, T)` if `T` is totally
 disconnected. -/
-def continuousMapPresheafEquivOfTotallyDisconnectedSpace [TotallyDisconnectedSpace T]
+private def continuousMapPresheafEquivOfTotallyDisconnectedSpace [TotallyDisconnectedSpace T]
     (U : Scheme.{u}) :
     (continuousMapPresheaf T).obj (.op U) ≃ C(ConnectedComponents U, T) where
   toFun f := ⟨f.continuous.connectedComponentsLift, f.continuous.connectedComponentsLift_continuous⟩
@@ -108,7 +108,7 @@ variable (A : Type v) [TopologicalSpace A] [AddCommGroup A] [IsTopologicalAddGro
 
 /-- `continuousMapPresheafAb` viewed as a type valued sheaf is isomorphic to
 `continuousMapPresheaf`. -/
-def continuousMapPresheafAbForgetIso :
+private def continuousMapPresheafAbForgetIso :
     continuousMapPresheafAb A ⋙ CategoryTheory.forget Ab ≅ continuousMapPresheaf A :=
   Iso.refl _
 

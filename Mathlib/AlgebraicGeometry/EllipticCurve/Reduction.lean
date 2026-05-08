@@ -221,7 +221,7 @@ noncomputable def valuation_Δ_aux (W : WeierstrassCurve K) :
       exact valuation_le_one (maximalIdeal R) r⟩
   else ⟨⊥, bot_le⟩
 
-lemma valuation_Δ_aux_eq_of_isIntegral (W : WeierstrassCurve K) [hW : IsIntegral R W] :
+private lemma valuation_Δ_aux_eq_of_isIntegral (W : WeierstrassCurve K) [hW : IsIntegral R W] :
     valuation_Δ_aux R W = valuation K (maximalIdeal R) W.Δ := by
   simp [valuation_Δ_aux, hW]
 

@@ -130,7 +130,7 @@ theorem mapGen_apply_apply_of_surjective
 /-- Given a ring congruence relation `c` on a semiring `M`, the order-preserving
 bijection between the set of ring congruence relations containing `c` and the
 ring congruence relations on the quotient of `M` by `c`. -/
-def correspondence {c : RingCon M} : Set.Ici c ≃o RingCon c.Quotient where
+private def correspondence {c : RingCon M} : Set.Ici c ≃o RingCon c.Quotient where
   toFun d := d.1.mapGen c.mk'
   invFun d := ⟨d.comap (mk' c), c.ker_mk'_eq.symm.trans_le <| comap_bot c.mk' ▸ comap_mono bot_le⟩
   left_inv d := by
@@ -414,7 +414,7 @@ on the quotient by `f`'s kernel has the same image as `f`. -/
 variable (c)
 
 /-- The **first isomorphism theorem for rings**. -/
-noncomputable def quotientKerEquivRange (f : M →+* P) :
+private noncomputable def quotientKerEquivRange (f : M →+* P) :
     (ker f).Quotient ≃+* f.range :=
   quotientKerEquivRangeS f
 

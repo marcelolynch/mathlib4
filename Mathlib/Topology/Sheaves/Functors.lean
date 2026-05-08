@@ -68,7 +68,7 @@ lemma pushforward_forget (f : X ⟶ Y) :
 /--
 Pushforward of sheaves is isomorphic (actually definitionally equal) to pushforward of presheaves.
 -/
-def pushforwardForgetIso (f : X ⟶ Y) :
+private def pushforwardForgetIso (f : X ⟶ Y) :
     pushforward C f ⋙ forget C Y ≅ forget C X ⋙ Presheaf.pushforward C f := Iso.refl _
 
 variable {C}
@@ -138,7 +138,7 @@ The pullback of a sheaf by an open embedding `f` is isomorphic to its naive pull
 `IsOpenEmbedding.sheafPullback`, i.e. to the composition by the functor `IsOpenMap.functor f`.
 Also, this is an isomorphism of functors.
 -/
-def sheafPullbackIso : Sheaf.pullback A f ≅ hf.sheafPullback A := by
+private def sheafPullbackIso : Sheaf.pullback A f ≅ hf.sheafPullback A := by
   refine Sheaf.pullbackIso A f ≪≫ NatIso.ofComponents (fun F ↦ ?_) (fun u ↦ ?_)
   · exact (presheafToSheaf (Opens.grothendieckTopology ↑X) A).mapIso
       (hf.isOpenMap.pullbackIso.app _) ≪≫

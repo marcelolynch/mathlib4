@@ -72,7 +72,7 @@ def sheafify : Sheaf (Type v) X :=
 sending each section to its germs.
 (This forms the unit of the adjunction.)
 -/
-def toSheafify : F ⟶ F.sheafify.1 where
+private def toSheafify : F ⟶ F.sheafify.1 where
   app U := ↾fun f ↦ ⟨fun x => F.germ _ x x.2 f, PrelocalPredicate.sheafifyOf
     ⟨f, fun x => rfl⟩⟩
   naturality U U' f := by
@@ -121,7 +121,7 @@ theorem stalkToFiber_injective (x : X) : Function.Injective (F.stalkToFiber x) :
 
 /-- The isomorphism between a stalk of the sheafification and the original stalk.
 -/
-def sheafifyStalkIso (x : X) : F.sheafify.presheaf.stalk x ≅ F.stalk x :=
+private def sheafifyStalkIso (x : X) : F.sheafify.presheaf.stalk x ≅ F.stalk x :=
   (Equiv.ofBijective _ ⟨stalkToFiber_injective _ _, stalkToFiber_surjective _ _⟩).toIso
 
 -- PROJECT functoriality, and that sheafification is the left adjoint of the forgetful functor.

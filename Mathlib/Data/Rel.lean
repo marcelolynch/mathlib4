@@ -341,7 +341,7 @@ lemma image_core_gc : GaloisConnection R.image R.core := fun _ _ ↦ image_subse
 
 variable (R s) in
 /-- Restrict the domain of a relation to a subtype. -/
-def restrictDomain : SetRel s β := {(a, b) | ↑a ~[R] b}
+private def restrictDomain : SetRel s β := {(a, b) | ↑a ~[R] b}
 
 variable {R R₁ R₂ : SetRel α α} {S : SetRel β β} {a b c : α}
 

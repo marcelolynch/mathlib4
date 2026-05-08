@@ -975,7 +975,7 @@ def subtypePermOfSupport (c : Perm α) : Perm c.support :=
   subtypePerm c fun _ : α => apply_mem_support
 
 /-- Restrict a permutation to a Finset containing its support -/
-def subtypePerm_of_support_le (c : Perm α) {s : Finset α}
+private def subtypePerm_of_support_le (c : Perm α) {s : Finset α}
     (hcs : c.support ⊆ s) : Equiv.Perm s :=
   subtypePerm c (isInvariant_of_support_le hcs)
 

@@ -232,7 +232,7 @@ theorem tendsto_iff_ptendsto_univ (l₁ : Filter α) (l₂ : Filter β) (f : α 
 
 /-- Inverse map of a filter under a partial function. One generalization of `Filter.comap` to
 partial functions. -/
-def pcomap' (f : α →. β) (l : Filter β) : Filter α :=
+private def pcomap' (f : α →. β) (l : Filter β) : Filter α :=
   Filter.rcomap' f.graph' l
 
 /-- Generic "limit of a partial function" predicate. `PTendsto' r l₁ l₂` asserts that for every

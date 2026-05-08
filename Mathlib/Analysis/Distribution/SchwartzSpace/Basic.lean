@@ -1180,7 +1180,7 @@ theorem toBoundedContinuousFunction_apply (f : 𝓢(E, F)) (x : E) :
   rfl
 
 /-- Schwartz functions as continuous functions -/
-def toContinuousMap (f : 𝓢(E, F)) : C(E, F) :=
+private def toContinuousMap (f : 𝓢(E, F)) : C(E, F) :=
   f.toBoundedContinuousFunction.toContinuousMap
 
 theorem norm_toBoundedContinuousFunction_le (f : 𝓢(E, F)) :

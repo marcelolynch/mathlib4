@@ -299,7 +299,7 @@ def costructuredArrowULiftYonedaEquivalence (F : Cᵒᵖ ⥤ Type (max w v)) :
 
 /-- The equivalence of categories `costructuredArrowULiftYonedaEquivalence`
 commutes with the projections. -/
-def costructuredArrowULiftYonedaEquivalenceFunctorCompProjIso (F : Cᵒᵖ ⥤ Type (max w v)) :
+private def costructuredArrowULiftYonedaEquivalenceFunctorCompProjIso (F : Cᵒᵖ ⥤ Type (max w v)) :
     (costructuredArrowULiftYonedaEquivalence.{w} F).functor ⋙ CostructuredArrow.proj _ _ ≅
       (π F).leftOp :=
   Iso.refl _
@@ -345,7 +345,7 @@ def Elements.initial (A : C) : (yoneda.obj A).Elements :=
 
 /-- Show that `Elements.initial A` is initial in the category of elements for the `yoneda` functor.
 -/
-def Elements.isInitial (A : C) : Limits.IsInitial (Elements.initial A) :=
+private def Elements.isInitial (A : C) : Limits.IsInitial (Elements.initial A) :=
   isInitialOfRepresentableBy (.yoneda A)
 
 end Functor

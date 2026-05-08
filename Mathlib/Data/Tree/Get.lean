@@ -51,7 +51,7 @@ def get : PosNum → Tree α → Option α
 
 /-- Retrieves an element from the tree, or the provided default value
 if the index is invalid. See `Tree.get`. -/
-def getOrElse (n : PosNum) (t : Tree α) (v : α) : α :=
+private def getOrElse (n : PosNum) (t : Tree α) (v : α) : α :=
   (t.get n).getD v
 
 end Tree

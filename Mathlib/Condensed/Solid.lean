@@ -62,7 +62,7 @@ instance : (profiniteSolid R).IsRightKanExtension (profiniteSolidCounit R) := by
 /-- The functor `Profinite.{u} ⥤ CondensedMod.{u} R` is a pointwise
 right Kan extension of `finFree R : FintypeCat.{u} ⥤ CondensedMod.{u} R`
 along `FintypeCat.toProfinite`. -/
-def profiniteSolidIsPointwiseRightKanExtension :
+private def profiniteSolidIsPointwiseRightKanExtension :
     (Functor.RightExtension.mk _ (profiniteSolidCounit R)).IsPointwiseRightKanExtension :=
   Functor.isPointwiseRightKanExtensionOfIsRightKanExtension _ _
 

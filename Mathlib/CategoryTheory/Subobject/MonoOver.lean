@@ -194,7 +194,7 @@ theorem lift_obj_arrow {Y : D} (F : Over Y ⥤ Over X)
 /-- Monomorphisms over an object `f : Over A` in an over category
 are equivalent to monomorphisms over the source of `f`.
 -/
-def slice {A : C} {f : Over A}
+private def slice {A : C} {f : Over A}
     (h₁ : ∀ (g : MonoOver f),
       Mono ((Over.iteratedSliceEquiv f).functor.obj ((forget f).obj g)).hom)
     (h₂ : ∀ (g : MonoOver f.left),
@@ -483,7 +483,7 @@ instance reflective : Reflective (forget X) where
 /-- Forgetting that a monomorphism over `X` is a monomorphism, then taking its image,
 is the identity functor.
 -/
-def forgetImage : forget X ⋙ image ≅ 𝟭 (MonoOver X) :=
+private def forgetImage : forget X ⋙ image ≅ 𝟭 (MonoOver X) :=
   asIso (Adjunction.counit imageForgetAdj)
 
 end Image

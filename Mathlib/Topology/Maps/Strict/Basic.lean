@@ -65,7 +65,7 @@ theorem isStrictMap_iff_isHomeomorph_quotientKerEquivRange :
 
 /-- The homeomorphism `Quotient (Setoid.ker f) ≃ₜ Set.range f` given by a strict map `f`.
 This is the homeomorphism obtained from the first isomorphism theorem. -/
-noncomputable def Homeomorph.quotientKerEquivRange (hf : IsStrictMap f) :
+private noncomputable def Homeomorph.quotientKerEquivRange (hf : IsStrictMap f) :
     Quotient (Setoid.ker f) ≃ₜ Set.range f :=
   (isStrictMap_iff_isHomeomorph_quotientKerEquivRange.mp hf).homeomorph
 

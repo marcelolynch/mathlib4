@@ -291,7 +291,7 @@ lemma map_injective {φ : R →+* A} (hφ : Function.Injective φ) :
   ext <;> apply_fun _ using hφ <;> assumption
 
 /-- The map over a ring homomorphism of a change of variables is a group homomorphism. -/
-def mapHom : VariableChange R →* VariableChange A where
+private def mapHom : VariableChange R →* VariableChange A where
   toFun C := C.map φ
   map_one' := by
     simp only [one_def, map]

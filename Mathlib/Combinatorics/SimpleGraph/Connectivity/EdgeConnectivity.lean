@@ -40,13 +40,13 @@ def IsEdgeConnected : Prop := ∀ u v, G.IsEdgeReachable k u v
 @[refl, simp]
 protected lemma IsEdgeReachable.rfl {u : V} : G.IsEdgeReachable k u u := fun _ _ ↦ .rfl
 
-protected lemma IsEdgeReachable.refl (u : V) : G.IsEdgeReachable k u u := .rfl
+private protected lemma IsEdgeReachable.refl (u : V) : G.IsEdgeReachable k u u := .rfl
 
 @[symm]
 lemma IsEdgeReachable.symm (h : G.IsEdgeReachable k u v) : G.IsEdgeReachable k v u :=
   fun _ hk ↦ (h hk).symm
 
-lemma isEdgeReachable_comm : G.IsEdgeReachable k u v ↔ G.IsEdgeReachable k v u :=
+private lemma isEdgeReachable_comm : G.IsEdgeReachable k u v ↔ G.IsEdgeReachable k v u :=
   ⟨.symm, .symm⟩
 
 @[trans]
@@ -88,7 +88,7 @@ lemma IsEdgeConnected.of_subsingleton [Subsingleton V] : G.IsEdgeConnected k :=
 lemma IsEdgeConnected.preconnected (hk : k ≠ 0) (h : G.IsEdgeConnected k) : G.Preconnected :=
   fun u v ↦ (h u v).reachable hk
 
-lemma IsEdgeConnected.connected [Nonempty V] (hk : k ≠ 0) (h : G.IsEdgeConnected k) :
+private lemma IsEdgeConnected.connected [Nonempty V] (hk : k ≠ 0) (h : G.IsEdgeConnected k) :
     G.Connected where
   preconnected := h.preconnected hk
 
@@ -100,7 +100,7 @@ lemma IsEdgeReachable.le_degree [Fintype (G.neighborSet u)] (h : G.IsEdgeReachab
     @h (G.incidenceSet u) (by simpa [← Set.coe_fintypeCard, ENat.coe_lt_coe]) |>.exists_isPath
   simpa using w.adj_snd <| by grind [Walk.nil_iff_length_eq, Walk.eq_of_length_eq_zero]
 
-lemma IsEdgeConnected.le_degree [Fintype (G.neighborSet u)] [Nontrivial V]
+private lemma IsEdgeConnected.le_degree [Fintype (G.neighborSet u)] [Nontrivial V]
     (h : G.IsEdgeConnected k) : k ≤ G.degree u := by
   obtain ⟨v, hv⟩ := exists_ne u
   exact (h u v).le_degree hv.symm

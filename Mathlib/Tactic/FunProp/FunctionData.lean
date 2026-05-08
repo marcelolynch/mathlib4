@@ -55,14 +55,14 @@ def FunctionData.isConstantFun (f : FunctionData) : Bool :=
   ((f.mainArgs.size = 0) && !(f.fn.containsFVar f.mainVar.fvarId!))
 
 /-- Domain type of `f`. -/
-def FunctionData.domainType (f : FunctionData) : MetaM Expr :=
+private def FunctionData.domainType (f : FunctionData) : MetaM Expr :=
   withLCtx f.lctx f.insts do
     inferType f.mainVar
 
 /-- Is head function of `f` a constant?
 
 If the head of `f` is a projection return the name of corresponding projection function. -/
-def FunctionData.getFnConstName? (f : FunctionData) : MetaM (Option Name) := do
+private def FunctionData.getFnConstName? (f : FunctionData) : MetaM (Option Name) := do
 
   match f.fn with
   | .const n _ => return n

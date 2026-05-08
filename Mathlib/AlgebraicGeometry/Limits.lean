@@ -47,7 +47,7 @@ attribute [local instance] Opposite.small
 namespace AlgebraicGeometry
 
 /-- `Spec ℤ` is the terminal object in the category of schemes. -/
-noncomputable def specZIsTerminal : IsTerminal (Spec <| .of ℤ) :=
+private noncomputable def specZIsTerminal : IsTerminal (Spec <| .of ℤ) :=
   @IsTerminal.isTerminalObj _ _ _ _ Scheme.Spec _ inferInstance
     (terminalOpOfInitial CommRingCat.zIsInitial)
 

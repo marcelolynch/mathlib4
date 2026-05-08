@@ -108,7 +108,7 @@ def Skeletal.monoidHom [F.Monoidal] (hC : Skeletal C) (hD : Skeletal D) :
 
 /-- A monoidal functor between monoidal categories induces a monoid homomorphism between
 the skeleta. -/
-noncomputable def Skeleton.monoidHom [F.Monoidal] : Skeleton C →* Skeleton D :=
+private noncomputable def Skeleton.monoidHom [F.Monoidal] : Skeleton C →* Skeleton D :=
   (skeleton_skeletal C).monoidHom F.mapSkeleton (skeleton_skeletal D)
 
 /-- A monoidal equivalence between skeletal monoidal categories induces a monoid isomorphism. -/

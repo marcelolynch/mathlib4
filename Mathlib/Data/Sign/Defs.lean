@@ -116,7 +116,7 @@ instance : HasDistribNeg SignType where
   mul_neg := by rintro ⟨_⟩ ⟨_⟩ <;> rfl
 
 /-- `SignType` is equivalent to `Fin 3`. -/
-def fin3Equiv : SignType ≃* Fin 3 where
+private def fin3Equiv : SignType ≃* Fin 3 where
   toFun a :=
     match a with
     | 0 => ⟨0, by simp⟩

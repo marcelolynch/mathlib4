@@ -295,21 +295,21 @@ theorem card_interedges_div_card (s t : Finset α) :
 theorem mem_interedges_iff {x : α × α} : x ∈ G.interedges s t ↔ x.1 ∈ s ∧ x.2 ∈ t ∧ G.Adj x.1 x.2 :=
   Rel.mem_interedges_iff
 
-theorem mk_mem_interedges_iff : (a, b) ∈ G.interedges s t ↔ a ∈ s ∧ b ∈ t ∧ G.Adj a b :=
+private theorem mk_mem_interedges_iff : (a, b) ∈ G.interedges s t ↔ a ∈ s ∧ b ∈ t ∧ G.Adj a b :=
   Rel.mk_mem_interedges_iff
 
 @[simp]
 theorem interedges_empty_left (t : Finset α) : G.interedges ∅ t = ∅ :=
   Rel.interedges_empty_left _
 
-theorem interedges_mono : s₂ ⊆ s₁ → t₂ ⊆ t₁ → G.interedges s₂ t₂ ⊆ G.interedges s₁ t₁ :=
+private theorem interedges_mono : s₂ ⊆ s₁ → t₂ ⊆ t₁ → G.interedges s₂ t₂ ⊆ G.interedges s₁ t₁ :=
   Rel.interedges_mono
 
-theorem interedges_disjoint_left (hs : Disjoint s₁ s₂) (t : Finset α) :
+private theorem interedges_disjoint_left (hs : Disjoint s₁ s₂) (t : Finset α) :
     Disjoint (G.interedges s₁ t) (G.interedges s₂ t) :=
   Rel.interedges_disjoint_left _ hs _
 
-theorem interedges_disjoint_right (s : Finset α) (ht : Disjoint t₁ t₂) :
+private theorem interedges_disjoint_right (s : Finset α) (ht : Disjoint t₁ t₂) :
     Disjoint (G.interedges s t₁) (G.interedges s t₂) :=
   Rel.interedges_disjoint_right _ _ ht
 
@@ -317,15 +317,15 @@ section DecidableEq
 
 variable [DecidableEq α]
 
-theorem interedges_biUnion_left (s : Finset ι) (t : Finset α) (f : ι → Finset α) :
+private theorem interedges_biUnion_left (s : Finset ι) (t : Finset α) (f : ι → Finset α) :
     G.interedges (s.biUnion f) t = s.biUnion fun a ↦ G.interedges (f a) t :=
   Rel.interedges_biUnion_left _ _ _ _
 
-theorem interedges_biUnion_right (s : Finset α) (t : Finset ι) (f : ι → Finset α) :
+private theorem interedges_biUnion_right (s : Finset α) (t : Finset ι) (f : ι → Finset α) :
     G.interedges s (t.biUnion f) = t.biUnion fun b ↦ G.interedges s (f b) :=
   Rel.interedges_biUnion_right _ _ _ _
 
-theorem interedges_biUnion (s : Finset ι) (t : Finset κ) (f : ι → Finset α) (g : κ → Finset α) :
+private theorem interedges_biUnion (s : Finset ι) (t : Finset κ) (f : ι → Finset α) (g : κ → Finset α) :
     G.interedges (s.biUnion f) (t.biUnion g) =
       (s ×ˢ t).biUnion fun ab ↦ G.interedges (f ab.1) (g ab.2) :=
   Rel.interedges_biUnion _ _ _ _ _
@@ -340,7 +340,7 @@ theorem card_interedges_add_card_interedges_compl (h : Disjoint s t) :
   rw [this, ← card_union_of_disjoint, filter_union_filter_not_eq]
   exact disjoint_filter.2 fun _ _ ↦ Classical.not_not.2
 
-theorem edgeDensity_add_edgeDensity_compl (hs : s.Nonempty) (ht : t.Nonempty) (h : Disjoint s t) :
+private theorem edgeDensity_add_edgeDensity_compl (hs : s.Nonempty) (ht : t.Nonempty) (h : Disjoint s t) :
     G.edgeDensity s t + Gᶜ.edgeDensity s t = 1 := by
   rw [edgeDensity_def, edgeDensity_def, ← add_div, div_eq_one_iff_eq]
   · exact mod_cast card_interedges_add_card_interedges_compl _ h
@@ -348,7 +348,7 @@ theorem edgeDensity_add_edgeDensity_compl (hs : s.Nonempty) (ht : t.Nonempty) (h
 
 end DecidableEq
 
-theorem card_interedges_le_mul (s t : Finset α) : #(G.interedges s t) ≤ #s * #t :=
+private theorem card_interedges_le_mul (s t : Finset α) : #(G.interedges s t) ≤ #s * #t :=
   Rel.card_interedges_le_mul _ _ _
 
 theorem edgeDensity_nonneg (s t : Finset α) : 0 ≤ G.edgeDensity s t :=
@@ -369,7 +369,7 @@ theorem edgeDensity_empty_right (s : Finset α) : G.edgeDensity s ∅ = 0 :=
 theorem swap_mem_interedges_iff {x : α × α} : x.swap ∈ G.interedges s t ↔ x ∈ G.interedges t s :=
   Rel.swap_mem_interedges_iff G.symm
 
-theorem mk_mem_interedges_comm : (a, b) ∈ G.interedges s t ↔ (b, a) ∈ G.interedges t s :=
+private theorem mk_mem_interedges_comm : (a, b) ∈ G.interedges s t ↔ (b, a) ∈ G.interedges t s :=
   Rel.mk_mem_interedges_comm G.symm
 
 theorem edgeDensity_comm (s t : Finset α) : G.edgeDensity s t = G.edgeDensity t s :=

@@ -270,7 +270,7 @@ theorem right_triangle_hom (e : a ≌ b) :
   congrArg Iso.hom e.right_triangle
 
 /-- Construct an adjoint equivalence from 2-isomorphisms by upgrading `ε` to a counit. -/
-def mkOfAdjointifyCounit (η : 𝟙 a ≅ f ≫ g) (ε : g ≫ f ≅ 𝟙 b) : a ≌ b where
+private def mkOfAdjointifyCounit (η : 𝟙 a ≅ f ≫ g) (ε : g ≫ f ≅ 𝟙 b) : a ≌ b where
   hom := f
   inv := g
   unit := η

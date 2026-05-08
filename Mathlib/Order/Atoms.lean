@@ -704,7 +704,7 @@ Representation theorem for complete atomic boolean algebras:
 For a complete atomic Boolean algebra `α`, `toSetOfIsAtom` is an order isomorphism
 between `α` and the set of subsets of its atoms.
 -/
-def toSetOfIsAtom {α} [CompleteAtomicBooleanAlgebra α] : α ≃o (Set {a : α // IsAtom a}) where
+private def toSetOfIsAtom {α} [CompleteAtomicBooleanAlgebra α] : α ≃o (Set {a : α // IsAtom a}) where
   toFun A := {a | a ≤ A}
   invFun S := sSup (Subtype.val '' S)
   left_inv A := by simp [Subtype.coe_image]
@@ -863,7 +863,7 @@ def equivBool {α} [DecidableEq α] [LE α] [BoundedOrder α] [IsSimpleOrder α]
   right_inv x := by cases x <;> simp [bot_ne_top]
 
 /-- Every simple lattice over a partial order is order-isomorphic to `Bool`. -/
-def orderIsoBool : α ≃o Bool :=
+private def orderIsoBool : α ≃o Bool :=
   { equivBool with
     map_rel_iff' := @fun a b => by
       rcases eq_bot_or_eq_top a with (rfl | rfl)

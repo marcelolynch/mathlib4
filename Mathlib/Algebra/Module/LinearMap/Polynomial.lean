@@ -285,7 +285,7 @@ lemma polyCharpolyAux_map_eq_toMatrix_charpoly (x : L) :
   rfl
 
 open LinearMap in
-lemma polyCharpolyAux_eval_eq_toMatrix_charpoly_coeff (x : L) (i : ℕ) :
+private lemma polyCharpolyAux_eval_eq_toMatrix_charpoly_coeff (x : L) (i : ℕ) :
     MvPolynomial.eval (b.repr x) ((polyCharpolyAux φ b bₘ).coeff i) =
       (toMatrix bₘ bₘ (φ x)).charpoly.coeff i := by
   simp [← polyCharpolyAux_map_eq_toMatrix_charpoly φ b bₘ x]

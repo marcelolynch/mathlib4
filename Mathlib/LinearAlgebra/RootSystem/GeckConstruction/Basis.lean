@@ -96,7 +96,7 @@ variable [LieAlgebra.IsKilling K (lieAlgebra b)]
 open LieAlgebra.IsKilling in
 /-- Up to equivalence, `LieAlgebra.IsKilling.rootSystem` is left inverse to
 `RootPairing.GeckConstruction.lieAlgebra`. -/
-def equivRootSystem [IsAlgClosed K] :
+private def equivRootSystem [IsAlgClosed K] :
     P.Equiv (rootSystem (basis b).cartan) :=
   b.equivOfCartanMatrixEq _ (basis b).baseSupportEquiv <| by simp [(basis b).cartanMatrix_base_eq]
 

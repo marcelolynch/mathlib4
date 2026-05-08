@@ -26,7 +26,7 @@ open Lean Meta Elab Tactic Rfl
 This tactic applies to a goal whose target has the form `x ~ x`, where `~` is a reflexive
 relation, that is, a relation which has a reflexive lemma tagged with the attribute `@[refl]`.
 -/
-def rflTac : TacticM Unit :=
+private def rflTac : TacticM Unit :=
   withMainContext do liftMetaFinishingTactic (·.applyRfl)
 
 /-- If `e` is the form `@R .. x y`, where `R` is a reflexive

@@ -91,7 +91,7 @@ instance {α : TypeVec n} [Inhabited q.P.A] [∀ i : Fin2 n, Inhabited (α i)] :
   ⟨Quot.mk _ default⟩
 
 /-- maps every element of the W type to a canonical representative -/
-def mRepr {α : TypeVec n} : q.P.M α → q.P.M α :=
+private def mRepr {α : TypeVec n} : q.P.M α → q.P.M α :=
   corecF (abs ∘ M.dest q.P)
 
 /-- the map function for the functor `Cofix F` -/
@@ -148,7 +148,7 @@ def Cofix.repr {α} : Cofix F α → q.P.M α :=
   M.corec _ <| q.repr ∘ Cofix.dest
 
 /-- Corecursor for `Cofix F` -/
-def Cofix.corec'₁ {α : TypeVec n} {β : Type u} (g : ∀ {X}, (β → X) → F (α.append1 X)) (x : β) :
+private def Cofix.corec'₁ {α : TypeVec n} {β : Type u} (g : ∀ {X}, (β → X) → F (α.append1 X)) (x : β) :
     Cofix F α :=
   Cofix.corec (fun _ => g id) x
 

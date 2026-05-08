@@ -511,7 +511,7 @@ noncomputable def homologyFunctorIso [CategoryWithHomology C] :
 
 /-- The natural isomorphism `K.homology j ≅ (K.sc' i j k).homology`
 for all homological complexes `K` when `c.prev j = i` and `c.next j = k`. -/
-noncomputable def homologyFunctorIso' [CategoryWithHomology C]
+private noncomputable def homologyFunctorIso' [CategoryWithHomology C]
     (hi : c.prev j = i) (hk : c.next j = k) :
     homologyFunctor C c j ≅
       shortComplexFunctor' C c i j k ⋙ ShortComplex.homologyFunctor C :=

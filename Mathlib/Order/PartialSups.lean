@@ -116,7 +116,7 @@ lemma partialSups_monotone (f : ι → α) :
 
 /-- `partialSups` forms a Galois insertion with the coercion from monotone functions to functions.
 -/
-def partialSups.gi :
+private def partialSups.gi :
     GaloisInsertion (partialSups : (ι → α) → ι →o α) (↑) where
   choice f h :=
     ⟨f, by convert (partialSups f).monotone using 1; exact (le_partialSups f).antisymm h⟩

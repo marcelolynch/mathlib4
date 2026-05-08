@@ -22,7 +22,7 @@ open Lean Elab Tactic Meta
 namespace Qq
 
 /-- If `e` has type `Sort u` for some level `u`, return `u` and `e : Q(Sort u)`. -/
-def getLevelQ (e : Expr) : MetaM (Σ u : Lean.Level, Q(Sort u)) := do
+private def getLevelQ (e : Expr) : MetaM (Σ u : Lean.Level, Q(Sort u)) := do
   return ⟨← getLevel e, e⟩
 
 /-- If `e` has type `Type u` for some level `u`, return `u` and `e : Q(Type u)`. -/

@@ -384,7 +384,7 @@ lemma ofIsReflexivePair_map_right (f g : A ⟶ B) [IsReflexivePair f g] :
 
 /-- The natural isomorphism between the diagram obtained by forgetting the reflexion of
 `ofIsReflexivePair f g` and the original parallel pair. -/
-noncomputable def inclusionWalkingReflexivePairOfIsReflexivePairIso
+private noncomputable def inclusionWalkingReflexivePairOfIsReflexivePairIso
     (f g : A ⟶ B) [IsReflexivePair f g] :
     WalkingParallelPair.inclusionWalkingReflexivePair ⋙ (ofIsReflexivePair f g) ≅
       parallelPair f g :=

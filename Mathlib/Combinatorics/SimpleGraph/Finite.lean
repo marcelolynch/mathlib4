@@ -125,7 +125,7 @@ theorem edgeFinset_card : #G.edgeFinset = Fintype.card G.edgeSet :=
 theorem card_edgeSet : Fintype.card G.edgeSet = #G.edgeFinset :=
   .symm <| Set.toFinset_card _
 
-theorem edgeSet_univ_card : #(univ : Finset G.edgeSet) = #G.edgeFinset := by
+private theorem edgeSet_univ_card : #(univ : Finset G.edgeSet) = #G.edgeFinset := by
   simp
 
 variable [Fintype V]
@@ -183,7 +183,7 @@ theorem notMem_neighborFinset_self : v ∉ G.neighborFinset v := by simp
 theorem neighborFinset_disjoint_singleton : Disjoint (G.neighborFinset v) {v} :=
   Finset.disjoint_singleton_right.mpr <| notMem_neighborFinset_self _ _
 
-theorem singleton_disjoint_neighborFinset : Disjoint {v} (G.neighborFinset v) :=
+private theorem singleton_disjoint_neighborFinset : Disjoint {v} (G.neighborFinset v) :=
   Finset.disjoint_singleton_left.mpr <| notMem_neighborFinset_self _ _
 
 @[simp] lemma neighborFinset_eq_empty : G.neighborFinset v = ∅ ↔ G.IsIsolated v := by
@@ -208,7 +208,7 @@ theorem card_neighborSet_eq_degree : Fintype.card (G.neighborSet v) = G.degree v
   (Set.toFinset_card _).symm
 
 lemma degree_eq_zero : G.degree v = 0 ↔ G.IsIsolated v := by simp [← card_neighborFinset_eq_degree]
-lemma degree_pos : 0 < G.degree v ↔ ¬ G.IsIsolated v := by simp [← card_neighborFinset_eq_degree]
+private lemma degree_pos : 0 < G.degree v ↔ ¬ G.IsIsolated v := by simp [← card_neighborFinset_eq_degree]
 
 protected alias ⟨IsIsolated.of_degree_eq_zero, IsIsolated.degree_eq_zero⟩ := degree_eq_zero
 
@@ -226,7 +226,7 @@ theorem Adj.degree_pos_left {w : V} (h : G.Adj v w) : 0 < G.degree v :=
   G.degree_pos_iff_nonempty.mpr ⟨_, h⟩
 
 variable {G v} in
-theorem Adj.degree_pos_right {w : V} (h : G.Adj w v) : 0 < G.degree v :=
+private theorem Adj.degree_pos_right {w : V} (h : G.Adj w v) : 0 < G.degree v :=
   h.symm.degree_pos_left
 
 theorem degree_pos_iff_mem_support : 0 < G.degree v ↔ v ∈ G.support := by
@@ -246,7 +246,7 @@ theorem degree_eq_one_iff_existsUnique_adj {G : SimpleGraph V} {v : V} [Fintype 
   rw [degree, Finset.card_eq_one, Finset.singleton_iff_unique_mem]
   simp only [mem_neighborFinset]
 
-theorem nontrivial_of_degree_ne_zero {G : SimpleGraph V} {v : V} [Fintype (G.neighborSet v)]
+private theorem nontrivial_of_degree_ne_zero {G : SimpleGraph V} {v : V} [Fintype (G.neighborSet v)]
     (h : G.degree v ≠ 0) : Nontrivial V := by
   by_contra!
   simp_all [degree_eq_zero_of_subsingleton]
@@ -507,11 +507,11 @@ theorem card_commonNeighbors_le_degree_left [DecidableRel G.Adj] (v w : V) :
   rw [← card_neighborSet_eq_degree]
   exact Set.card_le_card Set.inter_subset_left
 
-theorem card_commonNeighbors_le_degree_right [DecidableRel G.Adj] (v w : V) :
+private theorem card_commonNeighbors_le_degree_right [DecidableRel G.Adj] (v w : V) :
     Fintype.card (G.commonNeighbors v w) ≤ G.degree w := by
   simp_rw [commonNeighbors_symm _ v w, card_commonNeighbors_le_degree_left]
 
-theorem card_commonNeighbors_lt_card_verts [DecidableRel G.Adj] (v w : V) :
+private theorem card_commonNeighbors_lt_card_verts [DecidableRel G.Adj] (v w : V) :
     Fintype.card (G.commonNeighbors v w) < Fintype.card V :=
   Nat.lt_of_le_of_lt (G.card_commonNeighbors_le_degree_left _ _) (G.degree_lt_card_verts v)
 
@@ -549,12 +549,12 @@ theorem card_edgeFinset_eq (f : G ≃g G') [Fintype G.edgeSet] [Fintype G'.edgeS
 
 variable [Fintype V] [DecidableRel G.Adj] [Fintype W] [DecidableRel G'.Adj]
 
-theorem minDegree_eq (f : G ≃g G') : G.minDegree = G'.minDegree := by
+private theorem minDegree_eq (f : G ≃g G') : G.minDegree = G'.minDegree := by
   classical
   have : (G'.degree ·) ∘ f = (G.degree ·) := funext (f.degree_eq ·)
   rw [minDegree, minDegree, ← this, ← image_image, Finset.image_univ_of_surjective f.surjective]
 
-theorem maxDegree_eq (f : G ≃g G') : G.maxDegree = G'.maxDegree := by
+private theorem maxDegree_eq (f : G ≃g G') : G.maxDegree = G'.maxDegree := by
   classical
   have : (G'.degree ·) ∘ f = (G.degree ·) := funext (f.degree_eq ·)
   rw [maxDegree, maxDegree, ← this, ← image_image, Finset.image_univ_of_surjective f.surjective]
@@ -591,7 +591,7 @@ theorem card_edgeFinset_induce_of_support_subset (h : G.support ⊆ s) :
     #(G.induce s).edgeFinset = #G.edgeFinset := by
   rw [← map_edgeFinset_induce_of_support_subset h, card_map]
 
-theorem card_edgeFinset_induce_support :
+private theorem card_edgeFinset_induce_support :
     #(G.induce G.support).edgeFinset = #G.edgeFinset :=
   card_edgeFinset_induce_of_support_subset subset_rfl
 
@@ -636,7 +636,7 @@ theorem edgeFinset_map (f : V ↪ W) (G : SimpleGraph V) [DecidableRel G.Adj] :
   push_cast
   exact G.edgeSet_map f
 
-theorem card_edgeFinset_map (f : V ↪ W) (G : SimpleGraph V) [DecidableRel G.Adj] :
+private theorem card_edgeFinset_map (f : V ↪ W) (G : SimpleGraph V) [DecidableRel G.Adj] :
     #(G.map f).edgeFinset = #G.edgeFinset := by
   rw [edgeFinset_map]
   exact G.edgeFinset.card_map f.sym2Map

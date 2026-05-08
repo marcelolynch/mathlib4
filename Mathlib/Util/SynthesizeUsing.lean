@@ -60,7 +60,7 @@ let (gs, e) ← synthesizeUsingTactic ty (← `(tactic| congr!))
 The tactic `tac` is allowed to leave goals open, and these remain as metavariables in the
 returned expression.
 -/
-def synthesizeUsingTactic {u : Level} (type : Q(Sort u)) (tac : Syntax) :
+private def synthesizeUsingTactic {u : Level} (type : Q(Sort u)) (tac : Syntax) :
     MetaM (List MVarId × Q($type)) := do
   synthesizeUsing type (do evalTactic tac)
 

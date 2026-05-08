@@ -150,7 +150,7 @@ noncomputable def dHomologyData
 /-- The homology of the short complex
 `E^{n-1}(f₅, f₆, f₇) ⟶ E^{n}(f₃, f₄, f₅) ⟶ E^{n+1}(f₁, f₂, f₃)` identifies to
 `E^n(f₂ ≫ f₃, f₄, f₅ ≫ f₆)`. -/
-noncomputable def dHomologyIso
+private noncomputable def dHomologyIso
     (hn₁ : n₀ + 1 = n₁ := by lia) (hn₂ : n₁ + 1 = n₂ := by lia)
     (hn₃ : n₂ + 1 = n₃ := by lia) (hn₄ : n₃ + 1 = n₄ := by lia) :
     (X.dShortComplex f₁ f₂ f₃ f₄ f₅ f₆ f₇ n₀ n₁ n₂ n₃ n₄).homology ≅

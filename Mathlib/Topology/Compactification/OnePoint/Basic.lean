@@ -434,7 +434,7 @@ def continuousMapMkNat {Y : Type*} [TopologicalSpace Y]
 Continuous maps out of the one point compactification of `ℕ` to a Hausdorff space `Y` correspond
 bijectively to convergent sequences in `Y`.
 -/
-noncomputable def continuousMapNatEquiv (Y : Type*) [TopologicalSpace Y] [T2Space Y] :
+private noncomputable def continuousMapNatEquiv (Y : Type*) [TopologicalSpace Y] [T2Space Y] :
     C(OnePoint ℕ, Y) ≃ { f : ℕ → Y // ∃ L, Tendsto (f ·) atTop (𝓝 L) } := by
   refine (continuousMapDiscreteEquiv ℕ Y).trans {
     toFun := fun ⟨f, hf⟩ ↦ ⟨f, by rwa [← Nat.cofinite_eq_atTop]⟩

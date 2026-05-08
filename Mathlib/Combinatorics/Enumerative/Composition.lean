@@ -661,7 +661,7 @@ def recOnSingleAppend {motive : ∀ n, Composition n → Sort*} {n : ℕ} (c : C
 /-- Induction (recursion) principle on `c : Composition _`
 that corresponds to the reverse induction on the list of blocks of `c`. -/
 @[elab_as_elim]
-def recOnAppendSingle {motive : ∀ n, Composition n → Sort*} {n : ℕ} (c : Composition n)
+private def recOnAppendSingle {motive : ∀ n, Composition n → Sort*} {n : ℕ} (c : Composition n)
     (zero : motive 0 (ones 0))
     (append_single : ∀ k n c, motive n c →
       motive (n + (k + 1)) (append c (single (k + 1) k.succ_pos))) :

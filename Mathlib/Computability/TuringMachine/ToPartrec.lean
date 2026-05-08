@@ -512,7 +512,7 @@ theorem K'.elim_main (a b c d) : K'.elim a b c d K'.main = a := rfl
 
 theorem K'.elim_rev (a b c d) : K'.elim a b c d K'.rev = b := rfl
 
-theorem K'.elim_aux (a b c d) : K'.elim a b c d K'.aux = c := rfl
+private theorem K'.elim_aux (a b c d) : K'.elim a b c d K'.aux = c := rfl
 
 theorem K'.elim_stack (a b c d) : K'.elim a b c d K'.stack = d := rfl
 

@@ -267,7 +267,7 @@ def quotientPathsTo : Quotient (pathsHomRel C) ⥤ C :=
 
 /-- The canonical quotient of the path category of a category
 is equivalent to the original category. -/
-def quotientPathsEquiv : Quotient (pathsHomRel C) ≌ C where
+private def quotientPathsEquiv : Quotient (pathsHomRel C) ≌ C where
   functor := quotientPathsTo C
   inverse := toQuotientPaths C
   unitIso :=

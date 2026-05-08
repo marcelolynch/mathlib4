@@ -301,7 +301,7 @@ def recIterModByRegular
 
 /-- A simplified version of `IsWeaklyRegular.recIterModByRegular` where the
 motive is not allowed to depend on the proof of `IsWeaklyRegular`. -/
-def ndrecIterModByRegular
+private def ndrecIterModByRegular
     {motive : (M : Type v) → [AddCommGroup M] → [Module R M] → (rs : List R) → Sort*}
     (nil : (M : Type v) → [AddCommGroup M] → [Module R M] → motive M [])
     (cons : {M : Type v} → [AddCommGroup M] → [Module R M] → (r : R) →
@@ -337,7 +337,7 @@ def recIterModByRegularWithRing
 
 /-- A simplified version of `IsWeaklyRegular.recIterModByRegularWithRing` where
 the motive is not allowed to depend on the proof of `IsWeaklyRegular`. -/
-def ndrecWithRing
+private def ndrecWithRing
     {motive : (R : Type u) → [CommRing R] → (M : Type v) →
       [AddCommGroup M] → [Module R M] → (rs : List R) → Sort*}
     (nil : (R : Type u) → [CommRing R] → (M : Type v) →
@@ -433,7 +433,7 @@ def recIterModByRegular
 
 /-- A simplified version of `IsRegular.recIterModByRegular` where the motive is
 not allowed to depend on the proof of `IsRegular`. -/
-def ndrecIterModByRegular
+private def ndrecIterModByRegular
     {motive : (M : Type v) → [AddCommGroup M] → [Module R M] → (rs : List R) → Sort*}
     (nil : (M : Type v) → [AddCommGroup M] → [Module R M] → [Nontrivial M] → motive M [])
     (cons : {M : Type v} → [AddCommGroup M] → [Module R M] → (r : R) →
@@ -471,7 +471,7 @@ def recIterModByRegularWithRing
 
 /-- A simplified version of `IsRegular.recIterModByRegularWithRing` where the
 motive is not allowed to depend on the proof of `IsRegular`. -/
-def ndrecIterModByRegularWithRing
+private def ndrecIterModByRegularWithRing
     {motive : (R : Type u) → [CommRing R] → (M : Type v) →
       [AddCommGroup M] → [Module R M] → (rs : List R) → Sort*}
     (nil : (R : Type u) → [CommRing R] → (M : Type v) →

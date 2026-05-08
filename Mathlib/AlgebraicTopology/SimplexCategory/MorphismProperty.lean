@@ -71,7 +71,7 @@ lemma Truncated.morphismProperty_eq_top
     obtain rfl : f = 𝟙 _ := ObjectProperty.hom_ext _ (SimplexCategory.eq_id_of_epi _)
     apply W.id_mem
 
-lemma morphismProperty_eq_top
+private lemma morphismProperty_eq_top
     (W : MorphismProperty SimplexCategory) [W.IsMultiplicative]
     (δ_mem : ∀ {n : ℕ} (i : Fin (n + 2)), W (SimplexCategory.δ i))
     (σ_mem : ∀ {n : ℕ} (i : Fin (n + 1)), W (SimplexCategory.σ i)) :

@@ -558,7 +558,7 @@ end Bisim
 universe u' v'
 
 /-- corecursor for `M F` with swapped arguments -/
-def corecOn {X : Type*} (x₀ : X) (f : X → F X) : M F :=
+private def corecOn {X : Type*} (x₀ : X) (f : X → F X) : M F :=
   M.corec f x₀
 
 variable {P : PFunctor.{uA, uB}} {α : Type*}
@@ -626,7 +626,7 @@ def corec₁ {α : Type u} (F : ∀ X, (α → X) → α → P X) : α → M P :
 
 /-- corecursor where it is possible to return a fully formed value at any point
 of the computation -/
-def corec' {α : Type u} (F : ∀ {X : Type (max u uA uB)}, (α → X) → α → M P ⊕ P X) (x : α) : M P :=
+private def corec' {α : Type u} (F : ∀ {X : Type (max u uA uB)}, (α → X) → α → M P ⊕ P X) (x : α) : M P :=
   corec₁
     (fun _ rec (a : M P ⊕ α) =>
       let y := Sum.bind a (F (rec ∘ Sum.inr))

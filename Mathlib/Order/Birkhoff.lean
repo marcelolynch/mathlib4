@@ -260,7 +260,7 @@ namespace LatticeHom
 
 /-- **Birkhoff's Representation Theorem**. Any finite distributive lattice can be embedded in a
 powerset lattice. -/
-noncomputable def birkhoffSet : LatticeHom α (Set {a : α // SupIrred a}) where
+private noncomputable def birkhoffSet : LatticeHom α (Set {a : α // SupIrred a}) where
   toFun := OrderEmbedding.birkhoffSet
   map_sup' := OrderEmbedding.birkhoffSet_sup
   map_inf' := OrderEmbedding.birkhoffSet_inf

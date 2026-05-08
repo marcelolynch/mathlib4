@@ -26,7 +26,7 @@ Like `findConstVal?`, but also returns the declarations `ConstantKind`, which is
 
 Blocks on everything but the constant's body (if any), which is not accessible through the result.
 -/
-def findConstValWithKind? (env : Environment) (decl : Name) (skipRealize := false) :
+private def findConstValWithKind? (env : Environment) (decl : Name) (skipRealize := false) :
     Option (ConstantVal × ConstantKind) := do
   let info ← env.findAsync? decl skipRealize
   return (info.toConstantVal, info.kind)

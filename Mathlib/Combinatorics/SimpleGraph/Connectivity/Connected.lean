@@ -58,7 +58,7 @@ def Reachable (u v : V) : Prop := Nonempty (G.Walk u v)
 
 variable {G}
 
-theorem reachable_iff_nonempty_univ {u v : V} :
+private theorem reachable_iff_nonempty_univ {u v : V} :
     G.Reachable u v ↔ (Set.univ : Set (G.Walk u v)).Nonempty :=
   Set.nonempty_iff_univ_nonempty
 
@@ -78,7 +78,7 @@ protected theorem Walk.reachable {G : SimpleGraph V} {u v : V} (p : G.Walk u v) 
 protected theorem Adj.reachable {u v : V} (h : G.Adj u v) : G.Reachable u v :=
   h.toWalk.reachable
 
-theorem adj_le_reachable (G : SimpleGraph V) : G.Adj ≤ G.Reachable :=
+private theorem adj_le_reachable (G : SimpleGraph V) : G.Adj ≤ G.Reachable :=
   fun _ _ ↦ Adj.reachable
 
 @[refl]
@@ -121,7 +121,7 @@ theorem reachable_fromEdgeSet_eq_reflTransGen_toRel {s : Set (Sym2 V)} :
   ext
   simpa [Relation.reflGen_iff] using by tauto
 
-theorem reachable_fromEdgeSet_fromRel_eq_reflTransGen {r : V → V → Prop} (sym : Symmetric r) :
+private theorem reachable_fromEdgeSet_fromRel_eq_reflTransGen {r : V → V → Prop} (sym : Symmetric r) :
     (fromEdgeSet <| Sym2.fromRel sym).Reachable = Relation.ReflTransGen r :=
   reachable_fromEdgeSet_eq_reflTransGen_toRel
 
@@ -190,7 +190,7 @@ lemma Reachable.nonempty_neighborSet_left {G : SimpleGraph V} {u v : V} (huv : u
   · contradiction
   · exact ⟨x, hadj⟩
 
-lemma Reachable.nonempty_neighborSet_right {G : SimpleGraph V} {u v : V} (huv : u ≠ v)
+private lemma Reachable.nonempty_neighborSet_right {G : SimpleGraph V} {u v : V} (huv : u ≠ v)
     (hreach : G.Reachable u v) : (G.neighborSet v).Nonempty :=
   hreach.symm.nonempty_neighborSet_left huv.symm
 
@@ -198,7 +198,7 @@ lemma Reachable.degree_pos_left {G : SimpleGraph V} {u v : V} [Fintype (G.neighb
     (huv : u ≠ v) (hreach : G.Reachable u v) : 0 < G.degree u :=
   degree_pos_iff_nonempty.mpr (hreach.nonempty_neighborSet_left huv)
 
-lemma Reachable.degree_pos_right {G : SimpleGraph V} {u v : V} [Fintype (G.neighborSet v)]
+private lemma Reachable.degree_pos_right {G : SimpleGraph V} {u v : V} [Fintype (G.neighborSet v)]
     (huv : u ≠ v) (hreach : G.Reachable u v) : 0 < G.degree v :=
   hreach.symm.degree_pos_left huv.symm
 
@@ -206,7 +206,7 @@ lemma not_reachable_of_neighborSet_left_eq_empty {G : SimpleGraph V} {u v : V} (
     (hu : G.neighborSet u = ∅) : ¬G.Reachable u v :=
   (Reachable.nonempty_neighborSet_left huv).mt (Set.not_nonempty_iff_eq_empty.mpr hu)
 
-lemma not_reachable_of_neighborSet_right_eq_empty {G : SimpleGraph V} {u v : V} (huv : u ≠ v)
+private lemma not_reachable_of_neighborSet_right_eq_empty {G : SimpleGraph V} {u v : V} (huv : u ≠ v)
     (hv : G.neighborSet v = ∅) : ¬G.Reachable u v :=
   fun r ↦ not_reachable_of_neighborSet_left_eq_empty huv.symm hv r.symm
 
@@ -214,7 +214,7 @@ lemma not_reachable_of_left_degree_zero {G : SimpleGraph V} {u v : V} [Fintype (
     (huv : u ≠ v) (hu : G.degree u = 0) : ¬G.Reachable u v :=
   (Reachable.degree_pos_left huv).mt (by simp [hu])
 
-lemma not_reachable_of_right_degree_zero {G : SimpleGraph V} {u v : V} [Fintype (G.neighborSet v)]
+private lemma not_reachable_of_right_degree_zero {G : SimpleGraph V} {u v : V} [Fintype (G.neighborSet v)]
     (huv : u ≠ v) (hu : G.degree v = 0) : ¬G.Reachable u v := by
   rw [reachable_comm]
   exact not_reachable_of_left_degree_zero huv.symm hu
@@ -242,7 +242,7 @@ lemma preconnected_bot_iff_subsingleton : (⊥ : SimpleGraph V).Preconnected ↔
   contrapose! h
   simp [nontrivial_iff.mp h, Preconnected, reachable_bot]
 
-lemma preconnected_bot [Subsingleton V] : (⊥ : SimpleGraph V).Preconnected :=
+private lemma preconnected_bot [Subsingleton V] : (⊥ : SimpleGraph V).Preconnected :=
   preconnected_bot_iff_subsingleton.mpr ‹_›
 
 lemma not_preconnected_bot [Nontrivial V] : ¬(⊥ : SimpleGraph V).Preconnected :=
@@ -255,7 +255,7 @@ lemma not_preconnected_bot [Nontrivial V] : ¬(⊥ : SimpleGraph V).Preconnected
 lemma Preconnected.of_subsingleton {G : SimpleGraph V} [Subsingleton V] : G.Preconnected :=
   fun _ _ ↦ .of_subsingleton
 
-theorem Iso.preconnected_iff {G : SimpleGraph V} {H : SimpleGraph V'} (e : G ≃g H) :
+private theorem Iso.preconnected_iff {G : SimpleGraph V} {H : SimpleGraph V'} (e : G ≃g H) :
     G.Preconnected ↔ H.Preconnected :=
   ⟨Preconnected.map e.toHom e.toEquiv.surjective,
     Preconnected.map e.symm.toHom e.symm.toEquiv.surjective⟩
@@ -294,7 +294,7 @@ lemma mem_support_of_mem_walk_support {G : SimpleGraph V} {u v : V} (p : G.Walk 
   obtain ⟨y, hy⟩ := adj_of_mem_walk_support p hp hw
   exact (mem_support G).mpr ⟨y, hy.right⟩
 
-lemma mem_support_of_reachable {G : SimpleGraph V} {u v : V} (huv : u ≠ v) (h : G.Reachable u v) :
+private lemma mem_support_of_reachable {G : SimpleGraph V} {u v : V} (huv : u ≠ v) (h : G.Reachable u v) :
     u ∈ G.support := by
   let p : G.Walk u v := Classical.choice h
   have hp : ¬p.Nil := Walk.not_nil_of_ne huv
@@ -339,7 +339,7 @@ theorem Connected.exists_isPath {G : SimpleGraph V} (h : G.Connected) (u v : V) 
     ∃ p : G.Walk u v, p.IsPath :=
   (h u v).exists_isPath
 
-lemma connected_bot_iff : (⊥ : SimpleGraph V).Connected ↔ Subsingleton V ∧ Nonempty V := by
+private lemma connected_bot_iff : (⊥ : SimpleGraph V).Connected ↔ Subsingleton V ∧ Nonempty V := by
   simp [preconnected_bot_iff_subsingleton, connected_iff]
 
 lemma not_connected_bot [Nontrivial V] : ¬(⊥ : SimpleGraph V).Connected := by
@@ -376,7 +376,7 @@ theorem connected_or_preconnected_compl : G.Connected ∨ Gᶜ.Preconnected := b
   have ⟨w, huw⟩ := h u
   exact reachable_or_reachable_compl .. |>.resolve_left huw
 
-theorem connected_or_connected_compl [Nonempty V] : G.Connected ∨ Gᶜ.Connected :=
+private theorem connected_or_connected_compl [Nonempty V] : G.Connected ∨ Gᶜ.Connected :=
   G.connected_or_preconnected_compl.elim .inl (.inr ⟨·⟩)
 
 /-- The quotient of `V` by the `SimpleGraph.Reachable` relation gives the connected
@@ -578,7 +578,7 @@ theorem nonempty_supp (C : G.ConnectedComponent) : C.supp.Nonempty := C.exists_r
 /-- The equivalence between connected components, induced by an isomorphism of graphs,
 itself defines an equivalence on the supports of each connected component.
 -/
-def isoEquivSupp (φ : G ≃g G') (C : G.ConnectedComponent) :
+private def isoEquivSupp (φ : G ≃g G') (C : G.ConnectedComponent) :
     C.supp ≃ (φ.connectedComponentEquiv C).supp where
   toFun v := ⟨φ v, ConnectedComponent.iso_image_comp_eq_map_iff_eq_comp.mpr v.prop⟩
   invFun v' := ⟨φ.symm v', ConnectedComponent.iso_inv_image_comp_eq_iff_eq_map.mpr v'.prop⟩
@@ -615,7 +615,7 @@ lemma biUnion_supp_eq_supp {G G' : SimpleGraph V} (h : G ≤ G') (c' : Connected
   use c'.connectedComponentMk_supp_subset_supp h hv
   simp only [mem_supp_iff]
 
-lemma top_supp_eq_univ (c : ConnectedComponent (⊤ : SimpleGraph V)) :
+private lemma top_supp_eq_univ (c : ConnectedComponent (⊤ : SimpleGraph V)) :
     c.supp = (Set.univ : Set V) := by
   obtain ⟨w, rfl⟩ := c.exists_rep
   ext v
@@ -641,10 +641,10 @@ def toSimpleGraph_hom {G : SimpleGraph V} (C : G.ConnectedComponent) : C.toSimpl
   toFun u := u.val
   map_rel' := id
 
-lemma toSimpleGraph_hom_apply {G : SimpleGraph V} (C : G.ConnectedComponent) (u : C) :
+private lemma toSimpleGraph_hom_apply {G : SimpleGraph V} (C : G.ConnectedComponent) (u : C) :
     C.toSimpleGraph_hom u = u.val := rfl
 
-lemma toSimpleGraph_adj {G : SimpleGraph V} (C : G.ConnectedComponent) {u v : V} (hu : u ∈ C)
+private lemma toSimpleGraph_adj {G : SimpleGraph V} (C : G.ConnectedComponent) {u v : V} (hu : u ∈ C)
     (hv : v ∈ C) : C.toSimpleGraph.Adj ⟨u, hu⟩ ⟨v, hv⟩ ↔ G.Adj u v := by
   simp [toSimpleGraph]
 
@@ -688,7 +688,7 @@ theorem maximal_connected_induce_supp (C : G.ConnectedComponent) :
   refine ⟨connected_toSimpleGraph _, fun s hconn hle u hu ↦ ConnectedComponent.sound ?_⟩
   exact hconn.preconnected ⟨u, hu⟩ ⟨v, hle rfl⟩ |>.map <| Embedding.induce s |>.toHom
 
-theorem maximal_connected_induce_iff (s : Set V) :
+private theorem maximal_connected_induce_iff (s : Set V) :
     Maximal (G.induce · |>.Connected) s ↔ ∃ C : G.ConnectedComponent, C.supp = s := by
   refine ⟨fun ⟨hconn, h⟩ ↦ ?_, fun ⟨C, h⟩ ↦ ?_⟩
   · have ⟨v, hv⟩ := hconn.nonempty
@@ -733,7 +733,7 @@ theorem Preconnected.set_univ_walk_nonempty (hconn : G.Preconnected) (u v : V) :
   rw [← Set.nonempty_iff_univ_nonempty]
   exact hconn u v
 
-theorem Connected.set_univ_walk_nonempty (hconn : G.Connected) (u v : V) :
+private theorem Connected.set_univ_walk_nonempty (hconn : G.Connected) (u v : V) :
     (Set.univ : Set (G.Walk u v)).Nonempty :=
   hconn.preconnected.set_univ_walk_nonempty u v
 

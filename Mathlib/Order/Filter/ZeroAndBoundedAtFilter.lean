@@ -64,7 +64,7 @@ def zeroAtFilterSubmodule
 
 /-- `zeroAtFilterAddSubmonoid l` is the additive submonoid of `f : α → β`
 which tend to zero along `l`. -/
-def zeroAtFilterAddSubmonoid [TopologicalSpace β] [AddZeroClass β] [ContinuousAdd β]
+private def zeroAtFilterAddSubmonoid [TopologicalSpace β] [AddZeroClass β] [ContinuousAdd β]
     (l : Filter α) : AddSubmonoid (α → β) where
   carrier := ZeroAtFilter l
   add_mem' ha hb := ha.add hb

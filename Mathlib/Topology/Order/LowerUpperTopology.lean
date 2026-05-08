@@ -208,7 +208,7 @@ instance [Preorder α] : IsUpper (WithUpper α) := ⟨rfl⟩
 /--
 The lower topology is homeomorphic to the upper topology on the dual order
 -/
-def WithLower.toDualHomeomorph [Preorder α] : WithLower α ≃ₜ WithUpper αᵒᵈ where
+private def WithLower.toDualHomeomorph [Preorder α] : WithLower α ≃ₜ WithUpper αᵒᵈ where
   toFun := OrderDual.toDual
   invFun := OrderDual.ofDual
   left_inv := OrderDual.toDual_ofDual
@@ -394,7 +394,7 @@ variable {α}
 
 /-- If `α` is equipped with the upper topology, then it is homeomorphic to `WithUpper α`.
 -/
-def withUpperHomeomorph : WithUpper α ≃ₜ α :=
+private def withUpperHomeomorph : WithUpper α ≃ₜ α :=
   WithUpper.ofUpper.toHomeomorphOfIsInducing ⟨topology_eq α ▸ induced_id.symm⟩
 
 theorem isOpen_iff_generate_Iic_compl : IsOpen s ↔ GenerateOpen { t | ∃ a, (Iic a)ᶜ = t } s := by

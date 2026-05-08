@@ -209,19 +209,19 @@ theorem uniqueSigma_symm_apply {α} {β : α → Type*} [Unique α] (y : β defa
   rfl
 
 /-- `Empty` type is a right absorbing element for type product up to an equivalence. -/
-def prodEmpty (α) : α × Empty ≃ Empty :=
+private def prodEmpty (α) : α × Empty ≃ Empty :=
   equivEmpty _
 
 /-- `Empty` type is a left absorbing element for type product up to an equivalence. -/
-def emptyProd (α) : Empty × α ≃ Empty :=
+private def emptyProd (α) : Empty × α ≃ Empty :=
   equivEmpty _
 
 /-- `PEmpty` type is a right absorbing element for type product up to an equivalence. -/
-def prodPEmpty (α) : α × PEmpty ≃ PEmpty :=
+private def prodPEmpty (α) : α × PEmpty ≃ PEmpty :=
   equivPEmpty _
 
 /-- `PEmpty` type is a left absorbing element for type product up to an equivalence. -/
-def pemptyProd (α) : PEmpty × α ≃ PEmpty :=
+private def pemptyProd (α) : PEmpty × α ≃ PEmpty :=
   equivPEmpty _
 
 end

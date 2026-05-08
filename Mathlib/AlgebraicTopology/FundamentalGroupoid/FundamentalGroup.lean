@@ -51,7 +51,7 @@ def fundamentalGroupMulEquivOfPath (p : Path x₀ x₁) :
 variable (x₀ x₁)
 
 /-- The fundamental group of a path connected space is independent of the choice of basepoint. -/
-def fundamentalGroupMulEquivOfPathConnected [PathConnectedSpace X] :
+private def fundamentalGroupMulEquivOfPathConnected [PathConnectedSpace X] :
     FundamentalGroup X x₀ ≃* FundamentalGroup X x₁ :=
   fundamentalGroupMulEquivOfPath (PathConnectedSpace.somePath x₀ x₁)
 

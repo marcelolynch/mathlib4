@@ -89,7 +89,7 @@ open Metric
 /-- Extract the constant from `hf : AntilipschitzWith K f`. This is useful, e.g.,
 if `K` is given by a long formula, and we want to reuse this value. -/
 @[nolint unusedArguments]
-protected def k (_hf : AntilipschitzWith K f) : ℝ≥0 := K
+private protected def k (_hf : AntilipschitzWith K f) : ℝ≥0 := K
 
 protected theorem injective {α : Type*} {β : Type*} [EMetricSpace α] [PseudoEMetricSpace β]
     {K : ℝ≥0} {f : α → β} (hf : AntilipschitzWith K f) : Function.Injective f := fun x y h => by

@@ -54,7 +54,7 @@ This is an auxiliary definition for the equivalence `Matrix.toBilin'`. -/
 def Matrix.toBilin'Aux [Fintype n] (M : Matrix n n R₁) : BilinForm R₁ (n → R₁) :=
   Matrix.toLinearMap₂'Aux _ _ M
 
-theorem Matrix.toBilin'Aux_single [Fintype n] [DecidableEq n] (M : Matrix n n R₁) (i j : n) :
+private theorem Matrix.toBilin'Aux_single [Fintype n] [DecidableEq n] (M : Matrix n n R₁) (i j : n) :
     M.toBilin'Aux (Pi.single i 1) (Pi.single j 1) = M i j :=
   Matrix.toLinearMap₂'Aux_single _ _ _ _ _
 
@@ -362,7 +362,7 @@ theorem mem_pairSelfAdjointMatricesSubmodule' :
 
 /-- The submodule of self-adjoint matrices with respect to the bilinear form corresponding to
 the matrix `J`. -/
-def selfAdjointMatricesSubmodule' : Submodule R₂ (Matrix n n R₂) :=
+private def selfAdjointMatricesSubmodule' : Submodule R₂ (Matrix n n R₂) :=
   pairSelfAdjointMatricesSubmodule J J
 
 theorem mem_selfAdjointMatricesSubmodule' :
@@ -371,7 +371,7 @@ theorem mem_selfAdjointMatricesSubmodule' :
 
 /-- The submodule of skew-adjoint matrices with respect to the bilinear form corresponding to
 the matrix `J`. -/
-def skewAdjointMatricesSubmodule' : Submodule R₂ (Matrix n n R₂) :=
+private def skewAdjointMatricesSubmodule' : Submodule R₂ (Matrix n n R₂) :=
   pairSelfAdjointMatricesSubmodule (-J) J
 
 theorem mem_skewAdjointMatricesSubmodule' :

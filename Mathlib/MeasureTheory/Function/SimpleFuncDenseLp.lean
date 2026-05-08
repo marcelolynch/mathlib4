@@ -472,11 +472,11 @@ abbrev toLp (f : α →ₛ E) (hf : MemLp f p μ) : Lp.simpleFunc E p μ :=
 theorem toLp_eq_toLp (f : α →ₛ E) (hf : MemLp f p μ) : (toLp f hf : Lp E p μ) = hf.toLp f :=
   rfl
 
-theorem toLp_eq_mk (f : α →ₛ E) (hf : MemLp f p μ) :
+private theorem toLp_eq_mk (f : α →ₛ E) (hf : MemLp f p μ) :
     (toLp f hf : α →ₘ[μ] E) = AEEqFun.mk f f.aestronglyMeasurable :=
   rfl
 
-theorem toLp_zero : toLp (0 : α →ₛ E) MemLp.zero = (0 : Lp.simpleFunc E p μ) :=
+private theorem toLp_zero : toLp (0 : α →ₛ E) MemLp.zero = (0 : Lp.simpleFunc E p μ) :=
   rfl
 
 theorem toLp_add (f g : α →ₛ E) (hf : MemLp f p μ) (hg : MemLp g p μ) :
@@ -486,13 +486,13 @@ theorem toLp_add (f g : α →ₛ E) (hf : MemLp f p μ) (hg : MemLp g p μ) :
 theorem toLp_neg (f : α →ₛ E) (hf : MemLp f p μ) : toLp (-f) hf.neg = -toLp f hf :=
   rfl
 
-theorem toLp_sub (f g : α →ₛ E) (hf : MemLp f p μ) (hg : MemLp g p μ) :
+private theorem toLp_sub (f g : α →ₛ E) (hf : MemLp f p μ) (hg : MemLp g p μ) :
     toLp (f - g) (hf.sub hg) = toLp f hf - toLp g hg := by
   simp only [sub_eq_add_neg, ← toLp_neg, ← toLp_add]
 
 variable [NormedRing 𝕜] [Module 𝕜 E] [IsBoundedSMul 𝕜 E]
 
-theorem toLp_smul (f : α →ₛ E) (hf : MemLp f p μ) (c : 𝕜) :
+private theorem toLp_smul (f : α →ₛ E) (hf : MemLp f p μ) (c : 𝕜) :
     toLp (c • f) (hf.const_smul c) = c • toLp f hf :=
   rfl
 
@@ -523,7 +523,7 @@ protected theorem aemeasurable [MeasurableSpace E] (f : Lp.simpleFunc E p μ) :
     AEMeasurable (toSimpleFunc f) μ :=
   (simpleFunc.measurable f).aemeasurable
 
-protected theorem aestronglyMeasurable (f : Lp.simpleFunc E p μ) :
+private protected theorem aestronglyMeasurable (f : Lp.simpleFunc E p μ) :
     AEStronglyMeasurable (toSimpleFunc f) μ :=
   (simpleFunc.stronglyMeasurable f).aestronglyMeasurable
 
@@ -546,7 +546,7 @@ theorem toSimpleFunc_toLp (f : α →ₛ E) (hfi : MemLp f p μ) : toSimpleFunc 
 
 variable (E μ)
 
-theorem zero_toSimpleFunc : toSimpleFunc (0 : Lp.simpleFunc E p μ) =ᵐ[μ] 0 := by
+private theorem zero_toSimpleFunc : toSimpleFunc (0 : Lp.simpleFunc E p μ) =ᵐ[μ] 0 := by
   filter_upwards [toSimpleFunc_eq_toFun (0 : Lp.simpleFunc E p μ),
     Lp.coeFn_zero E 1 μ] with _ h₁ _
   rwa [h₁]
@@ -566,7 +566,7 @@ theorem neg_toSimpleFunc (f : Lp.simpleFunc E p μ) : toSimpleFunc (-f) =ᵐ[μ]
   simp only [Pi.neg_apply, AddSubgroup.coe_neg]
   repeat intro h; rw [h]
 
-theorem sub_toSimpleFunc (f g : Lp.simpleFunc E p μ) :
+private theorem sub_toSimpleFunc (f g : Lp.simpleFunc E p μ) :
     toSimpleFunc (f - g) =ᵐ[μ] toSimpleFunc f - toSimpleFunc g := by
   filter_upwards [toSimpleFunc_eq_toFun (f - g), toSimpleFunc_eq_toFun f,
     toSimpleFunc_eq_toFun g, Lp.coeFn_sub (f : Lp E p μ) g] with _
@@ -712,7 +712,7 @@ variable {p μ G}
 
 variable [PartialOrder G]
 
-theorem coeFn_nonneg (f : Lp.simpleFunc G p μ) : (0 : α → G) ≤ᵐ[μ] f ↔ 0 ≤ f := by
+private theorem coeFn_nonneg (f : Lp.simpleFunc G p μ) : (0 : α → G) ≤ᵐ[μ] f ↔ 0 ≤ f := by
   rw [← Subtype.coe_le_coe, Lp.coeFn_nonneg, AddSubmonoid.coe_zero]
 
 theorem exists_simpleFunc_nonneg_ae_eq {f : Lp.simpleFunc G p μ} (hf : 0 ≤ f) :

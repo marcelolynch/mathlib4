@@ -142,7 +142,7 @@ set_option backward.isDefEq.respectTransparency false in
 /-- If a family of maps `g` is contained in another family `g'` (up to isomorphisms),
 if `f : X₁ ⟶ X₂` is a morphism, and `X₂` is obtained from `X₁` by attaching cells
 of the form `g`, then it is also obtained by attaching cells of the form `g'`. -/
-def reindexCellTypes : AttachCells g' f where
+private def reindexCellTypes : AttachCells g' f where
   ι := c.ι
   π := a ∘ c.π
   cofan₁ := Cofan.mk c.cofan₁.pt

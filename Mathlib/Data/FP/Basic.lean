@@ -99,7 +99,7 @@ instance : Inhabited Float :=
   ⟨Float.zero true⟩
 
 @[nolint docBlame]
-protected def Float.sign' : Float → Semiquot Bool
+private protected def Float.sign' : Float → Semiquot Bool
   | Float.inf s => pure s
   | Float.nan => ⊤
   | Float.finite s _ _ _ => pure s
@@ -165,7 +165,7 @@ unsafe def nextUp : Float → Float
   | f => f
 
 @[nolint docBlame]
-unsafe def nextDn : Float → Float
+private unsafe def nextDn : Float → Float
   | Float.finite Bool.false e m f => nextDnPos e m f
   | Float.finite Bool.true e m f => Float.neg <| nextUpPos e m f
   | f => f
@@ -229,7 +229,7 @@ unsafe instance : Sub Float :=
   ⟨Float.sub RMode.NE⟩
 
 @[nolint docBlame]
-unsafe def mul (mode : RMode) : Float → Float → Float
+private unsafe def mul (mode : RMode) : Float → Float → Float
   | nan, _ => nan
   | _, nan => nan
   | inf s₁, f₂ => if f₂.isZero then nan else inf (xor s₁ f₂.sign)
@@ -240,7 +240,7 @@ unsafe def mul (mode : RMode) : Float → Float → Float
     ofRat mode (toRat f₁ rfl * toRat f₂ rfl)
 
 @[nolint docBlame]
-unsafe def div (mode : RMode) : Float → Float → Float
+private unsafe def div (mode : RMode) : Float → Float → Float
   | nan, _ => nan
   | _, nan => nan
   | inf _, inf _ => nan

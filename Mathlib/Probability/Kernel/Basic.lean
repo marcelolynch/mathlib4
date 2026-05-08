@@ -234,7 +234,7 @@ end Const
 
 /-- In a countable space with measurable singletons, every function `α → MeasureTheory.Measure β`
 defines a kernel. -/
-def ofFunOfCountable [MeasurableSpace α] {_ : MeasurableSpace β} [Countable α]
+private def ofFunOfCountable [MeasurableSpace α] {_ : MeasurableSpace β} [Countable α]
     [MeasurableSingletonClass α] (f : α → Measure β) : Kernel α β where
   toFun := f
   measurable' := measurable_of_countable f

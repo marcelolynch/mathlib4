@@ -1183,7 +1183,7 @@ variable {J C : Type*} [Category* J] [Category* C] {D : J ⥤ C}
 
 /-- If `Over j ⥤ J` is initial, restricting a limit cone to the diagram above `j`,
 preserves the limit. -/
-noncomputable def Limits.IsLimit.overPost {c : Cone D} (hc : IsLimit c) (j : J)
+private noncomputable def Limits.IsLimit.overPost {c : Cone D} (hc : IsLimit c) (j : J)
     [(CategoryTheory.Over.forget j).Initial] : IsLimit (c.overPost j) := by
   haveI : Nonempty (Over j) := ⟨Over.mk (𝟙 j)⟩
   letI c'' := Over.liftCone (Over.forget j ⋙ D) (X := D.obj j)

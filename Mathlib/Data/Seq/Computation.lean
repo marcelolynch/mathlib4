@@ -84,7 +84,7 @@ instance : Inhabited (Computation α) :=
 
 /-- `runFor c n` evaluates `c` for `n` steps and returns the result, or `none`
   if it did not terminate after `n` steps. -/
-def runFor : Computation α → ℕ → Option α :=
+private def runFor : Computation α → ℕ → Option α :=
   Subtype.val
 
 /-- `destruct c` is the destructor for `Computation α` as a coinductive type.
@@ -572,7 +572,7 @@ theorem has_bind_eq_bind {β} (c : Computation α) (f : α → Computation β) :
   rfl
 
 /-- Flatten a computation of computations into a single computation. -/
-def join (c : Computation (Computation α)) : Computation α :=
+private def join (c : Computation (Computation α)) : Computation α :=
   c >>= id
 
 @[simp]

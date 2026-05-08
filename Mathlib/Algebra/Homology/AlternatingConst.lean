@@ -222,7 +222,7 @@ namespace ChainComplex
 
 /-- `alternatingConst.obj X` is homotopy equivalent to the chain
 complex `(single₀ C).obj X`. -/
-noncomputable def alternatingConstHomotopyEquiv (X : C) :
+private noncomputable def alternatingConstHomotopyEquiv (X : C) :
     HomotopyEquiv (alternatingConst.obj X) ((single₀ C).obj X) :=
   (HomotopyEquiv.ofIso (alternatingFaceMapComplexConst.app X).symm).trans
     ((SimplicialObject.Augmented.ExtraDegeneracy.const X).homotopyEquiv)

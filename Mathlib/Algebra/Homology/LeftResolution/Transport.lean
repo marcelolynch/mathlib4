@@ -50,7 +50,7 @@ def transport {ι : C ⥤ A} (Λ : LeftResolution ι) {ι' : C' ⥤ A'}
 set_option backward.isDefEq.respectTransparency false in
 /-- If we have an isomorphism `e : G ⋙ ι' ≅ ι`, then any `Λ : LeftResolution ι`
 induces `Λ.ofCompIso e : LeftResolution ι'`. -/
-def ofCompIso {ι : C ⥤ A} (Λ : LeftResolution ι) {ι' : C' ⥤ A} {G : C ⥤ C'}
+private def ofCompIso {ι : C ⥤ A} (Λ : LeftResolution ι) {ι' : C' ⥤ A} {G : C ⥤ C'}
     (e : G ⋙ ι' ≅ ι) :
     LeftResolution ι' where
   F := Λ.F ⋙ G

@@ -88,7 +88,7 @@ variable [Preorder P]
 
 /-- Create an element of type `Order.Ideal.PrimePair` from an ideal satisfying the predicate
 `Order.Ideal.IsPrime`. -/
-def IsPrime.toPrimePair {I : Ideal P} (h : IsPrime I) : PrimePair P :=
+private def IsPrime.toPrimePair {I : Ideal P} (h : IsPrime I) : PrimePair P :=
   { I
     F := h.compl_filter.toPFilter
     isCompl_I_F := isCompl_compl }
@@ -196,7 +196,7 @@ class IsPrime (F : PFilter P) : Prop where
 
 /-- Create an element of type `Order.Ideal.PrimePair` from a filter satisfying the predicate
 `Order.PFilter.IsPrime`. -/
-def IsPrime.toPrimePair {F : PFilter P} (h : IsPrime F) : Ideal.PrimePair P :=
+private def IsPrime.toPrimePair {F : PFilter P} (h : IsPrime F) : Ideal.PrimePair P :=
   { I := h.compl_ideal.toIdeal
     F
     isCompl_I_F := isCompl_compl.symm }

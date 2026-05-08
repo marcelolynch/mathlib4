@@ -692,7 +692,7 @@ def LeftExtension.isUniversalOfPrecomp₂
 then for every `L' : D ⥤ D'`, `F₁ : D ⥤ H`, an extension
 `b : L'.LeftExtension F₁` is universal if and only if
 `(LeftExtension.precomp₂ L' α).obj b` is universal. -/
-def LeftExtension.isUniversalPrecomp₂Equiv
+private def LeftExtension.isUniversalPrecomp₂Equiv
     (hα : (LeftExtension.mk F₁ α).IsUniversal)
     (b : L'.LeftExtension F₁) :
     b.IsUniversal ≃ ((LeftExtension.precomp₂ L' α).obj b).IsUniversal where

@@ -49,7 +49,7 @@ private def typeToCatObjectsAdjCounitApp : (Cat.objects ⋙ typeToCat).obj C ⥤
 set_option backward.privateInPublic true in
 set_option backward.privateInPublic.warn false in
 /-- `typeToCat : Type ⥤ Cat` is left adjoint to `Cat.objects : Cat ⥤ Type` -/
-def typeToCatObjectsAdj : typeToCat ⊣ Cat.objects :=
+private def typeToCatObjectsAdj : typeToCat ⊣ Cat.objects :=
   Adjunction.mk' {
     homEquiv := typeToCatObjectsAdjHomEquiv
     unit := { app := fun _ ↦ ↾Discrete.mk }
@@ -68,7 +68,7 @@ def connectedComponents : Cat.{v, u} ⥤ Type u where
   map_comp _ _ := by ext x; simpa using (Quotient.exists_rep x).elim (fun _ h => by subst h; rfl)
 
 /-- `typeToCat : Type ⥤ Cat` is right adjoint to `connectedComponents : Cat ⥤ Type` -/
-def connectedComponentsTypeToCatAdj : connectedComponents.{u} ⊣ typeToCat.{u} :=
+private def connectedComponentsTypeToCatAdj : connectedComponents.{u} ⊣ typeToCat.{u} :=
   Adjunction.mk' {
     homEquiv := fun C X ↦ by
       refine TypeCat.homEquiv.trans ?_

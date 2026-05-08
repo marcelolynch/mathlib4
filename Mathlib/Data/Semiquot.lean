@@ -85,11 +85,11 @@ theorem mem_blur' (q : Semiquot α) {s : Set α} (h : q.s ⊆ s) {a : α} : a �
   Iff.rfl
 
 /-- Convert a `Trunc α` to a `Semiquot α`. -/
-def ofTrunc (q : Trunc α) : Semiquot α :=
+private def ofTrunc (q : Trunc α) : Semiquot α :=
   ⟨Set.univ, q.map fun a => ⟨a, trivial⟩⟩
 
 /-- Convert a `Semiquot α` to a `Trunc α`. -/
-def toTrunc (q : Semiquot α) : Trunc α :=
+private def toTrunc (q : Semiquot α) : Trunc α :=
   q.2.map Subtype.val
 
 /-- If `f` is a constant on `q.s`, then `q.liftOn f` is the value of `f`

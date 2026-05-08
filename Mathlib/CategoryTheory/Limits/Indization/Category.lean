@@ -109,7 +109,7 @@ instance : (Ind.yoneda (C := C)).Faithful :=
     ObjectProperty.lift _ CategoryTheory.yoneda isIndObject_yoneda ⋙ (Ind.equivalence C).inverse
 
 /-- The functor `C ⥤ Ind C` is fully faithful. -/
-protected noncomputable def Ind.yoneda.fullyFaithful : (Ind.yoneda (C := C)).FullyFaithful :=
+private protected noncomputable def Ind.yoneda.fullyFaithful : (Ind.yoneda (C := C)).FullyFaithful :=
   .ofFullyFaithful _
 
 /-- The composition `C ⥤ Ind C ⥤ (Cᵒᵖ ⥤ Type v)` is just the Yoneda embedding. -/

@@ -173,7 +173,7 @@ isomorphism as a linear isomorphism in `multilinearCurryRightEquiv R M M₂`.
 
 The direct and inverse maps are given by `f.curryRight` and `f.uncurryRight`. Use these
 unless you need the full framework of linear equivs. -/
-def multilinearCurryRightEquiv :
+private def multilinearCurryRightEquiv :
     MultilinearMap R M M₂ ≃ₗ[R]
       MultilinearMap R (fun i : Fin n => M (castSucc i)) (M (last n) →ₗ[R] M₂) where
   toFun := MultilinearMap.curryRight

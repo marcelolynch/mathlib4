@@ -344,7 +344,7 @@ instance (X : C) (a b : ℤ) : t.IsGE ((t.truncGELE a b).obj X) a := by
   dsimp; infer_instance
 
 /-- The natural isomorphism `t.truncGELE a b ≅ t.truncGELT a b'` when `b + 1 = b'`. -/
-noncomputable def truncGELEIsoTruncGELT (a b b' : ℤ) (hb' : b + 1 = b') :
+private noncomputable def truncGELEIsoTruncGELT (a b b' : ℤ) (hb' : b + 1 = b') :
     t.truncGELE a b ≅ t.truncGELT a b' :=
   Functor.isoWhiskerRight (t.truncLEIsoTruncLT b b' hb') _
 
@@ -391,7 +391,7 @@ instance (X : C) (n : ℤ) : IsIso ((t.truncLE n).map ((t.truncLEι n).app X)) :
   t.isIso_truncLE_map_truncLEι_app _ _ (by lia) _
 
 /-- The natural isomorphism `t.truncGELE a b ≅ t.truncLEGE a b`. -/
-noncomputable def truncGELEIsoLEGE (a b : ℤ) : t.truncGELE a b ≅ t.truncLEGE a b :=
+private noncomputable def truncGELEIsoLEGE (a b : ℤ) : t.truncGELE a b ≅ t.truncLEGE a b :=
   t.truncGELTIsoLTGE a (b + 1)
 
 end

@@ -181,13 +181,13 @@ section
 variable (M M' M₁)
 
 /-- Two vector spaces are isomorphic if they have the same dimension. -/
-def LinearEquiv.ofLiftRankEq
+private def LinearEquiv.ofLiftRankEq
     (cond : Cardinal.lift.{v'} (Module.rank R M) = Cardinal.lift.{v} (Module.rank R M')) :
     M ≃ₗ[R] M' :=
   Classical.choice (nonempty_linearEquiv_of_lift_rank_eq cond)
 
 /-- Two vector spaces are isomorphic if they have the same dimension. -/
-def LinearEquiv.ofRankEq (cond : Module.rank R M = Module.rank R M₁) : M ≃ₗ[R] M₁ :=
+private def LinearEquiv.ofRankEq (cond : Module.rank R M = Module.rank R M₁) : M ≃ₗ[R] M₁ :=
   Classical.choice (nonempty_linearEquiv_of_rank_eq cond)
 
 end

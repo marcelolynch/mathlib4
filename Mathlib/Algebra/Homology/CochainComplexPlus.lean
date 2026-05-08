@@ -53,7 +53,7 @@ abbrev ι : Plus C ⥤ CochainComplex C ℤ := ObjectProperty.ι _
 
 /-- The inclusion of the full subcategory of bounded below cochain complexes
 is fully faithful. -/
-def fullyFaithfulι : (ι C).FullyFaithful :=
+private def fullyFaithfulι : (ι C).FullyFaithful :=
   ObjectProperty.fullyFaithfulι _
 
 instance (J : Type*) [SmallCategory J] [FinCategory J] [HasLimitsOfShape J C] :

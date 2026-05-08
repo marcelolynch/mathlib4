@@ -34,7 +34,7 @@ noncomputable abbrev cokernelCofork :
 
 /-- A commutative square in a preadditive category is a pushout square iff
 the corresponding diagram `X₁ ⟶ X₂ ⊞ X₃ ⟶ X₄ ⟶ 0` makes `X₄` a cokernel. -/
-noncomputable def isPushoutEquivIsColimitCokernelCofork :
+private noncomputable def isPushoutEquivIsColimitCokernelCofork :
     sq.IsPushout ≃ IsColimit sq.cokernelCofork :=
   Equiv.trans
     { toFun := fun h ↦ h.isColimit
@@ -55,7 +55,7 @@ noncomputable abbrev kernelFork :
 
 /-- A commutative square in a preadditive category is a pullback square iff
 the corresponding diagram `0 ⟶ X₁ ⟶ X₂ ⊞ X₃ ⟶ X₄ ⟶ 0` makes `X₁` a kernel. -/
-noncomputable def isPullbackEquivIsLimitKernelFork :
+private noncomputable def isPullbackEquivIsLimitKernelFork :
     sq.IsPullback ≃ IsLimit sq.kernelFork :=
   Equiv.trans
     { toFun := fun h ↦ h.isLimit
@@ -65,7 +65,7 @@ noncomputable def isPullbackEquivIsLimitKernelFork :
 
 variable {sq} in
 /-- The limit kernel fork attached to a pullback square. -/
-noncomputable def IsPullback.isLimitKernelFork (h : sq.IsPullback) :
+private noncomputable def IsPullback.isLimitKernelFork (h : sq.IsPullback) :
     IsLimit sq.kernelFork :=
   h.isLimitEquivIsLimitKernelFork h.isLimit
 

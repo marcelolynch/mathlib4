@@ -362,7 +362,7 @@ functor which extends `A` to the presheaf category.
 The second part of [MM92], Chapter I, Section 5, Corollary 4.
 See Property 3 of https://ncatlab.org/nlab/show/Yoneda+extension#properties.
 -/
-noncomputable def uniqueExtensionAlongULiftYoneda (L : (Cᵒᵖ ⥤ Type max w v₁ v₂) ⥤ ℰ)
+private noncomputable def uniqueExtensionAlongULiftYoneda (L : (Cᵒᵖ ⥤ Type max w v₁ v₂) ⥤ ℰ)
     (e : A ≅ uliftYoneda.{max w v₂} ⋙ L)
     [PreservesColimitsOfSize.{v₁, max w u₁ v₁ v₂} L] :
     L ≅ uliftYoneda.{max w v₂}.leftKanExtension A :=
@@ -780,7 +780,7 @@ noncomputable def coconeπOpCompShrinkYonedaFlip :
 
 /-- If `F : C ⥤ Type w` and `C` is locally `w`-small, then `F` identifies to the colimit
 of `(CategoryOfElements.π F).op ⋙ shrinkYoneda.{w}.flip`. -/
-noncomputable def isColimitCoconeπOpCompShrinkYonedaFlip :
+private noncomputable def isColimitCoconeπOpCompShrinkYonedaFlip :
     IsColimit (coconeπOpCompShrinkYonedaFlip F) :=
   evaluationJointlyReflectsColimits _ (isColimitCoconeπOpCompShrinkYonedaObj F)
 

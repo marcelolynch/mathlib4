@@ -226,7 +226,7 @@ theorem countRestricted_two (n : ℕ) : countRestricted n 2 = distincts n := by
   grind [Multiset.count_eq_zero]
 
 /-- The finset of those partitions in which every part is odd and used at most once. -/
-def oddDistincts (n : ℕ) : Finset n.Partition :=
+private def oddDistincts (n : ℕ) : Finset n.Partition :=
   odds n ∩ distincts n
 
 end Partition

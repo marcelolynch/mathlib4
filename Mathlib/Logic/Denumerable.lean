@@ -170,7 +170,7 @@ instance plift : Denumerable (PLift α) :=
   ofEquiv _ Equiv.plift
 
 /-- If `α` is denumerable, then `α × α` and `α` are equivalent. -/
-def pair : α × α ≃ α :=
+private def pair : α × α ≃ α :=
   equiv₂ _ _
 
 end

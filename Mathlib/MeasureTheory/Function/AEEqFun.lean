@@ -529,7 +529,7 @@ theorem comp₂Measurable_toGerm [PseudoMetrizableSpace β] [MeasurableSpace β]
 
 /-- Given a predicate `p` and an equivalence class `[f]`, return true if `p` holds of `f a`
 for almost all `a` -/
-def LiftPred (p : β → Prop) (f : α →ₘ[μ] β) : Prop :=
+private def LiftPred (p : β → Prop) (f : α →ₘ[μ] β) : Prop :=
   f.toGerm.LiftPred p
 
 /-- Given a relation `r` and equivalence class `[f]` and `[g]`, return true if `r` holds of

@@ -374,7 +374,7 @@ def mkOfLax {F G : B ⥤ᴸ C} (η : LaxTrans F G) (η' : LaxTrans.StrongCore η
 
 /-- Construct a strong natural transformation from a lax natural transformation whose
 naturality 2-morphism is an isomorphism. -/
-noncomputable def mkOfLax' {F G : B ⥤ᴸ C} (η : LaxTrans F G)
+private noncomputable def mkOfLax' {F G : B ⥤ᴸ C} (η : LaxTrans F G)
     [∀ a b (f : a ⟶ b), IsIso (η.naturality f)] : StrongTrans F G where
   app := η.app
   naturality _ := asIso (η.naturality _)

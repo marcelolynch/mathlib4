@@ -543,7 +543,7 @@ Then, the homology of this short complex can be computed using
 `SpectralSequence.dHomologyIso`.
 (This only applies in the favourable case when there are `pq` and `pq''` such
 that `(c r).Rel pq pq'` and `(c r).Rel pq' pq''` hold.) -/
-noncomputable def spectralSequencePageSc'Iso (r : ℤ) (hr : r₀ ≤ r) (pq pq' pq'' : κ)
+private noncomputable def spectralSequencePageSc'Iso (r : ℤ) (hr : r₀ ≤ r) (pq pq' pq'' : κ)
     (hpq : (c r).Rel pq pq') (hpq' : (c r).Rel pq' pq'')
     (n₀ n₁ n₂ n₃ n₄ : ℤ)
     (hn₂' : n₂ = data.deg pq')

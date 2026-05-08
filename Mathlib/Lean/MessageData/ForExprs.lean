@@ -113,7 +113,7 @@ instance : ForIn m MessageData.Exprs (PPContext × Expr) where
   forIn exprs := exprs.msg.forExprsIn
 
 /-- Find the expression in a message on which `f` does not return `none`. -/
-partial def firstExpr? {α} (msg : MessageData) (f : Expr → MetaM (Option α)) :
+private partial def firstExpr? {α} (msg : MessageData) (f : Expr → MetaM (Option α)) :
     IO (Option α) := do
   for (ppCtx, e) in msg.exprs do
     let a@(some _) ← ppCtx.runMetaM (f e) | continue
@@ -124,7 +124,7 @@ partial def firstExpr? {α} (msg : MessageData) (f : Expr → MetaM (Option α))
 
 If you need the context of the expressions, prefer iterating over the expressions via
 `for (ppCtx, e) in msg.exprs do` directly. -/
-partial def getExprs (msg : MessageData) : m (Array Expr) := do
+private partial def getExprs (msg : MessageData) : m (Array Expr) := do
   let mut arr := #[]
   for (_, e) in msg.exprs do
     arr := arr.push e

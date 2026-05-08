@@ -212,7 +212,7 @@ namespace EsakiaHom
 variable [TopologicalSpace α] [Preorder α] [TopologicalSpace β] [Preorder β] [TopologicalSpace γ]
   [Preorder γ] [TopologicalSpace δ] [Preorder δ]
 
-def toPseudoEpimorphism (f : EsakiaHom α β) : PseudoEpimorphism α β :=
+private def toPseudoEpimorphism (f : EsakiaHom α β) : PseudoEpimorphism α β :=
   { f with }
 
 instance instFunLike : FunLike (EsakiaHom α β) α β where

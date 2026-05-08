@@ -21,6 +21,6 @@ def joinM {m : Type u → Type u} [Monad m] {α : Type u} (a : m (m α)) : m α 
 
 /-- Executes `tm` or `fm` depending on whether the result of `mbool` is `true` or `false`
 respectively. -/
-def condM {m : Type → Type} [Monad m] {α : Type} (mbool : m Bool) (tm fm : m α) : m α := do
+private def condM {m : Type → Type} [Monad m] {α : Type} (mbool : m Bool) (tm fm : m α) : m α := do
   let b ← mbool
   cond b tm fm

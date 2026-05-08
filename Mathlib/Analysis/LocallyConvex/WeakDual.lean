@@ -197,7 +197,7 @@ noncomputable def rightDualEquiv (hr : B.SeparatingRight) : F ≃ₗ[𝕜] Stron
 
 /-- When `B` is left-separating, `E` is linearly equivalent to the strong dual of `F` with the
 weak topology. -/
-noncomputable def leftDualEquiv (hl : B.SeparatingLeft) : E ≃ₗ[𝕜] StrongDual 𝕜 (WeakBilin B.flip) :=
+private noncomputable def leftDualEquiv (hl : B.SeparatingLeft) : E ≃ₗ[𝕜] StrongDual 𝕜 (WeakBilin B.flip) :=
   rightDualEquiv _ (LinearMap.flip_separatingRight.mpr hl)
 
 end NontriviallyNormedField

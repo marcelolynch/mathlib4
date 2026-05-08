@@ -166,7 +166,7 @@ lemma toTopCat_map_apply {Y Z : ContinuousGeneratedByCat.{v} X}
 
 /-- The functor `ContinuousGeneratedByCat.toTopCat : ContinuousGeneratedByCat X ⥤ TopCat`
 is fully faithful. -/
-def fullyFaithfulToTopCat : (toTopCat.{v} X).FullyFaithful where
+private def fullyFaithfulToTopCat : (toTopCat.{v} X).FullyFaithful where
   preimage {Y Z} g :=
     homMk (WithGeneratedByTopology.equiv (X := X) ∘ g.hom ∘
       (WithGeneratedByTopology.equiv (X := X)).symm) (by
@@ -211,7 +211,7 @@ def fromGeneratedByTopCat : GeneratedByTopCat.{v} X ⥤ ContinuousGeneratedByCat
 
 /-- The isomorphism between
 `fromGeneratedByTopCat ⋙ toTopCat X ≅ GeneratedByTopCat.toTopCat`. -/
-def equivalenceFunctorIso :
+private def equivalenceFunctorIso :
     fromGeneratedByTopCat ⋙ toTopCat X ≅ GeneratedByTopCat.toTopCat :=
   NatIso.ofComponents (fun Y ↦ TopCat.isoOfHomeo
     (IsGeneratedBy.homeomorph (Y := GeneratedByTopCat.toTopCat.obj Y)))

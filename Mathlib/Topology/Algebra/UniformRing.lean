@@ -251,7 +251,7 @@ def sepQuotHomeomorphRingQuot (α) [Ring α] [TopologicalSpace α] [IsTopologica
 /-- Given a topological ring `α` equipped with a uniform structure that makes subtraction uniformly
 continuous, get an equivalence between the separated quotient of `α` and the quotient ring
 corresponding to the closure of zero. -/
-def sepQuotRingEquivRingQuot (α) [CommRing α] [TopologicalSpace α] [IsTopologicalRing α] :
+private def sepQuotRingEquivRingQuot (α) [CommRing α] [TopologicalSpace α] [IsTopologicalRing α] :
     SeparationQuotient α ≃+* α ⧸ (⊥ : Ideal α).closure where
   __ := sepQuotHomeomorphRingQuot α
   map_mul' := SeparationQuotient.surjective_mk.forall₂.2 (fun _ _ ↦ rfl)

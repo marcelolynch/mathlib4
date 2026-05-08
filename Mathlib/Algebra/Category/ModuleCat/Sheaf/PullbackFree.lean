@@ -141,7 +141,7 @@ lemma pullbackObjFreeIso_hom_naturality {I J : Type u} (f : I → J) :
 /-- The canonical isomorphism `freeFunctor ⋙ pullback φ ≅ freeFunctor` for a
 continuous map between ringed sites, when the underlying functor between the sites
 is final. -/
-noncomputable def freeFunctorCompPullbackIso : freeFunctor ⋙ pullback φ ≅ freeFunctor :=
+private noncomputable def freeFunctorCompPullbackIso : freeFunctor ⋙ pullback φ ≅ freeFunctor :=
   NatIso.ofComponents (fun X ↦ pullbackObjFreeIso φ X)
 
 end SheafOfModules

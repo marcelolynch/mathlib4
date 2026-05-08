@@ -62,7 +62,7 @@ abbrev sHomComp (K L M : C) : sHom K L ⊗ sHom L M ⟶ sHom K M := eComp SSet K
 
 /-- The bijection `(K ⟶ L) ≃ sHom K L _⦋0⦌` for all objects `K` and `L`
 in a simplicial category. -/
-def homEquiv' (K L : C) : (K ⟶ L) ≃ sHom K L _⦋0⦌ :=
+private def homEquiv' (K L : C) : (K ⟶ L) ≃ sHom K L _⦋0⦌ :=
   (eHomEquiv SSet).trans (sHom K L).unitHomEquiv
 
 variable (C) in

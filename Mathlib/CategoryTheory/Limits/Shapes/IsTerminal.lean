@@ -451,17 +451,17 @@ def IsInitial.op {X : C} (hX : IsInitial X) : IsTerminal (op X) :=
     (fun _ _ ↦ Quiver.Hom.unop_inj (hX.hom_ext _ _))
 
 /-- An initial object in the opposite category is terminal in the original category. -/
-def IsInitial.unop {X : Cᵒᵖ} (hX : IsInitial X) : IsTerminal X.unop :=
+private def IsInitial.unop {X : Cᵒᵖ} (hX : IsInitial X) : IsTerminal X.unop :=
   IsTerminal.ofUniqueHom (fun _ ↦ (hX.to _).unop)
     (fun _ _ ↦ Quiver.Hom.op_inj (hX.hom_ext _ _))
 
 /-- A terminal object is initial in the opposite category. -/
-def IsTerminal.op {X : C} (hX : IsTerminal X) : IsInitial (op X) :=
+private def IsTerminal.op {X : C} (hX : IsTerminal X) : IsInitial (op X) :=
   IsInitial.ofUniqueHom (fun _ ↦ (hX.from _).op)
     (fun _ _ ↦ Quiver.Hom.unop_inj (hX.hom_ext _ _))
 
 /-- A terminal object in the opposite category is initial in the original category. -/
-def IsTerminal.unop {X : Cᵒᵖ} (hX : IsTerminal X) : IsInitial X.unop :=
+private def IsTerminal.unop {X : Cᵒᵖ} (hX : IsTerminal X) : IsInitial X.unop :=
   IsInitial.ofUniqueHom (fun _ ↦ (hX.from _).unop)
     (fun _ _ ↦ Quiver.Hom.op_inj (hX.hom_ext _ _))
 

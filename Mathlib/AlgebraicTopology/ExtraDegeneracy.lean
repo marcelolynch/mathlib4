@@ -133,7 +133,7 @@ lemma section_comp_hom : ed.section_ ≫ X.hom = 𝟙 _ := by cat_disch
 
 /-- If an augmented simplicial object has an extradegeneracy, then
 then augmentation is a split epimorphism. -/
-def splitEpi : SplitEpi X.hom where
+private def splitEpi : SplitEpi X.hom where
   section_ := ed.section_
 
 end ExtraDegeneracy

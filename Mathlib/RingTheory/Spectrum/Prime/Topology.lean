@@ -854,7 +854,7 @@ end Order
 
 /-- If `x` specializes to `y`, then there is a natural map from the localization of `y` to the
 localization of `x`. -/
-def localizationMapOfSpecializes {x y : PrimeSpectrum R} (h : x ⤳ y) :
+private def localizationMapOfSpecializes {x y : PrimeSpectrum R} (h : x ⤳ y) :
     Localization.AtPrime y.asIdeal →+* Localization.AtPrime x.asIdeal :=
   @IsLocalization.lift _ _ _ _ _ _ _ _ Localization.isLocalization
     (algebraMap R (Localization.AtPrime x.asIdeal))

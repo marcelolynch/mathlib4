@@ -61,7 +61,7 @@ lemma toTopHomeo_symm_naturality {n m : SimplexCategory} (f : n ⟶ m) :
   exact ConcreteCategory.congr_hom ((forget _).congr_map
     (toTopSimplex.inv.naturality f)) _
 
-lemma toTopHomeo_symm_naturality_apply {n m : SimplexCategory} (f : n ⟶ m)
+private lemma toTopHomeo_symm_naturality_apply {n m : SimplexCategory} (f : n ⟶ m)
     (x : stdSimplex ℝ (Fin (n.len + 1))) :
     m.toTopHomeo.symm (stdSimplex.map f x) =
       SSet.toTop.{u}.map (SSet.stdSimplex.map f) (n.toTopHomeo.symm x) :=

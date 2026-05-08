@@ -150,7 +150,7 @@ instance : HasLeftKanExtension f (g ≫ h) := (Lan.CommuteWith.isKan f g h).hasL
 
 /-- If `h` commutes with `f⁺ g` and `t` is another left Kan extension of `g` along `f`, then
 `t.whisker h` is a left Kan extension of `g ≫ h` along `f`. -/
-def isKanWhisker
+private def isKanWhisker
     (t : LeftExtension f g) (H : IsKan t) {x : B} (h : c ⟶ x) [Lan.CommuteWith f g h] :
     IsKan (t.whisker h) :=
   IsKan.whiskerOfCommute (lanLeftExtension f g) t (IsKan.uniqueUpToIso (lanIsKan f g) H) h
@@ -295,7 +295,7 @@ instance : HasLeftKanLift f (h ≫ g) := (LanLift.CommuteWith.isKan f g h).hasLe
 
 /-- If `h` commutes with `f₊ g` and `t` is another left Kan lift of `g` along `f`, then
 `t.whisker h` is a left Kan lift of `h ≫ g` along `f`. -/
-def isKanWhisker
+private def isKanWhisker
     (t : LeftLift f g) (H : IsKan t) {x : B} (h : x ⟶ c) [LanLift.CommuteWith f g h] :
     IsKan (t.whisker h) :=
   IsKan.whiskerOfCommute (lanLiftLeftLift f g) t (IsKan.uniqueUpToIso (lanLiftIsKan f g) H) h

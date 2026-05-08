@@ -87,7 +87,7 @@ When $R = \mathcal{O}_{\mathbb{C}_p}$, it coincides
 with the classical de Rham period ring.
 Note that if `p = 0` in `R`, then this definition is the zero ring.
 -/
-def BDeRham : Type u :=
+private def BDeRham : Type u :=
   Localization (M := BDeRhamPlus R p) <| Submonoid.closure <|
     AdicCompletion.of ((RingHom.ker (fontaineThetaInvertP R p))) _ ''
       {a | (RingHom.ker (fontaineThetaInvertP R p)) = Ideal.span {a}}

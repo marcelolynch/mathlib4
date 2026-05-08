@@ -58,7 +58,7 @@ instance : (isInternallyProjective (C := C)).IsStableUnderRetracts where
 
 namespace InternallyProjective
 
-lemma ofRetract {X Y : C} (r : Retract Y X) [InternallyProjective X] : InternallyProjective Y :=
+private lemma ofRetract {X Y : C} (r : Retract Y X) [InternallyProjective X] : InternallyProjective Y :=
   ⟨isInternallyProjective.prop_of_retract r (isInternallyProjective.prop_of_is _)⟩
 
 end CategoryTheory.InternallyProjective

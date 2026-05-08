@@ -139,7 +139,7 @@ protected theorem hasStrictFDerivAt :
       φ.pt :=
   φ.hasStrictFDerivAt_leftFun.prodMk φ.hasStrictFDerivAt_rightFun
 
-theorem isInvertible_fderiv_prodFun : (fderiv 𝕜 φ.prodFun φ.pt).IsInvertible := by
+private theorem isInvertible_fderiv_prodFun : (fderiv 𝕜 φ.prodFun φ.pt).IsInvertible := by
   rw [φ.hasStrictFDerivAt.hasFDerivAt.fderiv]
   exact ContinuousLinearMap.isInvertible_equiv
 
@@ -161,7 +161,7 @@ theorem implicitFunction_def :
     implicitFunction φ = Function.curry (φ.hasStrictFDerivAt.toOpenPartialHomeomorph _).symm := by
   rfl
 
-lemma implicitFunction_apply {x : F} {y : G} :
+private lemma implicitFunction_apply {x : F} {y : G} :
     φ.implicitFunction x y = φ.toOpenPartialHomeomorph.symm (x, y) := by
   rfl
 
@@ -169,14 +169,14 @@ lemma implicitFunction_apply {x : F} {y : G} :
 theorem toOpenPartialHomeomorph_coe : ⇑φ.toOpenPartialHomeomorph = φ.prodFun := by
   rfl
 
-theorem toOpenPartialHomeomorph_apply (x : E) :
+private theorem toOpenPartialHomeomorph_apply (x : E) :
     φ.toOpenPartialHomeomorph x = (φ.leftFun x, φ.rightFun x) := by
   rfl
 
 theorem pt_mem_toOpenPartialHomeomorph_source : φ.pt ∈ φ.toOpenPartialHomeomorph.source :=
   φ.hasStrictFDerivAt.mem_toOpenPartialHomeomorph_source
 
-theorem map_pt_mem_toOpenPartialHomeomorph_target :
+private theorem map_pt_mem_toOpenPartialHomeomorph_target :
     (φ.leftFun φ.pt, φ.rightFun φ.pt) ∈ φ.toOpenPartialHomeomorph.target :=
   φ.toOpenPartialHomeomorph.map_source <| φ.pt_mem_toOpenPartialHomeomorph_source
 
@@ -220,7 +220,7 @@ theorem leftFun_eq_iff_implicitFunction : ∀ᶠ x in 𝓝 φ.pt,
   filter_upwards [φ.implicitFunction_apply_image, φ.leftFun_implicitFunction_eq_leftFun] with x _ _
   constructor <;> exact fun h => by rwa [← h]
 
-theorem map_nhds_eq : map φ.leftFun (𝓝 φ.pt) = 𝓝 (φ.leftFun φ.pt) :=
+private theorem map_nhds_eq : map φ.leftFun (𝓝 φ.pt) = 𝓝 (φ.leftFun φ.pt) :=
   show map (Prod.fst ∘ φ.prodFun) (𝓝 φ.pt) = 𝓝 (φ.prodFun φ.pt).1 by
     rw [← map_map, φ.hasStrictFDerivAt.map_nhds_eq_of_equiv, map_fst_nhds]
 
@@ -233,7 +233,7 @@ theorem hasStrictFDerivAt_implicitFunction_fderiv :
   convert this
   exact this.hasFDerivAt.fderiv
 
-theorem differentiableAt_implicitFunction (φ : ImplicitFunctionData 𝕜 E F G) :
+private theorem differentiableAt_implicitFunction (φ : ImplicitFunctionData 𝕜 E F G) :
     DifferentiableAt 𝕜 (φ.implicitFunction (φ.leftFun φ.pt)) (φ.rightFun φ.pt) :=
   φ.hasStrictFDerivAt_implicitFunction_fderiv.hasFDerivAt.differentiableAt
 
@@ -269,7 +269,7 @@ theorem hasStrictFDerivAt_implicitFunction (g'inv : G →L[𝕜] E)
 @[deprecated (since := "2026-01-27")]
 alias implicitFunction_hasStrictFDerivAt := hasStrictFDerivAt_implicitFunction
 
-theorem map_implicitFunction_nhdsWithin_preimage (φ : ImplicitFunctionData 𝕜 E F G)
+private theorem map_implicitFunction_nhdsWithin_preimage (φ : ImplicitFunctionData 𝕜 E F G)
     (s : Set E) :
     (𝓝[φ.implicitFunction (φ.leftFun φ.pt) ⁻¹' s] (φ.rightFun φ.pt)).map
       (φ.implicitFunction (φ.leftFun φ.pt)) = 𝓝[s ∩ φ.leftFun ⁻¹' {φ.leftFun φ.pt}] φ.pt := by
@@ -292,7 +292,7 @@ theorem map_implicitFunction_nhdsWithin_preimage (φ : ImplicitFunctionData 𝕜
       φ.toOpenPartialHomeomorph.leftInvOn hxs]
   · exact φ.toOpenPartialHomeomorph.mapsTo φ.pt_mem_toOpenPartialHomeomorph_source
 
-theorem eventuallyEq_implicitFunction {ψ : F → G → E}
+private theorem eventuallyEq_implicitFunction {ψ : F → G → E}
     (h : ∀ᶠ x in 𝓝 φ.pt, ψ (φ.leftFun x) (φ.rightFun x) = x) :
     Function.uncurry ψ =ᶠ[𝓝 (φ.prodFun φ.pt)] Function.uncurry φ.implicitFunction :=
   HasStrictFDerivAt.localInverse_unique _ h

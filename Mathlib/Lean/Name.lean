@@ -30,7 +30,7 @@ private def isBlackListed (declName : Name) : CoreM Bool := do
 /--
 Retrieve all names in the environment satisfying a predicate.
 -/
-def allNames (p : Name → Bool) : CoreM (Array Name) := do
+private def allNames (p : Name → Bool) : CoreM (Array Name) := do
   (← getEnv).constants.foldM (init := #[]) fun names n _ => do
     if p n && !(← isBlackListed n) then
       return names.push n

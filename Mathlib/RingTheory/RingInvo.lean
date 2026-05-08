@@ -82,7 +82,7 @@ instance : RingInvoClass (RingInvo R) R where
 instance : CoeOut (RingInvo R) (R ≃+* Rᵐᵒᵖ) where coe := toRingEquiv
 
 /-- Construct a ring involution from a ring homomorphism. -/
-def mk' (f : R →+* Rᵐᵒᵖ) (involution : ∀ r, (f (f r).unop).unop = r) : RingInvo R :=
+private def mk' (f : R →+* Rᵐᵒᵖ) (involution : ∀ r, (f (f r).unop).unop = r) : RingInvo R :=
   { f with
     invFun := fun r => (f r.unop).unop
     left_inv := fun r => involution r

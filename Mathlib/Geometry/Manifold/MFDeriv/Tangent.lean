@@ -94,7 +94,7 @@ open Bundle
 variable (I) in
 /-- The canonical identification between the tangent bundle to the model space and the product,
 as a diffeomorphism. -/
-def tangentBundleModelSpaceDiffeomorph (n : ℕ∞) :
+private def tangentBundleModelSpaceDiffeomorph (n : ℕ∞) :
     TangentBundle I H ≃ₘ^n⟮I.tangent, I.prod 𝓘(𝕜, E)⟯ ModelProd H E where
   __ := TotalSpace.toProd H E
   contMDiff_toFun := contMDiff_tangentBundleModelSpaceHomeomorph

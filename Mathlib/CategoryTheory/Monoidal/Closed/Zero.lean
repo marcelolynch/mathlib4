@@ -62,7 +62,7 @@ attribute [local instance] uniqueHomsetOfZero
 /-- A Cartesian closed category with a zero object is equivalent to the category with one object and
 one morphism.
 -/
-def equivPUnit [HasZeroObject C] : C ≌ Discrete PUnit.{w + 1} where
+private def equivPUnit [HasZeroObject C] : C ≌ Discrete PUnit.{w + 1} where
   functor := Functor.star C
   inverse := Functor.fromPUnit 0
   unitIso := NatIso.ofComponents

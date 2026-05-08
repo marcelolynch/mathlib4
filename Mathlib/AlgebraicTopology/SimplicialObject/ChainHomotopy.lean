@@ -168,7 +168,7 @@ noncomputable def toChainHomotopy (H : Homotopy f g) :
       rw [dNext_eq (i' := n) (w := by simp), prevD_eq (j' := n + 2) (w := by simp)]
       simp [ToChainHomotopy.comm_succ H]
 
-theorem map_homology_eq [CategoryWithHomology C] (H : Homotopy f g) (n : ℕ) :
+private theorem map_homology_eq [CategoryWithHomology C] (H : Homotopy f g) (n : ℕ) :
     (HomologicalComplex.homologyFunctor C _ n).map ((alternatingFaceMapComplex C).map f) =
     (HomologicalComplex.homologyFunctor C _ n).map ((alternatingFaceMapComplex C).map g) := by
   simpa using (H.toChainHomotopy).homologyMap_eq n

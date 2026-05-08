@@ -149,7 +149,7 @@ private def fintypeHelper : ZMod (2 * n) ⊕ ZMod (2 * n) ≃ QuaternionGroup n 
 
 /-- The special case that more or less by definition `QuaternionGroup 0` is isomorphic to the
 infinite dihedral group. -/
-def quaternionGroupZeroEquivDihedralGroupZero : QuaternionGroup 0 ≃* DihedralGroup 0 where
+private def quaternionGroupZeroEquivDihedralGroupZero : QuaternionGroup 0 ≃* DihedralGroup 0 where
   toFun
     | a j => DihedralGroup.r j
     | xa j => DihedralGroup.sr j

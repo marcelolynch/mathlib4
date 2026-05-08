@@ -108,7 +108,7 @@ lemma PrespectralSpace.isBasis_opens [PrespectralSpace X] :
   exact ⟨fun ⟨V, hV, heq⟩ ↦ heq ▸ ⟨V.2, hV⟩, fun h ↦ ⟨⟨s, h.1⟩, h.2, rfl⟩⟩
 
 /-- In a prespectral space, the lattice of opens is determined by its lattice of compact opens. -/
-def PrespectralSpace.opensEquiv [PrespectralSpace X] :
+private def PrespectralSpace.opensEquiv [PrespectralSpace X] :
     Opens X ≃o Order.Ideal (CompactOpens X) where
   toFun U := ⟨⟨{ V | (V : Set X) ⊆ U }, fun U₁ U₂ h₁ h₂ ↦ subset_trans (α := Set X) h₁ h₂⟩,
     ⟨⊥, by simp⟩, fun U₁ h₁ U₂ h₂ ↦ ⟨U₁ ⊔ U₂, by aesop, le_sup_left, le_sup_right⟩⟩

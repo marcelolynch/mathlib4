@@ -121,7 +121,7 @@ instance : JointlySurjective (precoverage P) where
     exact heq
 
 /-- Turn a `K`-cover into a `Q`-cover by showing that the components satisfy `Q`. -/
-def Cover.changeProp [JointlySurjective K] (𝒰 : X.Cover K) (h : ∀ j, Q (𝒰.f j)) :
+private def Cover.changeProp [JointlySurjective K] (𝒰 : X.Cover K) (h : ∀ j, Q (𝒰.f j)) :
     X.Cover (precoverage Q) where
   I₀ := 𝒰.I₀
   X := 𝒰.X

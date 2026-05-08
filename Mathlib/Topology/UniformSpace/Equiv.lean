@@ -209,7 +209,7 @@ theorem completeSpace_iff (h : α ≃ᵤ β) : CompleteSpace α ↔ CompleteSpac
   completeSpace_congr h.isUniformEmbedding
 
 /-- Uniform equiv given a uniform embedding. -/
-noncomputable def ofIsUniformEmbedding (f : α → β) (hf : IsUniformEmbedding f) :
+private noncomputable def ofIsUniformEmbedding (f : α → β) (hf : IsUniformEmbedding f) :
     α ≃ᵤ Set.range f where
   uniformContinuous_toFun := hf.isUniformInducing.uniformContinuous.subtype_mk _
   uniformContinuous_invFun := by

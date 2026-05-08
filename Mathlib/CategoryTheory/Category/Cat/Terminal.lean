@@ -45,7 +45,7 @@ instance : HasTerminal Cat.{v, u} := by
   exact IsTerminal.hasTerminal (X := Cat.of (ShrinkHoms PUnit)) isTerminalOfUniqueOfIsDiscrete
 
 /-- Any `T : Cat.{u, u}` with a unique object and discrete homs is isomorphic to `⊤_ Cat.{u, u}.` -/
-noncomputable def terminalIsoOfUniqueOfIsDiscrete
+private noncomputable def terminalIsoOfUniqueOfIsDiscrete
     {T : Type u} [Category.{v} T] [Unique T] [IsDiscrete T] : ⊤_ Cat.{v, u} ≅ Cat.of T :=
   terminalIsoIsTerminal isTerminalOfUniqueOfIsDiscrete
 
@@ -54,7 +54,7 @@ def isTerminalDiscretePUnit : IsTerminal (Cat.of (Discrete PUnit)) :=
   isTerminalOfUniqueOfIsDiscrete
 
 /-- Any terminal object `T : Cat.{u, u}` is isomorphic to `Cat.of (Discrete PUnit)`. -/
-def isoDiscretePUnitOfIsTerminal {T : Type u} [Category.{u} T] (hT : IsTerminal (Cat.of T)) :
+private def isoDiscretePUnitOfIsTerminal {T : Type u} [Category.{u} T] (hT : IsTerminal (Cat.of T)) :
     Cat.of T ≅ Cat.of (Discrete PUnit) :=
   IsTerminal.uniqueUpToIso hT isTerminalDiscretePUnit
 

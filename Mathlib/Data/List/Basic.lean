@@ -279,7 +279,7 @@ theorem reverse_bijective : Bijective (@reverse α) :=
 theorem concat_eq_reverse_cons (a : α) (l : List α) : concat l a = reverse (a :: reverse l) := by
   grind
 
-theorem map_reverseAux (f : α → β) (l₁ l₂ : List α) :
+private theorem map_reverseAux (f : α → β) (l₁ l₂ : List α) :
     map f (reverseAux l₁ l₂) = reverseAux (map f l₁) (map f l₂) := by
   simp only [reverseAux_eq, map_append, map_reverse]
 

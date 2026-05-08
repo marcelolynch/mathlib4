@@ -123,7 +123,7 @@ theorem HasSubst.smul (r : MvPowerSeries τ S) {a : MvPowerSeries τ S} (ha : Ha
   ha.mul_right
 
 /-- Families of `PowerSeries` that can be substituted, as an `Ideal`. -/
-noncomputable def HasSubst.ideal : Ideal (MvPowerSeries τ S) where
+private noncomputable def HasSubst.ideal : Ideal (MvPowerSeries τ S) where
   carrier := setOf HasSubst
   add_mem' := HasSubst.add
   zero_mem' := HasSubst.zero

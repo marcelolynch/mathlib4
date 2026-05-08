@@ -382,13 +382,13 @@ def prodAssoc : (α × β) × γ ≃ᵐ α × β × γ where
   measurable_invFun := by eta_expand; dsimp; measurability
 
 /-- `PUnit` is a left identity for product of measurable spaces up to a measurable equivalence. -/
-def punitProd : PUnit × α ≃ᵐ α where
+private def punitProd : PUnit × α ≃ᵐ α where
   toEquiv := Equiv.punitProd α
   measurable_toFun := measurable_snd
   measurable_invFun := measurable_prodMk_left
 
 /-- `PUnit` is a right identity for product of measurable spaces up to a measurable equivalence. -/
-def prodPUnit : α × PUnit ≃ᵐ α where
+private def prodPUnit : α × PUnit ≃ᵐ α where
   toEquiv := Equiv.prodPUnit α
   measurable_toFun := measurable_fst
   measurable_invFun := measurable_prodMk_right
@@ -413,7 +413,7 @@ def Set.univ (α : Type*) [MeasurableSpace α] : (univ : Set α) ≃ᵐ α where
   measurable_invFun := measurable_id.subtype_mk
 
 /-- `{a} ≃ Unit` as measurable spaces. -/
-def Set.singleton (a : α) : ({a} : Set α) ≃ᵐ Unit where
+private def Set.singleton (a : α) : ({a} : Set α) ≃ᵐ Unit where
   toEquiv := Equiv.Set.singleton a
 
 /-- `α` is equivalent to its image in `α ⊕ β` as measurable spaces. -/
@@ -458,7 +458,7 @@ def prodSumDistrib (α β γ) [MeasurableSpace α] [MeasurableSpace β] [Measura
   prodComm.trans <| (sumProdDistrib _ _ _).trans <| sumCongr prodComm prodComm
 
 /-- Products distribute over sums as measurable spaces. -/
-def sumProdSum (α β γ δ) [MeasurableSpace α] [MeasurableSpace β] [MeasurableSpace γ]
+private def sumProdSum (α β γ δ) [MeasurableSpace α] [MeasurableSpace β] [MeasurableSpace γ]
     [MeasurableSpace δ] : (α ⊕ β) × (γ ⊕ δ) ≃ᵐ ((α × γ) ⊕ (α × δ)) ⊕ ((β × γ) ⊕ (β × δ)) :=
   (sumProdDistrib _ _ _).trans <| sumCongr (prodSumDistrib _ _ _) (prodSumDistrib _ _ _)
 

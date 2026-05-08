@@ -101,7 +101,7 @@ def LeftExtension.IsKan.adjunction {f : a ⟶ b} {t : LeftExtension f (𝟙 a)}
 
 /-- An absolute left Kan extension of the identity along `f` is a right adjoint to `f`.
 The unit of this adjunction is given by the unit of the Kan extension. -/
-def LeftExtension.IsAbsKan.adjunction {f : a ⟶ b} (t : LeftExtension f (𝟙 a)) (H : IsAbsKan t) :
+private def LeftExtension.IsAbsKan.adjunction {f : a ⟶ b} (t : LeftExtension f (𝟙 a)) (H : IsAbsKan t) :
     f ⊣ t.extension :=
   H.isKan.adjunction (H f)
 
@@ -181,7 +181,7 @@ def LeftLift.IsKan.adjunction {u : b ⟶ a} {t : LeftLift u (𝟙 a)}
 
 /-- An absolute left Kan lift of the identity along `u` is a left adjoint to `u`.
 The unit of this adjunction is given by the unit of the Kan lift. -/
-def LeftLift.IsAbsKan.adjunction {u : b ⟶ a} (t : LeftLift u (𝟙 a)) (H : IsAbsKan t) :
+private def LeftLift.IsAbsKan.adjunction {u : b ⟶ a} (t : LeftLift u (𝟙 a)) (H : IsAbsKan t) :
     t.lift ⊣ u :=
   H.isKan.adjunction (H u)
 

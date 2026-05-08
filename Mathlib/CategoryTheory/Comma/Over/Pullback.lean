@@ -234,12 +234,12 @@ instance faithful_pushout {X Y : C} (f : X ⟶ Y) [HasPushoutsAlong f]
   exact (mapPushoutAdj f).faithful_L_of_mono_unit_app
 
 /-- pushout (𝟙 X) : Under X ⥤ Under X is the identity functor. -/
-def pushoutId {X : C} : pushout (𝟙 X) ≅ 𝟭 _ :=
+private def pushoutId {X : C} : pushout (𝟙 X) ≅ 𝟭 _ :=
   (conjugateIsoEquiv (Adjunction.id (C := Under _)) (mapPushoutAdj (𝟙 _))).symm
     (Under.mapId X).symm
 
 /-- pushout commutes with composition (up to natural isomorphism). -/
-def pushoutComp {X Y Z : C} (f : X ⟶ Y) (g : Y ⟶ Z)
+private def pushoutComp {X Y Z : C} (f : X ⟶ Y) (g : Y ⟶ Z)
     [HasPushoutsAlong f] [HasPushoutsAlong g] :
     pushout (f ≫ g) ≅ pushout f ⋙ pushout g :=
   (conjugateIsoEquiv ((mapPushoutAdj _).comp (mapPushoutAdj _)) (mapPushoutAdj _)).symm

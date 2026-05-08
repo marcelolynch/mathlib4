@@ -568,7 +568,7 @@ theorem coe_prodComm : ⇑(prodComm I J M N n) = Prod.swap :=
   rfl
 
 /-- `(M × N) × N'` is diffeomorphic to `M × (N × N')`. -/
-def prodAssoc : ((M × N) × N') ≃ₘ^n⟮(I.prod J).prod J', I.prod (J.prod J')⟯ M × N × N' where
+private def prodAssoc : ((M × N) × N') ≃ₘ^n⟮(I.prod J).prod J', I.prod (J.prod J')⟯ M × N × N' where
   contMDiff_toFun :=
     (contMDiff_fst.comp contMDiff_fst).prodMk
       ((contMDiff_snd.comp contMDiff_fst).prodMk contMDiff_snd)
@@ -662,7 +662,7 @@ theorem sumEmpty_toEquiv [IsEmpty M'] : (sumEmpty I M n).toEquiv = Equiv.sumEmpt
 lemma sumEmpty_apply_inl [IsEmpty M'] (x : M) : (sumEmpty I M (M' := M') n) (Sum.inl x) = x := rfl
 
 /-- The unique diffeomorphism between two empty types -/
-protected def empty [IsEmpty M] [IsEmpty M'] : Diffeomorph I I M M' n where
+private protected def empty [IsEmpty M] [IsEmpty M'] : Diffeomorph I I M M' n where
   __ := Equiv.equivOfIsEmpty M M'
   contMDiff_toFun x := (IsEmpty.false x).elim
   contMDiff_invFun x := (IsEmpty.false x).elim

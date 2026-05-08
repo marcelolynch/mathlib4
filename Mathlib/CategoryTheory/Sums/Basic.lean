@@ -371,7 +371,7 @@ instance isEquivalence : (swap C D).IsEquivalence :=
   (by infer_instance : (equivalence C D).functor.IsEquivalence)
 
 /-- The double swap on `C ⊕ D` is naturally isomorphic to the identity functor. -/
-def symmetry : swap C D ⋙ swap D C ≅ 𝟭 (C ⊕ D) :=
+private def symmetry : swap C D ⋙ swap D C ≅ 𝟭 (C ⊕ D) :=
   (equivalence C D).unitIso.symm
 
 end Swap

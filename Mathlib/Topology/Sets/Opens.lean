@@ -480,7 +480,7 @@ theorem basis_nhds : (𝓝 x).HasBasis (fun _ : OpenNhdsOf x => True) (↑) :=
     ⟨U, ⟨⟨U.mem, U.isOpen⟩, Subset.rfl⟩⟩
 
 /-- Preimage of an open neighborhood of `f x` under a continuous map `f` as a `LatticeHom`. -/
-def comap (f : C(α, β)) (x : α) : LatticeHom (OpenNhdsOf (f x)) (OpenNhdsOf x) where
+private def comap (f : C(α, β)) (x : α) : LatticeHom (OpenNhdsOf (f x)) (OpenNhdsOf x) where
   toFun U := ⟨Opens.comap f U.1, U.mem⟩
   map_sup' _ _ := rfl
   map_inf' _ _ := rfl

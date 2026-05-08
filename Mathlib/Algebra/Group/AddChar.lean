@@ -302,12 +302,12 @@ lemma prod_eq_sum (s : Finset ι) (ψ : ι → AddChar A M) : ∏ i ∈ s, ψ i 
     toMonoidHomEquiv.symm (ψ * φ) = toMonoidHomEquiv.symm ψ + toMonoidHomEquiv.symm φ := rfl
 
 /-- The natural equivalence to `(Multiplicative A →* M)` is a monoid isomorphism. -/
-def toMonoidHomMulEquiv : AddChar A M ≃* (Multiplicative A →* M) :=
+private def toMonoidHomMulEquiv : AddChar A M ≃* (Multiplicative A →* M) :=
   { toMonoidHomEquiv with map_mul' := fun φ ψ ↦ by rfl }
 
 /-- Additive characters `A → M` are the same thing as additive homomorphisms from `A` to
 `Additive M`. -/
-def toAddMonoidAddEquiv : Additive (AddChar A M) ≃+ (A →+ Additive M) :=
+private def toAddMonoidAddEquiv : Additive (AddChar A M) ≃+ (A →+ Additive M) :=
   { toAddMonoidHomEquiv with map_add' := fun φ ψ ↦ by rfl }
 
 /-- The double dual embedding. -/

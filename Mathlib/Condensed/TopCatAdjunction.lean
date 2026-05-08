@@ -208,7 +208,7 @@ instance : IsIso compactlyGeneratedAdjunction.counit := by
 The functor from topological spaces to condensed sets restricted to compactly generated spaces
 is fully faithful.
 -/
-noncomputable def fullyFaithfulCompactlyGeneratedToCondensedSet :
+private noncomputable def fullyFaithfulCompactlyGeneratedToCondensedSet :
     compactlyGeneratedToCondensedSet.FullyFaithful :=
   compactlyGeneratedAdjunction.fullyFaithfulROfIsIsoCounit
 

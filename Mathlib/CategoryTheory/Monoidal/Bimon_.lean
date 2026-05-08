@@ -216,7 +216,7 @@ def equivMonComonCounitIsoApp (M : Mon (Comon C)) :
  Mon.mkIso <| (equivMonComonCounitIsoAppX M)
 
 /-- The equivalence `Comon (Mon C) ≌ Mon (Comon C)` -/
-def equivMonComon : Bimon C ≌ Mon (Comon C) where
+private def equivMonComon : Bimon C ≌ Mon (Comon C) where
   functor := toMonComon C
   inverse := ofMonComon C
   unitIso := NatIso.ofComponents equivMonComonUnitIsoApp

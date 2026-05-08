@@ -96,7 +96,7 @@ noncomputable def iterationFunctorObjBotIso : (Φ.iterationFunctor J).obj ⊥ �
   eqToIso (Φ.iter ⊥).obj_bot
 
 /-- The natural map `Φ.X₀ ⟶ (Φ.iterationFunctor J).obj j`. -/
-noncomputable def ιIterationFunctor :
+private noncomputable def ιIterationFunctor :
     (Functor.const _).obj Φ.X₀ ⟶ Φ.iterationFunctor J where
   app j := (Φ.iterationFunctorObjBotIso J).inv ≫
     (Φ.iterationFunctor J).map (homOfLE bot_le : ⊥ ⟶ j)

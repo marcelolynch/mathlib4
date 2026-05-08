@@ -174,7 +174,7 @@ variable [AddMonoid M]
 /-- The additive monoid hom representing an additive monoid action.
 
 When `M` is a group, see `AddAction.toPermHom`. -/
-def AddAction.toEndHom [AddAction M α] : M →+ Additive (Function.End α) :=
+private def AddAction.toEndHom [AddAction M α] : M →+ Additive (Function.End α) :=
   MulAction.toEndHom.toAdditiveRight
 
 /-- The additive action induced by a hom to `Additive (Function.End α)`

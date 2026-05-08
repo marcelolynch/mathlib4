@@ -129,7 +129,7 @@ noncomputable def shrink (M : ModelType.{u, v, w} T) [Small.{w'} M] : ModelType.
   equivInduced (equivShrink M)
 
 /-- Lifts a model to a particular universe. -/
-def ulift (M : ModelType.{u, v, w} T) : ModelType.{u, v, max w w'} T :=
+private def ulift (M : ModelType.{u, v, w} T) : ModelType.{u, v, max w w'} T :=
   equivInduced (Equiv.ulift.{w', w}.symm : M ≃ _)
 
 /-- The reduct of any model of `φ.onTheory T` is a model of `T`. -/

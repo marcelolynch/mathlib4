@@ -31,7 +31,7 @@ def onePointHyperplaneHomeoUnitSphere
 
 /-- A homeomorphism from the one-point compactification of a finite-dimensional real vector space to
 the sphere. -/
-def onePointEquivSphereOfFinrankEq {ι V : Type*} [Fintype ι]
+private def onePointEquivSphereOfFinrankEq {ι V : Type*} [Fintype ι]
     [AddCommGroup V] [Module ℝ V] [FiniteDimensional ℝ V]
     [TopologicalSpace V] [IsTopologicalAddGroup V] [ContinuousSMul ℝ V] [T2Space V]
     (h : finrank ℝ V + 1 = Fintype.card ι) :

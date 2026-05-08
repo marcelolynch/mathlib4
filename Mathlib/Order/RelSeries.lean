@@ -666,7 +666,7 @@ To show a proposition `p` for `xs : RelSeries r` it suffices to show it for all 
 and to show that when `p` holds for `xs` it also holds for `xs` appended with one element.
 -/
 @[elab_as_elim]
-def inductionOn' (motive : RelSeries r → Sort*)
+private def inductionOn' (motive : RelSeries r → Sort*)
     (singleton : (x : α) → motive (RelSeries.singleton r x))
     (snoc : (p : RelSeries r) → (x : α) → (hx : p.last ~[r] x) → (hp : motive p) →
       motive (p.snoc x hx)) (p : RelSeries r) :

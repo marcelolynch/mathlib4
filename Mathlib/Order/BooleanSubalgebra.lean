@@ -197,7 +197,7 @@ instance instInhabited : Inhabited (BooleanSubalgebra α) := ⟨⊥⟩
 /-- The top Boolean subalgebra is isomorphic to the original Boolean algebra.
 
 This is the Boolean subalgebra version of `Equiv.Set.univ α`. -/
-def topEquiv : (⊤ : BooleanSubalgebra α) ≃o α where
+private def topEquiv : (⊤ : BooleanSubalgebra α) ≃o α where
   toEquiv := Equiv.Set.univ _
   map_rel_iff' := .rfl
 

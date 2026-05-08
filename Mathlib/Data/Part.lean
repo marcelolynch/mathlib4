@@ -340,7 +340,7 @@ theorem of_toOption (o : Part α) [Decidable o.Dom] : ofOption (toOption o) = o 
   ext fun _ => mem_ofOption.trans mem_toOption
 
 /-- `Part α` is (classically) equivalent to `Option α`. -/
-noncomputable def equivOption : Part α ≃ Option α :=
+private noncomputable def equivOption : Part α ≃ Option α :=
   haveI := Classical.dec
   ⟨fun o => toOption o, ofOption, fun o => of_toOption o, fun o =>
     Eq.trans (by dsimp; congr) (to_ofOption o)⟩
@@ -559,7 +559,7 @@ theorem mem_restrict (p : Prop) (o : Part α) (h : p → o.Dom) (a : α) :
   rintro ⟨h₀, _, h₂⟩; exact ⟨h₀, h₂⟩
 
 /-- `unwrap o` gets the value at `o`, ignoring the condition. This function is unsound. -/
-unsafe def unwrap (o : Part α) : α :=
+private unsafe def unwrap (o : Part α) : α :=
   o.get lcProof
 
 theorem assert_defined {p : Prop} {f : p → Part α} : ∀ h : p, (f h).Dom → (assert p f).Dom :=

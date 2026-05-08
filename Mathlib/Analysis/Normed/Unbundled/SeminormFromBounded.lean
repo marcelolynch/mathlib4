@@ -365,7 +365,7 @@ theorem seminormFromBounded_is_norm_iff (f_zero : f 0 = 0) (f_nonneg : 0 ≤ f)
 /-- `seminormFromBounded' f` as a `RingNorm` on `R`, provided that `f` is nonnegative,
   multiplicatively bounded and subadditive, that it preserves `0` and negation, and that `f` has
   trivial kernel. -/
-def normFromBounded (f_zero : f 0 = 0) (f_nonneg : 0 ≤ f)
+private def normFromBounded (f_zero : f 0 = 0) (f_nonneg : 0 ≤ f)
     (f_mul : ∀ x y : R, f (x * y) ≤ c * f x * f y)
     (f_add : ∀ a b, f (a + b) ≤ f a + f b) (f_neg : ∀ x : R, f (-x) = f x)
     (f_ker : f ⁻¹' {0} = {0}) : RingNorm R :=

@@ -604,12 +604,12 @@ lemma exact [HasZeroObject C] (s : S.Splitting) : S.Exact :=
   ⟨s.homologyData, isZero_zero _⟩
 
 /-- If a short complex `S` is equipped with a splitting, then `S.X₁` is the kernel of `S.g`. -/
-noncomputable def fIsKernel [HasZeroObject C] (s : S.Splitting) :
+private noncomputable def fIsKernel [HasZeroObject C] (s : S.Splitting) :
     IsLimit (KernelFork.ofι S.f S.zero) :=
   s.homologyData.left.hi
 
 /-- If a short complex `S` is equipped with a splitting, then `S.X₃` is the cokernel of `S.f`. -/
-noncomputable def gIsCokernel [HasZeroObject C] (s : S.Splitting) :
+private noncomputable def gIsCokernel [HasZeroObject C] (s : S.Splitting) :
     IsColimit (CokernelCofork.ofπ S.g S.zero) :=
   s.homologyData.right.hp
 
@@ -658,7 +658,7 @@ noncomputable def ofIsZeroOfIsIso (hf : IsZero S.X₁) (hg : IsIso S.g) : Splitt
   f_r := hf.eq_of_src _ _
 
 /-- The obvious splitting of a short complex when `S.f` is an isomorphism and `S.X₃` is zero. -/
-noncomputable def ofIsIsoOfIsZero (hf : IsIso S.f) (hg : IsZero S.X₃) : Splitting S where
+private noncomputable def ofIsIsoOfIsZero (hf : IsIso S.f) (hg : IsZero S.X₃) : Splitting S where
   r := inv S.f
   s := 0
   s_g := hg.eq_of_src _ _

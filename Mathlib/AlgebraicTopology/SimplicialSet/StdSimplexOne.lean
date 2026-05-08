@@ -35,7 +35,7 @@ def objMk₁ {n : ℕ} (i : Fin (n + 2)) : (Δ[1] _⦋n⦌ : Type u) :=
         dsimp
         split_ifs <;> grind }
 
-lemma objMk₁_apply {n : ℕ} (i : Fin (n + 2)) (j : Fin (n + 1)) :
+private lemma objMk₁_apply {n : ℕ} (i : Fin (n + 2)) (j : Fin (n + 1)) :
     dsimp% objMk₁ i j = if j.castSucc < i then 0 else 1 := rfl
 
 lemma objMk₁_apply_eq_zero_iff {n : ℕ} (i : Fin (n + 2)) (j : Fin (n + 1)) :
@@ -46,7 +46,7 @@ lemma objMk₁_of_castSucc_lt {n : ℕ} (i : Fin (n + 2)) (j : Fin (n + 1)) (h :
     dsimp% objMk₁.{u} i j = 0 :=
   SimplexCategory.toMk₁_of_castSucc_lt _ _ h
 
-lemma objMk₁_apply_eq_one_iff {n : ℕ} (i : Fin (n + 2)) (j : Fin (n + 1)) :
+private lemma objMk₁_apply_eq_one_iff {n : ℕ} (i : Fin (n + 2)) (j : Fin (n + 1)) :
     dsimp% objMk₁.{u} i j = 1 ↔ i ≤ j.castSucc :=
   SimplexCategory.toMk₁_apply_eq_one_iff ..
 

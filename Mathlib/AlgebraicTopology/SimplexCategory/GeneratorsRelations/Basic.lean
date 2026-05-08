@@ -28,7 +28,7 @@ def FreeSimplexQuiver := ℕ
 def FreeSimplexQuiver.mk (n : ℕ) : FreeSimplexQuiver := n
 
 /-- Getting back the natural number from the objects. -/
-def FreeSimplexQuiver.len (x : FreeSimplexQuiver) : ℕ := x
+private def FreeSimplexQuiver.len (x : FreeSimplexQuiver) : ℕ := x
 
 namespace FreeSimplexQuiver
 

@@ -72,7 +72,7 @@ theorem SlashInvariantForm.ext {f g : SlashInvariantForm Γ k} (h : ∀ x, f x =
 
 /-- Copy of a `SlashInvariantForm` with a new `toFun` equal to the old one.
 Useful to fix definitional equalities. -/
-protected def SlashInvariantForm.copy (f : SlashInvariantForm Γ k) (f' : ℍ → ℂ) (h : f' = ⇑f) :
+private protected def SlashInvariantForm.copy (f : SlashInvariantForm Γ k) (f' : ℍ → ℂ) (h : f' = ⇑f) :
     SlashInvariantForm Γ k where
   toFun := f'
   slash_action_eq' := h.symm ▸ f.slash_action_eq'

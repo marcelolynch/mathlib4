@@ -192,7 +192,7 @@ theorem isElementary_closure (hA : L.MeetsDefinable A) :
   exact ⟨⟨b, by rwa [← hA.closure_eq_self] at hbA⟩, hbD⟩
 
 /-- Bundles the closure of a set meeting definable sets as an elementary substructure. -/
-def toElementarySubstructure (hA : L.MeetsDefinable A) :
+private def toElementarySubstructure (hA : L.MeetsDefinable A) :
     L.ElementarySubstructure M :=
   ⟨closure L A, hA.isElementary_closure⟩
 

@@ -29,13 +29,13 @@ variable [IsDomain R] [IsPrincipalIdealRing R] [IsDomain S] [Finite ι]
 
 /-- We can write the quotient of an ideal over a PID as a product of quotients by principal ideals.
 -/
-noncomputable def quotientEquivPiSpan (I : Ideal S) (b : Basis ι R S) (hI : I ≠ ⊥) :
+private noncomputable def quotientEquivPiSpan (I : Ideal S) (b : Basis ι R S) (hI : I ≠ ⊥) :
     (S ⧸ I) ≃ₗ[R] ∀ i, R ⧸ span ({I.smithCoeffs b hI i} : Set R) :=
   Submodule.quotientEquivPiSpan (I.restrictScalars R) b <| finrank_eq_finrank b I hI
 
 /-- Ideal quotients over a free finite extension of `ℤ` are isomorphic to a direct product of
 `ZMod`. -/
-noncomputable def quotientEquivPiZMod (I : Ideal S) (b : Basis ι ℤ S) (hI : I ≠ ⊥) :
+private noncomputable def quotientEquivPiZMod (I : Ideal S) (b : Basis ι ℤ S) (hI : I ≠ ⊥) :
     S ⧸ I ≃+ ∀ i, ZMod (I.smithCoeffs b hI i).natAbs :=
   Submodule.quotientEquivPiZMod (I.restrictScalars ℤ) b <| finrank_eq_finrank b I hI
 

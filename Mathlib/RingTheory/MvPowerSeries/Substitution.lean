@@ -589,7 +589,7 @@ lemma rescale_homogeneous_eq_smul {n : ℕ} {r : R} {f : MvPowerSeries σ R}
     simp [he, mul_zero, coeff_apply]
 
 /-- Rescale a multivariate power series, as a `MonoidHom` in the scaling parameters. -/
-noncomputable def rescaleMonoidHom :
+private noncomputable def rescaleMonoidHom :
     (σ → R) →* MvPowerSeries σ R →+* MvPowerSeries σ R where
   toFun := rescale
   map_one' := rescale_one

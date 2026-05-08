@@ -72,7 +72,7 @@ theorem deleteEdges_le_iff (s : Set (Sym2 V)) (G' : SimpleGraph V) :
 
 lemma deleteEdges_le (s : Set (Sym2 V)) : G.deleteEdges s ≤ G := sdiff_le
 
-lemma deleteEdges_anti (h : s₁ ⊆ s₂) : G.deleteEdges s₂ ≤ G.deleteEdges s₁ :=
+private lemma deleteEdges_anti (h : s₁ ⊆ s₂) : G.deleteEdges s₂ ≤ G.deleteEdges s₁ :=
   sdiff_le_sdiff_left <| fromEdgeSet_mono h
 
 lemma deleteEdges_mono (h : G ≤ H) : G.deleteEdges s ≤ H.deleteEdges s := sdiff_le_sdiff_right h
@@ -80,7 +80,7 @@ lemma deleteEdges_mono (h : G ≤ H) : G.deleteEdges s ≤ H.deleteEdges s := sd
 @[simp] lemma deleteEdges_eq_self : G.deleteEdges s = G ↔ Disjoint G.edgeSet s := by
   rw [deleteEdges, sdiff_eq_left, disjoint_fromEdgeSet]
 
-theorem deleteEdges_eq_inter_edgeSet (s : Set (Sym2 V)) :
+private theorem deleteEdges_eq_inter_edgeSet (s : Set (Sym2 V)) :
     G.deleteEdges s = G.deleteEdges (s ∩ G.edgeSet) := by
   ext
   simp +contextual [imp_false]
@@ -123,7 +123,7 @@ lemma deleteIncidenceSet_adj {G : SimpleGraph V} {x v₁ v₂ : V} :
   rw [deleteIncidenceSet, deleteEdges_adj, mk'_mem_incidenceSet_iff]
   tauto
 
-lemma deleteIncidenceSet_le (G : SimpleGraph V) (x : V) : G.deleteIncidenceSet x ≤ G :=
+private lemma deleteIncidenceSet_le (G : SimpleGraph V) (x : V) : G.deleteIncidenceSet x ≤ G :=
   deleteEdges_le (G.incidenceSet x)
 
 lemma edgeSet_fromEdgeSet_incidenceSet (G : SimpleGraph V) (x : V) :

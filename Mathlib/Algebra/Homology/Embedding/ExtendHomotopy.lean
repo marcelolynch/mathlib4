@@ -164,7 +164,7 @@ lemma ofExtend_extend (h : Homotopy f g) (e : c.Embedding c') [e.IsRelIff] :
 `f` and `g` are morphism between cochain complexes of shape `c`,
 this is the bijection between homotopies between `f` and `g`,
 and homotopies between the extensions `extendMap f e` and `extendMap g e`. -/
-noncomputable def extendEquiv (e : c.Embedding c') [e.IsRelIff] :
+private noncomputable def extendEquiv (e : c.Embedding c') [e.IsRelIff] :
     Homotopy f g ≃ Homotopy (extendMap f e) (extendMap g e) where
   toFun h := h.extend e
   invFun h := h.ofExtend
@@ -190,7 +190,7 @@ noncomputable def extendHomotopyFunctor :
 /-- Given an embedding `e : c.Embedding c'` of complex shapes, the
 functor `e.extendHomotopyFunctor C` on homotopy categories is
 induced by the functor `e.extendFunctor C` on homological complexes. -/
-noncomputable def extendHomotopyFunctorFactors :
+private noncomputable def extendHomotopyFunctorFactors :
     HomotopyCategory.quotient C c ⋙ e.extendHomotopyFunctor C ≅
       e.extendFunctor C ⋙ HomotopyCategory.quotient C c' :=
   Iso.refl _

@@ -84,7 +84,7 @@ This `.lit (.natVal n)` internally to represent a natural number,
 rather than the preferred `OfNat.ofNat` form.
 We use this internally to avoid unnecessary typeclass searches.
 -/
-meta def mkRawRatLit (q : ℚ) : Q(ℚ) :=
+private meta def mkRawRatLit (q : ℚ) : Q(ℚ) :=
   let nlit : Q(ℤ) := mkRawIntLit q.num
   let dlit : Q(ℕ) := mkRawNatLit q.den
   q(mkRat $nlit $dlit)
@@ -400,7 +400,7 @@ instance {α : Q(Type u)} {x : Q($α)} : ToMessageData (Result x) where
   | .isNegNNRat _ q _ _ proof => m!"isNegNNRat {q} ({proof})"
 
 /-- Returns the rational number that is the result of `norm_num` evaluation. -/
-def Result.toRat {α : Q(Type u)} {e : Q($α)} : Result e → Option Rat
+private def Result.toRat {α : Q(Type u)} {e : Q($α)} : Result e → Option Rat
   | .isBool .. => none
   | .isNat _ lit _ => some lit.natLit!
   | .isNegNat _ lit _ => some (-lit.natLit!)

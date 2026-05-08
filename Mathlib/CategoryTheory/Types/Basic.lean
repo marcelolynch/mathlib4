@@ -337,7 +337,7 @@ instance uliftFunctor_faithful : uliftFunctor.{v, u}.Faithful :=
 
 /-- The functor embedding `Type u` into `Type u` via `ULift` is isomorphic to the identity functor.
 -/
-def uliftFunctorTrivial : uliftFunctor.{u, u} ≅ 𝟭 _ :=
+private def uliftFunctorTrivial : uliftFunctor.{u, u} ≅ 𝟭 _ :=
   NatIso.ofComponents uliftTrivial
 
 -- TODO We should connect this to a general story about concrete categories

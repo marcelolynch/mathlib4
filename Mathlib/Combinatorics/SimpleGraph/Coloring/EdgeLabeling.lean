@@ -64,7 +64,7 @@ An edge labeling of the complete graph on `V` with labels in type `K`.
 abbrev TopEdgeLabeling (V K : Type*) :=
   EdgeLabeling (⊤ : SimpleGraph V) K
 
-theorem card_topEdgeLabeling [DecidableEq V] [Fintype V] [Fintype K] :
+private theorem card_topEdgeLabeling [DecidableEq V] [Fintype V] [Fintype K] :
     card (TopEdgeLabeling V K) = card K ^ (card V).choose 2 :=
   Fintype.card_fun.trans (by rw [← edgeFinset_card, card_edgeFinset_top_eq_card_choose_two])
 
@@ -77,12 +77,12 @@ on `V`.
 def get (C : EdgeLabeling G K) (x y : V) (h : G.Adj x y) : K :=
   C ⟨s(x, y), h⟩
 
-lemma get_eq (C : EdgeLabeling G K) (x y : V) (h : G.Adj x y) : C.get x y h = C ⟨s(x, y), h⟩ :=
+private lemma get_eq (C : EdgeLabeling G K) (x y : V) (h : G.Adj x y) : C.get x y h = C ⟨s(x, y), h⟩ :=
   rfl
 
 variable {C : EdgeLabeling G K}
 
-theorem get_comm (x y : V) (h) : C.get y x h = C.get x y h.symm := by
+private theorem get_comm (x y : V) (h) : C.get y x h = C.get x y h.symm := by
   simp [EdgeLabeling.get, Sym2.eq_swap]
 
 @[ext]
@@ -127,7 +127,7 @@ def mk (f : ∀ x y : V, G.Adj x y → K)
     apply Function.hfunext (by simp [adj_comm])
     grind
 
-theorem get_mk (f : ∀ x y : V, G.Adj x y → K) (f_symm) (x y : V) (h : G.Adj x y) :
+private theorem get_mk (f : ∀ x y : V, G.Adj x y → K) (f_symm) (x y : V) (h : G.Adj x y) :
     (mk f f_symm).get x y h = f x y h :=
   rfl
 
@@ -148,7 +148,7 @@ instance [DecidableRel G.Adj] [DecidableEq K] (k : K) {C : EdgeLabeling G K} :
     DecidableRel (C.labelGraph k).Adj := fun _ _ =>
   decidable_of_iff' _ (EdgeLabeling.labelGraph_adj _ _)
 
-theorem labelGraph_le (C : EdgeLabeling G K) {k : K} : C.labelGraph k ≤ G := by
+private theorem labelGraph_le (C : EdgeLabeling G K) {k : K} : C.labelGraph k ≤ G := by
   intro x y
   grind [labelGraph_adj]
 
@@ -158,12 +158,12 @@ theorem pairwise_disjoint_labelGraph {C : EdgeLabeling G K} :
   rw [disjoint_left]
   grind [labelGraph_adj]
 
-theorem pairwiseDisjoint_univ_labelGraph {C : EdgeLabeling G K} :
+private theorem pairwiseDisjoint_univ_labelGraph {C : EdgeLabeling G K} :
     Set.PairwiseDisjoint (@Set.univ K) C.labelGraph := by
   intro _ _ _ _ h
   exact pairwise_disjoint_labelGraph h
 
-theorem iSup_labelGraph (C : EdgeLabeling G K) : ⨆ k : K, C.labelGraph k = G := by
+private theorem iSup_labelGraph (C : EdgeLabeling G K) : ⨆ k : K, C.labelGraph k = G := by
   ext x y
   simp only [iSup_adj, EdgeLabeling.labelGraph_adj]
   grind
@@ -205,7 +205,7 @@ theorem toTopEdgeLabeling_labelGraph (G : SimpleGraph V) [DecidableRel G.Adj] :
 theorem toTopEdgeLabeling_labelGraph_compl (G : SimpleGraph V) [DecidableRel G.Adj] :
     G.toTopEdgeLabeling.labelGraph 0 = Gᶜ := by ext x y; simp [imp_false]
 
-theorem TopEdgeLabeling.labelGraph_toTopEdgeLabeling [DecidableEq V]
+private theorem TopEdgeLabeling.labelGraph_toTopEdgeLabeling [DecidableEq V]
     (C : TopEdgeLabeling V (Fin 2)) : (C.labelGraph 1).toTopEdgeLabeling = C := by
   refine EdgeLabeling.ext_get ?_
   grind [toTopEdgeLabeling_get, TopEdgeLabeling.labelGraph_adj, Adj.ne]

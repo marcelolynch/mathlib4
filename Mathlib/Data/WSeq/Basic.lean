@@ -338,7 +338,7 @@ def drop.aux : ℕ → Option (α × WSeq α) → Computation (Option (α × WSe
   | 0 => Computation.pure
   | n + 1 => fun a => tail.aux a >>= drop.aux n
 
-theorem drop.aux_none : ∀ n, @drop.aux α n none = Computation.pure none
+private theorem drop.aux_none : ∀ n, @drop.aux α n none = Computation.pure none
   | 0 => rfl
   | n + 1 =>
     show Computation.bind (Computation.pure none) (drop.aux n) = Computation.pure none by

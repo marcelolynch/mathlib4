@@ -44,7 +44,7 @@ noncomputable def homotopyPToId : ∀ q : ℕ, Homotopy (P q : K[X] ⟶ _) (𝟙
     · simp only [add_zero, comp_zero]
 
 /-- The complement projection `Q q` to `P q` is homotopic to zero. -/
-def homotopyQToZero (q : ℕ) : Homotopy (Q q : K[X] ⟶ _) 0 :=
+private def homotopyQToZero (q : ℕ) : Homotopy (Q q : K[X] ⟶ _) 0 :=
   Homotopy.equivSubZero.toFun (homotopyPToId X q).symm
 
 set_option backward.isDefEq.respectTransparency false in

@@ -499,7 +499,7 @@ noncomputable def complEDSRec' {P : ℕ → Sort u} (zero : P 0) (one : P 1)
 
 then we have `P n` for all `n : ℕ`. -/
 @[elab_as_elim]
-noncomputable def complEDSRec {P : ℕ → Sort u} (zero : P 0) (one : P 1)
+private noncomputable def complEDSRec {P : ℕ → Sort u} (zero : P 0) (one : P 1)
     (even : ∀ m : ℕ, P (m + 1) → P (2 * (m + 1)))
     (odd : ∀ m : ℕ, P (m + 1) → P (m + 2) → P (2 * (m + 1) + 1)) (n : ℕ) : P n :=
   complEDSRec' zero one (fun _ ih => even _ <| ih _ <| by linarith only)

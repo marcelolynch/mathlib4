@@ -170,7 +170,7 @@ def lanSheafProfinite (X : Type (u + 1)) :
       (hs := fun _ _ _ ↦ ((Profinite.effectiveEpi_tfae _).out 0 2).mp)).obj X).property
 
 /-- `lanPresheaf (locallyConstantPresheaf X)` as a condensed set. -/
-def lanCondensedSet (X : Type (u + 1)) : CondensedSet.{u} :=
+private def lanCondensedSet (X : Type (u + 1)) : CondensedSet.{u} :=
   (ProfiniteCompHaus.equivalence _).functor.obj (lanSheafProfinite X)
 
 variable (F : Profinite.{u}ᵒᵖ ⥤ Type (u + 1))
@@ -457,7 +457,7 @@ lemma lanPresheafNatIso_hom_app
 /--
 `lanPresheaf (locallyConstantPresheaf X)` as a light condensed set.
 -/
-def lanLightCondSet (X : Type u) : LightCondSet.{u} where
+private def lanLightCondSet (X : Type u) : LightCondSet.{u} where
   obj := lanPresheaf (locallyConstantPresheaf X)
   property := by
     rw [Presheaf.isSheaf_of_iso_iff (lanPresheafNatIso

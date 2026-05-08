@@ -264,7 +264,7 @@ def smoothPresheafRing : TopCat.Presheaf RingCat.{u} (TopCat.of M) :=
 
 /-- The sheaf of smooth functions from `M` to `R`, for `R` a smooth ring, as a sheaf of
 rings. -/
-def smoothSheafRing : TopCat.Sheaf RingCat.{u} (TopCat.of M) where
+private def smoothSheafRing : TopCat.Sheaf RingCat.{u} (TopCat.of M) where
   obj := smoothPresheafRing IM I M R
   property := by
     rw [CategoryTheory.Presheaf.isSheaf_iff_isSheaf_forget _ _ (CategoryTheory.forget RingCat)]

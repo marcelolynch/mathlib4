@@ -77,7 +77,7 @@ def Precoverage.preZeroHypercoverFamily (K : Precoverage C) :
 variable (C) in
 /-- Giving a precoverage on a category is the same as giving a predicate
 on every pre-`0`-hypercover that is stable under deduplication. -/
-def Precoverage.equivPreZeroHypercoverFamily :
+private def Precoverage.equivPreZeroHypercoverFamily :
     Precoverage C ≃ PreZeroHypercoverFamily C where
   toFun K := K.preZeroHypercoverFamily
   invFun P := P.precoverage

@@ -186,7 +186,7 @@ lemma transferFocal_surjective : Surjective P.transferFocal := by
   exact ⟨x, P.transferFocal_eq_pow x⟩
 
 /-- Isomorphism theorem: `G / ker(V) ≅ P / P*`. -/
-noncomputable def transferFocal.quotientKerMulEquivQuotientFocalSubroupOf :
+private noncomputable def transferFocal.quotientKerMulEquivQuotientFocalSubroupOf :
     G ⧸ P.transferFocal.ker ≃* P ⧸ P.focalSubgroupOf :=
   QuotientGroup.quotientKerEquivOfSurjective P.transferFocal (transferFocal_surjective P)
 

@@ -404,7 +404,7 @@ theorem closed_eq_range_close : l.closed = Set.range (u ∘ l) :=
   l.closureOperator.setOf_isClosed_eq_range_closure
 
 /-- Send an `x` to an element of the set of closed elements (by taking the closure). -/
-def toClosed (x : α) : l.closed :=
+private def toClosed (x : α) : l.closed :=
   ⟨u (l x), l.closure_is_closed x⟩
 
 @[simp]

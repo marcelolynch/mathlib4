@@ -297,7 +297,7 @@ theorem injective_of_map_injective (adj : F ⊣ G) [G.Full] [G.Faithful] (I : D)
 
 /-- Given an adjunction `F ⊣ G` such that `F` preserves monos, `G` maps an injective presentation
 of `X` to an injective presentation of `G(X)`. -/
-def mapInjectivePresentation (adj : F ⊣ G) [F.PreservesMonomorphisms] (X : D)
+private def mapInjectivePresentation (adj : F ⊣ G) [F.PreservesMonomorphisms] (X : D)
     (I : InjectivePresentation X) : InjectivePresentation (G.obj X) where
   J := G.obj I.J
   injective := adj.map_injective _ I.injective
@@ -355,7 +355,7 @@ theorem map_injective_iff (P : C) : Injective (F.functor.obj P) ↔ Injective P 
 
 /-- Given an equivalence of categories `F`, an injective presentation of `F(X)` induces an
 injective presentation of `X.` -/
-def injectivePresentationOfMapInjectivePresentation (X : C)
+private def injectivePresentationOfMapInjectivePresentation (X : C)
     (I : InjectivePresentation (F.functor.obj X)) : InjectivePresentation X :=
   F.toAdjunction.injectivePresentationOfMap _ I
 

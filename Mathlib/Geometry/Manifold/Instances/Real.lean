@@ -204,7 +204,7 @@ set_option backward.isDefEq.respectTransparency false in
 /--
 Definition of the model with corners `(EuclideanSpace ℝ (Fin n), EuclideanQuadrant n)`, used as a
 model for manifolds with corners -/
-def modelWithCornersEuclideanQuadrant (n : ℕ) :
+private def modelWithCornersEuclideanQuadrant (n : ℕ) :
     ModelWithCorners ℝ (EuclideanSpace ℝ (Fin n)) (EuclideanQuadrant n) where
   toFun := Subtype.val
   invFun x := ⟨toLp 2 fun i ↦ max (x i) 0,

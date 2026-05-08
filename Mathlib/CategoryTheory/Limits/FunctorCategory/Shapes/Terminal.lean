@@ -34,7 +34,7 @@ def isTerminal {F : C ⥤ D} (hF : ∀ (X : C), IsTerminal (F.obj X)) :
 
 /-- If `F : C ⥤ D` is such that `F.obj X` is initial for any `X : C`,
 then `F` is an initial object. -/
-def isInitial {F : C ⥤ D} (hF : ∀ (X : C), IsInitial (F.obj X)) :
+private def isInitial {F : C ⥤ D} (hF : ∀ (X : C), IsInitial (F.obj X)) :
     IsInitial F := by
   refine evaluationJointlyReflectsColimits _
     fun X ↦ IsColimit.equivOfNatIsoOfIso (Functor.emptyExt _ _) _ _ ?_ (hF X)

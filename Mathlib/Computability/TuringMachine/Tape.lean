@@ -424,7 +424,7 @@ inductive Dir
   deriving DecidableEq, Inhabited
 
 /-- The "inclusive" left side of the tape, including both `left` and `head`. -/
-def Tape.left₀ {Γ} [Inhabited Γ] (T : Tape Γ) : ListBlank Γ :=
+private def Tape.left₀ {Γ} [Inhabited Γ] (T : Tape Γ) : ListBlank Γ :=
   T.left.cons T.head
 
 /-- The "inclusive" right side of the tape, including both `right` and `head`. -/

@@ -285,7 +285,7 @@ theorem fixingSubgroup_fixedField [FiniteDimensional F E] : fixingSubgroup (fixe
 /--
 A subgroup is isomorphic to the Galois group of its fixed field.
 -/
-def subgroupEquivAlgEquiv [FiniteDimensional F E] (H : Subgroup Gal(E/F)) :
+private def subgroupEquivAlgEquiv [FiniteDimensional F E] (H : Subgroup Gal(E/F)) :
     H ≃* Gal(E/IntermediateField.fixedField H) :=
  (MulEquiv.subgroupCongr (fixingSubgroup_fixedField H).symm).trans (fixingSubgroupEquiv _)
 
@@ -379,7 +379,7 @@ theorem fixedField_eq_iff_fixingSubgroup_eq {K : IntermediateField F E} {H : Sub
 end
 
 /-- The Galois correspondence as a `GaloisInsertion`. -/
-def galoisInsertionIntermediateFieldSubgroup [FiniteDimensional F E] :
+private def galoisInsertionIntermediateFieldSubgroup [FiniteDimensional F E] :
     GaloisInsertion (OrderDual.toDual ∘
       (IntermediateField.fixingSubgroup : IntermediateField F E → Subgroup Gal(E/F)))
       ((IntermediateField.fixedField : Subgroup Gal(E/F) → IntermediateField F E) ∘
@@ -390,7 +390,7 @@ def galoisInsertionIntermediateFieldSubgroup [FiniteDimensional F E] :
   choice_eq _ _ := rfl
 
 /-- The Galois correspondence as a `GaloisCoinsertion`. -/
-def galoisCoinsertionIntermediateFieldSubgroup [FiniteDimensional F E] [IsGalois F E] :
+private def galoisCoinsertionIntermediateFieldSubgroup [FiniteDimensional F E] [IsGalois F E] :
     GaloisCoinsertion (OrderDual.toDual ∘
       (IntermediateField.fixingSubgroup : IntermediateField F E → Subgroup Gal(E/F)))
       ((IntermediateField.fixedField : Subgroup Gal(E/F) → IntermediateField F E) ∘

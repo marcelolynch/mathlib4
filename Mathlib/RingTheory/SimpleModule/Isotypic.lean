@@ -493,7 +493,7 @@ noncomputable def endAlgEquiv :
 
 /-- The endomorphism ring of a semisimple module is the direct product of the endomorphism rings
 of its isotypic components. -/
-noncomputable def endRingEquiv :
+private noncomputable def endRingEquiv :
     Module.End R M ≃+* Π c : isotypicComponents R M, Module.End R c.1 :=
   (endAlgEquiv ℕ R M).toRingEquiv
 

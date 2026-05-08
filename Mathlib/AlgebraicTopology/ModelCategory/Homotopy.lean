@@ -106,7 +106,7 @@ lemma leftHomotopyRel_iff_rightHomotopyRel :
 /-- When two morphisms `X ⟶ Y` with `X` cofibrant and `Y` fibrant are related
 by a left homotopy, this is a choice of a left homotopy relative
 to any good cylinder object for `X`. -/
-noncomputable def LeftHomotopyRel.leftHomotopy
+private noncomputable def LeftHomotopyRel.leftHomotopy
     (h : LeftHomotopyRel f g) (Q : Cylinder X) [Q.IsGood] :
     Q.LeftHomotopy f g :=
   RightHomotopyRel.leftHomotopy (by rwa [← leftHomotopyRel_iff_rightHomotopyRel]) _
@@ -114,7 +114,7 @@ noncomputable def LeftHomotopyRel.leftHomotopy
 /-- When two morphisms `X ⟶ Y` with `X` cofibrant and `Y` fibrant are related
 by a right homotopy, this is a choice of a right homotopy relative
 to any good path object for `Y`. -/
-noncomputable def RightHomotopyRel.rightHomotopy
+private noncomputable def RightHomotopyRel.rightHomotopy
     (h : RightHomotopyRel f g) (P : PathObject Y) [P.IsGood] :
     P.RightHomotopy f g :=
   LeftHomotopyRel.rightHomotopy (by rwa [leftHomotopyRel_iff_rightHomotopyRel]) _

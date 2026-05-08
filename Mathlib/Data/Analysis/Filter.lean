@@ -98,7 +98,7 @@ structure Filter.Realizer (f : Filter α) where
   eq : F.toFilter = f
 
 /-- A `CFilter` realizes the filter it generates. -/
-protected def CFilter.toRealizer (F : CFilter (Set α) σ) : F.toFilter.Realizer :=
+private protected def CFilter.toRealizer (F : CFilter (Set α) σ) : F.toFilter.Realizer :=
   ⟨σ, F, rfl⟩
 
 namespace Filter.Realizer
@@ -215,7 +215,7 @@ protected def comap (m : α → β) {f : Filter β} (F : f.Realizer) : (comap m 
         fun ⟨_, ⟨s, h⟩, h₂⟩ ↦ ⟨s, Subset.trans (preimage_mono h) h₂⟩⟩⟩
 
 /-- Construct a realizer for the sup of two filters -/
-protected def sup {f g : Filter α} (F : f.Realizer) (G : g.Realizer) : (f ⊔ g).Realizer :=
+private protected def sup {f g : Filter α} (F : f.Realizer) (G : g.Realizer) : (f ⊔ g).Realizer :=
   ⟨F.σ × G.σ,
     { f := fun ⟨s, t⟩ ↦ F.F s ∪ G.F t
       pt := (F.F.pt, G.F.pt)
@@ -243,7 +243,7 @@ protected def inf {f g : Filter α} (F : f.Realizer) (G : g.Realizer) : (f ⊓ g
         exact ⟨a, b, inter_subset_inter ha hb⟩⟩
 
 /-- Construct a realizer for the cofinite filter -/
-protected def cofinite [DecidableEq α] : (@cofinite α).Realizer :=
+private protected def cofinite [DecidableEq α] : (@cofinite α).Realizer :=
   ⟨Finset α,
     { f := fun s ↦ { a | a ∉ s }
       pt := ∅
@@ -281,7 +281,7 @@ protected def bind {f : Filter α} {m : α → Filter β} (F : f.Realizer) (G : 
           ⟨s, fun i h ↦ f' ⟨i, h⟩, fun _ H _ m ↦ h' ⟨_, H⟩ m⟩⟩⟩
 
 /-- Construct a realizer for indexed supremum -/
-protected def iSup {f : α → Filter β} (F : ∀ i, (f i).Realizer) : (⨆ i, f i).Realizer :=
+private protected def iSup {f : α → Filter β} (F : ∀ i, (f i).Realizer) : (⨆ i, f i).Realizer :=
   let F' : (⨆ i, f i).Realizer :=
     (Realizer.bind Realizer.top F).ofEq <|
       filter_eq <| Set.ext <| by simp [Filter.bind, iSup_sets_eq]
@@ -290,7 +290,7 @@ protected def iSup {f : α → Filter β} (F : ∀ i, (f i).Realizer) : (⨆ i, 
       ⟨fun ⟨_, f⟩ i ↦ f i ⟨⟩, fun f ↦ ⟨(), fun i _ ↦ f i⟩, fun _ ↦ rfl, fun _ ↦ rfl⟩
 
 /-- Construct a realizer for the product of filters -/
-protected def prod {f g : Filter α} (F : f.Realizer) (G : g.Realizer) : (f ×ˢ g).Realizer :=
+private protected def prod {f g : Filter α} (F : f.Realizer) (G : g.Realizer) : (f ×ˢ g).Realizer :=
   (F.comap _).inf (G.comap _)
 
 theorem le_iff {f g : Filter α} (F : f.Realizer) (G : g.Realizer) :

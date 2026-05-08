@@ -26,10 +26,10 @@ open Nat
 def IsFibAux (n a b : ℕ) :=
   fib n = a ∧ fib (n + 1) = b
 
-theorem isFibAux_zero : IsFibAux 0 0 1 :=
+private theorem isFibAux_zero : IsFibAux 0 0 1 :=
   ⟨fib_zero, fib_one⟩
 
-theorem isFibAux_one : IsFibAux 1 1 1 :=
+private theorem isFibAux_one : IsFibAux 1 1 1 :=
   ⟨fib_one, fib_two⟩
 
 theorem isFibAux_two_mul {n a b n' a' b' : ℕ} (H : IsFibAux n a b)
@@ -72,11 +72,11 @@ partial def proveNatFibAux (en' : Q(ℕ)) : (ea' eb' : Q(ℕ)) × Q(IsFibAux $en
       have h2 : Q($eb * (2 * $ea + $eb) = $eb') := (q(Eq.refl $eb') : Expr)
       ⟨ea', eb', q(isFibAux_two_mul_add_one $H $hn $h1 $h2)⟩
 
-theorem isFibAux_two_mul_done {n a b n' a' : ℕ} (H : IsFibAux n a b)
+private theorem isFibAux_two_mul_done {n a b n' a' : ℕ} (H : IsFibAux n a b)
     (hn : 2 * n = n') (h : a * (2 * b - a) = a') : fib n' = a' :=
   (isFibAux_two_mul H hn h rfl).1
 
-theorem isFibAux_two_mul_add_one_done {n a b n' a' : ℕ} (H : IsFibAux n a b)
+private theorem isFibAux_two_mul_add_one_done {n a b n' a' : ℕ} (H : IsFibAux n a b)
     (hn : 2 * n + 1 = n') (h : a * a + b * b = a') : fib n' = a' :=
   (isFibAux_two_mul_add_one H hn h rfl).1
 

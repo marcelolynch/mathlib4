@@ -69,7 +69,7 @@ def Const (α : Type*) (_β : Type*) :=
 /-- `Const.mk` is the canonical map `α → Const α β` (the identity), and
 it can be used as a pattern to extract this value. -/
 @[match_pattern]
-def Const.mk {α β} (x : α) : Const α β :=
+private def Const.mk {α β} (x : α) : Const α β :=
   x
 
 /-- `Const.mk'` is `Const.mk` but specialized to map `α` to
@@ -110,11 +110,11 @@ def AddConst (α : Type*) :=
 /-- `AddConst.mk` is the canonical map `α → AddConst α β`, which is the identity,
 where `AddConst α β = Const α β`. It can be used as a pattern to extract this value. -/
 @[match_pattern]
-def AddConst.mk {α β} (x : α) : AddConst α β :=
+private def AddConst.mk {α β} (x : α) : AddConst α β :=
   x
 
 /-- Extract the element of `α` from the constant functor. -/
-def AddConst.run {α β} : AddConst α β → α :=
+private def AddConst.run {α β} : AddConst α β → α :=
   id
 
 instance AddConst.functor {γ} : Functor (AddConst γ) :=

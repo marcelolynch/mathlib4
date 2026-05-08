@@ -94,7 +94,7 @@ theorem fn_apply (f : α →. β) (a : α) : f.fn a = (f a).get :=
   rfl
 
 /-- Evaluate a partial function to return an `Option` -/
-def evalOpt (f : α →. β) [D : DecidablePred (· ∈ Dom f)] (x : α) : Option β :=
+private def evalOpt (f : α →. β) [D : DecidablePred (· ∈ Dom f)] (x : α) : Option β :=
   @Part.toOption _ _ (D x)
 
 /-- Partial function extensionality -/
@@ -112,7 +112,7 @@ def asSubtype (f : α →. β) (s : f.Dom) : β :=
 
 /-- The type of partial functions `α →. β` is equivalent to
 the type of pairs `(p : α → Prop, f : Subtype p → β)`. -/
-def equivSubtype : (α →. β) ≃ Σ p : α → Prop, Subtype p → β :=
+private def equivSubtype : (α →. β) ≃ Σ p : α → Prop, Subtype p → β :=
   ⟨fun f => ⟨fun a => (f a).Dom, asSubtype f⟩, fun f x => ⟨f.1 x, fun h => f.2 ⟨x, h⟩⟩, fun _ =>
     funext fun _ => Part.eta _, fun ⟨p, f⟩ => by dsimp; congr⟩
 
@@ -149,7 +149,7 @@ def graph' (f : α →. β) : SetRel α β := {(x, y) : α × β | y ∈ f x}
 
 /-- The range of a partial function is the set of values
   `f x` where `x` is in the domain of `f`. -/
-def ran (f : α →. β) : Set β :=
+private def ran (f : α →. β) : Set β :=
   { b | ∃ a, b ∈ f a }
 
 /-- Restrict a partial function to a smaller domain. -/

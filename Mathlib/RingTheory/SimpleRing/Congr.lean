@@ -20,12 +20,12 @@ public section
 
 namespace IsSimpleRing
 
-lemma of_surjective {R S : Type*} [NonAssocRing R] [NonAssocRing S] [Nontrivial S]
+private lemma of_surjective {R S : Type*} [NonAssocRing R] [NonAssocRing S] [Nontrivial S]
     (f : R →+* S) (h : IsSimpleRing R) (hf : Function.Surjective f) : IsSimpleRing S where
   simple := OrderIso.isSimpleOrder (RingEquiv.ofBijective f
     ⟨RingHom.injective f, hf⟩).symm.mapTwoSidedIdeal
 
-lemma of_ringEquiv {R S : Type*} [NonUnitalNonAssocRing R] [NonUnitalNonAssocRing S]
+private lemma of_ringEquiv {R S : Type*} [NonUnitalNonAssocRing R] [NonUnitalNonAssocRing S]
     (f : R ≃+* S) (h : IsSimpleRing R) : IsSimpleRing S where
   simple := OrderIso.isSimpleOrder f.symm.mapTwoSidedIdeal
 

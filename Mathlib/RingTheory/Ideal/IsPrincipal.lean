@@ -102,7 +102,7 @@ theorem associatesEquivIsPrincipal_map_one :
 set_option backward.isDefEq.respectTransparency false in
 variable (R) in
 /-- The `MulEquiv` version of `Ideal.associatesEquivIsPrincipal`. -/
-noncomputable def associatesMulEquivIsPrincipal :
+private noncomputable def associatesMulEquivIsPrincipal :
     Associates R ≃* isPrincipalSubmonoid R where
   __ := associatesEquivIsPrincipal R
   map_mul' _ _ := by
@@ -152,7 +152,7 @@ theorem associatesNonZeroDivisorsEquivIsPrincipal_map_one :
 set_option backward.isDefEq.respectTransparency false in
 variable (R) in
 /-- The `MulEquiv` version of `Ideal.associatesNonZeroDivisorsEquivIsPrincipal`. -/
-noncomputable def associatesNonZeroDivisorsMulEquivIsPrincipal :
+private noncomputable def associatesNonZeroDivisorsMulEquivIsPrincipal :
     Associates R⁰ ≃* (isPrincipalNonZeroDivisorsSubmonoid R) where
   __ := associatesNonZeroDivisorsEquivIsPrincipal R
   map_mul' _ _ := by

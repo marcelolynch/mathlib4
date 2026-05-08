@@ -69,13 +69,13 @@ abbrev OrderMonoidIso.toAdditiveRight {G H : Type*}
 
 /-- The multiplicative version of an additivized ordered monoid is order-mul-equivalent to itself.
 -/
-def OrderMonoidIso.toMultiplicative_toAdditive {G : Type*} [CommMonoid G] [PartialOrder G] :
+private def OrderMonoidIso.toMultiplicative_toAdditive {G : Type*} [CommMonoid G] [PartialOrder G] :
     Multiplicative (Additive G) ≃*o G :=
   OrderAddMonoidIso.toMultiplicativeLeft <| OrderMonoidIso.toAdditive (.refl _)
 
 /-- The additive version of a multiplicativized ordered additive monoid is
 order-add-equivalent to itself. -/
-def OrderAddMonoidIso.toAdditive_toMultiplicative {G : Type*} [AddCommMonoid G] [PartialOrder G] :
+private def OrderAddMonoidIso.toAdditive_toMultiplicative {G : Type*} [AddCommMonoid G] [PartialOrder G] :
     Additive (Multiplicative G) ≃+o G :=
   OrderMonoidIso.toAdditiveLeft <| OrderAddMonoidIso.toMultiplicative (.refl _)
 

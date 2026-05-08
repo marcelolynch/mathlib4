@@ -267,7 +267,7 @@ end
 
 /-- The forgetful map from `NonUnitalStarSubalgebra` to `NonUnitalSubalgebra` as an
 `OrderEmbedding` -/
-def toNonUnitalSubalgebra' : NonUnitalStarSubalgebra R A ↪o NonUnitalSubalgebra R A where
+private def toNonUnitalSubalgebra' : NonUnitalStarSubalgebra R A ↪o NonUnitalSubalgebra R A where
   toEmbedding :=
     { toFun := fun S => S.toNonUnitalSubalgebra
       inj' := fun S T h => ext <| by apply SetLike.ext_iff.1 h }
@@ -878,7 +878,7 @@ theorem comap_top [IsScalarTower R B B] [SMulCommClass R B B] [StarModule R B] (
   eq_top_iff.2 fun _x => mem_top
 
 /-- `NonUnitalStarAlgHom` to `⊤ : NonUnitalStarSubalgebra R A`. -/
-def toTop : A →⋆ₙₐ[R] (⊤ : NonUnitalStarSubalgebra R A) :=
+private def toTop : A →⋆ₙₐ[R] (⊤ : NonUnitalStarSubalgebra R A) :=
   NonUnitalStarAlgHom.codRestrict (NonUnitalStarAlgHom.id R A) ⊤ fun _ => mem_top
 
 end StarSubAlgebraA

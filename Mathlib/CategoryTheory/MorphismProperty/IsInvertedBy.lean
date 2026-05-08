@@ -124,7 +124,7 @@ lemma FunctorsInverting.hom_ext {W : MorphismProperty C} {F₁ F₂ : FunctorsIn
   ObjectProperty.hom_ext _ (NatTrans.ext h)
 
 /-- A constructor for `W.FunctorsInverting D` -/
-def FunctorsInverting.mk {W : MorphismProperty C} {D : Type*} [Category* D] (F : C ⥤ D)
+private def FunctorsInverting.mk {W : MorphismProperty C} {D : Type*} [Category* D] (F : C ⥤ D)
     (hF : W.IsInvertedBy F) : W.FunctorsInverting D :=
   ⟨F, hF⟩
 

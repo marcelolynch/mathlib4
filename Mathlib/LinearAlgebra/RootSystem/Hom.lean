@@ -241,7 +241,7 @@ lemma coweightHom_injective (P : RootPairing ι R M N) : Injective (coweightHom 
     rw [this, Equiv.apply_symm_apply]
 
 /-- The permutation representation of the endomorphism monoid on the root index set -/
-def indexHom (P : RootPairing ι R M N) : End P →* (ι ≃ ι) where
+private def indexHom (P : RootPairing ι R M N) : End P →* (ι ≃ ι) where
   toFun f := Hom.indexEquiv f
   map_one' := by ext; simp
   map_mul' x y := by ext; simp

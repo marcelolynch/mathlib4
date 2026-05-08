@@ -95,7 +95,7 @@ variable {F L}
 
 /-- A left derived functor is a pointwise left derived functor when
 there exists a pointwise left derived functor. -/
-noncomputable def isPointwiseRightKanExtensionOfHasPointwiseLeftDerivedFunctor
+private noncomputable def isPointwiseRightKanExtensionOfHasPointwiseLeftDerivedFunctor
      [L.IsLocalization W] [F'.IsLeftDerivedFunctor α W] :
     (RightExtension.mk _ α).IsPointwiseRightKanExtension :=
   have := hasPointwiseRightKanExtension_of_hasPointwiseLeftDerivedFunctor F L
@@ -157,7 +157,7 @@ noncomputable def isPointwiseRightKanExtensionOfIsoOfIsLocalization
 of `F : C ⥤ H` along `L` is such that the natural transformation
 `E.hom : L ⋙ E.right ⟶ F` is an isomorphism, then `E` is a pointwise
 right Kan extension. -/
-noncomputable def RightExtension.isPointwiseRightKanExtensionOfIsIsoOfIsLocalization
+private noncomputable def RightExtension.isPointwiseRightKanExtensionOfIsIsoOfIsLocalization
     (E : RightExtension L F) [IsIso E.hom] [L.IsLocalization W] :
     E.IsPointwiseRightKanExtension :=
   Functor.isPointwiseRightKanExtensionOfIsoOfIsLocalization W (asIso E.hom).symm

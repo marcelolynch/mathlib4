@@ -796,7 +796,7 @@ def toStructuredArrow (G : E ⥤ C) (X : D) (F : C ⥤ D) (f : (Y : E) → X ⟶
 
 /-- Upgrading a functor `E ⥤ C` to a functor `E ⥤ StructuredArrow X F` and composing with the
 forgetful functor `StructuredArrow X F ⥤ C` recovers the original functor. -/
-def toStructuredArrowCompProj (G : E ⥤ C) (X : D) (F : C ⥤ D) (f : (Y : E) → X ⟶ F.obj (G.obj Y))
+private def toStructuredArrowCompProj (G : E ⥤ C) (X : D) (F : C ⥤ D) (f : (Y : E) → X ⟶ F.obj (G.obj Y))
     (h : ∀ {Y Z : E} (g : Y ⟶ Z), f Y ≫ F.map (G.map g) = f Z) :
     G.toStructuredArrow X F f h ⋙ StructuredArrow.proj _ _ ≅ G :=
   Iso.refl _
@@ -821,7 +821,7 @@ def toCostructuredArrow (G : E ⥤ C) (F : C ⥤ D) (X : D) (f : (Y : E) → F.o
 
 /-- Upgrading a functor `E ⥤ C` to a functor `E ⥤ CostructuredArrow F X` and composing with the
 forgetful functor `CostructuredArrow F X ⥤ C` recovers the original functor. -/
-def toCostructuredArrowCompProj (G : E ⥤ C) (F : C ⥤ D) (X : D)
+private def toCostructuredArrowCompProj (G : E ⥤ C) (F : C ⥤ D) (X : D)
     (f : (Y : E) → F.obj (G.obj Y) ⟶ X) (h : ∀ {Y Z : E} (g : Y ⟶ Z), F.map (G.map g) ≫ f Z = f Y) :
     G.toCostructuredArrow F X f h ⋙ CostructuredArrow.proj _ _ ≅ G :=
   Iso.refl _

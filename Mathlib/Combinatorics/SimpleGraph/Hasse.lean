@@ -86,7 +86,7 @@ theorem hasse_preconnected_of_succ [SuccOrder α] [IsSuccArchimedean α] : (hass
     reflTransGen_of_succ _ (fun c hc => Or.inl <| covBy_succ_of_not_isMax hc.2.not_isMax)
       fun c hc => Or.inr <| covBy_succ_of_not_isMax hc.2.not_isMax
 
-theorem hasse_preconnected_of_pred [PredOrder α] [IsPredArchimedean α] : (hasse α).Preconnected :=
+private theorem hasse_preconnected_of_pred [PredOrder α] [IsPredArchimedean α] : (hasse α).Preconnected :=
   fun a b => by
   rw [reachable_iff_reflTransGen, ← reflTransGen_swap]
   exact
@@ -108,7 +108,7 @@ theorem pathGraph_preconnected (n : ℕ) : (pathGraph n).Preconnected :=
 theorem pathGraph_connected (n : ℕ) : (pathGraph (n + 1)).Connected :=
   ⟨pathGraph_preconnected _⟩
 
-theorem pathGraph_two_eq_top : pathGraph 2 = ⊤ := by
+private theorem pathGraph_two_eq_top : pathGraph 2 = ⊤ := by
   ext u v
   fin_cases u <;> fin_cases v <;> simp [pathGraph]
 
@@ -124,7 +124,7 @@ def pathGraphHomToSubgraph : pathGraph (w.length + 1) →g w.toSubgraph.coe wher
       Subgraph.Adj.symm]
 
 /-- A walk induces a homomorphism from a path graph to the graph -/
-def pathGraphHom : pathGraph (w.length + 1) →g G :=
+private def pathGraphHom : pathGraph (w.length + 1) →g G :=
   w.toSubgraph.hom.comp w.pathGraphHomToSubgraph
 
 variable {w} in
@@ -147,7 +147,7 @@ def IsPath.pathGraphCopy (hw : w.IsPath) : Copy (pathGraph <| w.length + 1) G :=
 
 variable {w} in
 omit [DecidableEq V] in
-theorem IsPath.isContained_pathGraph (hw : w.IsPath) : pathGraph (w.length + 1) ⊑ G := by
+private theorem IsPath.isContained_pathGraph (hw : w.IsPath) : pathGraph (w.length + 1) ⊑ G := by
   classical
   exact ⟨hw.pathGraphCopy⟩
 

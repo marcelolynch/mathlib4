@@ -137,7 +137,7 @@ def comparisonAdjunction
 
 variable {adj}
 
-theorem comparisonAdjunction_counit_f_aux
+private theorem comparisonAdjunction_counit_f_aux
     [∀ A : adj.toComonad.Coalgebra, HasEqualizer (G.map A.a)
       (adj.unit.app (G.obj A.A))]
     (A : adj.toComonad.Coalgebra) :

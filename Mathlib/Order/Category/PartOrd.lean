@@ -192,7 +192,7 @@ def preordToPartOrd : Preord.{u} ⥤ PartOrd where
 
 /-- `preordToPartOrd` is left adjoint to the forgetful functor, meaning it is the free
 functor from `Preord` to `PartOrd`. -/
-def preordToPartOrdForgetAdjunction :
+private def preordToPartOrdForgetAdjunction :
     preordToPartOrd.{u} ⊣ forget₂ PartOrd Preord :=
   Adjunction.mkOfHomEquiv
     { homEquiv _ _ :=

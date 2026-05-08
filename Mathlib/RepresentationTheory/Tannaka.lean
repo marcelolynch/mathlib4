@@ -223,7 +223,7 @@ variable (k G) in
 
 A finite group `G` is isomorphic to `Aut (forget k G)`, where `k` is any integral domain,
 and `forget k G` is the monoidal forgetful functor `FDRep k G ⥤ FGModuleCat k G`. -/
-def equiv [IsDomain k] : G ≃* Aut (forget k G) :=
+private def equiv [IsDomain k] : G ≃* Aut (forget k G) :=
   MulEquiv.ofBijective (equivHom k G) ⟨equivHom_injective, equivHom_surjective⟩
 
 end FiniteGroup

@@ -119,7 +119,7 @@ theorem getVert_comp_val_eq_get_support {u v : V} (p : G.Walk u v) :
     p.getVert ∘ Fin.val = p.support.get := by
   grind [getVert_eq_support_getElem, length_support]
 
-theorem range_getVert_eq_range_support_getElem {u v : V} (p : G.Walk u v) :
+private theorem range_getVert_eq_range_support_getElem {u v : V} (p : G.Walk u v) :
     Set.range p.getVert = Set.range p.support.get :=
   Set.ext fun _ ↦ ⟨by grind [Set.range_list_get, getVert_mem_support],
     fun ⟨n, _⟩ ↦ ⟨n, by grind [getVert_eq_support_getElem, length_support]⟩⟩
@@ -144,7 +144,7 @@ abbrev snd (p : G.Walk u v) : V := p.getVert 1
     G.Adj v p.snd := by
   simpa using adj_getVert_succ p (by simpa [not_nil_iff_lt_length] using hp : 0 < p.length)
 
-lemma snd_cons {u v w} (q : G.Walk v w) (hadj : G.Adj u v) :
+private lemma snd_cons {u v w} (q : G.Walk v w) (hadj : G.Adj u v) :
     (q.cons hadj).snd = v := by simp
 
 lemma snd_mem_tail_support {u v : V} {p : G.Walk u v} (h : ¬p.Nil) : p.snd ∈ p.support.tail :=
@@ -184,7 +184,7 @@ lemma adj_penultimate {p : G.Walk v w} (hp : ¬ p.Nil) :
   rw [nil_iff_length_eq] at hp
   convert adj_getVert_succ _ _ <;> lia
 
-lemma penultimate_mem_dropLast_support {p : G.Walk u v} (h : ¬p.Nil) :
+private lemma penultimate_mem_dropLast_support {p : G.Walk u v} (h : ¬p.Nil) :
     p.penultimate ∈ p.support.dropLast := by
   have := adj_penultimate h |>.ne
   grind [getVert_mem_support, List.dropLast_concat_getLast, getLast_support]
@@ -208,10 +208,10 @@ def lastDart (p : G.Walk v w) (hp : ¬ p.Nil) : G.Dart where
   snd := w
   adj := p.adj_penultimate hp
 
-lemma edge_firstDart (p : G.Walk v w) (hp : ¬ p.Nil) :
+private lemma edge_firstDart (p : G.Walk v w) (hp : ¬ p.Nil) :
     (p.firstDart hp).edge = s(v, p.snd) := rfl
 
-lemma edge_lastDart (p : G.Walk v w) (hp : ¬ p.Nil) :
+private lemma edge_lastDart (p : G.Walk v w) (hp : ¬ p.Nil) :
     (p.lastDart hp).edge = s(p.penultimate, w) := rfl
 
 theorem firstDart_eq {p : G.Walk v w} (h₁ : ¬ p.Nil) (h₂ : 0 < p.darts.length) :
@@ -271,7 +271,7 @@ theorem mk_start_snd_eq_head_edges {p : G.Walk v w} (hnil : ¬p.Nil) :
     s(v, p.snd) = p.edges.head (edges_eq_nil.not.mpr hnil) :=
   head_edges_eq_mk_start_snd _ |>.symm
 
-theorem mk_start_snd_mem_edges {p : G.Walk v w} (hnil : ¬p.Nil) : s(v, p.snd) ∈ p.edges :=
+private theorem mk_start_snd_mem_edges {p : G.Walk v w} (hnil : ¬p.Nil) : s(v, p.snd) ∈ p.edges :=
   p.mk_start_snd_eq_head_edges hnil ▸ List.head_mem _
 
 /-- Use `mk_penultimate_end_eq_getLast_edges` to rewrite in the reverse direction. -/
@@ -285,7 +285,7 @@ theorem mk_penultimate_end_eq_getLast_edges {p : G.Walk v w} (hnil : ¬p.Nil) :
     s(p.penultimate, w) = p.edges.getLast (edges_eq_nil.not.mpr hnil) :=
   getLast_edges_eq_mk_penultimate_end _ |>.symm
 
-theorem mk_penultimate_end_mem_edges {p : G.Walk v w} (hnil : ¬p.Nil) :
+private theorem mk_penultimate_end_mem_edges {p : G.Walk v w} (hnil : ¬p.Nil) :
     s(p.penultimate, w) ∈ p.edges :=
   p.mk_penultimate_end_eq_getLast_edges hnil ▸ List.getLast_mem _
 

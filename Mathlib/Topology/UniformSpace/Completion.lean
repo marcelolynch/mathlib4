@@ -371,7 +371,7 @@ theorem isDenseInducing_coe : IsDenseInducing ((↑) : α → Completion α) :=
   { (isUniformInducing_coe α).isInducing with dense := denseRange_coe }
 
 /-- The uniform bijection between a complete space and its uniform completion. -/
-def UniformCompletion.completeEquivSelf [CompleteSpace α] [T0Space α] : Completion α ≃ᵤ α :=
+private def UniformCompletion.completeEquivSelf [CompleteSpace α] [T0Space α] : Completion α ≃ᵤ α :=
   AbstractCompletion.compareEquiv Completion.cPkg AbstractCompletion.ofComplete
 
 open TopologicalSpace

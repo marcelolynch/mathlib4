@@ -189,7 +189,7 @@ variable (I N)
 
 /-- For a manifold `N` and a `C^n` homomorphism `φ` between `C^n` rings `R'`, `R''`, the
 'left-composition-by-`φ`' ring homomorphism from `C^n⟮I, N; I', R'⟯` to `C^n⟮I, N; I'', R''⟯`. -/
-def compLeftRingHom {R' : Type*} [Ring R'] [TopologicalSpace R'] [ChartedSpace H' R']
+private def compLeftRingHom {R' : Type*} [Ring R'] [TopologicalSpace R'] [ChartedSpace H' R']
     [ContMDiffRing I' n R'] {R'' : Type*} [Ring R''] [TopologicalSpace R''] [ChartedSpace H'' R'']
     [ContMDiffRing I'' n R''] (φ : R' →+* R'') (hφ : CMDiff n φ) :
     C^n⟮I, N; I', R'⟯ →+* C^n⟮I, N; I'', R''⟯ :=

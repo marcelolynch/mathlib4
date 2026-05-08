@@ -274,7 +274,7 @@ theorem sSup_simples_le (N : Submodule R M) :
 
 variable (R M)
 
-theorem exists_simple_submodule [Nontrivial M] : ∃ m : Submodule R M, IsSimpleModule R m := by
+private theorem exists_simple_submodule [Nontrivial M] : ∃ m : Submodule R M, IsSimpleModule R m := by
   simpa only [isSimpleModule_iff_isAtom] using IsAtomic.exists_atom _
 
 theorem sSup_simples_eq_top : sSup { m : Submodule R M | IsSimpleModule R m } = ⊤ := by
@@ -318,7 +318,7 @@ instance (priority := low) [Module.Finite R M] : IsNoetherian R M where
 protected theorem range (f : M →ₗ[R] N) : IsSemisimpleModule R (range f) :=
   congr (quotKerEquivRange _).symm
 
-theorem of_surjective (f : M →ₗ[R] N) (hf : Function.Surjective f) : IsSemisimpleModule R N :=
+private theorem of_surjective (f : M →ₗ[R] N) (hf : Function.Surjective f) : IsSemisimpleModule R N :=
   congr (f.quotKerEquivOfSurjective hf).symm
 
 section

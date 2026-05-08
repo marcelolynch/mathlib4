@@ -668,7 +668,7 @@ def powerset (t : Ordnode α) : Ordnode (Ordnode α) :=
 ```
 prod {1, 2} {2, 3} = {(1, 2), (1, 3), (2, 2), (2, 3)}
 ``` -/
-protected def prod {β} (t₁ : Ordnode α) (t₂ : Ordnode β) : Ordnode (α × β) :=
+private protected def prod {β} (t₁ : Ordnode α) (t₂ : Ordnode β) : Ordnode (α × β) :=
   fold nil (fun s₁ a s₂ => merge s₁ <| merge (map (Prod.mk a) t₂) s₂) t₁
 
 /-- O(m + n). Build a set on the disjoint union by combining sets on the factors.
@@ -677,7 +677,7 @@ protected def prod {β} (t₁ : Ordnode α) (t₂ : Ordnode β) : Ordnode (α ×
 ```
 copair {1, 2} {2, 3} = {inl 1, inl 2, inr 2, inr 3}
 ``` -/
-protected def copair {β} (t₁ : Ordnode α) (t₂ : Ordnode β) : Ordnode (α ⊕ β) :=
+private protected def copair {β} (t₁ : Ordnode α) (t₂ : Ordnode β) : Ordnode (α ⊕ β) :=
   merge (map Sum.inl t₁) (map Sum.inr t₂)
 
 /-- O(n). Map a partial function across a set. The result depends on a proof

@@ -127,7 +127,7 @@ def PrelocalPredicate.and (P Q : PrelocalPredicate T) : PrelocalPredicate T wher
   res i f h := ⟨P.res i f h.1, Q.res i f h.2⟩
 
 /-- The conjunction of two prelocal predicates is prelocal. -/
-def LocalPredicate.and (P Q : LocalPredicate T) : LocalPredicate T where
+private def LocalPredicate.and (P Q : LocalPredicate T) : LocalPredicate T where
   __ := P.1.and Q.1
   locality f w := by
     refine ⟨P.locality f ?_, Q.locality f ?_⟩ <;>
@@ -135,7 +135,7 @@ def LocalPredicate.and (P Q : LocalPredicate T) : LocalPredicate T where
     exacts [h.1, h.2]
 
 /-- The local predicate of being a partial section of a function. -/
-def isSection {T} (p : T → X) : LocalPredicate fun _ : X ↦ T where
+private def isSection {T} (p : T → X) : LocalPredicate fun _ : X ↦ T where
   pred f := p ∘ f = (↑)
   res _ _ h := funext fun _ ↦ congr_fun h _
   locality _ w := funext fun x ↦ have ⟨_, hV, _, h⟩ := w x; congr_fun h ⟨x, hV⟩
@@ -235,7 +235,7 @@ variable (P : PrelocalPredicate T)
 /-- The natural transformation including the subpresheaf of functions satisfying a local predicate
 into the presheaf of all functions.
 -/
-def subtype : subpresheafToTypes P ⟶ presheafToTypes X T where app _ := ↾fun f ↦ f.1
+private def subtype : subpresheafToTypes P ⟶ presheafToTypes X T where app _ := ↾fun f ↦ f.1
 
 open TopCat.Presheaf
 
@@ -366,7 +366,7 @@ def subpresheafContinuousPrelocalIsoPresheafToTop {X : TopCat.{u}} (T : TopCat.{
 
 /-- The sheaf of continuous functions on `X` with values in a space `T`.
 -/
-def sheafToTop (T : TopCat) : Sheaf (Type _) X :=
+private def sheafToTop (T : TopCat) : Sheaf (Type _) X :=
   ⟨presheafToTop X T,
     Presheaf.isSheaf_of_iso (subpresheafContinuousPrelocalIsoPresheafToTop T)
       (subpresheafToTypes.isSheaf (continuousLocal X T))⟩

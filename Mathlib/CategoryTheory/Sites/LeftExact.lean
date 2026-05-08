@@ -282,7 +282,7 @@ def plusPlusSheafIsoPresheafToSheaf : plusPlusSheaf J D ≅ presheafToSheaf J D 
   (plusPlusAdjunction J D).leftAdjointUniq (sheafificationAdjunction J D)
 
 /-- `plusPlusFunctor` is isomorphic to `sheafification`. -/
-def plusPlusFunctorIsoSheafification : J.sheafification D ≅ sheafification J D :=
+private def plusPlusFunctorIsoSheafification : J.sheafification D ≅ sheafification J D :=
   Functor.isoWhiskerRight (plusPlusSheafIsoPresheafToSheaf J D) (sheafToPresheaf J D)
 
 /-- `plusPlus` is isomorphic to `sheafify`. -/

@@ -260,7 +260,7 @@ lemma of_boundaryGE {i₂ : ι₂} (h : e₂.BoundaryGE i₂) :
 
 /-- The bijection `Subtype e₁.BoundaryLE ≃ Subtype e₂.BoundaryGE` when
 `e₁` and `e₂` are complementary embeddings of complex shapes. -/
-noncomputable def equiv : Subtype e₁.BoundaryLE ≃ Subtype e₂.BoundaryGE where
+private noncomputable def equiv : Subtype e₁.BoundaryLE ≃ Subtype e₂.BoundaryGE where
   toFun := fun ⟨i₁, h⟩ => ⟨_, (of_boundaryLE ac h).snd⟩
   invFun := fun ⟨i₂, h⟩ => ⟨_, (of_boundaryGE ac h).fst⟩
   left_inv := fun ⟨i₁, h⟩ => by

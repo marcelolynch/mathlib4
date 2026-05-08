@@ -123,7 +123,7 @@ First, describe operations on `W` as a polynomial functor.
 
 
 /-- Constructor for `wp` -/
-def wpMk {α : TypeVec n} (a : P.A) (f : P.last.B a → P.last.W) (f' : P.WPath ⟨a, f⟩ ⟹ α) :
+private def wpMk {α : TypeVec n} (a : P.A) (f : P.last.B a → P.last.W) (f' : P.WPath ⟨a, f⟩ ⟹ α) :
     P.W α :=
   ⟨⟨a, f⟩, f'⟩
 

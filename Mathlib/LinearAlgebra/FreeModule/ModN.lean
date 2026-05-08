@@ -49,7 +49,7 @@ protected def liftEquiv [AddMonoid M] : (ModN G n →+ M) ≃ {φ : G →+ M // 
 
 /-- The universal property of `ModN G n` in terms of `ZMod n`-modules: `ZMod n`-linear maps from
 `ModN G n` are the same as monoid homomorphisms from `G` whose values are `n`-torsion. -/
-protected def liftEquiv' [AddCommGroup H] [Module (ZMod n) H] :
+private protected def liftEquiv' [AddCommGroup H] [Module (ZMod n) H] :
     (ModN G n →ₗ[ZMod n] H) ≃ {φ : G →+ H // ∀ g, n • φ g = 0} :=
   (AddMonoidHom.toZModLinearMapEquiv n).symm.toEquiv.trans ModN.liftEquiv
 

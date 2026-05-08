@@ -287,7 +287,7 @@ theorem smul_faceOppositeCentroid_vsub_point_eq_sum_vsub [CharZero k] (s : Affin
   simp [faceOppositeCentroid_eq_sum_vsub_vadd, smul_smul, mul_inv_cancel₀ (NeZero.ne (n : k)),
     one_smul]
 
-theorem smul_centroid_vsub_point_eq_smul_faceOppositeCentroid_vsub_point [CharZero k]
+private theorem smul_centroid_vsub_point_eq_smul_faceOppositeCentroid_vsub_point [CharZero k]
     (s : Affine.Simplex k P n) (i : Fin (n + 1)) :
     (n + 1 : k) • (s.centroid -ᵥ s.points i) =
     (n : k) • (s.faceOppositeCentroid i -ᵥ s.points i) := by
@@ -437,7 +437,7 @@ theorem median_map [CharZero k] {V₂ P₂ : Type*} [AddCommGroup V₂] [Module 
     (s.map f hf).median i = (s.median i).map f := by
   simp [median, map_span, Set.image_pair]
 
-theorem median_restrict [CharZero k] (s : Simplex k P n) (i : Fin (n + 1)) (S : AffineSubspace k P)
+private theorem median_restrict [CharZero k] (s : Simplex k P n) (i : Fin (n + 1)) (S : AffineSubspace k P)
     (hS : affineSpan k (Set.range s.points) ≤ S) :
     haveI := Nonempty.map (AffineSubspace.inclusion hS) inferInstance
     AffineSubspace.map (AffineSubspace.subtype S) ((s.restrict S hS).median i) = s.median i := by
@@ -545,13 +545,13 @@ def medial [CharZero k] (s : Simplex k P n) : Simplex k P n where
 theorem medial_points [CharZero k] (s : Simplex k P n) (i : Fin (n + 1)) :
     s.medial.points i = s.faceOppositeCentroid i := rfl
 
-theorem medial_reindex {m n : ℕ} [NeZero m] [NeZero n]
+private theorem medial_reindex {m n : ℕ} [NeZero m] [NeZero n]
     [CharZero k] (s : Simplex k P n) (e : Fin (n + 1) ≃ Fin (m + 1)) :
     (s.reindex e).medial = s.medial.reindex e := by
   ext i
   simp [medial_points]
 
-theorem medial_map {V₂ P₂ : Type*} [AddCommGroup V₂] [Module k V₂] [AffineSpace V₂ P₂] [CharZero k]
+private theorem medial_map {V₂ P₂ : Type*} [AddCommGroup V₂] [Module k V₂] [AffineSpace V₂ P₂] [CharZero k]
     {n : ℕ} [NeZero n] (s : Simplex k P n)
     (f : P →ᵃ[k] P₂) (hf : Function.Injective f) :
     (s.map f hf).medial = s.medial.map f hf := by
@@ -581,7 +581,7 @@ theorem affineSpan_range_medial [CharZero k] (s : Simplex k P n) :
   congrm ∃ a b, ?_ = v
   simp [← smul_neg]
 
-theorem medial_restrict [CharZero k] (s : Simplex k P n) (S : AffineSubspace k P)
+private theorem medial_restrict [CharZero k] (s : Simplex k P n) (S : AffineSubspace k P)
     (hS : affineSpan k (Set.range s.points) ≤ S) :
     haveI := Nonempty.map (AffineSubspace.inclusion hS) inferInstance
     (s.restrict S hS).medial = s.medial.restrict S (s.affineSpan_range_medial ▸ hS) := by

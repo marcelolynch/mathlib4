@@ -110,7 +110,7 @@ then deprecate the rest of them.
 namespace unitInterval
 
 /-- The path 0 ⟶ 1 in `I` -/
-def path01 : Path (0 : I) 1 where
+private def path01 : Path (0 : I) 1 where
   toFun := id
   source' := rfl
   target' := rfl

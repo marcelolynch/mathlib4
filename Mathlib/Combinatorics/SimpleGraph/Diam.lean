@@ -73,7 +73,7 @@ lemma eccent_eq_zero_iff (u : α) : G.eccent u = 0 ↔ Subsingleton α := by
   contrapose! h
   exact eccent_ne_zero u
 
-lemma eccent_pos_iff (u : α) : 0 < G.eccent u ↔ Nontrivial α := by
+private lemma eccent_pos_iff (u : α) : 0 < G.eccent u ↔ Nontrivial α := by
   rw [pos_iff_ne_zero, ← not_subsingleton_iff_nontrivial, ← eccent_eq_zero_iff]
 
 @[simp]
@@ -112,7 +112,7 @@ lemma eccent_le_one_iff (u : α) : G.eccent u ≤ 1 ↔ ∀ v, u ≠ v → G.Adj
     rw [edist_le_one_iff_adj_or_eq]
     exact or_iff_not_imp_right.mpr (hall v)
 
-lemma eccent_eq_one_iff [Nontrivial α] (u : α) :
+private lemma eccent_eq_one_iff [Nontrivial α] (u : α) :
     G.eccent u = 1 ↔ ∀ v, u ≠ v → G.Adj u v := by
   have h : 1 ≤ G.eccent u := ENat.one_le_iff_ne_zero.mpr (eccent_ne_zero u)
   rw [← h.ge_iff_eq']
@@ -129,7 +129,7 @@ case the distances are not bounded above, or the graph is not connected.
 noncomputable def ediam (G : SimpleGraph α) : ℕ∞ :=
   ⨆ u, G.eccent u
 
-lemma ediam_eq_iSup_iSup_edist : G.ediam = ⨆ u, ⨆ v, G.edist u v :=
+private lemma ediam_eq_iSup_iSup_edist : G.ediam = ⨆ u, ⨆ v, G.edist u v :=
   rfl
 
 lemma ediam_def : G.ediam = ⨆ p : α × α, G.edist p.1 p.2 := by
@@ -147,7 +147,7 @@ lemma ediam_le_of_edist_le {k : ℕ∞} (h : ∀ u v, G.edist u v ≤ k) : G.edi
 lemma ediam_le_iff {k : ℕ∞} : G.ediam ≤ k ↔ ∀ u v, G.edist u v ≤ k :=
   iSup₂_le_iff
 
-lemma ediam_eq_top : G.ediam = ⊤ ↔ ∀ b < ⊤, ∃ u v, b < G.edist u v := by
+private lemma ediam_eq_top : G.ediam = ⊤ ↔ ∀ b < ⊤, ∃ u v, b < G.edist u v := by
   simp only [ediam, eccent, iSup_eq_top, lt_iSup_iff]
 
 lemma ediam_eq_zero_of_subsingleton [Subsingleton α] : G.ediam = 0 := by
@@ -167,7 +167,7 @@ lemma subsingleton_of_ediam_eq_zero (h : G.ediam = 0) : Subsingleton α := by
   contrapose! h
   exact ediam_ne_zero
 
-lemma ediam_ne_zero_iff_nontrivial :
+private lemma ediam_ne_zero_iff_nontrivial :
     G.ediam ≠ 0 ↔ Nontrivial α :=
   ⟨nontrivial_of_ediam_ne_zero, fun _ ↦ ediam_ne_zero⟩
 
@@ -197,12 +197,12 @@ lemma preconnected_of_ediam_ne_top (h : G.ediam ≠ ⊤) : G.Preconnected :=
 lemma connected_of_ediam_ne_top [Nonempty α] (h : G.ediam ≠ ⊤) : G.Connected :=
   G.connected_iff.mpr ⟨preconnected_of_ediam_ne_top h, ‹_›⟩
 
-lemma exists_eccent_eq_ediam_of_ne_top [Nonempty α] (h : G.ediam ≠ ⊤) :
+private lemma exists_eccent_eq_ediam_of_ne_top [Nonempty α] (h : G.ediam ≠ ⊤) :
     ∃ u, G.eccent u = G.ediam :=
   ENat.exists_eq_iSup_of_lt_top h.lt_top
 
 -- Note: Neither `Finite α` nor `G.ediam ≠ ⊤` implies the other.
-lemma exists_eccent_eq_ediam_of_finite [Nonempty α] [Finite α] :
+private lemma exists_eccent_eq_ediam_of_finite [Nonempty α] [Finite α] :
     ∃ u, G.eccent u = G.ediam :=
   exists_eq_ciSup_of_finite
 
@@ -265,17 +265,17 @@ case the distances are not bounded above, or the graph is not connected.
 noncomputable def diam (G : SimpleGraph α) :=
   G.ediam.toNat
 
-lemma diam_def : G.diam = (⨆ p : α × α, G.edist p.1 p.2).toNat := by
+private lemma diam_def : G.diam = (⨆ p : α × α, G.edist p.1 p.2).toNat := by
   rw [diam, ediam_def]
 
 lemma dist_le_diam (h : G.ediam ≠ ⊤) {u v : α} : G.dist u v ≤ G.diam :=
   ENat.toNat_le_toNat edist_le_ediam h
 
-lemma nontrivial_of_diam_ne_zero (h : G.diam ≠ 0) : Nontrivial α := by
+private lemma nontrivial_of_diam_ne_zero (h : G.diam ≠ 0) : Nontrivial α := by
   contrapose! h
   simp [diam, h]
 
-lemma diam_eq_zero_of_not_connected (h : ¬ G.Connected) : G.diam = 0 := by
+private lemma diam_eq_zero_of_not_connected (h : ¬ G.Connected) : G.diam = 0 := by
   cases isEmpty_or_nonempty α
   · rw [diam, ediam, ciSup_of_empty, bot_eq_zero']; rfl
   · rw [diam, ediam_eq_top_of_not_connected h, ENat.toNat_top]
@@ -286,7 +286,7 @@ lemma diam_eq_zero_of_ediam_eq_top (h : G.ediam = ⊤) : G.diam = 0 := by
 lemma ediam_ne_top_of_diam_ne_zero (h : G.diam ≠ 0) : G.ediam ≠ ⊤ :=
   mt diam_eq_zero_of_ediam_eq_top h
 
-lemma exists_dist_eq_diam [Nonempty α] :
+private lemma exists_dist_eq_diam [Nonempty α] :
     ∃ u v, G.dist u v = G.diam := by
   by_cases h : G.diam = 0
   · simp [h]
@@ -339,7 +339,7 @@ section radius
 noncomputable def radius (G : SimpleGraph α) : ℕ∞ :=
   ⨅ u, G.eccent u
 
-lemma radius_eq_iInf_iSup_edist : G.radius = ⨅ u, ⨆ v, G.edist u v :=
+private lemma radius_eq_iInf_iSup_edist : G.radius = ⨅ u, ⨆ v, G.edist u v :=
   rfl
 
 lemma radius_le_eccent {u : α} : G.radius ≤ G.eccent u :=
@@ -361,7 +361,7 @@ lemma radius_eq_top_of_not_connected (h : ¬ G.Connected) : G.radius = ⊤ := by
 lemma radius_eq_top_of_isEmpty [IsEmpty α] : G.radius = ⊤ :=
   iInf_of_empty G.eccent
 
-lemma radius_ne_top_iff [Nonempty α] [Finite α] : G.radius ≠ ⊤ ↔ G.Connected := by
+private lemma radius_ne_top_iff [Nonempty α] [Finite α] : G.radius ≠ ⊤ ↔ G.Connected := by
   refine ⟨Not.imp_symm radius_eq_top_of_not_connected, fun h ↦ ?_⟩
   obtain ⟨u, v, huv⟩ := G.exists_edist_eq_radius_of_finite
   rw [← huv, edist_ne_top_iff_reachable]
@@ -394,7 +394,7 @@ lemma ediam_eq_top_iff_radius_eq_top [Nonempty α] : G.ediam = ⊤ ↔ G.radius 
   exact ne_top_of_lt <| lt_of_le_of_lt hdiam <| WithTop.mul_lt_top (ENat.coe_lt_top 2) <|
     lt_top_iff_ne_top.mpr (hw ▸ hr)
 
-lemma ediam_le_two_mul_radius : G.ediam ≤ 2 * G.radius := by
+private lemma ediam_le_two_mul_radius : G.ediam ≤ 2 * G.radius := by
   cases isEmpty_or_nonempty α
   · rw [radius_eq_top_of_isEmpty]
     exact le_top
@@ -434,12 +434,12 @@ section center
 def center (G : SimpleGraph α) : Set α :=
   {u | G.eccent u = G.radius}
 
-lemma center_nonempty [Nonempty α] : G.center.Nonempty :=
+private lemma center_nonempty [Nonempty α] : G.center.Nonempty :=
   exists_eccent_eq_radius
 
 lemma mem_center_iff (u : α) : u ∈ G.center ↔ G.eccent u = G.radius := .rfl
 
-lemma center_eq_univ_iff_radius_eq_ediam [Nonempty α] :
+private lemma center_eq_univ_iff_radius_eq_ediam [Nonempty α] :
     G.center = Set.univ ↔ G.radius = G.ediam := by
   rw [radius_eq_ediam_iff, ← Set.univ_subset_iff]
   refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
@@ -456,14 +456,14 @@ lemma center_eq_univ_of_subsingleton [Subsingleton α] : G.center = Set.univ := 
   rw [mem_center_iff, eccent_eq_zero_of_subsingleton u, eq_comm, radius_eq_zero_iff]
   tauto
 
-lemma center_bot : (⊥ : SimpleGraph α).center = Set.univ := by
+private lemma center_bot : (⊥ : SimpleGraph α).center = Set.univ := by
   cases subsingleton_or_nontrivial α
   · exact center_eq_univ_of_subsingleton
   · rw [Set.eq_univ_iff_forall]
     intro u
     rw [mem_center_iff, eccent_bot, radius_bot]
 
-lemma center_top : (⊤ : SimpleGraph α).center = Set.univ := by
+private lemma center_top : (⊤ : SimpleGraph α).center = Set.univ := by
   cases subsingleton_or_nontrivial α
   · exact center_eq_univ_of_subsingleton
   · rw [Set.eq_univ_iff_forall]

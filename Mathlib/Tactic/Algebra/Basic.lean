@@ -312,7 +312,7 @@ def preprocess (mvarId : MVarId) : MetaM MVarId := do
   `RingNF.cleanup` does and also pulls the scalar multiplication from the end of of each term to
   the start. i.e. x * y * (r • 1) → r • (x * y)
   Used by `cleanup`. -/
-def cleanupSMul (cfg : RingNF.Config) (r : Simp.Result) : MetaM Simp.Result := do
+private def cleanupSMul (cfg : RingNF.Config) (r : Simp.Result) : MetaM Simp.Result := do
   let thms : SimpTheorems := {}
   let thms ← [``add_zero, ``add_assoc_rev, ``_root_.mul_one, ``mul_assoc_rev, ``_root_.pow_one,
     ``mul_neg, ``add_neg, ``one_smul, ``mul_smul_comm, ``Nat.algebraMap_eq_cast,
@@ -329,7 +329,7 @@ def cleanupSMul (cfg : RingNF.Config) (r : Simp.Result) : MetaM Simp.Result := d
 
 e.g. `(4 : ℚ) • x` becomes `4 * x` but `↑n • x` stays `↑n • x`.
 -/
-def cleanupConsts (cfg : RingNF.Config) (r : Simp.Result) : MetaM Simp.Result := do
+private def cleanupConsts (cfg : RingNF.Config) (r : Simp.Result) : MetaM Simp.Result := do
   let thms : SimpTheorems := {}
   let thms ← [``add_zero, ``_root_.one_mul, ``_root_.mul_one,
     ``neg_mul, ``add_neg].foldlM (·.addConst ·) thms

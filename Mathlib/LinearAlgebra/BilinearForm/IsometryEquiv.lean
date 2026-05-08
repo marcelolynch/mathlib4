@@ -122,7 +122,7 @@ theorem trans (h : B₁.Equivalent B₂) (h' : B₂.Equivalent B₃) : B₁.Equi
 end Equivalent
 
 /-- A bilinear form composed with a `LinearEquiv` is isometric to itself. -/
-def isometryEquivOfCompLinearEquiv (B : LinearMap.BilinForm R M) (f : M₁ ≃ₗ[R] M) :
+private def isometryEquivOfCompLinearEquiv (B : LinearMap.BilinForm R M) (f : M₁ ≃ₗ[R] M) :
     B.IsometryEquiv (B.comp (f : M₁ →ₗ[R] M) (f : M₁ →ₗ[R] M)) :=
   { f.symm with
     map_app' := by

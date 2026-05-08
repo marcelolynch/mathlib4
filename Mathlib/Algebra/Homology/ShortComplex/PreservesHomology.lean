@@ -721,7 +721,7 @@ variable [HasKernels C] [HasCokernels C] [HasKernels D] [HasCokernels D]
 /-- The natural isomorphism
 `F.mapShortComplex ⋙ cyclesFunctor D ≅ cyclesFunctor C ⋙ F`
 for a functor `F : C ⥤ D` which preserves homology. -/
-noncomputable def cyclesFunctorIso [F.PreservesHomology] :
+private noncomputable def cyclesFunctorIso [F.PreservesHomology] :
     F.mapShortComplex ⋙ ShortComplex.cyclesFunctor D ≅
       ShortComplex.cyclesFunctor C ⋙ F :=
   NatIso.ofComponents (fun S => S.mapCyclesIso F)
@@ -730,7 +730,7 @@ noncomputable def cyclesFunctorIso [F.PreservesHomology] :
 /-- The natural isomorphism
 `F.mapShortComplex ⋙ leftHomologyFunctor D ≅ leftHomologyFunctor C ⋙ F`
 for a functor `F : C ⥤ D` which preserves homology. -/
-noncomputable def leftHomologyFunctorIso [F.PreservesHomology] :
+private noncomputable def leftHomologyFunctorIso [F.PreservesHomology] :
     F.mapShortComplex ⋙ ShortComplex.leftHomologyFunctor D ≅
       ShortComplex.leftHomologyFunctor C ⋙ F :=
   NatIso.ofComponents (fun S => S.mapLeftHomologyIso F)
@@ -739,7 +739,7 @@ noncomputable def leftHomologyFunctorIso [F.PreservesHomology] :
 /-- The natural isomorphism
 `F.mapShortComplex ⋙ opcyclesFunctor D ≅ opcyclesFunctor C ⋙ F`
 for a functor `F : C ⥤ D` which preserves homology. -/
-noncomputable def opcyclesFunctorIso [F.PreservesHomology] :
+private noncomputable def opcyclesFunctorIso [F.PreservesHomology] :
     F.mapShortComplex ⋙ ShortComplex.opcyclesFunctor D ≅
       ShortComplex.opcyclesFunctor C ⋙ F :=
   NatIso.ofComponents (fun S => S.mapOpcyclesIso F)
@@ -748,7 +748,7 @@ noncomputable def opcyclesFunctorIso [F.PreservesHomology] :
 /-- The natural isomorphism
 `F.mapShortComplex ⋙ rightHomologyFunctor D ≅ rightHomologyFunctor C ⋙ F`
 for a functor `F : C ⥤ D` which preserves homology. -/
-noncomputable def rightHomologyFunctorIso [F.PreservesHomology] :
+private noncomputable def rightHomologyFunctorIso [F.PreservesHomology] :
     F.mapShortComplex ⋙ ShortComplex.rightHomologyFunctor D ≅
       ShortComplex.rightHomologyFunctor C ⋙ F :=
   NatIso.ofComponents (fun S => S.mapRightHomologyIso F)

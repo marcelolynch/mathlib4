@@ -173,7 +173,7 @@ protected theorem surjective (h : X ≃ₜ Y) : Function.Surjective h :=
   h.toEquiv.surjective
 
 /-- Change the homeomorphism `f` to make the inverse function definitionally equal to `g`. -/
-def changeInv (f : X ≃ₜ Y) (g : Y → X) (hg : Function.RightInverse g f) : X ≃ₜ Y :=
+private def changeInv (f : X ≃ₜ Y) (g : Y → X) (hg : Function.RightInverse g f) : X ≃ₜ Y :=
   haveI : g = f.symm := (f.left_inv.eq_rightInverse hg).symm
   { toFun := f
     invFun := g

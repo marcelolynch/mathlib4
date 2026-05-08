@@ -77,10 +77,10 @@ theorem IsUniform.symm : Symmetric (IsUniform G ε) := fun s t h t' ht' s' hs' h
 variable (G)
 
 omit [IsStrictOrderedRing 𝕜] in
-theorem isUniform_comm : IsUniform G ε s t ↔ IsUniform G ε t s :=
+private theorem isUniform_comm : IsUniform G ε s t ↔ IsUniform G ε t s :=
   ⟨fun h => h.symm, fun h => h.symm⟩
 
-lemma isUniform_one : G.IsUniform (1 : 𝕜) s t := by
+private lemma isUniform_one : G.IsUniform (1 : 𝕜) s t := by
   intro s' hs' t' ht' hs ht
   rw [mul_one] at hs ht
   rw [eq_of_subset_of_card_le hs' (Nat.cast_le.1 hs),
@@ -105,7 +105,7 @@ lemma IsUniform.pos (hG : G.IsUniform ε s t) : 0 < ε :=
     exact (hε.not_ge ht).elim
   · rwa [sub_self, abs_zero]
 
-theorem not_isUniform_zero : ¬G.IsUniform (0 : 𝕜) s t := fun h =>
+private theorem not_isUniform_zero : ¬G.IsUniform (0 : 𝕜) s t := fun h =>
   (abs_nonneg _).not_gt <| h (empty_subset _) (empty_subset _) (by simp) (by simp)
 
 theorem not_isUniform_iff :
@@ -406,13 +406,13 @@ variable {G P}
 omit [IsStrictOrderedRing 𝕜] in
 lemma regularityReduced_le : G.regularityReduced P ε δ ≤ G := fun _ _ ↦ And.left
 
-lemma regularityReduced_mono {ε₁ ε₂ : 𝕜} (hε : ε₁ ≤ ε₂) :
+private lemma regularityReduced_mono {ε₁ ε₂ : 𝕜} (hε : ε₁ ≤ ε₂) :
     G.regularityReduced P ε₁ δ ≤ G.regularityReduced P ε₂ δ :=
   fun _a _b ⟨hab, U, hU, V, hV, ha, hb, hUV, hGε, hGδ⟩ ↦
     ⟨hab, U, hU, V, hV, ha, hb, hUV, hGε.mono hε, hGδ⟩
 
 omit [IsStrictOrderedRing 𝕜] in
-lemma regularityReduced_anti {δ₁ δ₂ : 𝕜} (hδ : δ₁ ≤ δ₂) :
+private lemma regularityReduced_anti {δ₁ δ₂ : 𝕜} (hδ : δ₁ ≤ δ₂) :
     G.regularityReduced P ε δ₂ ≤ G.regularityReduced P ε δ₁ :=
   fun _a _b ⟨hab, U, hU, V, hV, ha, hb, hUV, hUVε, hUVδ⟩ ↦
     ⟨hab, U, hU, V, hV, ha, hb, hUV, hUVε, hδ.trans hUVδ⟩

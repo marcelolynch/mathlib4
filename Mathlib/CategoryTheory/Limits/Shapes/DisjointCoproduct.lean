@@ -105,7 +105,7 @@ noncomputable def ofCoproductDisjointOfIsColimitOfIsLimit {c : Cofan X} (hc : Is
   (CoproductDisjoint.nonempty_isInitial_of_ne hc hij _ hs).some
 
 /-- If `i ≠ j`, the pullback `Xᵢ ×[∐ X] Xⱼ` is initial. -/
-noncomputable def ofCoproductDisjoint [HasCoproduct X] [HasPullback (Sigma.ι X i) (Sigma.ι X j)] :
+private noncomputable def ofCoproductDisjoint [HasCoproduct X] [HasPullback (Sigma.ι X i) (Sigma.ι X j)] :
     IsInitial (pullback (Sigma.ι X i) (Sigma.ι X j)) :=
   ofCoproductDisjointOfIsColimitOfIsLimit hij (colimit.isColimit _)
     (pullback.isLimit (Sigma.ι X i) (Sigma.ι X j))
@@ -117,7 +117,7 @@ noncomputable def ofCoproductDisjointOfIsColimit
   ofCoproductDisjointOfIsColimitOfIsLimit hij hc (pullback.isLimit (f i) (f j))
 
 /-- If `i ≠ j` and `Xᵢ ← Y → Xⱼ` is a pullback diagram over `∐ X`, `Y` is initial. -/
-noncomputable def ofCoproductDisjointOfIsLimit
+private noncomputable def ofCoproductDisjointOfIsLimit
     [HasCoproduct X] {s : PullbackCone (Sigma.ι X i) (Sigma.ι X j)} (hs : IsLimit s) :
     IsInitial s.pt :=
   ofCoproductDisjointOfIsColimitOfIsLimit hij (colimit.isColimit _) hs
@@ -207,19 +207,19 @@ noncomputable def ofBinaryCoproductDisjointOfIsColimitOfIsLimit
   (CoproductDisjoint.nonempty_isInitial_of_ne hc (by simp) _ hs).some
 
 /-- `X ×[X ⨿ Y] Y` is initial. -/
-noncomputable def ofBinaryCoproductDisjoint [HasBinaryCoproduct X Y]
+private noncomputable def ofBinaryCoproductDisjoint [HasBinaryCoproduct X Y]
     [HasPullback (coprod.inl : X ⟶ X ⨿ Y) coprod.inr] :
     IsInitial (pullback (coprod.inl : X ⟶ X ⨿ Y) coprod.inr) :=
   ofBinaryCoproductDisjointOfIsColimitOfIsLimit (colimit.isColimit _) (pullback.isLimit _ _)
 
 /-- The pullback `X ×[W] Y` is initial, if `W` is the coproduct of `X` and `Y`. -/
-noncomputable def ofBinaryCoproductDisjointOfIsColimit {Z : C}
+private noncomputable def ofBinaryCoproductDisjointOfIsColimit {Z : C}
     {f : X ⟶ Z} {g : Y ⟶ Z} [HasPullback f g] (hc : IsColimit (BinaryCofan.mk f g)) :
     IsInitial (pullback f g) :=
   ofBinaryCoproductDisjointOfIsColimitOfIsLimit hc (pullback.isLimit f g)
 
 /-- If `X ← Z → Y` is a pullback diagram over `X ⨿ Y`, `Z` is initial. -/
-noncomputable def ofBinaryCoproductDisjointOfIsLimit
+private noncomputable def ofBinaryCoproductDisjointOfIsLimit
     [HasBinaryCoproduct X Y] (s : PullbackCone (coprod.inl : X ⟶ X ⨿ Y) coprod.inr)
     (hs : IsLimit s) : IsInitial s.pt :=
   ofBinaryCoproductDisjointOfIsColimitOfIsLimit (colimit.isColimit _) hs

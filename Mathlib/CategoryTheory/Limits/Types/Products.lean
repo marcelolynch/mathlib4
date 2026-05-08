@@ -170,7 +170,7 @@ set_option backward.isDefEq.respectTransparency false in
 /-- The product functor given by the instance `HasBinaryProducts (Type u)` is isomorphic to the
 explicit binary product functor given by the product type.
 -/
-noncomputable def binaryProductIsoProd :
+private noncomputable def binaryProductIsoProd :
     binaryProductFunctor ≅ (prod.functor : Type u ⥤ _) := by
   refine NatIso.ofComponents (fun X => ?_) (fun _ => ?_)
   · refine NatIso.ofComponents (fun Y => ?_) (fun _ => ?_)

@@ -227,7 +227,7 @@ lemma map_glueMorphismsOfLocallyDirected {Y : Scheme.{u}} (g : ∀ i, 𝒰.X i �
 
 /-- If `𝒰` is an open cover of `X` that is locally directed, `X` is
 the colimit of the components of `𝒰`. -/
-def isColimitCoconeOfLocallyDirected : IsColimit 𝒰.coconeOfLocallyDirected where
+private def isColimitCoconeOfLocallyDirected : IsColimit 𝒰.coconeOfLocallyDirected where
   desc s := 𝒰.glueMorphismsOfLocallyDirected s.ι.app fun _ ↦ s.ι.naturality _
   uniq s m hm := 𝒰.hom_ext _ _ fun j ↦ by simpa using hm j
 

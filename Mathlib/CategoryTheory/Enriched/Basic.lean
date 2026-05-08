@@ -521,7 +521,7 @@ def enrichedFunctorTypeEquivFunctor {C : Type u₁} [𝒞 : EnrichedCategory (Ty
 between `Type v`-enriched functors is actually represented by
 the usual type of natural transformations!
 -/
-def enrichedNatTransYonedaTypeIsoYonedaNatTrans {C : Type v} [EnrichedCategory (Type v) C]
+private def enrichedNatTransYonedaTypeIsoYonedaNatTrans {C : Type v} [EnrichedCategory (Type v) C]
     {D : Type v} [EnrichedCategory (Type v) D] (F G : EnrichedFunctor (Type v) C D) :
     enrichedNatTransYoneda F G ≅
       yoneda.obj (enrichedFunctorTypeEquivFunctor F ⟶

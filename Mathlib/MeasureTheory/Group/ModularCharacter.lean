@@ -132,7 +132,7 @@ lemma modularCharacterFun_map_mul (g h : G) : modularCharacterFun (g * h) =
 /-- The modular character homomorphism. The underlying function is `modularCharacterFun`, which is
 `g ↦ μ (· * g⁻¹) / μ`, where `μ` is a left Haar measure.
 -/
-noncomputable def modularCharacter : G →* ℝ≥0 where
+private noncomputable def modularCharacter : G →* ℝ≥0 where
   toFun := modularCharacterFun
   map_one' := modularCharacterFun_map_one
   map_mul' := modularCharacterFun_map_mul

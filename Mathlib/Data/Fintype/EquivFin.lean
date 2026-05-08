@@ -90,7 +90,7 @@ preserve computability.
 See `Fintype.truncEquivFin` for a version that gives an equivalence
 given `[DecidableEq α]`.
 -/
-def truncFinBijection (α) [Fintype α] : Trunc { f : Fin (card α) → α // Bijective f } := by
+private def truncFinBijection (α) [Fintype α] : Trunc { f : Fin (card α) → α // Bijective f } := by
   unfold card Finset.card
   refine
     Quot.recOnSubsingleton

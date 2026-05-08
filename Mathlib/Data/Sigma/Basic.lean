@@ -257,7 +257,7 @@ theorem subtype_ext {β : Sort*} {p : α → β → Prop} :
 variable {α₁ : Sort*} {α₂ : Sort*} {β₁ : α₁ → Sort*} {β₂ : α₂ → Sort*}
 
 /-- Map the left and right components of a sigma -/
-def map (f₁ : α₁ → α₂) (f₂ : ∀ a, β₁ a → β₂ (f₁ a)) : PSigma β₁ → PSigma β₂
+private def map (f₁ : α₁ → α₂) (f₂ : ∀ a, β₁ a → β₂ (f₁ a)) : PSigma β₁ → PSigma β₂
   | ⟨a, b⟩ => ⟨f₁ a, f₂ a b⟩
 
 end PSigma

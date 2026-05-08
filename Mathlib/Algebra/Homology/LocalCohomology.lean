@@ -247,7 +247,7 @@ def SelfLERadical.isoOfSameRadical (hJK : J.radical = K.radical) (i : ℕ) :
   (isoOfFinal.{u, u, u} (SelfLERadical.cast hJK.symm) _ _).symm
 
 /-- Local cohomology agrees on ideals with the same radical. -/
-def isoOfSameRadical [IsNoetherian R R] (hJK : J.radical = K.radical) (i : ℕ) :
+private def isoOfSameRadical [IsNoetherian R R] (hJK : J.radical = K.radical) (i : ℕ) :
     localCohomology J i ≅ localCohomology K i :=
   (isoSelfLERadical J i).symm ≪≫ SelfLERadical.isoOfSameRadical hJK i ≪≫ isoSelfLERadical K i
 

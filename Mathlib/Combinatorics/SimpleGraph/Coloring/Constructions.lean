@@ -38,7 +38,7 @@ def pathGraph.bicoloring (n : ℕ) :
     rintro (h | h) <;> simp [← h, not_iff, Nat.succ_mod_two_eq_zero_iff]
 
 /-- Embedding of `pathGraph 2` into the first two elements of `pathGraph n` for `2 ≤ n` -/
-def pathGraph_two_embedding (n : ℕ) (h : 2 ≤ n) : pathGraph 2 ↪g pathGraph n where
+private def pathGraph_two_embedding (n : ℕ) (h : 2 ≤ n) : pathGraph 2 ↪g pathGraph n where
   toFun v := ⟨v, trans v.2 h⟩
   inj' := by
     rintro v w
@@ -46,7 +46,7 @@ def pathGraph_two_embedding (n : ℕ) (h : 2 ≤ n) : pathGraph 2 ↪g pathGraph
     exact Fin.ext
   map_rel_iff' := by simp [pathGraph]
 
-theorem chromaticNumber_pathGraph (n : ℕ) (h : 2 ≤ n) :
+private theorem chromaticNumber_pathGraph (n : ℕ) (h : 2 ≤ n) :
     (pathGraph n).chromaticNumber = 2 := by
   have hc := (pathGraph.bicoloring n).colorable
   apply le_antisymm
@@ -98,7 +98,7 @@ def cycleGraph.bicoloring_of_even (n : ℕ) (h : Even n) : Coloring (cycleGraph 
         apply Classical.not_iff.mpr
         simp [Fin.not_odd_iff_even_of_even h, Fin.not_even_iff_odd_of_even h]
 
-theorem chromaticNumber_cycleGraph_of_even (n : ℕ) (h : 2 ≤ n) (hEven : Even n) :
+private theorem chromaticNumber_cycleGraph_of_even (n : ℕ) (h : 2 ≤ n) (hEven : Even n) :
     (cycleGraph n).chromaticNumber = 2 := by
   have hc := (cycleGraph.bicoloring_of_even n hEven).colorable
   apply le_antisymm
@@ -135,7 +135,7 @@ def cycleGraph.tricoloring (n : ℕ) (h : 2 ≤ n) : Coloring (cycleGraph n)
           simp only [Nat.not_even_one, iff_false, not_iff_self, iff_not_self]
           exact id
 
-theorem chromaticNumber_cycleGraph_of_odd (n : ℕ) (h : 2 ≤ n) (hOdd : Odd n) :
+private theorem chromaticNumber_cycleGraph_of_odd (n : ℕ) (h : 2 ≤ n) (hOdd : Odd n) :
     (cycleGraph n).chromaticNumber = 3 := by
   have hc := (cycleGraph.tricoloring n h).colorable
   apply le_antisymm
@@ -167,7 +167,7 @@ theorem completeEquipartiteGraph_colorable :
 end CompleteEquipartiteGraph
 
 open Walk
-lemma two_colorable_iff_forall_loop_even {α : Type*} {G : SimpleGraph α} :
+private lemma two_colorable_iff_forall_loop_even {α : Type*} {G : SimpleGraph α} :
     G.Colorable 2 ↔ ∀ u, ∀ (w : G.Walk u u), Even w.length := by
   simp_rw [← Nat.not_odd_iff_even]
   constructor <;> intro h

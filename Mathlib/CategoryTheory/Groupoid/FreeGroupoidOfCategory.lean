@@ -182,7 +182,7 @@ def map (φ : C ⥤ D) : FreeGroupoid C ⥤ FreeGroupoid D :=
 lemma of_comp_map (F : C ⥤ D) : of C ⋙ map F = F ⋙ of D := rfl
 
 /-- The operation `of` is natural. -/
-def ofCompMapIso (F : C ⥤ D) : of C ⋙ map F ≅ F ⋙ of D := Iso.refl _
+private def ofCompMapIso (F : C ⥤ D) : of C ⋙ map F ≅ F ⋙ of D := Iso.refl _
 
 variable (C) in
 /-- The functor induced by the identity is the identity. -/

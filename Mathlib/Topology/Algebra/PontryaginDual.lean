@@ -112,7 +112,7 @@ nonrec theorem map_mul (f g : A →ₜ* G) : map (f * g) = map f * map g :=
 variable (A B C G)
 
 /-- `ContinuousMonoidHom.dual` as a `ContinuousMonoidHom`. -/
-def mapHom [LocallyCompactSpace G] :
+private def mapHom [LocallyCompactSpace G] :
     (A →ₜ* G) →ₜ* ((PontryaginDual G) →ₜ* (PontryaginDual A)) where
   toFun := map
   map_one' := map_one

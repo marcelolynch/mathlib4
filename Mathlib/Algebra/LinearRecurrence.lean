@@ -172,7 +172,7 @@ solutions of `E`. -/
 
 /-- `E.tupleSucc` maps `![s₀, s₁, ..., sₙ]` to `![s₁, ..., sₙ, ∑ (E.coeffs i) * sᵢ]`,
 where `n := E.order`. -/
-def tupleSucc : (Fin E.order → R) →ₗ[R] Fin E.order → R where
+private def tupleSucc : (Fin E.order → R) →ₗ[R] Fin E.order → R where
   toFun X i := if h : (i : ℕ) + 1 < E.order then X ⟨i + 1, h⟩ else ∑ i, E.coeffs i * X i
   map_add' x y := by
     ext i

@@ -474,7 +474,7 @@ noncomputable def tensorUnit₀ : (tensorUnit : GradedObject I C) 0 ≅ 𝟙_ C 
   singleObjApplyIso (0 : I) (𝟙_ C)
 
 /-- `tensorUnit i` is an initial object when `i ≠ 0`. -/
-noncomputable def isInitialTensorUnitApply (i : I) (hi : i ≠ 0) :
+private noncomputable def isInitialTensorUnitApply (i : I) (hi : i ≠ 0) :
     IsInitial ((tensorUnit : GradedObject I C) i) :=
   isInitialSingleObjApply _ _ _ hi
 

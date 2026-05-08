@@ -77,7 +77,7 @@ instance hasGlobalSectionsFunctor_of_hasTerminal [HasTerminal C] :
 
 /-- On sites with a terminal object, the global sections functor is isomorphic to the functor
 of sections on that object. -/
-noncomputable def Sheaf.ΓNatIsoSheafSections [HasTerminal C] {T : C} (hT : IsTerminal T) :
+private noncomputable def Sheaf.ΓNatIsoSheafSections [HasTerminal C] {T : C} (hT : IsTerminal T) :
     Γ J A ≅ (sheafSections J A).obj (op T) :=
   (constantSheafΓAdj J A).rightAdjointUniq (constantSheafAdj J A hT)
 
@@ -90,7 +90,7 @@ instance hasGlobalSectionsFunctor_of_hasLimitsOfShape [HasLimitsOfShape Cᵒᵖ 
 /-- Global sections of sheaves are naturally isomorphic to the limits of the underlying presheaves.
 Note that while `HasLimitsOfShape Cᵒᵖ A` is needed here to talk about `lim` as a functor, global
 sections are still limits without it - see `Sheaf.isLimitConeΓ`. -/
-noncomputable def Sheaf.ΓNatIsoLim [HasLimitsOfShape Cᵒᵖ A] :
+private noncomputable def Sheaf.ΓNatIsoLim [HasLimitsOfShape Cᵒᵖ A] :
     Γ J A ≅ sheafToPresheaf J A ⋙ lim :=
   (constantSheafΓAdj J A).rightAdjointUniq (constLimAdj.comp (sheafificationAdjunction J A))
 
@@ -140,7 +140,7 @@ noncomputable def Sheaf.coneΓ [HasGlobalSectionsFunctor J A] (F : Sheaf J A) : 
 
 /-- The global sections cone `Sheaf.coneΓ` is limiting - that is, global sections are limits even
 when not all limits of shape `Cᵒᵖ` exist in `A`. -/
-noncomputable def Sheaf.isLimitConeΓ [HasGlobalSectionsFunctor J A] (F : Sheaf J A) :
+private noncomputable def Sheaf.isLimitConeΓ [HasGlobalSectionsFunctor J A] (F : Sheaf J A) :
     IsLimit F.coneΓ where
   lift c := F.ΓHomEquiv c.π
   fac c j := by
@@ -203,7 +203,7 @@ lemma Sheaf.ΓObjEquivSections_naturality_symm [HasWeakSheafify J (Type w)]
 
 /-- For sheaves of types, the global sections functor is isomorphic to the sections functor
 on presheaves. -/
-noncomputable def Sheaf.ΓNatIsoSectionsFunctor :
+private noncomputable def Sheaf.ΓNatIsoSectionsFunctor :
     Γ J (Type (max u v)) ≅ sheafToPresheaf J _ ⋙ Functor.sectionsFunctor _ :=
   NatIso.ofComponents (fun F ↦ (ΓObjEquivSections J F).toIso) fun f ↦ by
     ext x
@@ -232,7 +232,7 @@ lemma Sheaf.ΓObjEquivHom_naturality_symm [HasWeakSheafify J (Type w)]
 
 /-- For sheaves of types, the global sections functor is isomorphic to the covariant hom
 functor of the terminal sheaf. -/
-noncomputable def Sheaf.ΓNatIsoCoyoneda (X : Type (max u v)) [Unique X] :
+private noncomputable def Sheaf.ΓNatIsoCoyoneda (X : Type (max u v)) [Unique X] :
     Γ J (Type (max u v)) ≅ coyoneda.obj (op ((constantSheaf J (Type (max u v))).obj X)) :=
   NatIso.ofComponents (fun F ↦ (F.ΓObjEquivHom J X).toIso) fun f ↦ by
     ext x

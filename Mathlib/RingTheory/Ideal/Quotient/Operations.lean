@@ -105,14 +105,14 @@ lemma quotientKerEquivOfSurjective_symm_comp {f : R →+* S} (hf : Function.Surj
   ext; simp
 
 /-- The **first isomorphism theorem** for commutative rings (`RingHom.rangeS` version). -/
-noncomputable def quotientKerEquivRangeS (f : R →+* S) : R ⧸ ker f ≃+* f.rangeS :=
+private noncomputable def quotientKerEquivRangeS (f : R →+* S) : R ⧸ ker f ≃+* f.rangeS :=
   (Ideal.quotEquivOfEq f.ker_rangeSRestrict.symm).trans <|
   quotientKerEquivOfSurjective f.rangeSRestrict_surjective
 
 variable {S : Type v} [Ring S] (f : R →+* S)
 
 /-- The **first isomorphism theorem** for commutative rings (`RingHom.range` version). -/
-noncomputable def quotientKerEquivRange (f : R →+* S) : R ⧸ ker f ≃+* f.range :=
+private noncomputable def quotientKerEquivRange (f : R →+* S) : R ⧸ ker f ≃+* f.range :=
   (Ideal.quotEquivOfEq f.ker_rangeRestrict.symm).trans <|
     quotientKerEquivOfSurjective f.rangeRestrict_surjective
 
@@ -797,7 +797,7 @@ lemma isPrime_map_quotientMk_of_isPrime {I : Ideal R} [I.IsTwoSided] {p : Ideal 
   · simpa
 
 /-- The **first isomorphism theorem** for commutative algebras (`AlgHom.range` version). -/
-noncomputable def quotientKerEquivRange
+private noncomputable def quotientKerEquivRange
     {R A B : Type*} [CommSemiring R] [Ring A] [Algebra R A] [Semiring B] [Algebra R B]
     (f : A →ₐ[R] B) :
     (A ⧸ RingHom.ker f) ≃ₐ[R] f.range :=

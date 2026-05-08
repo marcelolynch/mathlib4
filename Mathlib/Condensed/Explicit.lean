@@ -56,7 +56,7 @@ noncomputable def ofSheafStonean
 The condensed object associated to a presheaf on `Stonean` whose postcomposition with the
 forgetful functor preserves finite products.
 -/
-noncomputable def ofSheafForgetStonean
+private noncomputable def ofSheafForgetStonean
     [∀ X, HasLimitsOfShape (StructuredArrow X Stonean.toCompHaus.op) A]
     {FA : A → A → Type*} {CA : A → Type*} [∀ X Y, FunLike (FA X Y) (CA X) (CA Y)]
     [ConcreteCategory A FA] [ReflectsFiniteProducts (CategoryTheory.forget A)]
@@ -87,7 +87,7 @@ noncomputable def ofSheafProfinite
 The condensed object associated to a presheaf on `Profinite` whose postcomposition with the
 forgetful functor preserves finite products and satisfies the equalizer condition.
 -/
-noncomputable def ofSheafForgetProfinite
+private noncomputable def ofSheafForgetProfinite
     [∀ X, HasLimitsOfShape (StructuredArrow X profiniteToCompHaus.op) A]
     {FA : A → A → Type*} {CA : A → Type*} [∀ X Y, FunLike (FA X Y) (CA X) (CA Y)]
     [ConcreteCategory A FA] [ReflectsFiniteLimits (CategoryTheory.forget A)]
@@ -117,7 +117,7 @@ noncomputable def ofSheafCompHaus
 The condensed object associated to a presheaf on `CompHaus` whose postcomposition with the
 forgetful functor preserves finite products and satisfies the equalizer condition.
 -/
-noncomputable def ofSheafForgetCompHaus
+private noncomputable def ofSheafForgetCompHaus
     {FA : A → A → Type*} {CA : A → Type*} [∀ X Y, FunLike (FA X Y) (CA X) (CA Y)]
     [ConcreteCategory A FA] [ReflectsFiniteLimits (CategoryTheory.forget A)]
     (F : CompHaus.{u}ᵒᵖ ⥤ A) [PreservesFiniteProducts (F ⋙ CategoryTheory.forget A)]

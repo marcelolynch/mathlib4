@@ -165,7 +165,7 @@ instance instInhabited : Inhabited (Sublattice α) := ⟨⊥⟩
 /-- The top sublattice is isomorphic to the original lattice.
 
 This is the sublattice version of `Equiv.Set.univ α`. -/
-def topEquiv : (⊤ : Sublattice α) ≃o α where
+private def topEquiv : (⊤ : Sublattice α) ≃o α where
   toEquiv := Equiv.Set.univ _
   map_rel_iff' := Iff.rfl
 

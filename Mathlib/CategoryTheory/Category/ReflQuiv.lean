@@ -33,7 +33,7 @@ instance : CoeSort ReflQuiv (Type u) where coe := Bundled.α
 instance (C : ReflQuiv.{v, u}) : ReflQuiver.{v, u} C := C.str
 
 /-- The underlying quiver of a reflexive quiver -/
-def toQuiv (C : ReflQuiv.{v, u}) : Quiv.{v, u} := Quiv.of C.α
+private def toQuiv (C : ReflQuiv.{v, u}) : Quiv.{v, u} := Quiv.of C.α
 
 /-- Construct a bundled `ReflQuiv` from the underlying type and the typeclass. -/
 def of (C : Type u) [ReflQuiver.{v} C] : ReflQuiv.{v, u} := Bundled.of C
@@ -122,7 +122,7 @@ end ReflQuiv
 namespace ReflPrefunctor
 
 /-- A refl prefunctor can be promoted to a functor if it respects composition. -/
-def toFunctor {C D : Cat} (F : (ReflQuiv.of C) ⟶ (ReflQuiv.of D))
+private def toFunctor {C D : Cat} (F : (ReflQuiv.of C) ⟶ (ReflQuiv.of D))
     (hyp : ∀ {X Y Z : ↑C} (f : X ⟶ Y) (g : Y ⟶ Z),
       F.map (CategoryStruct.comp (obj := C) f g) =
         CategoryStruct.comp (obj := D) (F.map f) (F.map g)) : C ⥤ D where
@@ -366,7 +366,7 @@ def freeRefl : ReflQuiv.{v, u} ⥤ Cat.{max u v, u} where
 
 /-- We will make use of the natural quotient map from the free category on the underlying
 quiver of a refl quiver to the free category on the reflexive quiver. -/
-def freeReflNatTrans : ReflQuiv.forgetToQuiv ⋙ Cat.free ⟶ freeRefl where
+private def freeReflNatTrans : ReflQuiv.forgetToQuiv ⋙ Cat.free ⟶ freeRefl where
   app V := (FreeRefl.quotientFunctor V).toCatHom
   naturality v w f := by
     ext1; exact Paths.ext_functor (V := Quiv.of v) (by cat_disch) (by cat_disch)

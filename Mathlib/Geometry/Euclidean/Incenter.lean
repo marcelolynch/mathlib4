@@ -115,7 +115,7 @@ lemma excenterWeightsUnnorm_ne_zero (signs : Finset (Fin (n + 1))) (i : Fin (n +
 def ExcenterExists (signs : Finset (Fin (n + 1))) : Prop :=
   ∑ i, s.excenterWeightsUnnorm signs i ≠ 0
 
-lemma excenterExists_reindex {e : Fin (n + 1) ≃ Fin (m + 1)} {signs : Finset (Fin (m + 1))} :
+private lemma excenterExists_reindex {e : Fin (n + 1) ≃ Fin (m + 1)} {signs : Finset (Fin (m + 1))} :
     (s.reindex e).ExcenterExists signs ↔ s.ExcenterExists (signs.map e.symm) := by
   simp_rw [ExcenterExists, excenterWeightsUnnorm_reindex, Finset.sum_comp_equiv,
     Finset.map_univ_equiv]
@@ -413,7 +413,7 @@ exists). -/
 def exradius (signs : Finset (Fin (n + 1))) : ℝ :=
   (s.exsphere signs).radius
 
-lemma exradius_reindex (e : Fin (n + 1) ≃ Fin (m + 1)) (signs : Finset (Fin (m + 1))) :
+private lemma exradius_reindex (e : Fin (n + 1) ≃ Fin (m + 1)) (signs : Finset (Fin (m + 1))) :
     (s.reindex e).exradius signs = s.exradius (signs.map e.symm) := by
   simp_rw [exradius, exsphere_reindex]
 
@@ -504,7 +504,7 @@ lemma incenter_eq_affineCombination :
     s.incenter = Finset.univ.affineCombination ℝ s.points (s.excenterWeights ∅) :=
   rfl
 
-lemma inradius_eq_abs_inv_sum : s.inradius = |(∑ i, s.excenterWeightsUnnorm ∅ i)⁻¹| :=
+private lemma inradius_eq_abs_inv_sum : s.inradius = |(∑ i, s.excenterWeightsUnnorm ∅ i)⁻¹| :=
   rfl
 
 lemma exradius_nonneg (signs : Finset (Fin (n + 1))) : 0 ≤ s.exradius signs :=
@@ -515,10 +515,10 @@ lemma ExcenterExists.exradius_pos {signs : Finset (Fin (n + 1))} (h : s.Excenter
     0 < s.exradius signs :=
   abs_pos.2 (inv_ne_zero h)
 
-lemma inradius_pos : 0 < s.inradius :=
+private lemma inradius_pos : 0 < s.inradius :=
   s.excenterExists_empty.exradius_pos
 
-lemma exradius_singleton_pos [Nat.AtLeastTwo n] (i : Fin (n + 1)) : 0 < s.exradius {i} :=
+private lemma exradius_singleton_pos [Nat.AtLeastTwo n] (i : Fin (n + 1)) : 0 < s.exradius {i} :=
   (s.excenterExists_singleton i).exradius_pos
 
 variable {s} in
@@ -526,10 +526,10 @@ lemma ExcenterExists.excenter_mem_affineSpan_range {signs : Finset (Fin (n + 1))
     (h : s.ExcenterExists signs) : s.excenter signs ∈ affineSpan ℝ (Set.range s.points) :=
   affineCombination_mem_affineSpan h.sum_excenterWeights_eq_one _
 
-lemma incenter_mem_affineSpan_range : s.incenter ∈ affineSpan ℝ (Set.range s.points) :=
+private lemma incenter_mem_affineSpan_range : s.incenter ∈ affineSpan ℝ (Set.range s.points) :=
   s.excenterExists_empty.excenter_mem_affineSpan_range
 
-lemma incenter_mem_interior : s.incenter ∈ s.interior := by
+private lemma incenter_mem_interior : s.incenter ∈ s.interior := by
   have h := s.excenterExists_empty.sum_excenterWeights_eq_one
   rw [incenter_eq_affineCombination, s.affineCombination_mem_interior_iff h]
   intro i
@@ -545,7 +545,7 @@ lemma incenter_mem_interior : s.incenter ∈ s.interior := by
   exact add_pos_of_pos_of_nonneg (s.excenterWeights_empty_pos j)
     (Finset.sum_nonneg fun k _ ↦ (s.excenterWeights_empty_pos k).le)
 
-lemma excenter_singleton_mem_affineSpan_range [Nat.AtLeastTwo n] (i : Fin (n + 1)) :
+private lemma excenter_singleton_mem_affineSpan_range [Nat.AtLeastTwo n] (i : Fin (n + 1)) :
     s.excenter {i} ∈ affineSpan ℝ (Set.range s.points) :=
   (s.excenterExists_singleton i).excenter_mem_affineSpan_range
 
@@ -571,7 +571,7 @@ lemma ExcenterExists.sign_signedInfDist_excenter {signs : Finset (Fin (n + 1))}
   rw [sign_eq_one_iff, ← dist_eq_norm_vsub]
   exact s.height_pos _
 
-lemma sign_signedInfDist_incenter (i : Fin (n + 1)) :
+private lemma sign_signedInfDist_incenter (i : Fin (n + 1)) :
     SignType.sign (s.signedInfDist i s.incenter) = 1 := by
   convert s.excenterExists_empty.sign_signedInfDist_excenter i
   simp
@@ -607,7 +607,7 @@ lemma ExcenterExists.excenter_notMem_affineSpan_face {signs : Finset (Fin (n + 1
   exact h.excenterWeights_ne_zero i (s.independent.eq_zero_of_affineCombination_mem_affineSpan
     h.sum_excenterWeights_eq_one hm (Finset.mem_univ i) hi)
 
-lemma incenter_notMem_affineSpan_face {fs : Finset (Fin (n + 1))} {m : ℕ} (hfs : #fs = m + 1)
+private lemma incenter_notMem_affineSpan_face {fs : Finset (Fin (n + 1))} {m : ℕ} (hfs : #fs = m + 1)
     (hne : m ≠ n) : s.incenter ∉ affineSpan ℝ (Set.range (s.face hfs).points) :=
   s.excenterExists_empty.excenter_notMem_affineSpan_face hfs hne
 
@@ -617,7 +617,7 @@ lemma ExcenterExists.excenter_notMem_affineSpan_faceOpposite {signs : Finset (Fi
     s.excenter signs ∉ affineSpan ℝ (Set.range (s.faceOpposite i).points) :=
   h.excenter_notMem_affineSpan_face _ (by have := NeZero.ne n; lia)
 
-lemma incenter_notMem_affineSpan_faceOpposite (i : Fin (n + 1)) :
+private lemma incenter_notMem_affineSpan_faceOpposite (i : Fin (n + 1)) :
     s.incenter ∉ affineSpan ℝ (Set.range (s.faceOpposite i).points) :=
   s.excenterExists_empty.excenter_notMem_affineSpan_faceOpposite i
 
@@ -627,7 +627,7 @@ lemma ExcenterExists.excenter_ne_point {signs : Finset (Fin (n + 1))}
   have hf := h.excenter_notMem_affineSpan_face (fs := {i}) (m := 0) (by simp) (NeZero.ne' _)
   simpa using hf
 
-lemma incenter_ne_point (i : Fin (n + 1)) :
+private lemma incenter_ne_point (i : Fin (n + 1)) :
     s.incenter ≠ s.points i :=
   s.excenterExists_empty.excenter_ne_point i
 
@@ -643,7 +643,7 @@ lemma ExcenterExists.excenter_notMem_affineSpan_pair [Nat.AtLeastTwo n]
       Nat.AtLeastTwo.ne_one.symm
     simp [Set.image_insert_eq]
 
-lemma incenter_notMem_affineSpan_pair [Nat.AtLeastTwo n] (i j : Fin (n + 1)) :
+private lemma incenter_notMem_affineSpan_pair [Nat.AtLeastTwo n] (i j : Fin (n + 1)) :
     s.incenter ∉ line[ℝ, s.points i, s.points j] :=
   s.excenterExists_empty.excenter_notMem_affineSpan_pair i j
 
@@ -872,7 +872,7 @@ lemma ExcenterExists.touchpoint_mem_exsphere {signs : Finset (Fin (n + 1))}
     (h : s.ExcenterExists signs) (i : Fin (n + 1)) : s.touchpoint signs i ∈ s.exsphere signs :=
   mem_sphere'.2 (h.dist_excenter i)
 
-lemma touchpoint_mem_insphere (i : Fin (n + 1)) : s.touchpoint ∅ i ∈ s.insphere :=
+private lemma touchpoint_mem_insphere (i : Fin (n + 1)) : s.touchpoint ∅ i ∈ s.insphere :=
   s.excenterExists_empty.touchpoint_mem_exsphere _
 
 variable {s} in
@@ -884,7 +884,7 @@ lemma ExcenterExists.isTangentAt_touchpoint {signs : Finset (Fin (n + 1))}
     ← EuclideanGeometry.Sphere.dist_orthogonalProjection_eq_radius_iff_isTangentAt,
     ← orthogonalProjectionSpan, ← excenter, ← exradius, ← touchpoint, h.dist_excenter]
 
-lemma isTangentAt_insphere_touchpoint (i : Fin (n + 1)) :
+private lemma isTangentAt_insphere_touchpoint (i : Fin (n + 1)) :
     s.insphere.IsTangentAt (s.touchpoint ∅ i)
       (affineSpan ℝ (Set.range (s.faceOpposite i).points)) :=
   s.excenterExists_empty.isTangentAt_touchpoint i
@@ -905,7 +905,7 @@ lemma ExcenterExists.isTangentAt_exsphere_iff_eq_touchpoint {signs : Finset (Fin
   exact h.isTangentAt_touchpoint i
 
 variable {s} in
-lemma isTangentAt_insphere_iff_eq_touchpoint {i : Fin (n + 1)} {p : P} :
+private lemma isTangentAt_insphere_iff_eq_touchpoint {i : Fin (n + 1)} {p : P} :
     s.insphere.IsTangentAt p (affineSpan ℝ (Set.range (s.faceOpposite i).points)) ↔
       p = s.touchpoint ∅ i :=
   s.excenterExists_empty.isTangentAt_exsphere_iff_eq_touchpoint
@@ -921,7 +921,7 @@ lemma ExcenterExists.affineSpan_faceOpposite_eq_orthRadius [hf : Fact (Module.fi
   have := NeZero.ne n
   lia
 
-lemma affineSpan_faceOpposite_eq_orthRadius_insphere [Fact (Module.finrank ℝ V = n)]
+private lemma affineSpan_faceOpposite_eq_orthRadius_insphere [Fact (Module.finrank ℝ V = n)]
     (i : Fin (n + 1)) :
     affineSpan ℝ (Set.range (s.faceOpposite i).points) = s.insphere.orthRadius (s.touchpoint ∅ i) :=
   s.excenterExists_empty.affineSpan_faceOpposite_eq_orthRadius i
@@ -956,7 +956,7 @@ lemma exists_forall_signedInfDist_eq_iff_excenterExists_and_eq_excenter {p : P}
     rw [h.signedInfDist_excenter]
     simp
 
-lemma exists_forall_signedInfDist_eq_iff_eq_incenter {p : P}
+private lemma exists_forall_signedInfDist_eq_iff_eq_incenter {p : P}
     (hp : p ∈ affineSpan ℝ (Set.range s.points)) :
     (∃ r : ℝ, ∀ i, s.signedInfDist i p = r) ↔ p = s.incenter := by
   convert s.exists_forall_signedInfDist_eq_iff_excenterExists_and_eq_excenter hp (signs := ∅)
@@ -1029,7 +1029,7 @@ lemma ExcenterExists.touchpoint_notMem_affineSpan_of_ne {signs : Finset (Fin (n 
   fun hm ↦ h.touchpoint_injective.ne hne
     ((h.isTangentAt_touchpoint j).eq_of_mem_of_mem (h.touchpoint_mem_exsphere i) hm)
 
-lemma touchpoint_empty_notMem_affineSpan_of_ne {i j : Fin (n + 1)} (hne : i ≠ j) :
+private lemma touchpoint_empty_notMem_affineSpan_of_ne {i j : Fin (n + 1)} (hne : i ≠ j) :
     s.touchpoint ∅ i ∉ affineSpan ℝ (Set.range (s.faceOpposite j).points) :=
   s.excenterExists_empty.touchpoint_notMem_affineSpan_of_ne hne
 
@@ -1067,7 +1067,7 @@ lemma ExcenterExists.sign_signedInfDist_lineMap_excenter_touchpoint {signs : Fin
   convert Set.mem_image_of_mem _ (Set.left_mem_Icc.2 (zero_le_one' ℝ))
   simp
 
-lemma sign_signedInfDist_lineMap_incenter_touchpoint {i j : Fin (n + 1)} (hne : i ≠ j) {r : ℝ}
+private lemma sign_signedInfDist_lineMap_incenter_touchpoint {i j : Fin (n + 1)} (hne : i ≠ j) {r : ℝ}
     (hr : r ∈ Set.Icc 0 1) :
     SignType.sign
       (s.signedInfDist j (AffineMap.lineMap s.incenter (s.touchpoint ∅ i) r)) =
@@ -1082,7 +1082,7 @@ lemma ExcenterExists.sign_signedInfDist_touchpoint {signs : Finset (Fin (n + 1))
   rw [← h.sign_signedInfDist_lineMap_excenter_touchpoint hne (r := 1) ⟨zero_le_one, le_rfl⟩]
   simp
 
-lemma sign_signedInfDist_touchpoint_empty {i j : Fin (n + 1)} (hne : i ≠ j) :
+private lemma sign_signedInfDist_touchpoint_empty {i j : Fin (n + 1)} (hne : i ≠ j) :
     SignType.sign (s.signedInfDist j (s.touchpoint ∅ i)) =
       SignType.sign (s.signedInfDist j s.incenter) :=
   s.excenterExists_empty.sign_signedInfDist_touchpoint hne
@@ -1114,7 +1114,7 @@ variable {s} in
   · rintro rfl
     simp
 
-lemma touchpointWeights_reindex (e : Fin (n + 1) ≃ Fin (m + 1)) (signs : Finset (Fin (m + 1)))
+private lemma touchpointWeights_reindex (e : Fin (n + 1) ≃ Fin (m + 1)) (signs : Finset (Fin (m + 1)))
     (i : Fin (m + 1)) :
     (s.reindex e).touchpointWeights signs i =
       s.touchpointWeights (signs.map e.symm) (e.symm i) ∘ e.symm := by
@@ -1233,7 +1233,7 @@ lemma ExcenterExists.touchpoint_ne_point [Nat.AtLeastTwo n] {signs : Finset (Fin
   rw [excenterWeightsUnnorm] at he'
   by_cases hk : k ∈ signs <;> simp [hk, (s.height_pos k).ne'] at he'
 
-lemma touchpoint_empty_ne_point [Nat.AtLeastTwo n] (i j : Fin (n + 1)) :
+private lemma touchpoint_empty_ne_point [Nat.AtLeastTwo n] (i j : Fin (n + 1)) :
     s.touchpoint ∅ i ≠ s.points j :=
   s.excenterExists_empty.touchpoint_ne_point i j
 

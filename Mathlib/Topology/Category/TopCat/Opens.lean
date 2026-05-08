@@ -86,7 +86,7 @@ noncomputable def leSupr {ι : Type*} (U : ι → Opens X) (i : ι) : U i ⟶ iS
 
 /-- The inclusion `⊥ ⟶ U` as a morphism in the category of open sets.
 -/
-noncomputable def botLE (U : Opens X) : ⊥ ⟶ U :=
+private noncomputable def botLE (U : Opens X) : ⊥ ⟶ U :=
   bot_le.hom
 
 /-- The inclusion `U ⟶ ⊤` as a morphism in the category of open sets.
@@ -187,7 +187,7 @@ lemma map_top (f : X ⟶ Y) : (Opens.map f).obj ⊤ = ⊤ := rfl
 
 /-- The inclusion `U ⟶ (map f).obj ⊤` as a morphism in the category of open sets.
 -/
-noncomputable def leMapTop (f : X ⟶ Y) (U : Opens X) : U ⟶ (map f).obj ⊤ :=
+private noncomputable def leMapTop (f : X ⟶ Y) (U : Opens X) : U ⟶ (map f).obj ⊤ :=
   leTop U
 
 @[simp]

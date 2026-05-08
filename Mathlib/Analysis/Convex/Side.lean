@@ -1016,7 +1016,7 @@ lemma wSameSide_affineSpan_faceOpposite_point_left_iff {w : Fin (n + 1) → R}
     s.wSameSide_affineSpan_faceOpposite_iff (Fintype.sum_pi_single' _ _) hw, eq_comm]
   simp [sign_eq_one_iff, le_iff_eq_or_lt', or_comm]
 
-lemma wSameSide_affineSpan_faceOpposite_point_right_iff {w : Fin (n + 1) → R}
+private lemma wSameSide_affineSpan_faceOpposite_point_right_iff {w : Fin (n + 1) → R}
     (hw : ∑ j, w j = 1) {i : Fin (n + 1)} :
     (affineSpan R (Set.range (s.faceOpposite i).points)).WSameSide
       (Finset.univ.affineCombination R s.points w) (s.points i) ↔ 0 ≤ w i := by
@@ -1031,7 +1031,7 @@ lemma wOppSide_affineSpan_faceOpposite_point_left_iff {w : Fin (n + 1) → R}
     neg_eq_iff_eq_neg]
   simp [sign_eq_neg_one_iff, le_iff_eq_or_lt, or_comm]
 
-lemma wOppSide_affineSpan_faceOpposite_point_right_iff {w : Fin (n + 1) → R}
+private lemma wOppSide_affineSpan_faceOpposite_point_right_iff {w : Fin (n + 1) → R}
     (hw : ∑ j, w j = 1) {i : Fin (n + 1)} :
     (affineSpan R (Set.range (s.faceOpposite i).points)).WOppSide
       (Finset.univ.affineCombination R s.points w) (s.points i) ↔ w i ≤ 0 := by

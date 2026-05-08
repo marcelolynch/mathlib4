@@ -102,7 +102,7 @@ instance : (pushforward.{v} φ).IsRightAdjoint :=
 /-- The pullback functor on sheaves of modules can be described as a composition
 of the forget functor to presheaves, the pullback on presheaves of modules, and
 the sheafification functor. -/
-noncomputable def pullbackIso :
+private noncomputable def pullbackIso :
     pullback.{v} φ ≅
       forget S ⋙ PresheafOfModules.pullback.{v} φ.hom ⋙
         PresheafOfModules.sheafification (R₀ := R.obj) (𝟙 R.obj) :=
@@ -114,7 +114,7 @@ section
 variable [HasWeakSheafify J AddCommGrpCat.{v}] [J.WEqualsLocallyBijective AddCommGrpCat.{v}]
 
 /-- The pullback of (pre)sheaves of modules commutes with the sheafification. -/
-noncomputable def sheafificationCompPullback :
+private noncomputable def sheafificationCompPullback :
     PresheafOfModules.sheafification (𝟙 S.obj) ⋙ pullback.{v} φ ≅
       PresheafOfModules.pullback.{v} φ.hom ⋙
         PresheafOfModules.sheafification (R₀ := R.obj) (𝟙 R.obj) :=

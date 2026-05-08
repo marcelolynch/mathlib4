@@ -52,7 +52,7 @@ def isLimitFanMkObjOfIsLimit [PreservesLimit (Discrete.functor f) G] {P : C} (g 
   isLimitMapConeFanMkEquiv _ _ _ (isLimitOfPreserves G t)
 
 /-- The property of reflecting products expressed in terms of fans. -/
-def isLimitOfIsLimitFanMkObj [ReflectsLimit (Discrete.functor f) G] {P : C} (g : ∀ j, P ⟶ f j)
+private def isLimitOfIsLimitFanMkObj [ReflectsLimit (Discrete.functor f) G] {P : C} (g : ∀ j, P ⟶ f j)
     (t : IsLimit (Fan.mk _ fun j => G.map (g j) : Fan fun j => G.obj (f j))) :
     IsLimit (Fan.mk P g) :=
   isLimitOfReflects G ((isLimitMapConeFanMkEquiv _ _ _).symm t)
@@ -126,7 +126,7 @@ def isColimitCofanMkObjOfIsColimit [PreservesColimit (Discrete.functor f) G] {P 
   isColimitMapCoconeCofanMkEquiv _ _ _ (isColimitOfPreserves G t)
 
 /-- The property of reflecting coproducts expressed in terms of cofans. -/
-def isColimitOfIsColimitCofanMkObj [ReflectsColimit (Discrete.functor f) G] {P : C}
+private def isColimitOfIsColimitCofanMkObj [ReflectsColimit (Discrete.functor f) G] {P : C}
     (g : ∀ j, f j ⟶ P)
     (t : IsColimit (Cofan.mk _ fun j => G.map (g j) : Cofan fun j => G.obj (f j))) :
     IsColimit (Cofan.mk P g) :=

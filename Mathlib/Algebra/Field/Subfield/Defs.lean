@@ -203,7 +203,7 @@ theorem mem_toSubring (s : Subfield K) (x : K) : x ∈ s.toSubring ↔ x ∈ s :
 end Subfield
 
 /-- A `Subring` containing inverses is a `Subfield`. -/
-def Subring.toSubfield (s : Subring K) (hinv : ∀ x ∈ s, x⁻¹ ∈ s) : Subfield K :=
+private def Subring.toSubfield (s : Subring K) (hinv : ∀ x ∈ s, x⁻¹ ∈ s) : Subfield K :=
   { s with inv_mem' := hinv }
 
 namespace Subfield

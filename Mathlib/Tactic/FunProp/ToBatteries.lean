@@ -112,7 +112,7 @@ Examples:
   HAdd.hAdd y      ==> fun x => HAdd.hAdd y x
   HAdd.hAdd        ==> fun x => HAdd.hAdd x
 ``` -/
-def etaExpand1 (f : Expr) : MetaM Expr := do
+private def etaExpand1 (f : Expr) : MetaM Expr := do
   let f := f.eta
   if f.isLambda then
     return f

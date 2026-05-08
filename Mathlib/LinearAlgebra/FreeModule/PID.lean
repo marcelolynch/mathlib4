@@ -665,7 +665,7 @@ need to map `I` into a submodule of `R`.
 
 This is a strengthening of `Submodule.basisOfPid`.
 -/
-noncomputable def Ideal.smithNormalForm [Fintype ι] (b : Basis ι R S) (I : Ideal S) (hI : I ≠ ⊥) :
+private noncomputable def Ideal.smithNormalForm [Fintype ι] (b : Basis ι R S) (I : Ideal S) (hI : I ≠ ⊥) :
     Basis.SmithNormalForm (I.restrictScalars R) ι (Fintype.card ι) :=
   Submodule.smithNormalFormOfRankEq b (finrank_eq_finrank b I hI)
 

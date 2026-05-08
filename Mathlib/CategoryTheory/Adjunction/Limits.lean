@@ -311,7 +311,7 @@ the functor associating to each `Y` the cocones over `K ⋙ F` with cone point `
 is naturally isomorphic to
 the functor associating to each `Y` the cocones over `K` with cone point `G.obj Y`.
 -/
-def coconesIso {J : Type u} [Category.{v} J] {K : J ⥤ C} :
+private def coconesIso {J : Type u} [Category.{v} J] {K : J ⥤ C} :
     (cocones J D).obj (op (K ⋙ F)) ≅ G ⋙ (cocones J C).obj (op K) :=
   NatIso.ofComponents fun Y =>
     { hom := ↾(coconesIsoComponentHom adj Y)
@@ -323,7 +323,7 @@ the functor associating to each `X` the cones over `K` with cone point `F.op.obj
 is naturally isomorphic to
 the functor associating to each `X` the cones over `K ⋙ G` with cone point `X`.
 -/
-def conesIso {J : Type u} [Category.{v} J] {K : J ⥤ D} :
+private def conesIso {J : Type u} [Category.{v} J] {K : J ⥤ D} :
     F.op ⋙ (cones J D).obj K ≅ (cones J C).obj (K ⋙ G) :=
   NatIso.ofComponents fun X =>
     { hom := ↾(conesIsoComponentHom adj X)
