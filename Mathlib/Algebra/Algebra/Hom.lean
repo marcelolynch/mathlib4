@@ -104,7 +104,7 @@ instance algHomClass : AlgHomClass (A →ₐ[R] B) R A B where
     (f : F) : (AlgHomClass.toAlgHom f : A →ₗ[R] B) = f := rfl
 
 /-- See Note [custom simps projection] -/
-def Simps.apply {R : Type u} {α : Type v} {β : Type w} [CommSemiring R]
+private def Simps.apply {R : Type u} {α : Type v} {β : Type w} [CommSemiring R]
     [Semiring α] [Semiring β] [Algebra R α] [Algebra R β] (f : α →ₐ[R] β) : α → β := f
 
 initialize_simps_projections AlgHom (toFun → apply)
