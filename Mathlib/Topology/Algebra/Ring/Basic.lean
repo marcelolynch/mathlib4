@@ -576,7 +576,7 @@ def toAddGroupTopology (t : RingTopology R) : AddGroupTopology R where
     @IsTopologicalRing.to_topologicalAddGroup _ _ t.toTopologicalSpace t.toIsTopologicalRing
 
 /-- The order embedding from ring topologies on `a` to additive group topologies on `a`. -/
-def toAddGroupTopology.orderEmbedding : OrderEmbedding (RingTopology R) (AddGroupTopology R) :=
+private def toAddGroupTopology.orderEmbedding : OrderEmbedding (RingTopology R) (AddGroupTopology R) :=
   OrderEmbedding.ofMapLEIff toAddGroupTopology fun _ _ => Iff.rfl
 
 end RingTopology
