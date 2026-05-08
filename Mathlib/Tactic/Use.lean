@@ -41,7 +41,7 @@ try to synthesize. The third list is a sublist of the second list.
 
 Returns metavariables for all arguments whether or not the metavariables are assigned.
 -/
-def applyTheConstructor (mvarId : MVarId) :
+private def applyTheConstructor (mvarId : MVarId) :
     MetaM (List MVarId × List MVarId × List MVarId) := do
   mvarId.withContext do
     mvarId.checkNotAssigned `constructor
@@ -118,7 +118,7 @@ def useLoop (eager : Bool) (gs : List MVarId) (args : List Term) (acc insts : Li
     useLoop eager gs' args' (acc ++ newGoals) insts
 
 /-- Run the `useLoop` on the main goal then discharge remaining explicit `Prop` arguments. -/
-def runUse (eager : Bool) (discharger : TacticM Unit) (args : List Term) : TacticM Unit := do
+private def runUse (eager : Bool) (discharger : TacticM Unit) (args : List Term) : TacticM Unit := do
   let egoals ← focus do
     let (egoals, acc, insts) ← useLoop eager (← getGoals) args [] []
     -- Try synthesizing instance arguments
@@ -157,7 +157,7 @@ macro_rules | `(tactic| use_discharger) => `(tactic| apply True.intro)
 
 /-- Returns a `TacticM Unit` that either runs the tactic sequence from `discharger?` if it's
 non-`none`, or it does `try with_reducible use_discharger`. -/
-def mkUseDischarger (discharger? : Option (TSyntax ``Parser.Tactic.discharger)) :
+private def mkUseDischarger (discharger? : Option (TSyntax ``Parser.Tactic.discharger)) :
     TacticM (TacticM Unit) := do
   let discharger ←
     if let some disch := discharger? then
