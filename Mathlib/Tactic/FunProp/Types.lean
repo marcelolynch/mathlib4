@@ -134,7 +134,7 @@ structure State where
   transitionTheorems : GeneralTheorems
 
 /-- Increase depth -/
-def Context.increaseTransitionDepth (ctx : Context) : Context :=
+private def Context.increaseTransitionDepth (ctx : Context) : Context :=
   {ctx with transitionDepth := ctx.transitionDepth + 1}
 
 /-- Monad to run `fun_prop` tactic in. -/
