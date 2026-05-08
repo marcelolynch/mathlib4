@@ -279,7 +279,7 @@ theorem limit.homIso_hom (F : J ⥤ C) [HasLimit F] {W : C} :
 morphisms from a specified object `W` to the limit object,
 and an explicit componentwise description of cones with cone point `W`.
 -/
-def limit.homIso' (F : J ⥤ C) [HasLimit F] (W : C) :
+private def limit.homIso' (F : J ⥤ C) [HasLimit F] (W : C) :
     ULift.{u₁} (W ⟶ limit F : Type v) ≅
       { p : ∀ j, W ⟶ F.obj j // ∀ {j j' : J} (f : j ⟶ j'), p j ≫ F.map f = p j' } :=
   (limit.isLimit F).homIso' W
