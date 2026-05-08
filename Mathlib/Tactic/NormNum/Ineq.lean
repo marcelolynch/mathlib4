@@ -24,7 +24,7 @@ variable {u : Level}
 
 /-- Helper function to synthesize typed `Semiring α` `PartialOrder α` `IsOrderedSemiring α`
 expressions. -/
-def inferOrderedSemiring (α : Q(Type u)) : MetaM <|
+private def inferOrderedSemiring (α : Q(Type u)) : MetaM <|
     (_ : Q(Semiring $α)) × (_ : Q(PartialOrder $α)) × Q(IsOrderedRing $α) :=
   let go := do
     let semiring ← synthInstanceQ q(Semiring $α)
@@ -35,7 +35,7 @@ def inferOrderedSemiring (α : Q(Type u)) : MetaM <|
 
 /-- Helper function to synthesize typed `Ring α` `PartialOrder α` `IsOrderedSemiring α`
 expressions. -/
-def inferOrderedRing (α : Q(Type u)) : MetaM <|
+private def inferOrderedRing (α : Q(Type u)) : MetaM <|
     (_ : Q(Ring $α)) × (_ : Q(PartialOrder $α)) × Q(IsOrderedRing $α) :=
   let go := do
     let ring ← synthInstanceQ q(Ring $α)
@@ -46,7 +46,7 @@ def inferOrderedRing (α : Q(Type u)) : MetaM <|
 
 /-- Helper function to synthesize typed `Semifield α` `LinearOrder α` `IsStrictOrderedRing α`
 expressions. -/
-def inferLinearOrderedSemifield (α : Q(Type u)) : MetaM <|
+private def inferLinearOrderedSemifield (α : Q(Type u)) : MetaM <|
     (_ : Q(Semifield $α)) × (_ : Q(LinearOrder $α)) × Q(IsStrictOrderedRing $α) :=
   let go := do
     let semifield ← synthInstanceQ q(Semifield $α)
@@ -57,7 +57,7 @@ def inferLinearOrderedSemifield (α : Q(Type u)) : MetaM <|
 
 /-- Helper function to synthesize typed `Field α` `LinearOrder α` `IsStrictOrderedRing α`
 expressions. -/
-def inferLinearOrderedField (α : Q(Type u)) : MetaM <|
+private def inferLinearOrderedField (α : Q(Type u)) : MetaM <|
     (_ : Q(Field $α)) × (_ : Q(LinearOrder $α)) × Q(IsStrictOrderedRing $α) :=
   let go := do
     let field ← synthInstanceQ q(Field $α)
