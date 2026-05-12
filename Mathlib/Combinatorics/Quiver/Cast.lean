@@ -119,17 +119,17 @@ theorem Path.cast_cons {u v w u' w' : U} (p : Path u v) (e : v ⟶ w) (hu : u = 
   subst_vars
   rfl
 
-theorem cast_eq_of_cons_eq_cons {u v v' w : U} {p : Path u v} {p' : Path u v'} {e : v ⟶ w}
+private theorem cast_eq_of_cons_eq_cons {u v v' w : U} {p : Path u v} {p' : Path u v'} {e : v ⟶ w}
     {e' : v' ⟶ w} (h : p.cons e = p'.cons e') : p.cast rfl (obj_eq_of_cons_eq_cons h) = p' := by
   rw [Path.cast_eq_iff_heq]
   exact heq_of_cons_eq_cons h
 
-theorem hom_cast_eq_of_cons_eq_cons {u v v' w : U} {p : Path u v} {p' : Path u v'} {e : v ⟶ w}
+private theorem hom_cast_eq_of_cons_eq_cons {u v v' w : U} {p : Path u v} {p' : Path u v'} {e : v ⟶ w}
     {e' : v' ⟶ w} (h : p.cons e = p'.cons e') : e.cast (obj_eq_of_cons_eq_cons h) rfl = e' := by
   rw [Hom.cast_eq_iff_heq]
   exact hom_heq_of_cons_eq_cons h
 
-theorem eq_nil_of_length_zero {u v : U} (p : Path u v) (hzero : p.length = 0) :
+private theorem eq_nil_of_length_zero {u v : U} (p : Path u v) (hzero : p.length = 0) :
     p.cast (eq_of_length_zero p hzero) rfl = Path.nil := by
   cases p
   · rfl

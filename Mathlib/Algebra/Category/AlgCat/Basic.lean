@@ -53,7 +53,7 @@ typeclasses. This is the preferred way to construct a term of `AlgCat R`. -/
 abbrev of (X : Type v) [Ring X] [Algebra R X] : AlgCat.{v} R :=
   ⟨X⟩
 
-lemma coe_of (X : Type v) [Ring X] [Algebra R X] : (of R X : Type v) = X :=
+private lemma coe_of (X : Type v) [Ring X] [Algebra R X] : (of R X : Type v) = X :=
   rfl
 
 variable {R} in
@@ -104,7 +104,7 @@ The results below duplicate the `ConcreteCategory` simp lemmas, but we can keep 
 lemma hom_id {A : AlgCat.{v} R} : (𝟙 A : A ⟶ A).hom = AlgHom.id R A := rfl
 
 /- Provided for rewriting. -/
-lemma id_apply (A : AlgCat.{v} R) (a : A) :
+private lemma id_apply (A : AlgCat.{v} R) (a : A) :
     (𝟙 A : A ⟶ A) a = a := by simp
 
 @[simp]
@@ -112,7 +112,7 @@ lemma hom_comp {A B C : AlgCat.{v} R} (f : A ⟶ B) (g : B ⟶ C) :
     (f ≫ g).hom = g.hom.comp f.hom := rfl
 
 /- Provided for rewriting. -/
-lemma comp_apply {A B C : AlgCat.{v} R} (f : A ⟶ B) (g : B ⟶ C) (a : A) :
+private lemma comp_apply {A B C : AlgCat.{v} R} (f : A ⟶ B) (g : B ⟶ C) (a : A) :
     (f ≫ g) a = g (f a) := by simp
 
 @[ext]
@@ -136,19 +136,19 @@ lemma ofHom_comp {X Y Z : Type v} [Ring X] [Ring Y] [Ring Z] [Algebra R X] [Alge
     ofHom (g.comp f) = ofHom f ≫ ofHom g :=
   rfl
 
-lemma ofHom_apply {R : Type u} [CommRing R] {X Y : Type v} [Ring X] [Algebra R X] [Ring Y]
+private lemma ofHom_apply {R : Type u} [CommRing R] {X Y : Type v} [Ring X] [Algebra R X] [Ring Y]
     [Algebra R Y] (f : X →ₐ[R] Y) (x : X) : ofHom f x = f x := rfl
 
-lemma inv_hom_apply {A B : AlgCat.{v} R} (e : A ≅ B) (x : A) : e.inv (e.hom x) = x := by
+private lemma inv_hom_apply {A B : AlgCat.{v} R} (e : A ≅ B) (x : A) : e.inv (e.hom x) = x := by
   simp
 
-lemma hom_inv_apply {A B : AlgCat.{v} R} (e : A ≅ B) (x : B) : e.hom (e.inv x) = x := by
+private lemma hom_inv_apply {A B : AlgCat.{v} R} (e : A ≅ B) (x : B) : e.hom (e.inv x) = x := by
   simp
 
 instance : Inhabited (AlgCat R) :=
   ⟨of R R⟩
 
-lemma forget_obj {A : AlgCat.{v} R} : (forget (AlgCat.{v} R)).obj A = A := rfl
+private lemma forget_obj {A : AlgCat.{v} R} : (forget (AlgCat.{v} R)).obj A = A := rfl
 
 @[deprecated ConcreteCategory.forget_map_eq_ofHom (since := "2026-03-03")]
 lemma forget_map {A B : AlgCat.{v} R} (f : A ⟶ B) :
@@ -189,6 +189,7 @@ def free : Type u ⥤ AlgCat.{u} R where
 
 set_option backward.isDefEq.respectTransparency false in
 /-- The free/forget adjunction for `R`-algebras. -/
+@[no_expose]
 def adj : free.{u} R ⊣ forget (AlgCat.{u} R) :=
   Adjunction.mkOfHomEquiv
     { homEquiv := fun _ _ =>

@@ -85,12 +85,12 @@ lemma map_comp_id (P : ProfunctorCore.{w} C D) {X X' X'' : C} (Y : D)
   simp only [P.map_comp]
 
 @[reassoc (attr := simp)]
-lemma map_lid_comp_map_rid (P : ProfunctorCore.{w} C D) {X X' : C} {Y Y' : D}
+private lemma map_lid_comp_map_rid (P : ProfunctorCore.{w} C D) {X X' : C} {Y Y' : D}
     (f : X ⟶ X') (g : Y ⟶ Y') : P.map (𝟙 _) g ≫ P.map f (𝟙 _) = P.map f g := by
   simp [← P.map_comp]
 
 @[reassoc (attr := simp)]
-lemma map_rid_comp_map_lid (P : ProfunctorCore.{w} C D) {X X' : C} {Y Y' : D}
+private lemma map_rid_comp_map_lid (P : ProfunctorCore.{w} C D) {X X' : C} {Y Y' : D}
     (f : X ⟶ X') (g : Y ⟶ Y') : P.map f (𝟙 _) ≫ P.map (𝟙 _) g = P.map f g := by
   simp [← P.map_comp]
 

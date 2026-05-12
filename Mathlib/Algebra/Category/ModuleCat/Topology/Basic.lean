@@ -56,7 +56,7 @@ abbrev of (M : Type v) [AddCommGroup M] [Module R M] [TopologicalSpace M] [Conti
   have : IsTopologicalAddGroup M := ⟨⟩
   ⟨.of R M⟩
 
-lemma coe_of (M : Type v) [AddCommGroup M] [Module R M] [TopologicalSpace M] [ContinuousAdd M]
+private lemma coe_of (M : Type v) [AddCommGroup M] [Module R M] [TopologicalSpace M] [ContinuousAdd M]
     [ContinuousSMul R M] : (of R M) = M := rfl
 
 set_option backward.privateInPublic true in
@@ -215,12 +215,14 @@ def coinduced : TopModuleCat R :=
 
 set_option backward.isDefEq.respectTransparency false in
 /-- The maps into the coinduced topology as homs in `TopModuleCat R`. -/
+@[no_expose]
 def toCoinduced (i) : X i ⟶ coinduced f :=
   ofHom (Y := coinduced f)
     ⟨(f i).hom, continuous_iff_coinduced_le.mpr (le_sInf fun _ hτ ↦ hτ.2.2 i)⟩
 
 /-- The cocone of topological modules associated to a cocone over the underlying modules, where
 the cocone point is given the coinduced topology. This is colimiting when the given cocone is. -/
+@[no_expose]
 def ofCocone {J : Type*} [Category* J] {F : J ⥤ TopModuleCat R}
     (c : Cocone (F ⋙ forget₂ _ (ModuleCat R))) : Cocone F where
   pt := coinduced c.ι.app
@@ -231,6 +233,7 @@ def ofCocone {J : Type*} [Category* J] {F : J ⥤ TopModuleCat R}
 set_option backward.isDefEq.respectTransparency false in
 /-- Given a colimit cocone over the underlying modules, equipping the cocone point with
 the coinduced topology gives a colimit cocone in `TopModuleCat R`. -/
+@[no_expose]
 def isColimit {J : Type*} [Category* J] {F : J ⥤ TopModuleCat R}
     {c : Cocone (F ⋙ forget₂ _ (ModuleCat R))} (hc : IsColimit c) :
     IsColimit (ofCocone c) where
@@ -277,6 +280,7 @@ def induced : TopModuleCat R :=
 
 set_option backward.isDefEq.respectTransparency false in
 /-- The maps from the induced topology as homs in `TopModuleCat R`. -/
+@[no_expose]
 def fromInduced (i) : induced f ⟶ X i :=
   ofHom (X := induced f) ⟨(f i).hom, continuous_iff_le_induced.mpr (iInf_le _ i)⟩
 
@@ -294,6 +298,7 @@ def ofCone {J : Type*} [Category* J] {F : J ⥤ TopModuleCat R}
 set_option backward.isDefEq.respectTransparency false in
 /-- Given a limit cone over the underlying modules, equipping the cone point with
 the induced topology gives a limit cone in `TopModuleCat R`. -/
+@[no_expose]
 def isLimit {J : Type*} [Category* J] {F : J ⥤ TopModuleCat R}
     {c : Cone (F ⋙ forget₂ _ (ModuleCat R))} (hc : IsLimit c) :
     IsLimit (ofCone c) where
@@ -347,6 +352,7 @@ set_option backward.privateInPublic true in
 set_option backward.privateInPublic.warn false in
 /-- The functor equipping a module over a topological ring with the finest possible
 topology making it into a topological module. This is left adjoint to the forgetful functor. -/
+@[no_expose]
 def withModuleTopology : ModuleCat R ⥤ TopModuleCat R where
   obj X :=
     letI := moduleTopology R X
@@ -360,6 +366,7 @@ def withModuleTopology : ModuleCat R ⥤ TopModuleCat R where
 
 set_option backward.isDefEq.respectTransparency false in
 /-- The adjunction between `withModuleTopology` and the forgetful functor. -/
+@[no_expose]
 def withModuleTopologyAdj : withModuleTopology R ⊣ forget₂ (TopModuleCat R) (ModuleCat R) where
   unit := 𝟙 _
   counit :=
@@ -371,6 +378,7 @@ instance : (withModuleTopology R).IsLeftAdjoint := ⟨_, ⟨withModuleTopologyAd
 
 /-- The functor equipping a module with the indiscrete topology.
 This is right adjoint to the forgetful functor. -/
+@[no_expose]
 def indiscrete : ModuleCat.{v} R ⥤ TopModuleCat.{v} R where
   obj X :=
     letI : TopologicalSpace X := ⊤
@@ -384,6 +392,7 @@ def indiscrete : ModuleCat.{v} R ⥤ TopModuleCat.{v} R where
       ⟨f.hom, by rw [continuous_iff_coinduced_le]; exact le_top⟩
 
 /-- The adjunction between the forgetful functor and the indiscrete topology functor. -/
+@[no_expose]
 def indiscreteAdj : forget₂ (TopModuleCat.{v} R) (ModuleCat.{v} R) ⊣ indiscrete.{v} R where
   counit := 𝟙 _
   unit := { app X := ConcreteCategory.ofHom (C := TopModuleCat R)
@@ -393,6 +402,7 @@ instance : (forget₂ (TopModuleCat.{v} R) (ModuleCat.{v} R)).IsLeftAdjoint := �
 instance : (indiscrete.{v} R).IsRightAdjoint := ⟨_, ⟨indiscreteAdj R⟩⟩
 
 /-- The free topological module over a topological space. -/
+@[no_expose]
 noncomputable
 def freeObj (X : TopCat.{v}) : TopModuleCat.{max v u} R :=
   letI : TopologicalSpace (X →₀ R) := sInf
@@ -402,10 +412,11 @@ def freeObj (X : TopCat.{v}) : TopModuleCat.{max v u} R :=
   letI : ContinuousSMul R (X →₀ R) := continuousSMul_sInf fun _ h ↦ h.1
   of R (X →₀ R)
 
-lemma coe_freeObj (X : TopCat.{v}) : freeObj R X = (X →₀ R) := rfl
+private lemma coe_freeObj (X : TopCat.{v}) : freeObj R X = (X →₀ R) := rfl
 
 set_option backward.isDefEq.respectTransparency false in
 /-- The free topological module over a topological space is functorial. -/
+@[no_expose]
 noncomputable
 def freeMap {X Y : TopCat.{v}} (f : X ⟶ Y) : freeObj R X ⟶ freeObj R Y :=
   ConcreteCategory.ofHom ⟨Finsupp.lmapDomain _ _ f.hom, by
@@ -421,7 +432,7 @@ def freeMap {X Y : TopCat.{v}} (f : X ⟶ Y) : freeObj R X ⟶ freeObj R Y :=
     ext x
     simp [coe_freeObj]⟩
 
-lemma freeMap_map {X Y : TopCat.{v}} (f : X ⟶ Y) (v : X →₀ R) :
+private lemma freeMap_map {X Y : TopCat.{v}} (f : X ⟶ Y) (v : X →₀ R) :
     (freeMap R f : (X →₀ R) → (Y →₀ R)) v = Finsupp.mapDomain f.hom v := rfl
 
 /-- The free topological module over a topological space as a functor.
@@ -435,6 +446,7 @@ def free : TopCat.{v} ⥤ TopModuleCat.{max v u} R :=
 
 set_option backward.isDefEq.respectTransparency false in
 /-- The free-forgetful adjoint for `TopModuleCat R`. -/
+@[no_expose]
 noncomputable
 def freeAdj : free.{max v u} R ⊣ forget₂ (TopModuleCat.{max v u} R) TopCat.{max v u} where
   unit :=

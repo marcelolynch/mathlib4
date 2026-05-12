@@ -50,7 +50,7 @@ instance : CoeSort FinBoolAlg Type* :=
 abbrev of (α : Type*) [BooleanAlgebra α] [Fintype α] : FinBoolAlg where
   carrier := α
 
-theorem coe_of (α : Type*) [BooleanAlgebra α] [Fintype α] : ↥(of α) = α :=
+private theorem coe_of (α : Type*) [BooleanAlgebra α] [Fintype α] : ↥(of α) = α :=
   rfl
 
 instance : Inhabited FinBoolAlg :=
@@ -110,7 +110,7 @@ def dualEquiv : FinBoolAlg ≌ FinBoolAlg where
 
 end FinBoolAlg
 
-theorem finBoolAlg_dual_comp_forget_to_finBddDistLat :
+private theorem finBoolAlg_dual_comp_forget_to_finBddDistLat :
     FinBoolAlg.dual ⋙ forget₂ FinBoolAlg FinBddDistLat =
       forget₂ FinBoolAlg FinBddDistLat ⋙ FinBddDistLat.dual :=
   rfl

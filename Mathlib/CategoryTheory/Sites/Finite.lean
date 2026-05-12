@@ -31,6 +31,7 @@ namespace Precoverage
 
 /-- The finite precoverage on a category consists of finite presieves, i.e. a presieve with finitely
 many maps after uncurrying. -/
+@[no_expose]
 def finite (C : Type u) [Category.{v} C] : Precoverage C where
   coverings X := { s : Presieve X | s.uncurry.Finite }
 
@@ -39,7 +40,7 @@ variable {C : Type u} [Category.{v} C]
 @[simp] lemma mem_finite_iff {X : C} {s : Presieve X} :
     s ∈ finite C X ↔ s.uncurry.Finite := Iff.rfl
 
-theorem ofArrows_mem_finite {X : C} {ι : Type*} [Finite ι] (Y : ι → C) (f : (i : ι) → Y i ⟶ X) :
+private theorem ofArrows_mem_finite {X : C} {ι : Type*} [Finite ι] (Y : ι → C) (f : (i : ι) → Y i ⟶ X) :
     ofArrows Y f ∈ finite C X := by
   simpa using Set.finite_range _
 
@@ -63,7 +64,7 @@ def finite (C : Type u) [Category.{v} C] [HasPullbacks C] : Pretopology C where
 
 variable {C : Type u} [Category.{v} C] [HasPullbacks C]
 
-theorem ofArrows_mem_finite {X : C} {ι : Type*} [Finite ι] (Y : ι → C) (f : (i : ι) → Y i ⟶ X) :
+private theorem ofArrows_mem_finite {X : C} {ι : Type*} [Finite ι] (Y : ι → C) (f : (i : ι) → Y i ⟶ X) :
     ofArrows Y f ∈ (finite C).coverings X :=
   Precoverage.ofArrows_mem_finite _ _
 

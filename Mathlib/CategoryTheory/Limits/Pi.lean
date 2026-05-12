@@ -35,6 +35,7 @@ variable {F : J ⥤ ∀ i, C i}
 
 /-- A cone over `F : J ⥤ Π i, C i` has as its components cones over each of the `F ⋙ Pi.eval C i`.
 -/
+@[no_expose]
 def coneCompEval (c : Cone F) (i : I) : Cone (F ⋙ Pi.eval C i) where
   pt := c.pt i
   π :=
@@ -44,6 +45,7 @@ def coneCompEval (c : Cone F) (i : I) : Cone (F ⋙ Pi.eval C i) where
 /--
 A cocone over `F : J ⥤ Π i, C i` has as its components cocones over each of the `F ⋙ Pi.eval C i`.
 -/
+@[no_expose]
 def coconeCompEval (c : Cocone F) (i : I) : Cocone (F ⋙ Pi.eval C i) where
   pt := c.pt i
   ι :=
@@ -53,6 +55,7 @@ def coconeCompEval (c : Cocone F) (i : I) : Cocone (F ⋙ Pi.eval C i) where
 /--
 Given a family of cones over the `F ⋙ Pi.eval C i`, we can assemble these together as a `Cone F`.
 -/
+@[no_expose]
 def coneOfConeCompEval (c : ∀ i, Cone (F ⋙ Pi.eval C i)) : Cone F where
   pt i := (c i).pt
   π :=
@@ -64,6 +67,7 @@ def coneOfConeCompEval (c : ∀ i, Cone (F ⋙ Pi.eval C i)) : Cone F where
 /-- Given a family of cocones over the `F ⋙ Pi.eval C i`,
 we can assemble these together as a `Cocone F`.
 -/
+@[no_expose]
 def coconeOfCoconeCompEval (c : ∀ i, Cocone (F ⋙ Pi.eval C i)) : Cocone F where
   pt i := (c i).pt
   ι :=
@@ -75,6 +79,7 @@ def coconeOfCoconeCompEval (c : ∀ i, Cocone (F ⋙ Pi.eval C i)) : Cocone F wh
 /-- Given a family of limit cones over the `F ⋙ Pi.eval C i`,
 assembling them together as a `Cone F` produces a limit cone.
 -/
+@[no_expose]
 def coneOfConeEvalIsLimit {c : ∀ i, Cone (F ⋙ Pi.eval C i)} (P : ∀ i, IsLimit (c i)) :
     IsLimit (coneOfConeCompEval c) where
   lift s i := (P i).lift (coneCompEval s i)
@@ -88,6 +93,7 @@ def coneOfConeEvalIsLimit {c : ∀ i, Cone (F ⋙ Pi.eval C i)} (P : ∀ i, IsLi
 /-- Given a family of colimit cocones over the `F ⋙ Pi.eval C i`,
 assembling them together as a `Cocone F` produces a colimit cocone.
 -/
+@[no_expose]
 def coconeOfCoconeEvalIsColimit {c : ∀ i, Cocone (F ⋙ Pi.eval C i)} (P : ∀ i, IsColimit (c i)) :
     IsColimit (coconeOfCoconeCompEval c) where
   desc s i := (P i).desc (coconeCompEval s i)
@@ -106,7 +112,7 @@ variable [∀ i, HasLimit (F ⋙ Pi.eval C i)]
 and we have limits for each of the `F ⋙ Pi.eval C i`,
 then `F` has a limit.
 -/
-theorem hasLimit_of_hasLimit_comp_eval : HasLimit F :=
+private theorem hasLimit_of_hasLimit_comp_eval : HasLimit F :=
   HasLimit.mk
     { cone := coneOfConeCompEval fun _ => limit.cone _
       isLimit := coneOfConeEvalIsLimit fun _ => limit.isLimit _ }
@@ -121,7 +127,7 @@ variable [∀ i, HasColimit (F ⋙ Pi.eval C i)]
 and colimits exist for each of the `F ⋙ Pi.eval C i`,
 there is a colimit for `F`.
 -/
-theorem hasColimit_of_hasColimit_comp_eval : HasColimit F :=
+private theorem hasColimit_of_hasColimit_comp_eval : HasColimit F :=
   HasColimit.mk
     { cocone := coconeOfCoconeCompEval fun _ => colimit.cocone _
       isColimit := coconeOfCoconeEvalIsColimit fun _ => colimit.isColimit _ }

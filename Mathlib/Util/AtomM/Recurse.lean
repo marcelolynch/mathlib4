@@ -72,6 +72,7 @@ monad.
 * `root`: true if this is a direct call to the function.
   `AtomM.RecurseM.run` sets this to `false` in recursive mode.
 -/
+@[no_expose]
 def onSubexpressions (eval : Expr → AtomM Simp.Result) (parent : Expr)
     (wellBehavedDischarge : Bool) (root := true) :
     RecurseM Simp.Result :=
@@ -131,6 +132,7 @@ Normalizes an expression, given initial data:
 * `simp`: a cleanup operation which will be used to post-process expressions
 * `tgt`: the expression to normalize
 -/
+@[no_expose]
 def recurse (s : IO.Ref State) (cfg : Recurse.Config) (wellBehavedDischarge : Bool)
     (eval : Expr → AtomM Simp.Result)
     (simp : Simp.Result → MetaM Simp.Result) (tgt : Expr) :

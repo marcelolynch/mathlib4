@@ -36,7 +36,7 @@ def IsChord (p : G.Walk u v) (e : Sym2 V) : Prop :=
   e ∈ G.edgeSet ∧ e ∉ p.edges ∧
     e.lift ⟨fun v w => v ∈ p.support ∧ w ∈ p.support, by grind⟩
 
-theorem isChord_sym2Mk {p : G.Walk u v} {u' v' : V} :
+private theorem isChord_sym2Mk {p : G.Walk u v} {u' v' : V} :
     p.IsChord s(u', v') ↔ G.Adj u' v' ∧ s(u', v') ∉ p.edges ∧ u' ∈ p.support ∧ v' ∈ p.support :=
   .rfl
 
@@ -45,7 +45,7 @@ theorem isChord_sym2Mk {p : G.Walk u v} {u' v' : V} :
 def IsChordless (p : G.Walk u v) : Prop :=
   ∀ ⦃e : Sym2 V⦄, ¬ p.IsChord e
 
-theorem isChordless_iff_forall_mem_edges {p : G.Walk u v} :
+private theorem isChordless_iff_forall_mem_edges {p : G.Walk u v} :
     p.IsChordless ↔
       ∀ ⦃u' v' : V⦄, u' ∈ p.support → v' ∈ p.support → G.Adj u' v' → s(u', v') ∈ p.edges := by
   simp [IsChordless, Sym2.forall, isChord_sym2Mk]; grind

@@ -57,6 +57,7 @@ noncomputable def finsuppAntidiagEquivSubtype :
 
 variable (s) in
 /-- The equivalence between `Finset.finsuppAntidiag s n` and `Sym s n`. -/
+@[no_expose]
 noncomputable def finsuppAntidiagEquiv (n : ℕ) : s.finsuppAntidiag n ≃ Sym s n :=
   (finsuppAntidiagEquivSubtype s n).trans (Sym.equivNatSum s n).symm
 
@@ -70,11 +71,11 @@ theorem count_coe_finsuppAntidiagEquiv_apply (n : ℕ) (f : s.finsuppAntidiag n)
     (finsuppAntidiagEquiv s n f).toMultiset.count a = f.val a := by
   simp [finsuppAntidiagEquiv]
 
-theorem card_finsuppAntidiag_nat_eq_choose (n : ℕ) :
+private theorem card_finsuppAntidiag_nat_eq_choose (n : ℕ) :
     #(s.finsuppAntidiag n) = (#s + n - 1).choose n := by
   simp [card_eq_of_equiv_fintype (finsuppAntidiagEquiv s n), Sym.card_sym_eq_choose]
 
-theorem card_finsuppAntidiag_nat_eq_multichoose (n : ℕ) :
+private theorem card_finsuppAntidiag_nat_eq_multichoose (n : ℕ) :
     #(s.finsuppAntidiag n) = (#s).multichoose n := by
   simp [card_eq_of_equiv_fintype (finsuppAntidiagEquiv s n), Sym.card_sym_eq_multichoose]
 

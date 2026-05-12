@@ -84,7 +84,7 @@ structure IsAdmissible (x : α) (f : α → α) (s : Set α) : Prop where
   /-- If a chain is a subset of an admissible set, its `cSup` is a member of the admissible set -/
   cSup_mem : ∀ (c : NonemptyChain α), ↑c ⊆ s → cSup c ∈ s
 
-lemma ici_isAdmissible (le_map : ∀ x, x ≤ f x) : IsAdmissible x f (Ici x) where
+private lemma ici_isAdmissible (le_map : ∀ x, x ≤ f x) : IsAdmissible x f (Ici x) where
   base_isLeast := ⟨le_refl x, fun _ h ↦ h⟩
   image_self_subset_self := by
     rintro _ ⟨y, hy, rfl⟩
@@ -97,7 +97,7 @@ lemma ici_isAdmissible (le_map : ∀ x, x ≤ f x) : IsAdmissible x f (Ici x) wh
 /-- The bottom admissible set with base point `x` and inflationary function `f` -/
 abbrev bot (x : α) (f : α → α) : Set α := ⋂₀ {s | IsAdmissible x f s}
 
-lemma bot_isAdmissible (le_map : ∀ x, x ≤ f x) : IsAdmissible x f (bot x f) where
+private lemma bot_isAdmissible (le_map : ∀ x, x ≤ f x) : IsAdmissible x f (bot x f) where
   base_isLeast := by
     constructor
     · exact fun _ h ↦ h.base_isLeast.1
@@ -110,11 +110,11 @@ lemma bot_isAdmissible (le_map : ∀ x, x ≤ f x) : IsAdmissible x f (bot x f) 
     intro c hc s hs
     exact hs.cSup_mem c (subset_trans hc (sInter_subset_of_mem hs))
 
-lemma subset_bot_iff {s : Set α} (h : IsAdmissible x f s) : s ⊆ bot x f ↔ s = bot x f where
+private lemma subset_bot_iff {s : Set α} (h : IsAdmissible x f s) : s ⊆ bot x f ↔ s = bot x f where
   mp h' := subset_antisymm h' (sInter_subset_of_mem h)
   mpr h' := h' ▸ subset_refl (bot x f)
 
-lemma map_mem_bot {y : α} (le_map : ∀ x, x ≤ f x) (h : y ∈ bot x f) : f y ∈ bot x f :=
+private lemma map_mem_bot {y : α} (le_map : ∀ x, x ≤ f x) (h : y ∈ bot x f) : f y ∈ bot x f :=
   (bot_isAdmissible le_map).image_self_subset_self <| mem_image_of_mem f h
 
 /-- `y` is an extreme point for `x : α` and `f : α → α` if it is in the bottom admissible set and
@@ -128,7 +128,7 @@ namespace IsExtremePt
 
 /-- If `y` is an extreme point and `f` is inflationary, then there are no element between `y` and
 `f y`. -/
-lemma bot_eq_of_le_or_map_le {y : α} (le_map : ∀ x, x ≤ f x) (hy : IsExtremePt x f y) :
+private lemma bot_eq_of_le_or_map_le {y : α} (le_map : ∀ x, x ≤ f x) (hy : IsExtremePt x f y) :
     {z ∈ bot x f | z ≤ y ∨ f y ≤ z} = bot x f := by
   rw [← subset_bot_iff]
   · apply sep_subset
@@ -153,7 +153,7 @@ lemma bot_eq_of_le_or_map_le {y : α} (le_map : ∀ x, x ≤ f x) (hy : IsExtrem
           right
           apply le_trans h' (le_cSup _ _ hz)
 
-lemma setOf_isExtremePt_isAdmissible (le_map : ∀ x, x ≤ f x) :
+private lemma setOf_isExtremePt_isAdmissible (le_map : ∀ x, x ≤ f x) :
     IsAdmissible x f {y | IsExtremePt x f y} := by
   apply IsAdmissible.mk
   · constructor
@@ -193,16 +193,16 @@ lemma setOf_isExtremePt_isAdmissible (le_map : ∀ x, x ≤ f x) :
       intro hc'
       exact lt_irrefl y (lt_of_lt_of_le hy' hc')
 
-lemma setOf_isExtremePt_eq_bot (le_map : ∀ x, x ≤ f x) : {y | IsExtremePt x f y} = bot x f := by
+private lemma setOf_isExtremePt_eq_bot (le_map : ∀ x, x ≤ f x) : {y | IsExtremePt x f y} = bot x f := by
   rw [← subset_bot_iff]
   · exact fun _ h ↦ h.mem_bot
   · exact setOf_isExtremePt_isAdmissible le_map
 
-lemma mem_bot_iff_isExtremePt {y : α} (le_map : ∀ x, x ≤ f x) :
+private lemma mem_bot_iff_isExtremePt {y : α} (le_map : ∀ x, x ≤ f x) :
     y ∈ bot x f ↔ IsExtremePt x f y := by
   rw [← setOf_isExtremePt_eq_bot le_map, mem_setOf]
 
-lemma bot_isChain (le_map : ∀ x, x ≤ f x) : IsChain (· ≤ ·) (bot x f) := by
+private lemma bot_isChain (le_map : ∀ x, x ≤ f x) : IsChain (· ≤ ·) (bot x f) := by
   intro y hy z hz _
   rw [mem_bot_iff_isExtremePt le_map] at hy
   rw [← bot_eq_of_le_or_map_le le_map hy] at hz
@@ -216,7 +216,7 @@ open Function IsExtremePt
 
 /- **The Bourbaki-Witt Theorem**: If `α` is a chain complete partial order and `f : α → α` is
 inflationary, then `f` has a fixed point -/
-theorem nonempty_fixedPoints_of_inflationary [Nonempty α] (le_map : ∀ x, x ≤ f x) :
+private theorem nonempty_fixedPoints_of_inflationary [Nonempty α] (le_map : ∀ x, x ≤ f x) :
     (fixedPoints f).Nonempty := by
   let x : α := Classical.ofNonempty
   let y := cSup

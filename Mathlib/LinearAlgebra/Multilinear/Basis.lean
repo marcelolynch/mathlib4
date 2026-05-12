@@ -47,6 +47,7 @@ variable {κ : ι → Type*} (b : (i : ι) → Basis (κ i) R (M i))
 
 open scoped Classical in
 /-- A basis for multilinear maps given a finite basis on each domain and a basis on the codomain. -/
+@[no_expose]
 noncomputable def multilinearMap [Finite ι] [∀ i, Finite (κ i)] :
     Basis ((Π i, κ i) × ι') R (MultilinearMap R M N) where
   repr :=
@@ -57,7 +58,7 @@ noncomputable def multilinearMap [Finite ι] [∀ i, Finite (κ i)] :
 
 variable [Fintype ι] [∀ i, Finite (κ i)]
 
-theorem multilinearMap_apply (i : (Π i, κ i) × ι') :
+private theorem multilinearMap_apply (i : (Π i, κ i) × ι') :
     Basis.multilinearMap b b' i =
       ((LinearMap.id (M := R)).smulRight (b' i.2)).compMultilinearMap
         (MultilinearMap.mkPiRing R ι 1 |>.compLinearMap fun i' => (b i').coord (i.1 i')) := by
@@ -71,7 +72,7 @@ theorem multilinearMap_apply (i : (Π i, κ i) × ι') :
 
 /-- The elements of the basis are the maps which scale `b' ii.2` by the
 product of all the `ii.1 ·` coordinates along `b i`. -/
-theorem multilinearMap_apply_apply (ii : (Π i, κ i) × ι') (v) :
+private theorem multilinearMap_apply_apply (ii : (Π i, κ i) × ι') (v) :
     Basis.multilinearMap b b' ii v = (∏ i, (b i).repr (v i) (ii.1 i)) • b' ii.2 := by
   simp [Basis.multilinearMap_apply]
 

@@ -26,6 +26,7 @@ namespace FreeGroup
 /--
 All elements of the free Group that start with a certain letter.
 -/
+@[no_expose]
 def startsWith (w : α × Bool) := {g : FreeGroup α | (FreeGroup.toWord g)[0]? = some w}
 
 /--
@@ -45,7 +46,7 @@ lemma startsWith.Injective : @startsWith α _ |>.Injective := fun a b h ↦ by
   simp only [startsWith, Set.ext_iff, Set.mem_setOf_eq] at h
   simpa using h (mk [a])
 
-theorem startsWith_mk_mul {w : α × Bool} (g : FreeGroup α)
+private theorem startsWith_mk_mul {w : α × Bool} (g : FreeGroup α)
     (h : ¬ g ∈ startsWith (w.1, !w.2)) : mk [w] * g ∈ startsWith w := by
   by_cases hC : 0 < g.toWord.length
   · simp only [startsWith, Set.mem_setOf_eq, getElem?_pos, Option.some.injEq,

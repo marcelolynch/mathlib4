@@ -67,27 +67,27 @@ abbrev snd {α β β'} (f : β → β') : F α β → F α β' :=
 variable [LawfulBifunctor F]
 
 @[higher_order fst_id]
-theorem id_fst : ∀ {α β} (x : F α β), fst id x = x :=
+private theorem id_fst : ∀ {α β} (x : F α β), fst id x = x :=
   @id_bimap _ _ _
 
 @[higher_order snd_id]
-theorem id_snd : ∀ {α β} (x : F α β), snd id x = x :=
+private theorem id_snd : ∀ {α β} (x : F α β), snd id x = x :=
   @id_bimap _ _ _
 
 @[higher_order fst_comp_fst]
-theorem comp_fst {α₀ α₁ α₂ β} (f : α₀ → α₁) (f' : α₁ → α₂) (x : F α₀ β) :
+private theorem comp_fst {α₀ α₁ α₂ β} (f : α₀ → α₁) (f' : α₁ → α₂) (x : F α₀ β) :
     fst f' (fst f x) = fst (f' ∘ f) x := by simp [fst, bimap_bimap]
 
 @[higher_order fst_comp_snd]
-theorem fst_snd {α₀ α₁ β₀ β₁} (f : α₀ → α₁) (f' : β₀ → β₁) (x : F α₀ β₀) :
+private theorem fst_snd {α₀ α₁ β₀ β₁} (f : α₀ → α₁) (f' : β₀ → β₁) (x : F α₀ β₀) :
     fst f (snd f' x) = bimap f f' x := by simp [fst, bimap_bimap]
 
 @[higher_order snd_comp_fst]
-theorem snd_fst {α₀ α₁ β₀ β₁} (f : α₀ → α₁) (f' : β₀ → β₁) (x : F α₀ β₀) :
+private theorem snd_fst {α₀ α₁ β₀ β₁} (f : α₀ → α₁) (f' : β₀ → β₁) (x : F α₀ β₀) :
     snd f' (fst f x) = bimap f f' x := by simp [snd, bimap_bimap]
 
 @[higher_order snd_comp_snd]
-theorem comp_snd {α β₀ β₁ β₂} (g : β₀ → β₁) (g' : β₁ → β₂) (x : F α β₀) :
+private theorem comp_snd {α β₀ β₁ β₂} (g : β₀ → β₁) (g' : β₁ → β₂) (x : F α β₀) :
     snd g' (snd g x) = snd (g' ∘ g) x := by simp [snd, bimap_bimap]
 
 attribute [functor_norm]

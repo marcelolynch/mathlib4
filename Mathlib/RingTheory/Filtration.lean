@@ -58,18 +58,18 @@ variable (F F' : I.Filtration M) {I}
 
 namespace Ideal.Filtration
 
-theorem pow_smul_le (i j : ℕ) : I ^ i • F.N j ≤ F.N (i + j) := by
+private theorem pow_smul_le (i j : ℕ) : I ^ i • F.N j ≤ F.N (i + j) := by
   induction i with
   | zero => simp
   | succ _ ih =>
     rw [pow_succ', mul_smul, add_assoc, add_comm 1, ← add_assoc]
     exact (smul_mono_right _ ih).trans (F.smul_le _)
 
-theorem pow_smul_le_pow_smul (i j k : ℕ) : I ^ (i + k) • F.N j ≤ I ^ k • F.N (i + j) := by
+private theorem pow_smul_le_pow_smul (i j k : ℕ) : I ^ (i + k) • F.N j ≤ I ^ k • F.N (i + j) := by
   rw [add_comm, pow_add, mul_smul]
   exact smul_mono_right _ (F.pow_smul_le i j)
 
-protected theorem antitone : Antitone F.N :=
+private protected theorem antitone : Antitone F.N :=
   antitone_nat_of_succ_le F.mono
 
 /-- The trivial `I`-filtration of `N`. -/
@@ -170,6 +170,7 @@ instance : Inhabited (I.Filtration M) :=
   ⟨⊥⟩
 
 /-- An `I` filtration is stable if `I • F.N n = F.N (n+1)` for large enough `n`. -/
+@[no_expose]
 def Stable : Prop :=
   ∃ n₀, ∀ n ≥ n₀, I • F.N n = F.N (n + 1)
 
@@ -205,7 +206,7 @@ theorem Stable.exists_pow_smul_eq_of_ge (h : F.Stable) :
   convert hn₀ (n - n₀)
   rw [add_comm, tsub_add_cancel_of_le hn]
 
-theorem stable_iff_exists_pow_smul_eq_of_ge :
+private theorem stable_iff_exists_pow_smul_eq_of_ge :
     F.Stable ↔ ∃ n₀, ∀ n ≥ n₀, F.N n = I ^ (n - n₀) • F.N n₀ := by
   refine ⟨Stable.exists_pow_smul_eq_of_ge, fun h => ⟨h.choose, fun n hn => ?_⟩⟩
   rw [h.choose_spec n hn, h.choose_spec (n + 1) (by lia), smul_smul, ← pow_succ',
@@ -236,6 +237,7 @@ open PolynomialModule
 variable (F F')
 
 /-- The `R[IX]`-submodule of `M[X]` associated with an `I`-filtration. -/
+@[no_expose]
 protected noncomputable def submodule : Submodule (reesAlgebra I) (PolynomialModule R M) where
   carrier := { f | ∀ i, f i ∈ F.N i }
   add_mem' hf hg i := Submodule.add_mem _ (hf i) (hg i)
@@ -252,13 +254,14 @@ protected noncomputable def submodule : Submodule (reesAlgebra I) (PolynomialMod
 theorem mem_submodule (f : PolynomialModule R M) : f ∈ F.submodule ↔ ∀ i, f i ∈ F.N i :=
   Iff.rfl
 
-theorem inf_submodule : (F ⊓ F').submodule = F.submodule ⊓ F'.submodule := by
+private theorem inf_submodule : (F ⊓ F').submodule = F.submodule ⊓ F'.submodule := by
   ext
   exact forall_and
 
 variable (I M)
 
 /-- `Ideal.Filtration.submodule` as an `InfHom`. -/
+@[no_expose]
 noncomputable def submoduleInfHom :
     InfHom (I.Filtration M) (Submodule (reesAlgebra I) (PolynomialModule R M)) where
   toFun := Ideal.Filtration.submodule
@@ -266,7 +269,7 @@ noncomputable def submoduleInfHom :
 
 variable {I M}
 
-theorem submodule_closure_single :
+private theorem submodule_closure_single :
     AddSubmonoid.closure (⋃ i, single R i '' (F.N i : Set M)) = F.submodule.toAddSubmonoid := by
   apply le_antisymm
   · rw [AddSubmonoid.closure_le, Set.iUnion_subset_iff]
@@ -281,13 +284,13 @@ theorem submodule_closure_single :
     rintro c -
     exact AddSubmonoid.subset_closure (Set.subset_iUnion _ c <| Set.mem_image_of_mem _ (hf c))
 
-theorem submodule_span_single :
+private theorem submodule_span_single :
     Submodule.span (reesAlgebra I) (⋃ i, single R i '' (F.N i : Set M)) = F.submodule := by
   rw [← Submodule.span_closure, submodule_closure_single, Submodule.coe_toAddSubmonoid]
   exact Submodule.span_eq (Filtration.submodule F)
 
 set_option backward.isDefEq.respectTransparency false in
-theorem submodule_eq_span_le_iff_stable_ge (n₀ : ℕ) :
+private theorem submodule_eq_span_le_iff_stable_ge (n₀ : ℕ) :
     F.submodule = Submodule.span _ (⋃ i ≤ n₀, single R i '' (F.N i : Set M)) ↔
       ∀ n ≥ n₀, I • F.N n = F.N (n + 1) := by
   rw [← submodule_span_single,
@@ -333,7 +336,7 @@ theorem submodule_eq_span_le_iff_stable_ge (n₀ : ℕ) :
 
 /-- If the components of a filtration are finitely generated, then the filtration is stable iff
 its associated submodule of is finitely generated. -/
-theorem submodule_fg_iff_stable (hF' : ∀ i, (F.N i).FG) : F.submodule.FG ↔ F.Stable := by
+private theorem submodule_fg_iff_stable (hF' : ∀ i, (F.N i).FG) : F.submodule.FG ↔ F.Stable := by
   classical
   delta Ideal.Filtration.Stable
   simp_rw [← F.submodule_eq_span_le_iff_stable_ge]

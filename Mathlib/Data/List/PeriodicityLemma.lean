@@ -39,10 +39,11 @@ which can be seen in two equivalent ways:
 · The element of `w` at index `i` is the same as the element at index `i + p`, for all `i`
 The definition is given in terms of the self-overlap.
 -/
+@[no_expose]
 def HasPeriod (w : List α) (p : ℕ) : Prop := w <+: take p w ++ w
 
 /-- This is the equivalent definition of `HasPeriod w p` by indices. -/
-lemma hasPeriod_iff_getElem? {p : ℕ} {w : List α} :
+private lemma hasPeriod_iff_getElem? {p : ℕ} {w : List α} :
     HasPeriod w p ↔ ∀ i < w.length - p, w[i]? = w[i + p]? := by
   constructor
   · rw [HasPeriod]
@@ -71,7 +72,7 @@ lemma hasPeriod_zero (w : List α) : HasPeriod w 0 := by
 lemma hasPeriod_of_length_le (w : List α) (p : ℕ) (large : w.length ≤ p) : HasPeriod w p := by
   rw [HasPeriod]; simp_all [(take_eq_self_iff w).mpr large]
 
-lemma hasPeriod_empty (p : ℕ) : HasPeriod ([] : List α) p := by
+private lemma hasPeriod_empty (p : ℕ) : HasPeriod ([] : List α) p := by
   simp
 
 lemma HasPeriod.getElem?_mod (p i : ℕ) (w : List α) (per : HasPeriod w p)
@@ -93,7 +94,7 @@ lemma HasPeriod.getElem?_mod (p i : ℕ) (w : List α) (per : HasPeriod w p)
         aesop
 
 /-- An equivalent definition of `HasPeriod w p` by modular equivalence on indices. -/
-lemma hasPeriod_iff_forall_getElem?_mod {p : ℕ} {w : List α} :
+private lemma hasPeriod_iff_forall_getElem?_mod {p : ℕ} {w : List α} :
     HasPeriod w p ↔ (∀ i < w.length, w[i]? = w[i % p]?) := by
   constructor
   · intro per i len

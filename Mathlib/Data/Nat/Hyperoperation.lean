@@ -34,6 +34,7 @@ hyperoperation
 /-- Implementation of the hyperoperation sequence
 where `hyperoperation n m k` is the `n`th hyperoperation between `m` and `k`.
 -/
+@[no_expose]
 def hyperoperation : ℕ → ℕ → ℕ → ℕ
   | 0, _, k => k + 1
   | 1, m, 0 => m
@@ -49,11 +50,11 @@ theorem hyperoperation_zero (m k : ℕ) : hyperoperation 0 m k = k + 1 := by
   grind
 
 @[grind =]
-theorem hyperoperation_ge_three_eq_one (n m : ℕ) : hyperoperation (n + 3) m 0 = 1 := by
+private theorem hyperoperation_ge_three_eq_one (n m : ℕ) : hyperoperation (n + 3) m 0 = 1 := by
   grind
 
 @[grind =]
-theorem hyperoperation_recursion (n m k : ℕ) :
+private theorem hyperoperation_recursion (n m k : ℕ) :
     hyperoperation (n + 1) m (k + 1) = hyperoperation n m (hyperoperation (n + 1) m k) := by
   grind
 
@@ -71,18 +72,18 @@ theorem hyperoperation_three (m k : ℕ) : hyperoperation 3 m k = m ^ k := by
   induction k with grind
 
 @[grind =]
-theorem hyperoperation_ge_two_eq_self (n m : ℕ) : hyperoperation (n + 2) m 1 = m := by
+private theorem hyperoperation_ge_two_eq_self (n m : ℕ) : hyperoperation (n + 2) m 1 = m := by
   induction n with grind
 
 @[grind =]
-theorem hyperoperation_two_two_eq_four (n : ℕ) : hyperoperation (n + 1) 2 2 = 4 := by
+private theorem hyperoperation_two_two_eq_four (n : ℕ) : hyperoperation (n + 1) 2 2 = 4 := by
   induction n with grind
 
 @[grind =]
-theorem hyperoperation_ge_three_one (n k : ℕ) : hyperoperation (n + 3) 1 k = 1 := by
+private theorem hyperoperation_ge_three_one (n k : ℕ) : hyperoperation (n + 3) 1 k = 1 := by
   induction n generalizing k with grind [cases Nat]
 
 @[grind =]
-theorem hyperoperation_ge_four_zero (n k : ℕ) :
+private theorem hyperoperation_ge_four_zero (n k : ℕ) :
     hyperoperation (n + 4) 0 k = if Even k then 1 else 0 := by
   induction k with grind

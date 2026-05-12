@@ -139,14 +139,14 @@ def labellingCostarEquiv (x : SchreierGraph V ι) :
   right_inv := fun ⟨_, _⟩ => rfl
 
 /-- The labelling prefunctor is a covering for Schreier graphs with group actions. -/
-theorem labelling_isCovering : (labelling V ι).IsCovering where
+private theorem labelling_isCovering : (labelling V ι).IsCovering where
   star_bijective u := (labellingStarEquiv ι u).bijective
   costar_bijective u := (labellingCostarEquiv ι u).bijective
 
 /-- If a prefunctor between Schreier graphs commutes with the labelling (i.e., labels are
 preserved), then it commutes with the group action. In other words, morphisms that preserve edge
 labels also preserve the group structure. -/
-lemma map_smul_of_comp_labelling_eq {W : Type*} [MulAction M W]
+private lemma map_smul_of_comp_labelling_eq {W : Type*} [MulAction M W]
     (φ : SchreierGraph V ι ⥤q SchreierGraph W ι) (φm : φ ⋙q labelling W ι = labelling V ι)
     (v : SchreierGraph V ι) (s : S) :
     φ.obj (ι s • v) = ι s • (φ.obj v) := by

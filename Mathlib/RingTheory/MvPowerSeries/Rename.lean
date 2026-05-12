@@ -52,6 +52,7 @@ section Semiring
 variable [Semiring R] [Semiring S]
 
 /-- Implementation detail for `rename`. Use `MvPowerSeries.rename` instead. -/
+@[no_expose]
 def renameFun : MvPowerSeries σ R → MvPowerSeries τ R :=
   TendstoCofinite.mapDomain (Finsupp.mapDomain f)
 
@@ -118,11 +119,11 @@ def rename : MvPowerSeries σ R →ₐ[R] MvPowerSeries τ R where
   map_add' _ _ := by ext; simp [coeff_renameFun, Finset.sum_add_distrib]
   commutes' := renameFun_monomial f 0
 
-theorem coeff_rename (p : MvPowerSeries σ R) (x : τ →₀ ℕ) : coeff x (rename f p) =
+private theorem coeff_rename (p : MvPowerSeries σ R) (x : τ →₀ ℕ) : coeff x (rename f p) =
     (TendstoCofinite.finite_preimage_singleton (Finsupp.mapDomain f) x).toFinset.sum
       (p.coeff ·) := by rfl
 
-theorem rename_monomial (x : σ →₀ ℕ) (r : R) : rename f (monomial x r) =
+private theorem rename_monomial (x : σ →₀ ℕ) (r : R) : rename f (monomial x r) =
     monomial (mapDomain f x) r := renameFun_monomial f ..
 
 @[simp]
@@ -131,7 +132,7 @@ theorem coeff_embDomain_rename (e : σ ↪ τ) (p : MvPowerSeries σ R) (x : σ 
   rw [coeff_rename, Finset.sum_eq_single x _ (by simp [← embDomain_eq_mapDomain])]
   simpa using fun _ h h' ↦ by simp [← embDomain_eq_mapDomain, embDomain_inj, h'] at h
 
-theorem coeff_rename_eq_zero (p : MvPowerSeries σ R) {x : τ →₀ ℕ}
+private theorem coeff_rename_eq_zero (p : MvPowerSeries σ R) {x : τ →₀ ℕ}
     (h' : x ∉ Set.range (Finsupp.mapDomain f)) : (rename f p).coeff x = 0 := by
   simp [coeff_rename, Set.Finite.toFinset, Set.preimage_singleton_eq_empty.mpr h']
 
@@ -151,7 +152,7 @@ theorem rename_rename [TendstoCofinite g] (p : MvPowerSeries σ R) :
     (Finsupp.mapDomain (g ∘ f)) y).toFinset.image (fun u ↦ (Finsupp.mapDomain f u, u))) _ _
       (by simp; grind [mapDomain_comp]), Finset.sum_image (by simp)]
 
-lemma rename_comp_rename [TendstoCofinite g] :
+private lemma rename_comp_rename [TendstoCofinite g] :
     (rename (R := R) g).comp (rename f) = rename (g ∘ f) :=
   AlgHom.ext fun p ↦ rename_rename f g p
 
@@ -160,7 +161,7 @@ theorem rename_id : rename id = AlgHom.id R (MvPowerSeries σ R) := by
   ext _ y
   simpa [coeff_rename] using Finset.sum_eq_single y (by simp) (by simp)
 
-lemma rename_id_apply (p : MvPowerSeries σ R) : rename id p = p := by simp
+private lemma rename_id_apply (p : MvPowerSeries σ R) : rename id p = p := by simp
 
 @[simp]
 theorem constantCoeff_rename (p : MvPowerSeries σ R) :
@@ -169,18 +170,18 @@ theorem constantCoeff_rename (p : MvPowerSeries σ R) :
     coeff_rename, Finset.sum_eq_single 0 (by
       simp [mapDomain_apply_eq_zero_iff_of_subsingletonAddUnits]) (by simp)]
 
-theorem rename_injective (e : σ ↪ τ) : Function.Injective (rename (R := R) e) := by
+private theorem rename_injective (e : σ ↪ τ) : Function.Injective (rename (R := R) e) := by
   intro _ _ h; ext x
   simpa using MvPowerSeries.ext_iff.mp h (embDomain e x)
 
-theorem rename_inj (e : σ ↪ τ) (p q : MvPowerSeries σ R) :
+private theorem rename_inj (e : σ ↪ τ) (p q : MvPowerSeries σ R) :
     rename e p = rename e q ↔ p = q := (rename_injective e).eq_iff
 
-theorem rename_map (φ : R →+* S) (p : MvPowerSeries σ R) :
+private theorem rename_map (φ : R →+* S) (p : MvPowerSeries σ R) :
     rename f (map φ p) = map φ (rename f p) := by
   ext; simp [coeff_rename]
 
-theorem rename_coe (p : MvPolynomial σ R) : rename f (p : MvPowerSeries σ R) = p.rename f := by
+private theorem rename_coe (p : MvPolynomial σ R) : rename f (p : MvPowerSeries σ R) = p.rename f := by
   induction p using MvPolynomial.induction_on with
   | C a => simp
   | add P Q hP hQ => simp [hP, hQ]
@@ -209,6 +210,7 @@ theorem renameEquiv_trans (e : σ ≃ τ) (f : τ ≃ γ) : (renameEquiv R e).tr
 variable {e : σ ↪ τ}
 
 /-- Implementation detail for `killCompl`. Use `MvPowerSeries.killCompl` instead. -/
+@[no_expose]
 def killComplFun (e : σ ↪ τ) (p : MvPowerSeries τ R) : MvPowerSeries σ R :=
   fun x ↦ coeff (embDomain e x) p
 
@@ -246,14 +248,14 @@ def killCompl (e : σ ↪ τ) : MvPowerSeries τ R →ₐ[R] MvPowerSeries σ R 
   map_add' _ _ := by ext; simp [coeff_killComplFun]
   commutes' := by simpa using killComplFun_monomial_embDomain 0
 
-lemma coeff_killCompl (p : MvPowerSeries τ R) (x : σ →₀ ℕ) :
+private lemma coeff_killCompl (p : MvPowerSeries τ R) (x : σ →₀ ℕ) :
     coeff x (killCompl e p) = coeff (embDomain e x) p := by rfl
 
-lemma killCompl_monomial_embDomain (x : σ →₀ ℕ) (r : R) :
+private lemma killCompl_monomial_embDomain (x : σ →₀ ℕ) (r : R) :
     killCompl e (monomial (embDomain e x) r) = monomial x r :=
   killComplFun_monomial_embDomain x r
 
-lemma killCompl_monomial_eq_zero {x : τ →₀ ℕ} (r : R)
+private lemma killCompl_monomial_eq_zero {x : τ →₀ ℕ} (r : R)
     (h : x ∉ Set.range (embDomain e)) : killCompl e (monomial x r) = 0 :=
   killComplFun_monomial_eq_zero r h
 
@@ -266,21 +268,21 @@ theorem killCompl_X (i : σ) : killCompl (R := R) e (X (e i)) = X i := by
   classical
   ext; simp [coeff_X, coeff_killCompl, ← embDomain_single]
 
-theorem killCompl_X_eq_zero {t : τ} (h : t ∉ Set.range e) :
+private theorem killCompl_X_eq_zero {t : τ} (h : t ∉ Set.range e) :
     killCompl (R := R) e (X t) = 0 := by
   replace h : single t 1 ∉ Set.range (embDomain e) := by
     rwa [mem_range_embDomain_iff, support_single _ (by simp), Finset.coe_singleton,
       Set.singleton_subset_iff]
   simpa using killCompl_monomial_eq_zero (1 : R) h
 
-theorem killCompl_comp_rename : (killCompl e).comp (rename e) = AlgHom.id R _ := by
+private theorem killCompl_comp_rename : (killCompl e).comp (rename e) = AlgHom.id R _ := by
   ext; simp [coeff_killCompl]
 
 @[simp]
 theorem killCompl_rename_app (p : MvPowerSeries σ R) : killCompl e (rename e p) = p :=
   AlgHom.congr_fun (killCompl_comp_rename) p
 
-theorem killCompl_map (φ : R →+* S) (p : MvPowerSeries τ R) :
+private theorem killCompl_map (φ : R →+* S) (p : MvPowerSeries τ R) :
     killCompl e (map φ p) = map φ (killCompl e p) := by
   ext; simp [coeff_killCompl]
 
@@ -296,7 +298,7 @@ lemma HasSubst.X_comp : HasSubst (X ∘ f : σ → MvPowerSeries τ R) where
     (fun i _ ↦ TendstoCofinite.finite_preimage_singleton f i)) (fun x => by
       contrapose; intro _ _; classical simp_all [coeff_X])
 
-theorem rename_eq_subst : rename f p = p.subst (X ∘ f) := by
+private theorem rename_eq_subst : rename f p = p.subst (X ∘ f) := by
   classical
   ext n
   rw [coeff_rename, coeff_subst (HasSubst.X_comp _) p n, finsum_eq_sum _

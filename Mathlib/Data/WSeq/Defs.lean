@@ -26,6 +26,7 @@ variable {α : Type u} {β : Type v} {γ : Type w}
 open Function
 
 /-- Get the length of `s` (if it is finite and completes in finite time). -/
+@[no_expose]
 def length (s : WSeq α) : Computation ℕ :=
   @Computation.corec ℕ (ℕ × WSeq α)
     (fun ⟨n, s⟩ =>
@@ -72,6 +73,7 @@ def removeNth (s : WSeq α) (n : ℕ) : WSeq α :=
     (n + 1, s)
 
 /-- Map the elements of `s` over `f`, removing any values that yield `none`. -/
+@[no_expose]
 def filterMap (f : α → Option β) : WSeq α → WSeq β :=
   Seq.corec fun s =>
     match Seq.destruct s with
@@ -80,6 +82,7 @@ def filterMap (f : α → Option β) : WSeq α → WSeq β :=
     | some (some a, s') => some (f a, s')
 
 /-- Select the elements of `s` that satisfy `p`. -/
+@[no_expose]
 def filter (p : α → Prop) [DecidablePred p] : WSeq α → WSeq α :=
   filterMap fun a => if p a then some a else none
 
@@ -89,6 +92,7 @@ def find (p : α → Prop) [DecidablePred p] (s : WSeq α) : Computation (Option
   head <| filter p s
 
 /-- Zip a function over two weak sequences -/
+@[no_expose]
 def zipWith (f : α → β → γ) (s1 : WSeq α) (s2 : WSeq β) : WSeq γ :=
   @Seq.corec (Option γ) (WSeq α × WSeq β)
     (fun ⟨s1, s2⟩ =>
@@ -101,14 +105,17 @@ def zipWith (f : α → β → γ) (s1 : WSeq α) (s2 : WSeq β) : WSeq γ :=
     (s1, s2)
 
 /-- Zip two weak sequences into a single sequence of pairs -/
+@[no_expose]
 def zip : WSeq α → WSeq β → WSeq (α × β) :=
   zipWith Prod.mk
 
 /-- Get the list of indexes of elements of `s` satisfying `p` -/
+@[no_expose]
 def findIndexes (p : α → Prop) [DecidablePred p] (s : WSeq α) : WSeq ℕ :=
   (zip s (Stream'.nats : WSeq ℕ)).filterMap fun ⟨a, n⟩ => if p a then some n else none
 
 /-- Get the index of the first element of `s` satisfying `p` -/
+@[no_expose]
 def findIndex (p : α → Prop) [DecidablePred p] (s : WSeq α) : Computation ℕ :=
   (fun o => Option.getD o 0) <$> head (findIndexes p s)
 
@@ -221,7 +228,7 @@ def inits (s : WSeq α) : WSeq (List α) :=
 def collect (s : WSeq α) (n : ℕ) : List α :=
   (Seq.take n s).filterMap id
 
-theorem length_eq_map (s : WSeq α) : length s = Computation.map List.length (toList s) := by
+private theorem length_eq_map (s : WSeq α) : length s = Computation.map List.length (toList s) := by
   refine
     Computation.eq_of_bisim
       (fun c1 c2 =>

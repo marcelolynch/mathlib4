@@ -32,6 +32,7 @@ variable {R : Type*} [Ring R] (p : R[X]) (T : Subring R)
 
 /-- Given a polynomial `p` and a subring `T` that contains the coefficients of `p`,
 return the corresponding polynomial whose coefficients are in `T`. -/
+@[no_expose]
 noncomputable def toSubring (hp : (↑p.coeffs : Set R) ⊆ T) : T[X] :=
   ∑ i ∈ p.support,
     monomial i
@@ -51,7 +52,7 @@ theorem coeff_toSubring {n : ℕ} : ↑(coeff (toSubring p T hp) n) = coeff p n 
     rfl
   · rfl
 
-theorem coeff_toSubring' {n : ℕ} : (coeff (toSubring p T hp) n).1 = coeff p n := by
+private theorem coeff_toSubring' {n : ℕ} : (coeff (toSubring p T hp) n).1 = coeff p n := by
   simp
 
 @[simp]
@@ -95,10 +96,11 @@ variable (T : Subring R)
 
 /-- Given a polynomial whose coefficients are in some subring, return
 the corresponding polynomial whose coefficients are in the ambient ring. -/
+@[no_expose]
 noncomputable def ofSubring (p : T[X]) : R[X] :=
   ∑ i ∈ p.support, monomial i (p.coeff i : R)
 
-theorem coeff_ofSubring (p : T[X]) (n : ℕ) : coeff (ofSubring T p) n = (coeff p n : T) := by
+private theorem coeff_ofSubring (p : T[X]) (n : ℕ) : coeff (ofSubring T p) n = (coeff p n : T) := by
   simp only [ofSubring, coeff_monomial, finsetSum_coeff, mem_support_iff, Finset.sum_ite_eq',
     Ne, Classical.not_not, ite_eq_left_iff]
   intro h

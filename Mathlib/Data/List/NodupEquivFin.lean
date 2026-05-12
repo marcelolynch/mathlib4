@@ -109,7 +109,7 @@ section Sublist
 any element of `l` found at index `ix` can be found at index `f ix` in `l'`,
 then `Sublist l l'`.
 -/
-theorem sublist_of_orderEmbedding_getElem?_eq {l l' : List α} (f : ℕ ↪o ℕ)
+private theorem sublist_of_orderEmbedding_getElem?_eq {l l' : List α} (f : ℕ ↪o ℕ)
     (hf : ∀ ix : ℕ, l[ix]? = l'[f ix]?) : l <+ l' := by
   induction l generalizing l' f with
   | nil => simp
@@ -138,7 +138,7 @@ theorem sublist_of_orderEmbedding_getElem?_eq {l l' : List α} (f : ℕ ↪o ℕ
 there is `f`, an order-preserving embedding of `ℕ` into `ℕ` such that
 any element of `l` found at index `ix` can be found at index `f ix` in `l'`.
 -/
-theorem sublist_iff_exists_orderEmbedding_getElem?_eq {l l' : List α} :
+private theorem sublist_iff_exists_orderEmbedding_getElem?_eq {l l' : List α} :
     l <+ l' ↔ ∃ f : ℕ ↪o ℕ, ∀ ix : ℕ, l[ix]? = l'[f ix]? := by
   constructor
   · intro H
@@ -163,7 +163,7 @@ theorem sublist_iff_exists_orderEmbedding_getElem?_eq {l l' : List α} :
 there is `f`, an order-preserving embedding of `Fin l.length` into `Fin l'.length` such that
 any element of `l` found at index `ix` can be found at index `f ix` in `l'`.
 -/
-theorem sublist_iff_exists_fin_orderEmbedding_get_eq {l l' : List α} :
+private theorem sublist_iff_exists_fin_orderEmbedding_get_eq {l l' : List α} :
     l <+ l' ↔
       ∃ f : Fin l.length ↪o Fin l'.length,
         ∀ ix : Fin l.length, l.get ix = l'.get (f ix) := by
@@ -199,7 +199,7 @@ set_option backward.isDefEq.respectTransparency false in
 /-- An element `x : α` of `l : List α` is a duplicate iff it can be found
 at two distinct indices `n m : ℕ` inside the list `l`.
 -/
-theorem duplicate_iff_exists_distinct_get {l : List α} {x : α} :
+private theorem duplicate_iff_exists_distinct_get {l : List α} {x : α} :
     l.Duplicate x ↔
       ∃ (n m : Fin l.length) (_ : n < m),
         x = l.get n ∧ x = l.get m := by

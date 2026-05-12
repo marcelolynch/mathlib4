@@ -31,6 +31,7 @@ using subsingleton lemmas, and if they are so provable they are recorded with `.
 Note that this is slightly abusing `.subsingletonInst` since
 (1) the argument might not be for a `Decidable` instance and
 (2) the argument might not even be an instance. -/
+@[no_expose]
 def mkHCongrWithArity' (f : Expr) (numArgs : Nat) : MetaM CongrTheorem := do
   let thm ← mkHCongrWithArity f numArgs
   process thm thm.type thm.argKinds.toList #[] #[] #[] #[]
@@ -145,6 +146,7 @@ have associated `FastSubsingleton` and `FastIsEmpty` instances.
 The function passed to `mx` eliminates these instances from expressions,
 since they are only locally valid inside this context.
 -/
+@[no_expose]
 def withSubsingletonAsFast {α : Type} [Inhabited α] (mx : (Expr → Expr) → MetaM α) : MetaM α := do
   let insts1 := (← getLocalInstances).filter fun inst => inst.className == ``Subsingleton
   let insts2 := (← getLocalInstances).filter fun inst => inst.className == ``IsEmpty
@@ -160,6 +162,7 @@ def withSubsingletonAsFast {α : Type} [Inhabited α] (mx : (Expr → Expr) → 
       mx elim
 
 /-- Like `subsingletonElim` but uses `FastSubsingleton` to fail fast. -/
+@[no_expose]
 def fastSubsingletonElim (mvarId : MVarId) : MetaM Bool :=
   mvarId.withContext do
     let res ← observing? do
@@ -215,6 +218,7 @@ This is the interpretation of the `CongrArgKind`s in the generated congruence th
 
 Note that the first entry in this array is for the function itself.
 -/
+@[no_expose]
 partial def mkRichHCongr (fType : Expr) (info : FunInfo)
     (fixedFun : Bool := false) (fixedParams : Array Bool := #[])
     (forceHEq : Bool := false) :

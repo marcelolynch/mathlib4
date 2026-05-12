@@ -36,6 +36,7 @@ lemma countP'_mul (l₁ l₂ : FreeMonoid α) : (l₁ * l₂).countP' p = l₁.c
   simp only [List.countP_append]
 
 /-- `List.countP` as a bundled multiplicative monoid homomorphism. -/
+@[no_expose]
 def countP : FreeMonoid α →* Multiplicative ℕ where
   toFun := .ofAdd ∘ FreeMonoid.countP' p
   map_one' := by
@@ -43,21 +44,22 @@ def countP : FreeMonoid α →* Multiplicative ℕ where
   map_mul' x y := by
     simp [countP'_mul p]
 
-theorem countP_apply (l : FreeMonoid α) : l.countP p = .ofAdd (l.toList.countP p) := rfl
+private theorem countP_apply (l : FreeMonoid α) : l.countP p = .ofAdd (l.toList.countP p) := rfl
 
-lemma countP_of (x : α) : (of x).countP p =
+private lemma countP_of (x : α) : (of x).countP p =
     if p x then Multiplicative.ofAdd 1 else Multiplicative.ofAdd 0 := by
   rw [countP_apply, toList_of, List.countP_singleton, apply_ite (Multiplicative.ofAdd)]
   simp only [decide_eq_true_eq]
 
 
 /-- `List.count` as a bundled additive monoid homomorphism. -/
+@[no_expose]
 def count [DecidableEq α] (x : α) : FreeMonoid α →* Multiplicative ℕ := countP (· = x)
 
-theorem count_apply [DecidableEq α] (x : α) (l : FreeAddMonoid α) :
+private theorem count_apply [DecidableEq α] (x : α) (l : FreeAddMonoid α) :
     count x l = Multiplicative.ofAdd (l.toList.count x) := rfl
 
-theorem count_of [DecidableEq α] (x y : α) :
+private theorem count_of [DecidableEq α] (x y : α) :
     count x (of y) = Pi.mulSingle (M := fun _ ↦ Multiplicative ℕ) x (Multiplicative.ofAdd 1) y := by
   simp [count, countP_of, Pi.mulSingle_apply]
 
@@ -66,27 +68,29 @@ end FreeMonoid
 namespace FreeAddMonoid
 
 /-- `List.countP` as a bundled additive monoid homomorphism. -/
+@[no_expose]
 def countP : FreeAddMonoid α →+ ℕ where
   toFun := FreeAddMonoid.countP' p
   map_zero' := countP'_zero p
   map_add' := countP'_add p
 
-theorem countP_apply (l : FreeAddMonoid α) : l.countP p = l.toList.countP p := rfl
+private theorem countP_apply (l : FreeAddMonoid α) : l.countP p = l.toList.countP p := rfl
 
-theorem countP_of (x : α) : countP p (of x) = if p x then 1 else 0 := by
+private theorem countP_of (x : α) : countP p (of x) = if p x then 1 else 0 := by
   rw [countP_apply, toList_of, List.countP_singleton]
   simp only [decide_eq_true_eq]
 
 /-- `List.count` as a bundled additive monoid homomorphism. -/
 -- Porting note: was (x = ·)
+@[no_expose]
 def count [DecidableEq α] (x : α) : FreeAddMonoid α →+ ℕ := countP (· = x)
 
-lemma count_of [DecidableEq α] (x y : α) : count x (of y) = (Pi.single x 1 : α → ℕ) y := by
+private lemma count_of [DecidableEq α] (x y : α) : count x (of y) = (Pi.single x 1 : α → ℕ) y := by
   dsimp [count]
   rw [countP_of]
   simp [Pi.single, Function.update]
 
-theorem count_apply [DecidableEq α] (x : α) (l : FreeAddMonoid α) : l.count x = l.toList.count x :=
+private theorem count_apply [DecidableEq α] (x : α) (l : FreeAddMonoid α) : l.count x = l.toList.count x :=
   rfl
 
 end FreeAddMonoid

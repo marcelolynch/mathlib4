@@ -31,7 +31,7 @@ The sequence itself is allowed to be infinite though. -/
 class Productive (s : WSeq α) : Prop where
   get?_terminates : ∀ n, (get? s n).Terminates
 
-theorem productive_iff (s : WSeq α) : Productive s ↔ ∀ n, (get? s n).Terminates :=
+private theorem productive_iff (s : WSeq α) : Productive s ↔ ∀ n, (get? s n).Terminates :=
   ⟨fun h => h.1, fun h => ⟨h⟩⟩
 
 instance get?_terminates (s : WSeq α) [h : Productive s] : ∀ n, (get? s n).Terminates :=
@@ -51,11 +51,12 @@ open Computation
 instance productive_ofSeq (s : Seq α) : Productive (ofSeq s) :=
   ⟨fun n => by rw [get?_ofSeq]; infer_instance⟩
 
-theorem productive_congr {s t : WSeq α} (h : s ~ʷ t) : Productive s ↔ Productive t := by
+private theorem productive_congr {s t : WSeq α} (h : s ~ʷ t) : Productive s ↔ Productive t := by
   simp only [productive_iff]; exact forall_congr' fun n => terminates_congr <| get?_congr h _
 
 /-- Given a productive weak sequence, we can collapse all the `think`s to
   produce a sequence. -/
+@[no_expose]
 def toSeq (s : WSeq α) [Productive s] : Seq α :=
   ⟨fun n => (get? s n).get,
    fun {n} h => by
@@ -67,7 +68,7 @@ def toSeq (s : WSeq α) [Productive s] : Seq α :=
     have := mem_unique h' (@Computation.mem_of_get_eq _ _ _ _ h)
     contradiction⟩
 
-theorem toSeq_ofSeq (s : Seq α) : toSeq (ofSeq s) = s := by
+private theorem toSeq_ofSeq (s : Seq α) : toSeq (ofSeq s) = s := by
   apply Subtype.ext; funext n
   dsimp [toSeq]; apply get_eq_of_mem
   rw [get?_ofSeq]; apply ret_mem

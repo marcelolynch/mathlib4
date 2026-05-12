@@ -31,6 +31,7 @@ variable {m : Type → Type u} [Monad m] [MonadLiftT BaseIO m]
 /-- Iterate over all the expressions in a `MessageData`. Used to implement
 `for (ppCtx, e) in msg.exprs do` notation, which should be preferred over using this declaration
 directly. -/
+@[no_expose]
 partial def forExprsIn {σ} (msg : MessageData) (s : σ)
     (f : PPContext × Expr → σ → m (ForInStep σ)) : m σ := do
   return (← go ⟨.anonymous, []⟩ none s msg).value
@@ -107,12 +108,14 @@ with their `ppCtx : PPContext`. The `ppCtx` can be used to interpret the express
 The monad must support `BaseIO` in order to interpret `.ofLazy` nodes in `MessageData`.
 
 Expressions without a valid `ppCtx` are skipped. -/
+@[no_expose]
 def exprs (msg : MessageData) : MessageData.Exprs := ⟨msg⟩
 
 instance : ForIn m MessageData.Exprs (PPContext × Expr) where
   forIn exprs := exprs.msg.forExprsIn
 
 /-- Find the expression in a message on which `f` does not return `none`. -/
+@[no_expose]
 partial def firstExpr? {α} (msg : MessageData) (f : Expr → MetaM (Option α)) :
     IO (Option α) := do
   for (ppCtx, e) in msg.exprs do
@@ -124,6 +127,7 @@ partial def firstExpr? {α} (msg : MessageData) (f : Expr → MetaM (Option α))
 
 If you need the context of the expressions, prefer iterating over the expressions via
 `for (ppCtx, e) in msg.exprs do` directly. -/
+@[no_expose]
 partial def getExprs (msg : MessageData) : m (Array Expr) := do
   let mut arr := #[]
   for (_, e) in msg.exprs do

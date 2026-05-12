@@ -86,6 +86,7 @@ Y₁ - g₁ -> Y₂ - g₂ -> Y₃
 ```
 Then the big square is a pullback if both the small squares are.
 -/
+@[no_expose]
 def pasteHorizIsPullback (H : IsLimit t₂) (H' : IsLimit t₁) : IsLimit (t₂.pasteHoriz t₁ hi₂) := by
   apply PullbackCone.isLimitAux'
   intro s
@@ -114,6 +115,7 @@ Y₁ - g₁ -> Y₂ - g₂ -> Y₃
 ```
 Then the left square is a pullback if the right square and the big square are.
 -/
+@[no_expose]
 def leftSquareIsPullback (H : IsLimit t₂) (H' : IsLimit (t₂.pasteHoriz t₁ hi₂)) : IsLimit t₁ := by
   apply PullbackCone.isLimitAux'
   intro s
@@ -133,6 +135,7 @@ def leftSquareIsPullback (H : IsLimit t₂) (H' : IsLimit (t₂.pasteHoriz t₁ 
 
 /-- Given that the right square is a pullback, the pasted square is a pullback iff the left
 square is. -/
+@[no_expose]
 def pasteHorizIsPullbackEquiv (H : IsLimit t₂) : IsLimit (t₂.pasteHoriz t₁ hi₂) ≃ IsLimit t₁ where
   toFun H' := leftSquareIsPullback t₁ _ H H'
   invFun H' := pasteHorizIsPullback _ H H'
@@ -198,6 +201,7 @@ Y₁ - i₁ -> X₁
 ```
 The big square is a pullback if both the small squares are.
 -/
+@[no_expose]
 def pasteVertIsPullback (H₁ : IsLimit t₁) (H₂ : IsLimit t₂) : IsLimit (t₁.pasteVert t₂ hi₂) := by
   apply PullbackCone.isLimitOfFlip <| IsLimit.ofIsoLimit _ (t₁.pasteVertFlip t₂ hi₂).symm
   exact pasteHorizIsPullback hi₂ (PullbackCone.flipIsLimit H₁) (PullbackCone.flipIsLimit H₂)
@@ -218,12 +222,14 @@ Y₁ - i₁ -> X₁
 ```
 The top square is a pullback if the bottom square and the big square are.
 -/
+@[no_expose]
 def topSquareIsPullback (H₁ : IsLimit t₁) (H₂ : IsLimit (t₁.pasteVert t₂ hi₂)) : IsLimit t₂ :=
   PullbackCone.isLimitOfFlip
     (leftSquareIsPullback _ hi₂ (PullbackCone.flipIsLimit H₁) (PullbackCone.flipIsLimit H₂))
 
 /-- Given that the bottom square is a pullback, the pasted square is a pullback iff the top
 square is. -/
+@[no_expose]
 def pasteVertIsPullbackEquiv (H : IsLimit t₁) : IsLimit (t₁.pasteVert t₂ hi₂) ≃ IsLimit t₂ where
   toFun H' := topSquareIsPullback t₂ _ H H'
   invFun H' := pasteVertIsPullback _ H H'
@@ -274,6 +280,7 @@ Y₁ - g₁ -> Y₂ - g₂ -> Y₃
 ```
 Then the big square is a pushout if both the small squares are.
 -/
+@[no_expose]
 def pasteHorizIsPushout (H : IsColimit t₁) (H' : IsColimit t₂) :
     IsColimit (t₁.pasteHoriz t₂ hi₂) := by
   apply PushoutCocone.isColimitAux'
@@ -303,6 +310,7 @@ Y₁ - g₁ -> Y₂ - g₂ -> Y₃
 
 Then the right square is a pushout if the left square and the big square are.
 -/
+@[no_expose]
 def rightSquareIsPushout (H : IsColimit t₁) (H' : IsColimit (t₁.pasteHoriz t₂ hi₂)) :
     IsColimit t₂ := by
   apply PushoutCocone.isColimitAux'
@@ -323,6 +331,7 @@ def rightSquareIsPushout (H : IsColimit t₁) (H' : IsColimit (t₁.pasteHoriz t
 
 /-- Given that the left square is a pushout, the pasted square is a pushout iff the right square is.
 -/
+@[no_expose]
 def pasteHorizIsPushoutEquiv (H : IsColimit t₁) :
     IsColimit (t₁.pasteHoriz t₂ hi₂) ≃ IsColimit t₂ where
   toFun H' := rightSquareIsPushout t₂ _ H H'
@@ -388,6 +397,7 @@ Y₁ - i₁ -> X₁
 ```
 The big square is a pushout if both the small squares are.
 -/
+@[no_expose]
 def pasteVertIsPushout (H₁ : IsColimit t₁) (H₂ : IsColimit t₂) :
     IsColimit (t₁.pasteVert t₂ hi₂) := by
   apply PushoutCocone.isColimitOfFlip <| IsColimit.ofIsoColimit _ (t₁.pasteVertFlip t₂ hi₂).symm
@@ -409,12 +419,14 @@ Y₁ - i₁ -> X₁
 ```
 The bottom square is a pushout if the top square and the big square are.
 -/
+@[no_expose]
 def botSquareIsPushout (H₁ : IsColimit t₁) (H₂ : IsColimit (t₁.pasteVert t₂ hi₂)) : IsColimit t₂ :=
   PushoutCocone.isColimitOfFlip
     (rightSquareIsPushout _ hi₂ (PushoutCocone.flipIsColimit H₁) (PushoutCocone.flipIsColimit H₂))
 
 /-- Given that the top square is a pushout, the pasted square is a pushout iff the bottom square is.
 -/
+@[no_expose]
 def pasteVertIsPushoutEquiv (H : IsColimit t₁) :
     IsColimit (t₁.pasteVert t₂ hi₂) ≃ IsColimit t₂ where
   toFun H' := botSquareIsPushout t₂ _ H H'
@@ -449,6 +461,7 @@ instance hasPullbackHorizPaste : HasPullback (f' ≫ f) g :=
   }
 
 /-- The canonical isomorphism `W ×[X] (X ×[Z] Y) ≅ W ×[Z] Y` -/
+@[no_expose]
 noncomputable def pullbackRightPullbackFstIso :
     pullback f' (pullback.fst f g) ≅ pullback (f' ≫ f) g :=
   IsLimit.conePointUniqueUpToIso
@@ -516,6 +529,7 @@ instance hasPullbackVertPaste : HasPullback f (g' ≫ g) :=
   }
 
 /-- The canonical isomorphism `(X ×[Z] Y) ×[Y] W ≅ X ×[Z] W` -/
+@[no_expose]
 def pullbackLeftPullbackSndIso :
     pullback (pullback.snd f g) g' ≅ pullback f (g' ≫ g) :=
   IsLimit.conePointUniqueUpToIso
@@ -576,6 +590,7 @@ instance : HasPushout f (g ≫ g') :=
   }
 
 /-- The canonical isomorphism `(Y ⨿[X] Z) ⨿[Z] W ≅ Y ⨿[X] W` -/
+@[no_expose]
 noncomputable def pushoutLeftPushoutInrIso :
     pushout (pushout.inr f g) g' ≅ pushout f (g ≫ g') :=
   IsColimit.coconePointUniqueUpToIso
@@ -589,7 +604,7 @@ theorem inl_pushoutLeftPushoutInrIso_inv :
   IsColimit.comp_coconePointUniqueUpToIso_inv _ _ WalkingSpan.left
 
 @[reassoc (attr := simp)]
-theorem inr_pushoutLeftPushoutInrIso_hom :
+private theorem inr_pushoutLeftPushoutInrIso_hom :
     (pushout.inr (pushout.inr f g) g') ≫ (pushoutLeftPushoutInrIso f g g').hom =
       (pushout.inr f (g ≫ g')) :=
   IsColimit.comp_coconePointUniqueUpToIso_hom (pasteHorizIsPushout _ _ _) _ WalkingSpan.right
@@ -601,14 +616,14 @@ theorem inr_pushoutLeftPushoutInrIso_inv :
   IsColimit.comp_coconePointUniqueUpToIso_inv _ _ WalkingSpan.right
 
 @[reassoc (attr := simp)]
-theorem inl_inl_pushoutLeftPushoutInrIso_hom :
+private theorem inl_inl_pushoutLeftPushoutInrIso_hom :
     (pushout.inl f g) ≫ (pushout.inl (pushout.inr f g) g') ≫
       (pushoutLeftPushoutInrIso f g g').hom = (pushout.inl f (g ≫ g')) := by
   rw [← Category.assoc]
   apply IsColimit.comp_coconePointUniqueUpToIso_hom (pasteHorizIsPushout _ _ _) _ WalkingSpan.left
 
 @[reassoc (attr := simp)]
-theorem inr_inl_pushoutLeftPushoutInrIso_hom :
+private theorem inr_inl_pushoutLeftPushoutInrIso_hom :
     pushout.inr f g ≫ pushout.inl (pushout.inr f g) g' ≫ (pushoutLeftPushoutInrIso f g g').hom =
       g' ≫ pushout.inr f (g ≫ g') := by
   rw [← Category.assoc, ← Iso.eq_comp_inv, Category.assoc, inr_pushoutLeftPushoutInrIso_inv,
@@ -644,6 +659,7 @@ instance hasPushoutVertPaste : HasPushout (f ≫ f') g :=
   }
 
 /-- The canonical isomorphism `W ⨿[Y] (Y ⨿[X] Z) ≅ W ⨿[X] Z` -/
+@[no_expose]
 noncomputable def pushoutRightPushoutInlIso :
     pushout f' (pushout.inl f g) ≅ pushout (f ≫ f') g :=
   IsColimit.coconePointUniqueUpToIso
@@ -651,30 +667,30 @@ noncomputable def pushoutRightPushoutInlIso :
     (pushout.isColimit (f ≫ f') g)
 
 @[reassoc (attr := simp)]
-theorem inl_pushoutRightPushoutInlIso_inv :
+private theorem inl_pushoutRightPushoutInlIso_inv :
     pushout.inl _ _ ≫ (pushoutRightPushoutInlIso f g f').inv = pushout.inl _ _ :=
   IsColimit.comp_coconePointUniqueUpToIso_inv _ _ WalkingSpan.left
 
 @[reassoc (attr := simp)]
-theorem inr_inr_pushoutRightPushoutInlIso_hom :
+private theorem inr_inr_pushoutRightPushoutInlIso_hom :
     pushout.inr _ _ ≫ pushout.inr _ _ ≫ (pushoutRightPushoutInlIso f g f').hom =
       pushout.inr _ _ := by
   rw [← Category.assoc]
   apply IsColimit.comp_coconePointUniqueUpToIso_hom (pasteVertIsPushout rfl _ _) _ WalkingSpan.right
 
 @[reassoc (attr := simp)]
-theorem inr_pushoutRightPushoutInlIso_inv :
+private theorem inr_pushoutRightPushoutInlIso_inv :
     pushout.inr _ _ ≫ (pushoutRightPushoutInlIso f g f').inv =
       pushout.inr _ _ ≫ pushout.inr _ _ :=
   IsColimit.comp_coconePointUniqueUpToIso_inv _ _ WalkingSpan.right
 
 @[reassoc (attr := simp)]
-theorem inl_pushoutRightPushoutInlIso_hom :
+private theorem inl_pushoutRightPushoutInlIso_hom :
     pushout.inl _ _ ≫ (pushoutRightPushoutInlIso f g f').hom = pushout.inl _ _ :=
   IsColimit.comp_coconePointUniqueUpToIso_hom (pasteVertIsPushout rfl _ _) _ WalkingSpan.left
 
 @[reassoc (attr := simp)]
-theorem inr_inl_pushoutRightPushoutInlIso_hom :
+private theorem inr_inl_pushoutRightPushoutInlIso_hom :
     pushout.inl _ _ ≫ pushout.inr _ _ ≫ (pushoutRightPushoutInlIso f g f').hom =
       f' ≫ pushout.inl _ _ := by
   rw [← Category.assoc, ← pushout.condition, Category.assoc, inl_pushoutRightPushoutInlIso_hom]

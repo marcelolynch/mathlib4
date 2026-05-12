@@ -35,6 +35,7 @@ open Function
 open Matrix Kronecker
 
 /-- `A.IsDiag` means square matrix `A` is a diagonal matrix. -/
+@[no_expose]
 def IsDiag [Zero α] (A : Matrix n n α) : Prop :=
   Pairwise fun i j => A i j = 0
 
@@ -51,12 +52,12 @@ theorem IsDiag.diagonal_diag [Zero α] [DecidableEq n] {A : Matrix n n α} (h : 
     · rw [diagonal_apply_ne _ hij, h hij]
 
 /-- `Matrix.IsDiag.diagonal_diag` as an iff. -/
-theorem isDiag_iff_diagonal_diag [Zero α] [DecidableEq n] (A : Matrix n n α) :
+private theorem isDiag_iff_diagonal_diag [Zero α] [DecidableEq n] (A : Matrix n n α) :
     A.IsDiag ↔ diagonal (diag A) = A :=
   ⟨IsDiag.diagonal_diag, fun hd => hd ▸ isDiag_diagonal (diag A)⟩
 
 /-- Every matrix indexed by a subsingleton is diagonal. -/
-theorem isDiag_of_subsingleton [Zero α] [Subsingleton n] (A : Matrix n n α) : A.IsDiag :=
+private theorem isDiag_of_subsingleton [Zero α] [Subsingleton n] (A : Matrix n n α) : A.IsDiag :=
   fun i j h => (h <| Subsingleton.elim i j).elim
 
 /-- Every zero matrix is diagonal. -/
@@ -146,7 +147,7 @@ theorem IsDiag.fromBlocks [Zero α] {A : Matrix m m α} {D : Matrix n n α} (ha 
   · exact hd (ne_of_apply_ne _ hij)
 
 /-- This is the `iff` version of `Matrix.IsDiag.fromBlocks`. -/
-theorem isDiag_fromBlocks_iff [Zero α] {A : Matrix m m α} {B : Matrix m n α} {C : Matrix n m α}
+private theorem isDiag_fromBlocks_iff [Zero α] {A : Matrix m m α} {B : Matrix m n α} {C : Matrix n m α}
     {D : Matrix n n α} : (A.fromBlocks B C D).IsDiag ↔ A.IsDiag ∧ B = 0 ∧ C = 0 ∧ D.IsDiag := by
   constructor
   · intro h
@@ -166,11 +167,11 @@ theorem IsDiag.fromBlocks_of_isSymm [Zero α] {A : Matrix m m α} {C : Matrix n 
   rw [← (isSymm_fromBlocks_iff.1 h).2.1]
   exact ha.fromBlocks hd
 
-theorem mul_transpose_self_isDiag_iff_hasOrthogonalRows [Fintype n] [Mul α] [AddCommMonoid α]
+private theorem mul_transpose_self_isDiag_iff_hasOrthogonalRows [Fintype n] [Mul α] [AddCommMonoid α]
     {A : Matrix m n α} : (A * Aᵀ).IsDiag ↔ A.HasOrthogonalRows :=
   Iff.rfl
 
-theorem transpose_mul_self_isDiag_iff_hasOrthogonalCols [Fintype m] [Mul α] [AddCommMonoid α]
+private theorem transpose_mul_self_isDiag_iff_hasOrthogonalCols [Fintype m] [Mul α] [AddCommMonoid α]
     {A : Matrix m n α} : (Aᵀ * A).IsDiag ↔ A.HasOrthogonalCols :=
   Iff.rfl
 

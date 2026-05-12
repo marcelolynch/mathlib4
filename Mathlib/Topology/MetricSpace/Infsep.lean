@@ -41,6 +41,7 @@ open ENNReal
 open Function
 
 /-- The "extended infimum separation" of a set with an edist function. -/
+@[no_expose]
 noncomputable def einfsep [EDist α] (s : Set α) : ℝ≥0∞ :=
   ⨅ (x ∈ s) (y ∈ s) (_ : x ≠ y), edist x y
 
@@ -48,61 +49,61 @@ section EDist
 
 variable [EDist α] {x y : α} {s t : Set α}
 
-theorem le_einfsep_iff {d} :
+private theorem le_einfsep_iff {d} :
     d ≤ s.einfsep ↔ ∀ x ∈ s, ∀ y ∈ s, x ≠ y → d ≤ edist x y := by
   simp_rw [einfsep, le_iInf_iff]
 
-theorem einfsep_zero : s.einfsep = 0 ↔ ∀ C > 0, ∃ x ∈ s, ∃ y ∈ s, x ≠ y ∧ edist x y < C := by
+private theorem einfsep_zero : s.einfsep = 0 ↔ ∀ C > 0, ∃ x ∈ s, ∃ y ∈ s, x ≠ y ∧ edist x y < C := by
   simp_rw [einfsep, ← _root_.bot_eq_zero, iInf_eq_bot, iInf_lt_iff, exists_prop]
 
-theorem einfsep_pos : 0 < s.einfsep ↔ ∃ C > 0, ∀ x ∈ s, ∀ y ∈ s, x ≠ y → C ≤ edist x y := by
+private theorem einfsep_pos : 0 < s.einfsep ↔ ∃ C > 0, ∀ x ∈ s, ∀ y ∈ s, x ≠ y → C ≤ edist x y := by
   rw [pos_iff_ne_zero, Ne, einfsep_zero]
   simp only [not_forall, not_exists, not_lt, exists_prop, not_and]
 
-theorem einfsep_top :
+private theorem einfsep_top :
     s.einfsep = ∞ ↔ ∀ x ∈ s, ∀ y ∈ s, x ≠ y → edist x y = ∞ := by
   simp_rw [einfsep, iInf_eq_top]
 
-theorem einfsep_lt_top :
+private theorem einfsep_lt_top :
     s.einfsep < ∞ ↔ ∃ x ∈ s, ∃ y ∈ s, x ≠ y ∧ edist x y < ∞ := by
   simp_rw [einfsep, iInf_lt_iff, exists_prop]
 
-theorem einfsep_ne_top :
+private theorem einfsep_ne_top :
     s.einfsep ≠ ∞ ↔ ∃ x ∈ s, ∃ y ∈ s, x ≠ y ∧ edist x y ≠ ∞ := by
   simp_rw [← lt_top_iff_ne_top, einfsep_lt_top]
 
-theorem einfsep_lt_iff {d} :
+private theorem einfsep_lt_iff {d} :
     s.einfsep < d ↔ ∃ x ∈ s, ∃ y ∈ s, x ≠ y ∧ edist x y < d := by
   simp_rw [einfsep, iInf_lt_iff, exists_prop]
 
-theorem nontrivial_of_einfsep_lt_top (hs : s.einfsep < ∞) : s.Nontrivial := by
+private theorem nontrivial_of_einfsep_lt_top (hs : s.einfsep < ∞) : s.Nontrivial := by
   rcases einfsep_lt_top.1 hs with ⟨_, hx, _, hy, hxy, _⟩
   exact ⟨_, hx, _, hy, hxy⟩
 
-theorem nontrivial_of_einfsep_ne_top (hs : s.einfsep ≠ ∞) : s.Nontrivial :=
+private theorem nontrivial_of_einfsep_ne_top (hs : s.einfsep ≠ ∞) : s.Nontrivial :=
   nontrivial_of_einfsep_lt_top (lt_top_iff_ne_top.mpr hs)
 
-theorem Subsingleton.einfsep (hs : s.Subsingleton) : s.einfsep = ∞ := by
+private theorem Subsingleton.einfsep (hs : s.Subsingleton) : s.einfsep = ∞ := by
   rw [einfsep_top]
   exact fun _ hx _ hy hxy => (hxy <| hs hx hy).elim
 
-theorem le_einfsep_image_iff {d} {f : β → α} {s : Set β} : d ≤ einfsep (f '' s)
+private theorem le_einfsep_image_iff {d} {f : β → α} {s : Set β} : d ≤ einfsep (f '' s)
     ↔ ∀ x ∈ s, ∀ y ∈ s, f x ≠ f y → d ≤ edist (f x) (f y) := by
   simp_rw [le_einfsep_iff, forall_mem_image]
 
-theorem le_edist_of_le_einfsep {d x} (hx : x ∈ s) {y} (hy : y ∈ s) (hxy : x ≠ y)
+private theorem le_edist_of_le_einfsep {d x} (hx : x ∈ s) {y} (hy : y ∈ s) (hxy : x ≠ y)
     (hd : d ≤ s.einfsep) : d ≤ edist x y :=
   le_einfsep_iff.1 hd x hx y hy hxy
 
-theorem einfsep_le_edist_of_mem {x} (hx : x ∈ s) {y} (hy : y ∈ s) (hxy : x ≠ y) :
+private theorem einfsep_le_edist_of_mem {x} (hx : x ∈ s) {y} (hy : y ∈ s) (hxy : x ≠ y) :
     s.einfsep ≤ edist x y :=
   le_edist_of_le_einfsep hx hy hxy le_rfl
 
-theorem einfsep_le_of_mem_of_edist_le {d x} (hx : x ∈ s) {y} (hy : y ∈ s) (hxy : x ≠ y)
+private theorem einfsep_le_of_mem_of_edist_le {d x} (hx : x ∈ s) {y} (hy : y ∈ s) (hxy : x ≠ y)
     (hxy' : edist x y ≤ d) : s.einfsep ≤ d :=
   le_trans (einfsep_le_edist_of_mem hx hy hxy) hxy'
 
-theorem le_einfsep {d} (h : ∀ x ∈ s, ∀ y ∈ s, x ≠ y → d ≤ edist x y) : d ≤ s.einfsep :=
+private theorem le_einfsep {d} (h : ∀ x ∈ s, ∀ y ∈ s, x ≠ y → d ≤ edist x y) : d ≤ s.einfsep :=
   le_einfsep_iff.2 h
 
 @[simp]
@@ -113,41 +114,41 @@ theorem einfsep_empty : (∅ : Set α).einfsep = ∞ :=
 theorem einfsep_singleton : ({x} : Set α).einfsep = ∞ :=
   subsingleton_singleton.einfsep
 
-theorem einfsep_iUnion_mem_option {ι : Type*} (o : Option ι) (s : ι → Set α) :
+private theorem einfsep_iUnion_mem_option {ι : Type*} (o : Option ι) (s : ι → Set α) :
     (⋃ i ∈ o, s i).einfsep = ⨅ i ∈ o, (s i).einfsep := by cases o <;> simp
 
-theorem einfsep_anti (hst : s ⊆ t) : t.einfsep ≤ s.einfsep :=
+private theorem einfsep_anti (hst : s ⊆ t) : t.einfsep ≤ s.einfsep :=
   le_einfsep fun _x hx _y hy => einfsep_le_edist_of_mem (hst hx) (hst hy)
 
-theorem einfsep_insert_le : (insert x s).einfsep ≤ ⨅ (y ∈ s) (_ : x ≠ y), edist x y := by
+private theorem einfsep_insert_le : (insert x s).einfsep ≤ ⨅ (y ∈ s) (_ : x ≠ y), edist x y := by
   simp_rw [le_iInf_iff]
   exact fun _ hy hxy => einfsep_le_edist_of_mem (mem_insert _ _) (mem_insert_of_mem _ hy) hxy
 
-theorem le_einfsep_pair : edist x y ⊓ edist y x ≤ ({x, y} : Set α).einfsep := by
+private theorem le_einfsep_pair : edist x y ⊓ edist y x ≤ ({x, y} : Set α).einfsep := by
   simp_rw [le_einfsep_iff, inf_le_iff, mem_insert_iff, mem_singleton_iff]
   rintro a (rfl | rfl) b (rfl | rfl) hab <;> (try simp only [le_refl, true_or, or_true]) <;>
     contradiction
 
-theorem einfsep_pair_le_left (hxy : x ≠ y) : ({x, y} : Set α).einfsep ≤ edist x y :=
+private theorem einfsep_pair_le_left (hxy : x ≠ y) : ({x, y} : Set α).einfsep ≤ edist x y :=
   einfsep_le_edist_of_mem (mem_insert _ _) (mem_insert_of_mem _ (mem_singleton _)) hxy
 
-theorem einfsep_pair_le_right (hxy : x ≠ y) : ({x, y} : Set α).einfsep ≤ edist y x := by
+private theorem einfsep_pair_le_right (hxy : x ≠ y) : ({x, y} : Set α).einfsep ≤ edist y x := by
   rw [pair_comm]; exact einfsep_pair_le_left hxy.symm
 
-theorem einfsep_pair_eq_inf (hxy : x ≠ y) : ({x, y} : Set α).einfsep = edist x y ⊓ edist y x :=
+private theorem einfsep_pair_eq_inf (hxy : x ≠ y) : ({x, y} : Set α).einfsep = edist x y ⊓ edist y x :=
   le_antisymm (le_inf (einfsep_pair_le_left hxy) (einfsep_pair_le_right hxy)) le_einfsep_pair
 
-theorem einfsep_eq_iInf : s.einfsep = ⨅ d : s.offDiag, (uncurry edist) (d : α × α) := by
+private theorem einfsep_eq_iInf : s.einfsep = ⨅ d : s.offDiag, (uncurry edist) (d : α × α) := by
   refine eq_of_forall_le_iff fun _ => ?_
   simp_rw [le_einfsep_iff, le_iInf_iff, imp_forall_iff, SetCoe.forall, mem_offDiag,
     Prod.forall, uncurry_apply_pair, and_imp]
 
-theorem einfsep_of_fintype [Fintype s] : s.einfsep = s.offDiag.toFinset.inf (uncurry edist) := by
+private theorem einfsep_of_fintype [Fintype s] : s.einfsep = s.offDiag.toFinset.inf (uncurry edist) := by
   refine eq_of_forall_le_iff fun _ => ?_
   simp_rw [le_einfsep_iff, imp_forall_iff, Finset.le_inf_iff, mem_toFinset, mem_offDiag,
     Prod.forall, uncurry_apply_pair, and_imp]
 
-theorem Finite.einfsep (hs : s.Finite) : s.einfsep = hs.offDiag.toFinset.inf (uncurry edist) := by
+private theorem Finite.einfsep (hs : s.Finite) : s.einfsep = hs.offDiag.toFinset.inf (uncurry edist) := by
   refine eq_of_forall_le_iff fun _ => ?_
   simp_rw [le_einfsep_iff, imp_forall_iff, Finset.le_inf_iff, Finite.mem_toFinset, mem_offDiag,
     Prod.forall, uncurry_apply_pair, and_imp]
@@ -176,12 +177,12 @@ section PseudoEMetricSpace
 
 variable [PseudoEMetricSpace α] {x y z : α} {s : Set α}
 
-theorem einfsep_pair (hxy : x ≠ y) : ({x, y} : Set α).einfsep = edist x y := by
+private theorem einfsep_pair (hxy : x ≠ y) : ({x, y} : Set α).einfsep = edist x y := by
   nth_rw 1 [← min_self (edist x y)]
   convert einfsep_pair_eq_inf hxy using 2
   rw [edist_comm]
 
-theorem einfsep_insert : einfsep (insert x s) =
+private theorem einfsep_insert : einfsep (insert x s) =
     (⨅ (y ∈ s) (_ : x ≠ y), edist x y) ⊓ s.einfsep := by
   refine le_antisymm (le_min einfsep_insert_le (einfsep_anti (subset_insert _ _))) ?_
   simp_rw [le_einfsep_iff, inf_le_iff, mem_insert_iff]
@@ -192,12 +193,12 @@ theorem einfsep_insert : einfsep (insert x s) =
     exact Or.inl (iInf_le_of_le _ (iInf₂_le hy hyz.symm))
   · exact Or.inr (einfsep_le_edist_of_mem hy hz hyz)
 
-theorem einfsep_triple (hxy : x ≠ y) (hyz : y ≠ z) (hxz : x ≠ z) :
+private theorem einfsep_triple (hxy : x ≠ y) (hyz : y ≠ z) (hxz : x ≠ z) :
     einfsep ({x, y, z} : Set α) = edist x y ⊓ edist x z ⊓ edist y z := by
   simp_rw [einfsep_insert, iInf_insert, iInf_singleton, einfsep_singleton, inf_top_eq,
     ciInf_pos hxy, ciInf_pos hyz, ciInf_pos hxz]
 
-theorem le_einfsep_pi_of_le {X : β → Type*} [Fintype β] [∀ b, PseudoEMetricSpace (X b)]
+private theorem le_einfsep_pi_of_le {X : β → Type*} [Fintype β] [∀ b, PseudoEMetricSpace (X b)]
     {s : ∀ b : β, Set (X b)} {c : ℝ≥0∞} (h : ∀ b, c ≤ einfsep (s b)) :
     c ≤ einfsep (Set.pi univ s) := by
   refine le_einfsep fun x hx y hy hxy => ?_
@@ -211,28 +212,28 @@ section PseudoMetricSpace
 
 variable [PseudoMetricSpace α] {s : Set α}
 
-theorem subsingleton_of_einfsep_eq_top (hs : s.einfsep = ∞) : s.Subsingleton := by
+private theorem subsingleton_of_einfsep_eq_top (hs : s.einfsep = ∞) : s.Subsingleton := by
   rw [einfsep_top] at hs
   exact fun _ hx _ hy => of_not_not fun hxy => edist_ne_top _ _ (hs _ hx _ hy hxy)
 
-theorem einfsep_eq_top_iff : s.einfsep = ∞ ↔ s.Subsingleton :=
+private theorem einfsep_eq_top_iff : s.einfsep = ∞ ↔ s.Subsingleton :=
   ⟨subsingleton_of_einfsep_eq_top, Subsingleton.einfsep⟩
 
-theorem Nontrivial.einfsep_ne_top (hs : s.Nontrivial) : s.einfsep ≠ ∞ := by
+private theorem Nontrivial.einfsep_ne_top (hs : s.Nontrivial) : s.einfsep ≠ ∞ := by
   contrapose! hs
   exact subsingleton_of_einfsep_eq_top hs
 
-theorem Nontrivial.einfsep_lt_top (hs : s.Nontrivial) : s.einfsep < ∞ := by
+private theorem Nontrivial.einfsep_lt_top (hs : s.Nontrivial) : s.einfsep < ∞ := by
   rw [lt_top_iff_ne_top]
   exact hs.einfsep_ne_top
 
-theorem einfsep_lt_top_iff : s.einfsep < ∞ ↔ s.Nontrivial :=
+private theorem einfsep_lt_top_iff : s.einfsep < ∞ ↔ s.Nontrivial :=
   ⟨nontrivial_of_einfsep_lt_top, Nontrivial.einfsep_lt_top⟩
 
-theorem einfsep_ne_top_iff : s.einfsep ≠ ∞ ↔ s.Nontrivial :=
+private theorem einfsep_ne_top_iff : s.einfsep ≠ ∞ ↔ s.Nontrivial :=
   ⟨nontrivial_of_einfsep_ne_top, Nontrivial.einfsep_ne_top⟩
 
-theorem le_einfsep_of_forall_dist_le {d} (h : ∀ x ∈ s, ∀ y ∈ s, x ≠ y → d ≤ dist x y) :
+private theorem le_einfsep_of_forall_dist_le {d} (h : ∀ x ∈ s, ∀ y ∈ s, x ≠ y → d ≤ dist x y) :
     ENNReal.ofReal d ≤ s.einfsep :=
   le_einfsep fun x hx y hy hxy => (edist_dist x y).symm ▸ ENNReal.ofReal_le_ofReal (h x hx y hy hxy)
 
@@ -242,7 +243,7 @@ section EMetricSpace
 
 variable [EMetricSpace α] {s : Set α}
 
-theorem einfsep_pos_of_finite [Finite s] : 0 < s.einfsep := by
+private theorem einfsep_pos_of_finite [Finite s] : 0 < s.einfsep := by
   cases nonempty_fintype s
   by_cases hs : s.Nontrivial
   · rcases hs.einfsep_exists_of_finite with ⟨x, _hx, y, _hy, hxy, hxy'⟩
@@ -250,12 +251,12 @@ theorem einfsep_pos_of_finite [Finite s] : 0 < s.einfsep := by
   · rw [not_nontrivial_iff] at hs
     exact hs.einfsep.symm ▸ WithTop.top_pos
 
-theorem relatively_discrete_of_finite [Finite s] :
+private theorem relatively_discrete_of_finite [Finite s] :
     ∃ C > 0, ∀ x ∈ s, ∀ y ∈ s, x ≠ y → C ≤ edist x y := by
   rw [← einfsep_pos]
   exact einfsep_pos_of_finite
 
-theorem Finite.einfsep_pos (hs : s.Finite) : 0 < s.einfsep :=
+private theorem Finite.einfsep_pos (hs : s.Finite) : 0 < s.einfsep :=
   letI := hs.fintype
   einfsep_pos_of_finite
 
@@ -275,6 +276,7 @@ open ENNReal
 open Set Function
 
 /-- The "infimum separation" of a set with an edist function. -/
+@[no_expose]
 noncomputable def infsep [EDist α] (s : Set α) : ℝ :=
   ENNReal.toReal s.einfsep
 
@@ -282,30 +284,30 @@ section EDist
 
 variable [EDist α] {x y : α} {s : Set α}
 
-theorem infsep_zero : s.infsep = 0 ↔ s.einfsep = 0 ∨ s.einfsep = ∞ := by
+private theorem infsep_zero : s.infsep = 0 ↔ s.einfsep = 0 ∨ s.einfsep = ∞ := by
   rw [infsep, ENNReal.toReal_eq_zero_iff]
 
-theorem infsep_nonneg : 0 ≤ s.infsep :=
+private theorem infsep_nonneg : 0 ≤ s.infsep :=
   ENNReal.toReal_nonneg
 
-theorem infsep_pos : 0 < s.infsep ↔ 0 < s.einfsep ∧ s.einfsep < ∞ := by
+private theorem infsep_pos : 0 < s.infsep ↔ 0 < s.einfsep ∧ s.einfsep < ∞ := by
   simp_rw [infsep, ENNReal.toReal_pos_iff]
 
-theorem Subsingleton.infsep_zero (hs : s.Subsingleton) : s.infsep = 0 :=
+private theorem Subsingleton.infsep_zero (hs : s.Subsingleton) : s.infsep = 0 :=
   Set.infsep_zero.mpr <| Or.inr hs.einfsep
 
-theorem nontrivial_of_infsep_pos (hs : 0 < s.infsep) : s.Nontrivial := by
+private theorem nontrivial_of_infsep_pos (hs : 0 < s.infsep) : s.Nontrivial := by
   contrapose hs
   rw [not_nontrivial_iff] at hs
   exact hs.infsep_zero ▸ lt_irrefl _
 
-theorem infsep_empty : (∅ : Set α).infsep = 0 :=
+private theorem infsep_empty : (∅ : Set α).infsep = 0 :=
   subsingleton_empty.infsep_zero
 
-theorem infsep_singleton : ({x} : Set α).infsep = 0 :=
+private theorem infsep_singleton : ({x} : Set α).infsep = 0 :=
   subsingleton_singleton.infsep_zero
 
-theorem infsep_pair_le_toReal_inf (hxy : x ≠ y) :
+private theorem infsep_pair_le_toReal_inf (hxy : x ≠ y) :
     ({x, y} : Set α).infsep ≤ (edist x y ⊓ edist y x).toReal := by
   simp_rw [infsep, einfsep_pair_eq_inf hxy]
   simp
@@ -316,7 +318,7 @@ section PseudoEMetricSpace
 
 variable [PseudoEMetricSpace α] {x y : α}
 
-theorem infsep_pair_eq_toReal : ({x, y} : Set α).infsep = (edist x y).toReal := by
+private theorem infsep_pair_eq_toReal : ({x, y} : Set α).infsep = (edist x y).toReal := by
   by_cases hxy : x = y
   · rw [hxy]
     simp only [infsep_singleton, pair_eq_singleton, edist_self, ENNReal.toReal_zero]
@@ -341,7 +343,7 @@ theorem Nontrivial.le_infsep {d} (hs : s.Nontrivial)
     (h : ∀ x ∈ s, ∀ y ∈ s, x ≠ y → d ≤ dist x y) : d ≤ s.infsep :=
   hs.le_infsep_iff.2 h
 
-theorem le_edist_of_le_infsep {d x} (hx : x ∈ s) {y} (hy : y ∈ s) (hxy : x ≠ y)
+private theorem le_edist_of_le_infsep {d x} (hx : x ∈ s) {y} (hy : y ∈ s) (hxy : x ≠ y)
     (hd : d ≤ s.infsep) : d ≤ dist x y := by
   by_cases hs : s.Nontrivial
   · exact hs.le_infsep_iff.1 hd x hx y hy hxy
@@ -349,18 +351,18 @@ theorem le_edist_of_le_infsep {d x} (hx : x ∈ s) {y} (hy : y ∈ s) (hxy : x �
     rw [hs.infsep_zero] at hd
     exact le_trans hd dist_nonneg
 
-theorem infsep_le_dist_of_mem (hx : x ∈ s) (hy : y ∈ s) (hxy : x ≠ y) : s.infsep ≤ dist x y :=
+private theorem infsep_le_dist_of_mem (hx : x ∈ s) (hy : y ∈ s) (hxy : x ≠ y) : s.infsep ≤ dist x y :=
   le_edist_of_le_infsep hx hy hxy le_rfl
 
-theorem infsep_le_of_mem_of_edist_le {d x} (hx : x ∈ s) {y} (hy : y ∈ s) (hxy : x ≠ y)
+private theorem infsep_le_of_mem_of_edist_le {d x} (hx : x ∈ s) {y} (hy : y ∈ s) (hxy : x ≠ y)
     (hxy' : dist x y ≤ d) : s.infsep ≤ d :=
   le_trans (infsep_le_dist_of_mem hx hy hxy) hxy'
 
-theorem infsep_pair : ({x, y} : Set α).infsep = dist x y := by
+private theorem infsep_pair : ({x, y} : Set α).infsep = dist x y := by
   rw [infsep_pair_eq_toReal, edist_dist]
   exact ENNReal.toReal_ofReal dist_nonneg
 
-theorem infsep_triple (hxy : x ≠ y) (hyz : y ≠ z) (hxz : x ≠ z) :
+private theorem infsep_triple (hxy : x ≠ y) (hyz : y ≠ z) (hxz : x ≠ z) :
     ({x, y, z} : Set α).infsep = dist x y ⊓ dist x z ⊓ dist y z := by
   simp only [infsep, einfsep_triple hxy hyz hxz, ENNReal.toReal_inf, edist_ne_top x y,
     edist_ne_top x z, edist_ne_top y z, dist_edist, Ne, inf_eq_top_iff, and_self_iff,
@@ -369,7 +371,7 @@ theorem infsep_triple (hxy : x ≠ y) (hyz : y ≠ z) (hxz : x ≠ z) :
 theorem Nontrivial.infsep_anti (hs : s.Nontrivial) (hst : s ⊆ t) : t.infsep ≤ s.infsep :=
   ENNReal.toReal_mono hs.einfsep_ne_top (einfsep_anti hst)
 
-theorem infsep_eq_iInf [Decidable s.Nontrivial] :
+private theorem infsep_eq_iInf [Decidable s.Nontrivial] :
     s.infsep = if s.Nontrivial then ⨅ d : s.offDiag, (uncurry dist) (d : α × α) else 0 := by
   split_ifs with hs
   · have hb : BddBelow (uncurry dist '' s.offDiag) := by
@@ -382,11 +384,11 @@ theorem infsep_eq_iInf [Decidable s.Nontrivial] :
       mem_offDiag, Prod.forall, uncurry_apply_pair, and_imp]
   · exact (not_nontrivial_iff.mp hs).infsep_zero
 
-theorem Nontrivial.infsep_eq_iInf (hs : s.Nontrivial) :
+private theorem Nontrivial.infsep_eq_iInf (hs : s.Nontrivial) :
     s.infsep = ⨅ d : s.offDiag, (uncurry dist) (d : α × α) := by
   classical rw [Set.infsep_eq_iInf, if_pos hs]
 
-theorem infsep_of_fintype [Decidable s.Nontrivial] [Fintype s] : s.infsep =
+private theorem infsep_of_fintype [Decidable s.Nontrivial] [Fintype s] : s.infsep =
     if hs : s.Nontrivial then s.offDiag.toFinset.inf' (by simpa) (uncurry dist) else 0 := by
   split_ifs with hs
   · refine eq_of_forall_le_iff fun _ => ?_
@@ -395,11 +397,11 @@ theorem infsep_of_fintype [Decidable s.Nontrivial] [Fintype s] : s.infsep =
   · rw [not_nontrivial_iff] at hs
     exact hs.infsep_zero
 
-theorem Nontrivial.infsep_of_fintype [Fintype s] (hs : s.Nontrivial) :
+private theorem Nontrivial.infsep_of_fintype [Fintype s] (hs : s.Nontrivial) :
     s.infsep = s.offDiag.toFinset.inf' (by simpa) (uncurry dist) := by
   classical rw [Set.infsep_of_fintype, dif_pos hs]
 
-theorem Finite.infsep [Decidable s.Nontrivial] (hsf : s.Finite) :
+private theorem Finite.infsep [Decidable s.Nontrivial] (hsf : s.Finite) :
     s.infsep =
       if hs : s.Nontrivial then hsf.offDiag.toFinset.inf' (by simpa) (uncurry dist) else 0 := by
   split_ifs with hs
@@ -451,11 +453,11 @@ section MetricSpace
 
 variable [MetricSpace α] {s : Set α}
 
-theorem infsep_zero_iff_subsingleton_of_finite [Finite s] : s.infsep = 0 ↔ s.Subsingleton := by
+private theorem infsep_zero_iff_subsingleton_of_finite [Finite s] : s.infsep = 0 ↔ s.Subsingleton := by
   rw [infsep_zero, einfsep_eq_top_iff, or_iff_right_iff_imp]
   exact fun H => (einfsep_pos_of_finite.ne' H).elim
 
-theorem infsep_pos_iff_nontrivial_of_finite [Finite s] : 0 < s.infsep ↔ s.Nontrivial := by
+private theorem infsep_pos_iff_nontrivial_of_finite [Finite s] : 0 < s.infsep ↔ s.Nontrivial := by
   rw [infsep_pos, einfsep_lt_top_iff, and_iff_right_iff_imp]
   exact fun _ => einfsep_pos_of_finite
 

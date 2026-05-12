@@ -165,6 +165,7 @@ def MatchState.pushFold (s : MatchState) (name : Name) (t : Term) : MatchState :
 
 /-- Matcher that assigns the current `SubExpr` into the match state;
 if a value already exists, then it checks for equality. -/
+@[no_expose]
 def matchVar (c : Name) : Matcher := fun s => do
   if let some (se, _, _) := s.vars[c]? then
     guard <| se.expr == (← getExpr)
@@ -173,27 +174,32 @@ def matchVar (c : Name) : Matcher := fun s => do
     s.captureSubexpr c
 
 /-- Matcher for an expression satisfying a given predicate. -/
+@[no_expose]
 def matchExpr (p : Expr → Bool) : Matcher := fun s => do
   guard <| p (← getExpr)
   return s
 
 /-- Matcher for `Expr.fvar`.
 It checks that the user name agrees and that the type of the expression is matched by `matchTy`. -/
+@[no_expose]
 def matchFVar (userName : Name) (matchTy : Matcher) : Matcher := fun s => do
   let .fvar fvarId ← getExpr | failure
   guard <| userName == (← fvarId.getUserName)
   withType (matchTy s)
 
 /-- Matcher that checks that the type of the expression is matched by `matchTy`. -/
+@[no_expose]
 def matchTypeOf (matchTy : Matcher) : Matcher := fun s => do
   withType (matchTy s)
 
 /-- Matches raw `Nat` literals. -/
+@[no_expose]
 def natLitMatcher (n : Nat) : Matcher := fun s => do
   guard <| (← getExpr).rawNatLit? == n
   return s
 
 /-- Matches applications. -/
+@[no_expose]
 def matchApp (matchFun matchArg : Matcher) : Matcher := fun s => do
   guard <| (← getExpr).isApp
   let s ← withAppFn <| matchFun s
@@ -202,6 +208,7 @@ def matchApp (matchFun matchArg : Matcher) : Matcher := fun s => do
 
 /-- Matches pi types. The name `n` should be unique, and `matchBody` should use `n`
 as the `userName` of its fvar. -/
+@[no_expose]
 def matchForall (matchDom : Matcher) (matchBody : Expr → Matcher) : Matcher := fun s => do
   guard <| (← getExpr).isForall
   let s ← withBindingDomain <| matchDom s
@@ -209,6 +216,7 @@ def matchForall (matchDom : Matcher) (matchBody : Expr → Matcher) : Matcher :=
   return s
 
 /-- Matches lambdas. The `matchBody` takes the fvar introduced when visiting the body. -/
+@[no_expose]
 def matchLambda (matchDom : Matcher) (matchBody : Expr → Matcher) : Matcher := fun s => do
   guard <| (← getExpr).isLambda
   let s ← withBindingDomain <| matchDom s
@@ -218,6 +226,7 @@ def matchLambda (matchDom : Matcher) (matchBody : Expr → Matcher) : Matcher :=
 /-- Adds all the names in `boundNames` to the local context
 with types that are fresh metavariables.
 This is used for example when initializing `p` in `(scoped p => ...)` when elaborating `...`. -/
+@[no_expose]
 def setupLCtx (lctx : LocalContext) (boundNames : Array Name) :
     MetaM (LocalContext × Std.HashMap FVarId Name) := do
   let mut lctx := lctx
@@ -232,6 +241,7 @@ def setupLCtx (lctx : LocalContext) (boundNames : Array Name) :
 Like `Expr.isType`, but uses logic that normalizes the universe level.
 Mirrors the core `Sort` delaborator logic.
 -/
+@[no_expose]
 def isType' : Expr → Bool
   | .sort u => u.dec.isSome
   | _       => false
@@ -353,6 +363,7 @@ Fails in the `OptionT` sense if it comes across something it's unable to handle.
 
 Also returns constant names that could serve as a key for a delaborator.
 For example, if it's for a function `f`, then `app.f`. -/
+@[no_expose]
 partial def mkExprMatcher (stx : Term) (boundNames : Array Name) :
     OptionT TermElabM (List DelabKey × Term) := do
   let (lctx, boundFVars) ← setupLCtx (← getLCtx) boundNames
@@ -374,6 +385,7 @@ against is in the `lit` variable.
 
 Runs `smatcher`, extracts the resulting `scopeId` variable, processes this value
 (which must be a lambda) to produce a binder, and loops. -/
+@[no_expose]
 partial def matchScoped (lit scopeId : Name) (smatcher : Matcher) : Matcher := go #[] where
   /-- Variant of `matchScoped` after some number of `binders` have already been captured. -/
   go (binders : Array (TSyntax ``extBinderParenthesized)) : Matcher := fun s => do
@@ -416,6 +428,7 @@ partial def matchScoped (lit scopeId : Name) (smatcher : Matcher) : Matcher := g
 Fails in the `OptionT` sense if a matcher couldn't be constructed.
 Also returns a delaborator key like in `mkExprMatcher`.
 Reminder: `$lit:ident : (scoped $scopedId:ident => $scopedTerm:Term)` -/
+@[no_expose]
 partial def mkScopedMatcher (lit scopeId : Name) (scopedTerm : Term) (boundNames : Array Name) :
     OptionT TermElabM (List DelabKey × Term) := do
   -- Build the matcher for `scopedTerm` with `scopeId` as an additional variable
@@ -445,6 +458,7 @@ partial def matchFoldl (lit x y : Name) (smatcher : Matcher) (sinit : Matcher) :
 
 /-- Create a `Term` that represents a matcher for `foldl` notation.
 Reminder: `( lit ","* => foldl (x y => scopedTerm) init)` -/
+@[no_expose]
 partial def mkFoldlMatcher (lit x y : Name) (scopedTerm init : Term) (boundNames : Array Name) :
     OptionT TermElabM (List DelabKey × Term) := do
   -- Build the `scopedTerm` matcher with `x` and `y` as additional variables
@@ -455,6 +469,7 @@ partial def mkFoldlMatcher (lit x y : Name) (scopedTerm init : Term) (boundNames
 
 /-- Create a `Term` that represents a matcher for `foldr` notation.
 Reminder: `( lit ","* => foldr (x y => scopedTerm) init)` -/
+@[no_expose]
 partial def mkFoldrMatcher (lit x y : Name) (scopedTerm init : Term) (boundNames : Array Name) :
     OptionT TermElabM (List DelabKey × Term) := do
   -- Build the `scopedTerm` matcher with `x` and `y` as additional variables
@@ -479,6 +494,7 @@ inductive BoundValueType
 syntax prettyPrintOpt := "(" &"prettyPrint" " := " (&"true" <|> &"false") ")"
 
 /-- Interpret a `prettyPrintOpt`. The default value is `true`. -/
+@[no_expose]
 def getPrettyPrintOpt (opt? : Option (TSyntax ``prettyPrintOpt)) : Bool :=
   if let some opt := opt? then
     match opt with
@@ -493,6 +509,7 @@ then delaborates the head and uses it for the ref.
 This causes tokens inside the syntax to refer to this constant.
 A consequence is that docgen will linkify the tokens.
 -/
+@[no_expose]
 def withHeadRefIfTagAppFns (d : Delab) : Delab := do
   let tagAppFns ← getPPOption getPPTagAppFns
   if tagAppFns && (← getExpr).getAppFn.consumeMData.isConst then

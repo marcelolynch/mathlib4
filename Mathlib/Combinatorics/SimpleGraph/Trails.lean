@@ -76,6 +76,7 @@ theorem IsTrail.even_countP_edges_iff {u v : V} {p : G.Walk u v} (ht : p.IsTrail
 that these are trails.
 
 Combine with `p.IsCircuit` to get an Eulerian circuit (also known as an "Eulerian cycle"). -/
+@[no_expose]
 def IsEulerian {u v : V} (p : G.Walk u v) : Prop :=
   ∀ e, e ∈ G.edgeSet → p.edges.count e = 1
 
@@ -102,7 +103,7 @@ theorem IsTrail.isEulerian_of_forall_mem {u v : V} {p : G.Walk u v} (h : p.IsTra
     (hc : ∀ e, e ∈ G.edgeSet → e ∈ p.edges) : p.IsEulerian := fun e he =>
   List.count_eq_one_of_mem h.edges_nodup (hc e he)
 
-theorem isEulerian_iff {u v : V} (p : G.Walk u v) :
+private theorem isEulerian_iff {u v : V} (p : G.Walk u v) :
     p.IsEulerian ↔ p.IsTrail ∧ ∀ e, e ∈ G.edgeSet → e ∈ p.edges := by
   constructor
   · intro h
@@ -110,7 +111,7 @@ theorem isEulerian_iff {u v : V} (p : G.Walk u v) :
   · rintro ⟨h, hl⟩
     exact h.isEulerian_of_forall_mem hl
 
-theorem IsTrail.isEulerian_iff {u v : V} {p : G.Walk u v} (hp : p.IsTrail) :
+private theorem IsTrail.isEulerian_iff {u v : V} {p : G.Walk u v} (hp : p.IsTrail) :
     p.IsEulerian ↔ p.edgeSet = G.edgeSet :=
   ⟨fun h ↦ Set.Subset.antisymm p.edges_subset_edgeSet (p.isEulerian_iff.mp h).2,
    fun h ↦ p.isEulerian_iff.mpr ⟨hp, by simp [← h]⟩⟩

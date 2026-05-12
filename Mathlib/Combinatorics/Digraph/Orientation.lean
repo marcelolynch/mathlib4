@@ -48,18 +48,20 @@ section toSimpleGraph
 Orientation-forgetting map from `Digraph` to `SimpleGraph` that gives an unoriented edge if
 either orientation is present.
 -/
+@[no_expose]
 def toSimpleGraphInclusive (G : Digraph V) : SimpleGraph V := SimpleGraph.fromRel G.Adj
 
 /--
 Orientation-forgetting map from `Digraph` to `SimpleGraph` that gives an unoriented edge if
 both orientations are present.
 -/
+@[no_expose]
 def toSimpleGraphStrict (G : Digraph V) : SimpleGraph V where
   Adj v w := v ≠ w ∧ G.Adj v w ∧ G.Adj w v
   symm _ _ h := And.intro h.1.symm h.2.symm
   loopless := ⟨fun _ h ↦ h.1 rfl⟩
 
-lemma toSimpleGraphStrict_subgraph_toSimpleGraphInclusive (G : Digraph V) :
+private lemma toSimpleGraphStrict_subgraph_toSimpleGraphInclusive (G : Digraph V) :
     G.toSimpleGraphStrict ≤ G.toSimpleGraphInclusive :=
   fun _ _ h ↦ ⟨h.1, Or.inl h.2.1⟩
 

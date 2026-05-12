@@ -37,6 +37,7 @@ variable {R : Type*} [Semiring R]
          (n : Type*) [Fintype n] [DecidableEq n]
 
 /-- The left ideal of matrices with entries in `I ≤ R`. -/
+@[no_expose]
 def matrix (I : Ideal R) : Ideal (Matrix n n R) where
   __ := I.toAddSubmonoid.matrix
   smul_mem' M N hN := by
@@ -50,10 +51,10 @@ def matrix (I : Ideal R) : Ideal (Matrix n n R) where
 theorem mem_matrix (I : Ideal R) (M : Matrix n n R) :
     M ∈ I.matrix n ↔ ∀ i j, M i j ∈ I := by rfl
 
-theorem matrix_monotone : Monotone (matrix (R := R) n) :=
+private theorem matrix_monotone : Monotone (matrix (R := R) n) :=
   fun _ _ IJ _ MI i j => IJ (MI i j)
 
-theorem matrix_strictMono_of_nonempty [Nonempty n] :
+private theorem matrix_strictMono_of_nonempty [Nonempty n] :
     StrictMono (matrix (R := R) n) :=
   matrix_monotone n |>.strictMono_of_injective <| fun I J eq => by
     ext x
@@ -83,7 +84,7 @@ variable {R : Type*} [Ring R] {n : Type*} [Fintype n] [DecidableEq n]
 
 /-- A standard basis matrix is in $J(Mₙ(I))$
 as long as its one possibly non-zero entry is in $J(I)$. -/
-theorem single_mem_jacobson_matrix (I : Ideal R) :
+private theorem single_mem_jacobson_matrix (I : Ideal R) :
     ∀ x ∈ I.jacobson, ∀ (i j : n), single i j x ∈ (I.matrix n).jacobson := by
   -- Proof generalized from example 8 in
   -- https://ysharifi.wordpress.com/2022/08/16/the-jacobson-radical-basic-examples/
@@ -102,7 +103,7 @@ theorem single_mem_jacobson_matrix (I : Ideal R) :
   · simp [N, qj, sum_apply, mul_apply]
 
 /-- For any left ideal $I ≤ R$, we have $Mₙ(J(I)) ≤ J(Mₙ(I))$. -/
-theorem matrix_jacobson_le (I : Ideal R) :
+private theorem matrix_jacobson_le (I : Ideal R) :
     I.jacobson.matrix n ≤ (I.matrix n).jacobson := by
   intro M MI
   rw [matrix_eq_sum_single M]
@@ -124,6 +125,7 @@ variable [NonUnitalNonAssocSemiring R] [Fintype n]
 variable (n)
 
 /-- The ring congruence of matrices with entries related by `c`. -/
+@[no_expose]
 def matrix (c : RingCon R) : RingCon (Matrix n n R) where
   r M N := ∀ i j, c (M i j) (N i j)
   -- note: kept `fun` to distinguish `RingCon`'s binders from `r`'s binders.
@@ -148,15 +150,15 @@ theorem matrix_apply_single [DecidableEq n] {c : RingCon R} {i j : n} {x y : R} 
   · simpa [hj] using c.refl _
   simpa using h
 
-theorem matrix_monotone : Monotone (matrix (R := R) n) :=
+private theorem matrix_monotone : Monotone (matrix (R := R) n) :=
   fun _ _ hc _ _ h _ _ ↦ hc (h _ _)
 
-theorem matrix_injective [Nonempty n] : Function.Injective (matrix (R := R) n) :=
+private theorem matrix_injective [Nonempty n] : Function.Injective (matrix (R := R) n) :=
   fun I J eq ↦ RingCon.ext fun r s ↦ by
     have := congr_fun (DFunLike.congr_fun eq (Matrix.of fun _ _ ↦ r)) (Matrix.of fun _ _ ↦ s)
     simpa using this
 
-theorem matrix_strictMono_of_nonempty [Nonempty n] :
+private theorem matrix_strictMono_of_nonempty [Nonempty n] :
     StrictMono (matrix (R := R) n) :=
   matrix_monotone n |>.strictMono_of_injective <| matrix_injective _
 
@@ -173,6 +175,7 @@ open Matrix
 variable {n}
 
 /-- The congruence relation induced by `c` on `single i j`. -/
+@[no_expose]
 def ofMatrix [DecidableEq n] (c : RingCon (Matrix n n R)) : RingCon R where
   r x y := ∀ i j, c (single i j x) (single i j y)
   iseqv.refl _ := fun _ _ ↦ c.refl _
@@ -219,12 +222,12 @@ theorem matrix_ofMatrix [DecidableEq n] (c : RingCon (Matrix n n R)) :
     simpa using c.mul (c.mul (c.refl <| single i i' 1) h) (c.refl <| single j' j 1)
 
 /-- A version of `ofMatrix_rel` for a single matrix index, rather than all indices. -/
-theorem ofMatrix_rel' [DecidableEq n] {c : RingCon (Matrix n n R)} {x y : R} (i j : n) :
+private theorem ofMatrix_rel' [DecidableEq n] {c : RingCon (Matrix n n R)} {x y : R} (i j : n) :
     ofMatrix c x y ↔ c (single i j x) (single i j y) := by
   refine ⟨fun h ↦ h i j, fun h i' j' ↦ ?_⟩
   simpa using c.mul (c.mul (c.refl <| single i' i 1) h) (c.refl <| single j j' 1)
 
-theorem coe_ofMatrix_eq_relationMap [DecidableEq n] {c : RingCon (Matrix n n R)} (i j : n) :
+private theorem coe_ofMatrix_eq_relationMap [DecidableEq n] {c : RingCon (Matrix n n R)} (i j : n) :
     ⇑(ofMatrix c) = Relation.Map c (· i j) (· i j) := by
   ext x y
   constructor
@@ -255,10 +258,10 @@ def matrix (I : TwoSidedIdeal R) : TwoSidedIdeal (Matrix n n R) where
 lemma mem_matrix (I : TwoSidedIdeal R) (M : Matrix n n R) :
     M ∈ I.matrix n ↔ ∀ i j, M i j ∈ I := Iff.rfl
 
-theorem matrix_monotone : Monotone (matrix (R := R) n) :=
+private theorem matrix_monotone : Monotone (matrix (R := R) n) :=
   fun _ _ IJ _ MI i j => IJ (MI i j)
 
-theorem matrix_strictMono_of_nonempty [h : Nonempty n] :
+private theorem matrix_strictMono_of_nonempty [h : Nonempty n] :
     StrictMono (matrix (R := R) n) :=
   matrix_monotone n |>.strictMono_of_injective <|
     .comp (fun _ _ => mk.inj) <| (RingCon.matrix_injective n).comp ringCon_injective
@@ -290,7 +293,7 @@ def equivMatrix : TwoSidedIdeal R ≃ TwoSidedIdeal (Matrix n n R) where
   right_inv _ := ringCon_injective <| RingCon.matrix_ofMatrix _
   left_inv _ := ringCon_injective <| RingCon.ofMatrix_matrix _
 
-theorem coe_equivMatrix_symm_apply (I : TwoSidedIdeal (Matrix n n R)) (i j : n) :
+private theorem coe_equivMatrix_symm_apply (I : TwoSidedIdeal (Matrix n n R)) (i j : n) :
     equivMatrix.symm I = {N i j | N ∈ I} := by
   ext r
   constructor
@@ -322,7 +325,7 @@ end NonAssocRing
 section Ring
 variable [Ring R] [Fintype n]
 
-theorem asIdeal_matrix [DecidableEq n] (I : TwoSidedIdeal R) :
+private theorem asIdeal_matrix [DecidableEq n] (I : TwoSidedIdeal R) :
     asIdeal (I.matrix n) = (asIdeal I).matrix n := by
   ext; simp
 
@@ -353,14 +356,14 @@ private lemma jacobson_matrix_le (I : TwoSidedIdeal R) :
   simpa [mul_apply, single, ite_and] using NxMI p p
 
 /-- For any two-sided ideal $I ≤ R$, we have $J(Mₙ(I)) = Mₙ(J(I))$. -/
-theorem jacobson_matrix (I : TwoSidedIdeal R) :
+private theorem jacobson_matrix (I : TwoSidedIdeal R) :
     (I.matrix n).jacobson = I.jacobson.matrix n := by
   apply le_antisymm
   · apply jacobson_matrix_le
   · change asIdeal (I.matrix n).jacobson ≥ asIdeal (I.jacobson.matrix n)
     simp [asIdeal_jacobson, asIdeal_matrix, Ideal.matrix_jacobson_le]
 
-theorem matrix_jacobson_bot :
+private theorem matrix_jacobson_bot :
     (⊥ : TwoSidedIdeal R).jacobson.matrix n = (⊥ : TwoSidedIdeal (Matrix n n R)).jacobson :=
   matrix_bot n (R := R) ▸ (jacobson_matrix _).symm
 

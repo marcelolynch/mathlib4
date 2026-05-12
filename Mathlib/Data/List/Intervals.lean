@@ -37,23 +37,24 @@ See also `Mathlib/Order/Interval/Basic.lean` for modelling intervals in general 
 as sibling definitions alongside it such as `Set.Ico`, `Multiset.Ico` and `Finset.Ico`
 for sets, multisets and finite sets respectively.
 -/
+@[no_expose]
 def Ico (n m : ℕ) : List ℕ :=
   range' n (m - n)
 
 namespace Ico
 
-theorem zero_bot (n : ℕ) : Ico 0 n = range n := by rw [Ico, Nat.sub_zero, range_eq_range']
+private theorem zero_bot (n : ℕ) : Ico 0 n = range n := by rw [Ico, Nat.sub_zero, range_eq_range']
 
 @[simp]
 theorem length (n m : ℕ) : length (Ico n m) = m - n := by
   dsimp [Ico]
   simp [length_range']
 
-theorem pairwise_lt (n m : ℕ) : Pairwise (· < ·) (Ico n m) := by
+private theorem pairwise_lt (n m : ℕ) : Pairwise (· < ·) (Ico n m) := by
   dsimp [Ico]
   simp [pairwise_lt_range']
 
-theorem nodup (n m : ℕ) : Nodup (Ico n m) := by
+private theorem nodup (n m : ℕ) : Nodup (Ico n m) := by
   dsimp [Ico]
   simp [nodup_range']
 
@@ -62,13 +63,13 @@ theorem mem {n m l : ℕ} : l ∈ Ico n m ↔ n ≤ l ∧ l < m := by
   suffices n ≤ l ∧ l < n + (m - n) ↔ n ≤ l ∧ l < m by simp [Ico, this]
   lia
 
-theorem eq_nil_of_le {n m : ℕ} (h : m ≤ n) : Ico n m = [] := by
+private theorem eq_nil_of_le {n m : ℕ} (h : m ≤ n) : Ico n m = [] := by
   simp [Ico, Nat.sub_eq_zero_iff_le.mpr h]
 
-theorem map_add (n m k : ℕ) : (Ico n m).map (k + ·) = Ico (n + k) (m + k) := by
+private theorem map_add (n m k : ℕ) : (Ico n m).map (k + ·) = Ico (n + k) (m + k) := by
   rw [Ico, Ico, map_add_range', Nat.add_sub_add_right m k, Nat.add_comm n k]
 
-theorem map_sub (n m k : ℕ) (h₁ : k ≤ n) :
+private theorem map_sub (n m k : ℕ) (h₁ : k ≤ n) :
     ((Ico n m).map fun x => x - k) = Ico (n - k) (m - k) := by
   rw [Ico, Ico, Nat.sub_sub_sub_cancel_right h₁, map_sub_range' h₁]
 
@@ -80,7 +81,7 @@ theorem self_empty {n : ℕ} : Ico n n = [] :=
 theorem eq_empty_iff {n m : ℕ} : Ico n m = [] ↔ m ≤ n :=
   Iff.intro (fun h => Nat.sub_eq_zero_iff_le.mp <| by rw [← length, h, List.length]) eq_nil_of_le
 
-theorem append_consecutive {n m l : ℕ} (hnm : n ≤ m) (hml : m ≤ l) :
+private theorem append_consecutive {n m l : ℕ} (hnm : n ≤ m) (hml : m ≤ l) :
     Ico n m ++ Ico m l = Ico n l := by
   dsimp only [Ico]
   convert range'_append using 2
@@ -106,11 +107,11 @@ theorem succ_singleton {n : ℕ} : Ico n (n + 1) = [n] := by
   dsimp [Ico]
   simp [Nat.add_sub_cancel_left]
 
-theorem succ_top {n m : ℕ} (h : n ≤ m) : Ico n (m + 1) = Ico n m ++ [m] := by
+private theorem succ_top {n m : ℕ} (h : n ≤ m) : Ico n (m + 1) = Ico n m ++ [m] := by
   rwa [← succ_singleton, append_consecutive]
   exact Nat.le_succ _
 
-theorem eq_cons {n m : ℕ} (h : n < m) : Ico n m = n :: Ico (n + 1) m := by
+private theorem eq_cons {n m : ℕ} (h : n < m) : Ico n m = n :: Ico (n + 1) m := by
   rw [← append_consecutive (Nat.le_succ n) h, succ_singleton]
   rfl
 
@@ -118,7 +119,7 @@ theorem eq_cons {n m : ℕ} (h : n < m) : Ico n m = n :: Ico (n + 1) m := by
 theorem pred_singleton {m : ℕ} (h : 0 < m) : Ico (m - 1) m = [m - 1] := by
   simp [Ico, Nat.sub_sub_self (succ_le_of_lt h)]
 
-theorem isChain_succ (n m : ℕ) : IsChain (fun a b => b = succ a) (Ico n m) := by
+private theorem isChain_succ (n m : ℕ) : IsChain (fun a b => b = succ a) (Ico n m) := by
   by_cases! h : n < m
   · rw [eq_cons h]
     unfold List.Ico
@@ -126,20 +127,20 @@ theorem isChain_succ (n m : ℕ) : IsChain (fun a b => b = succ a) (Ico n m) := 
   · rw [eq_nil_of_le h]
     exact .nil
 
-theorem notMem_top {n m : ℕ} : m ∉ Ico n m := by simp
+private theorem notMem_top {n m : ℕ} : m ∉ Ico n m := by simp
 
-theorem filter_lt_of_top_le {n m l : ℕ} (hml : m ≤ l) :
+private theorem filter_lt_of_top_le {n m l : ℕ} (hml : m ≤ l) :
     ((Ico n m).filter fun x => x < l) = Ico n m :=
   filter_eq_self.2 fun k hk => by
     simp only [(lt_of_lt_of_le (mem.1 hk).2 hml), decide_true]
 
-theorem filter_lt_of_le_bot {n m l : ℕ} (hln : l ≤ n) : ((Ico n m).filter fun x => x < l) = [] :=
+private theorem filter_lt_of_le_bot {n m l : ℕ} (hln : l ≤ n) : ((Ico n m).filter fun x => x < l) = [] :=
   filter_eq_nil_iff.2 fun k hk => by
      simp only [decide_eq_true_eq, not_lt]
      apply le_trans hln
      exact (mem.1 hk).1
 
-theorem filter_lt_of_ge {n m l : ℕ} (hlm : l ≤ m) :
+private theorem filter_lt_of_ge {n m l : ℕ} (hlm : l ≤ m) :
     ((Ico n m).filter fun x => x < l) = Ico n l := by
   rcases le_total n l with hnl | hln
   · rw [← append_consecutive hnl hlm, filter_append, filter_lt_of_top_le (le_refl l),
@@ -153,18 +154,18 @@ theorem filter_lt (n m l : ℕ) :
   · rw [min_eq_left hml, filter_lt_of_top_le hml]
   · rw [min_eq_right hlm, filter_lt_of_ge hlm]
 
-theorem filter_le_of_le_bot {n m l : ℕ} (hln : l ≤ n) :
+private theorem filter_le_of_le_bot {n m l : ℕ} (hln : l ≤ n) :
     ((Ico n m).filter fun x => l ≤ x) = Ico n m :=
   filter_eq_self.2 fun k hk => by
     rw [decide_eq_true_eq]
     exact le_trans hln (mem.1 hk).1
 
-theorem filter_le_of_top_le {n m l : ℕ} (hml : m ≤ l) : ((Ico n m).filter fun x => l ≤ x) = [] :=
+private theorem filter_le_of_top_le {n m l : ℕ} (hml : m ≤ l) : ((Ico n m).filter fun x => l ≤ x) = [] :=
   filter_eq_nil_iff.2 fun k hk => by
     rw [decide_eq_true_eq]
     exact not_le_of_gt (lt_of_lt_of_le (mem.1 hk).2 hml)
 
-theorem filter_le_of_le {n m l : ℕ} (hnl : n ≤ l) :
+private theorem filter_le_of_le {n m l : ℕ} (hnl : n ≤ l) :
     ((Ico n m).filter fun x => l ≤ x) = Ico l m := by
   rcases le_total l m with hlm | hml
   · rw [← append_consecutive hnl hlm, filter_append, filter_le_of_top_le (le_refl l),
@@ -177,7 +178,7 @@ theorem filter_le (n m l : ℕ) : ((Ico n m).filter fun x => l ≤ x) = Ico (max
   · rw [max_eq_right hnl, filter_le_of_le hnl]
   · rw [max_eq_left hln, filter_le_of_le_bot hln]
 
-theorem filter_lt_of_succ_bot {n m : ℕ} (hnm : n < m) :
+private theorem filter_lt_of_succ_bot {n m : ℕ} (hnm : n < m) :
     ((Ico n m).filter fun x => x < n + 1) = [n] := by
   have r : min m (n + 1) = n + 1 := (@inf_eq_right _ _ m (n + 1)).mpr hnm
   simp [filter_lt n m (n + 1), r]
@@ -193,7 +194,7 @@ theorem filter_le_of_bot {n m : ℕ} (hnm : n < m) : ((Ico n m).filter fun x => 
 2. n ≥ b
 3. n ∈ Ico a b
 -/
-theorem trichotomy (n a b : ℕ) : n < a ∨ b ≤ n ∨ n ∈ Ico a b := by
+private theorem trichotomy (n a b : ℕ) : n < a ∨ b ≤ n ∨ n ∈ Ico a b := by
   grind [mem]
 
 end Ico

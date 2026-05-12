@@ -40,7 +40,7 @@ instance : CoeSort CompleteLat (Type _) :=
 
 attribute [coe] CompleteLat.carrier
 
-theorem coe_of (α : Type*) [CompleteLattice α] : ↥(of α) = α :=
+private theorem coe_of (α : Type*) [CompleteLattice α] : ↥(of α) = α :=
   rfl
 
 instance : Inhabited CompleteLat :=
@@ -83,7 +83,7 @@ def dualEquiv : CompleteLat ≌ CompleteLat where
 
 end CompleteLat
 
-theorem completeLat_dual_comp_forget_to_bddLat :
+private theorem completeLat_dual_comp_forget_to_bddLat :
     CompleteLat.dual ⋙ forget₂ CompleteLat BddLat =
     forget₂ CompleteLat BddLat ⋙ BddLat.dual :=
   rfl

@@ -34,7 +34,7 @@ namespace MonoidWithZeroHom
 
 variable {M₀ N₀ : Type*}
 
-lemma inl_mono [LinearOrderedCommGroupWithZero M₀] [GroupWithZero N₀] [Preorder N₀]
+private lemma inl_mono [LinearOrderedCommGroupWithZero M₀] [GroupWithZero N₀] [Preorder N₀]
     [DecidablePred fun x : M₀ ↦ x = 0] : Monotone (inl M₀ N₀) := by
   refine (WithZero.map'_mono MonoidHom.inl_mono).comp ?_
   intro x y
@@ -42,11 +42,11 @@ lemma inl_mono [LinearOrderedCommGroupWithZero M₀] [GroupWithZero N₀] [Preor
   obtain rfl | ⟨y, rfl⟩ := GroupWithZero.eq_zero_or_unit y <;>
   · simp [WithZero.withZeroUnitsEquiv]
 
-lemma inl_strictMono [LinearOrderedCommGroupWithZero M₀] [GroupWithZero N₀] [PartialOrder N₀]
+private lemma inl_strictMono [LinearOrderedCommGroupWithZero M₀] [GroupWithZero N₀] [PartialOrder N₀]
     [DecidablePred fun x : M₀ ↦ x = 0] : StrictMono (inl M₀ N₀) :=
   inl_mono.strictMono_of_injective inl_injective
 
-lemma inr_mono [GroupWithZero M₀] [Preorder M₀] [LinearOrderedCommGroupWithZero N₀]
+private lemma inr_mono [GroupWithZero M₀] [Preorder M₀] [LinearOrderedCommGroupWithZero N₀]
     [DecidablePred fun x : N₀ ↦ x = 0] : Monotone (inr M₀ N₀) := by
   refine (WithZero.map'_mono MonoidHom.inr_mono).comp ?_
   intro x y
@@ -54,17 +54,17 @@ lemma inr_mono [GroupWithZero M₀] [Preorder M₀] [LinearOrderedCommGroupWithZ
   obtain rfl | ⟨y, rfl⟩ := GroupWithZero.eq_zero_or_unit y <;>
   · simp [WithZero.withZeroUnitsEquiv]
 
-lemma inr_strictMono [GroupWithZero M₀] [PartialOrder M₀] [LinearOrderedCommGroupWithZero N₀]
+private lemma inr_strictMono [GroupWithZero M₀] [PartialOrder M₀] [LinearOrderedCommGroupWithZero N₀]
     [DecidablePred fun x : N₀ ↦ x = 0] : StrictMono (inr M₀ N₀) :=
   inr_mono.strictMono_of_injective inr_injective
 
-lemma fst_mono [LinearOrderedCommGroupWithZero M₀] [GroupWithZero N₀] [Preorder N₀] :
+private lemma fst_mono [LinearOrderedCommGroupWithZero M₀] [GroupWithZero N₀] [Preorder N₀] :
     Monotone (fst M₀ N₀) := by
   refine WithZero.forall.mpr ?_
   simp +contextual [WithZero.forall, Prod.le_def]
 
 
-lemma snd_mono [GroupWithZero M₀] [Preorder M₀] [LinearOrderedCommGroupWithZero N₀] :
+private lemma snd_mono [GroupWithZero M₀] [Preorder M₀] [LinearOrderedCommGroupWithZero N₀] :
     Monotone (snd M₀ N₀) := by
   refine WithZero.forall.mpr ?_
   simp [WithZero.forall, Prod.le_def]
@@ -117,17 +117,17 @@ theorem fst_comp_inl : (fst _ _).comp (inl α β) = .id α := by
 
 variable {α β}
 
-lemma inl_eq_coe_inlₗ {m : α} (hm : m ≠ 0) :
+private lemma inl_eq_coe_inlₗ {m : α} (hm : m ≠ 0) :
     inl α β m = OrderMonoidHom.inlₗ αˣ βˣ (Units.mk0 _ hm) := by
   lift m to αˣ using isUnit_iff_ne_zero.mpr hm
   simp
 
-lemma inr_eq_coe_inrₗ {n : β} (hn : n ≠ 0) :
+private lemma inr_eq_coe_inrₗ {n : β} (hn : n ≠ 0) :
     inr α β n = OrderMonoidHom.inrₗ αˣ βˣ (Units.mk0 _ hn) := by
   lift n to βˣ using isUnit_iff_ne_zero.mpr hn
   simp
 
-theorem inl_mul_inr_eq_coe_toLex {m : α} {n : β} (hm : m ≠ 0) (hn : n ≠ 0) :
+private theorem inl_mul_inr_eq_coe_toLex {m : α} {n : β} (hm : m ≠ 0) (hn : n ≠ 0) :
     inl α β m * inr α β n = toLex (Units.mk0 _ hm, Units.mk0 _ hn) := by
   rw [inl_eq_coe_inlₗ hm, inr_eq_coe_inrₗ hn,
       ← WithZero.coe_mul, OrderMonoidHom.inlₗ_mul_inrₗ_eq_toLex]

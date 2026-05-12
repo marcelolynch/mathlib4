@@ -90,15 +90,18 @@ open Rand
 variable [Monad m]
 
 /-- Generate a random value of type `α`. -/
+@[no_expose]
 def rand (α : Type u) [Random m α] [RandomGen g] : RandGT g m α := Random.random
 
 /-- Generate a random value of type `α` between `x` and `y` inclusive. -/
+@[no_expose]
 def randBound (α : Type u)
     [Preorder α] [BoundedRandom m α] (lo hi : α) (h : lo ≤ hi) [RandomGen g] :
     RandGT g m {a // lo ≤ a ∧ a ≤ hi} :=
   (BoundedRandom.randomR lo hi h : RandGT g _ _)
 
 /-- Generate a random `Fin`. -/
+@[no_expose]
 def randFin {n : Nat} [NeZero n] [RandomGen g] : RandGT g m (Fin n) :=
   fun ⟨g⟩ ↦ pure <| randNat g 0 (n - 1) |>.map (Fin.ofNat n) ULift.up
 
@@ -106,6 +109,7 @@ instance {n : Nat} [NeZero n] : Random m (Fin n) where
   random := randFin
 
 /-- Generate a random `Bool`. -/
+@[no_expose]
 def randBool [RandomGen g] : RandGT g m Bool :=
   return (← rand (Fin 2)) == 1
 

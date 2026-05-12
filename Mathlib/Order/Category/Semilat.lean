@@ -51,7 +51,7 @@ instance : CoeSort SemilatSupCat Type* :=
 
 attribute [instance] isSemilatticeSup isOrderBot
 
-theorem coe_of (α : Type*) [SemilatticeSup α] [OrderBot α] : ↥(of α) = α :=
+private theorem coe_of (α : Type*) [SemilatticeSup α] [OrderBot α] : ↥(of α) = α :=
   rfl
 
 instance : Inhabited SemilatSupCat :=
@@ -87,7 +87,7 @@ instance : CoeSort SemilatInfCat Type* :=
 
 attribute [instance] isSemilatticeInf isOrderTop
 
-theorem coe_of (α : Type*) [SemilatticeInf α] [OrderTop α] : ↥(of α) = α :=
+private theorem coe_of (α : Type*) [SemilatticeInf α] [OrderTop α] : ↥(of α) = α :=
   rfl
 
 instance : Inhabited SemilatInfCat :=
@@ -162,12 +162,12 @@ def SemilatSupCatEquivSemilatInfCat : SemilatSupCat ≌ SemilatInfCat where
   unitIso := NatIso.ofComponents fun X => SemilatSupCat.Iso.mk <| OrderIso.dualDual X
   counitIso := NatIso.ofComponents fun X => SemilatInfCat.Iso.mk <| OrderIso.dualDual X
 
-theorem SemilatSupCat_dual_comp_forget_to_partOrd :
+private theorem SemilatSupCat_dual_comp_forget_to_partOrd :
     SemilatSupCat.dual ⋙ forget₂ SemilatInfCat PartOrd =
       forget₂ SemilatSupCat PartOrd ⋙ PartOrd.dual :=
   rfl
 
-theorem SemilatInfCat_dual_comp_forget_to_partOrd :
+private theorem SemilatInfCat_dual_comp_forget_to_partOrd :
     SemilatInfCat.dual ⋙ forget₂ SemilatSupCat PartOrd =
       forget₂ SemilatInfCat PartOrd ⋙ PartOrd.dual :=
   rfl

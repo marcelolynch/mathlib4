@@ -28,6 +28,7 @@ variable {α β : Type*}
 namespace Part
 
 /-- Convert an `o : Part α` with decidable `Part.Dom o` to `Finset α`. -/
+@[no_expose]
 def toFinset (o : Part α) [Decidable o.Dom] : Finset α :=
   o.toOption.toFinset
 
@@ -55,6 +56,7 @@ variable [DecidableEq β] {f g : α →. β} [∀ x, Decidable (f x).Dom] [∀ x
   {s t : Finset α} {b : β}
 
 /-- Image of `s : Finset α` under a partially defined function `f : α →. β`. -/
+@[no_expose]
 def pimage (f : α →. β) [∀ x, Decidable (f x).Dom] (s : Finset α) : Finset β :=
   s.biUnion fun x => (f x).toFinset
 
@@ -72,17 +74,17 @@ theorem pimage_some (s : Finset α) (f : α → β) [∀ x, Decidable (Part.some
   ext
   simp [eq_comm]
 
-theorem pimage_congr (h₁ : s = t) (h₂ : ∀ x ∈ t, f x = g x) : s.pimage f = t.pimage g := by
+private theorem pimage_congr (h₁ : s = t) (h₂ : ∀ x ∈ t, f x = g x) : s.pimage f = t.pimage g := by
   aesop
 
 /-- Rewrite `s.pimage f` in terms of `Finset.filter`, `Finset.attach`, and `Finset.image`. -/
-theorem pimage_eq_image_filter : s.pimage f =
+private theorem pimage_eq_image_filter : s.pimage f =
     {x ∈ s | (f x).Dom}.attach.image
       fun x : { x // x ∈ filter (fun x => (f x).Dom) s } =>
         (f x).get (mem_filter.mp x.coe_prop).2 := by
   aesop (add simp Part.mem_eq)
 
-theorem pimage_union [DecidableEq α] : (s ∪ t).pimage f = s.pimage f ∪ t.pimage f :=
+private theorem pimage_union [DecidableEq α] : (s ∪ t).pimage f = s.pimage f ∪ t.pimage f :=
   coe_inj.1 <| by
   simp only [coe_pimage, coe_union, ← PFun.image_union]
 
@@ -91,14 +93,14 @@ theorem pimage_empty : pimage f ∅ = ∅ := by
   ext
   simp
 
-theorem pimage_subset {t : Finset β} : s.pimage f ⊆ t ↔ ∀ x ∈ s, ∀ y ∈ f x, y ∈ t := by
+private theorem pimage_subset {t : Finset β} : s.pimage f ⊆ t ↔ ∀ x ∈ s, ∀ y ∈ f x, y ∈ t := by
   simp [subset_iff, @forall_comm _ β]
 
 @[gcongr, mono]
 theorem pimage_mono (h : s ⊆ t) : s.pimage f ⊆ t.pimage f :=
   pimage_subset.2 fun x hx _ hy => mem_pimage.2 ⟨x, h hx, hy⟩
 
-theorem pimage_inter [DecidableEq α] : (s ∩ t).pimage f ⊆ s.pimage f ∩ t.pimage f := by
+private theorem pimage_inter [DecidableEq α] : (s ∩ t).pimage f ⊆ s.pimage f ∩ t.pimage f := by
   simp only [← coe_subset, coe_pimage, coe_inter, PFun.image_inter]
 
 end Finset

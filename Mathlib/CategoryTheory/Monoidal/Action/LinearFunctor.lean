@@ -76,7 +76,7 @@ variable
   [F.LaxLeftLinear C]
 
 @[reassoc (attr := simp)]
-lemma μₗ_associativity_inv (c c' : C) (d : D) :
+private lemma μₗ_associativity_inv (c c' : C) (d : D) :
     c ⊴ₗ μₗ F c' d ≫ μₗ F c (c' ⊙ₗ d) ≫ F.map (αₗ _ _ _).inv =
     (αₗ c c' (F.obj d)).inv ≫ μₗ F (c ⊗ c') d := by
   simpa [-μₗ_associativity, -μₗ_associativity_assoc] using
@@ -85,7 +85,7 @@ lemma μₗ_associativity_inv (c c' : C) (d : D) :
       F.map (αₗ _ _ _).inv
 
 @[reassoc (attr := simp)]
-lemma μₗ_unitality_inv (d : D) :
+private lemma μₗ_unitality_inv (d : D) :
      (λₗ (F.obj d)).inv ≫ μₗ F (𝟙_ C) d = F.map (λₗ d).inv := by
   simpa [-μₗ_unitality] using
     (λₗ[C] (F.obj d)).inv ≫=
@@ -132,7 +132,7 @@ variable
   [F.OplaxLeftLinear C]
 
 @[reassoc (attr := simp)]
-lemma δₗ_associativity_inv (c c' : C) (d : D) :
+private lemma δₗ_associativity_inv (c c' : C) (d : D) :
     δₗ F c (c' ⊙ₗ d) ≫
       c ⊴ₗ δₗ F c' d ≫ (αₗ _ _ _).inv =
     F.map (αₗ _ _ _).inv ≫ δₗ F (c ⊗ c' : C) d := by
@@ -142,7 +142,7 @@ lemma δₗ_associativity_inv (c c' : C) (d : D) :
       (αₗ _ _ _).inv
 
 @[reassoc (attr := simp)]
-lemma δₗ_unitality_hom (d : D) :
+private lemma δₗ_unitality_hom (d : D) :
     δₗ F (𝟙_ C) d ≫ (λₗ (F.obj d)).hom = F.map (λₗ d).hom := by
   simpa [-δₗ_unitality_inv] using
     F.map (λₗ[C] d).hom ≫=
@@ -238,7 +238,7 @@ variable
   [F.LaxRightLinear C]
 
 @[reassoc (attr := simp)]
-lemma μᵣ_associativity_inv (d : D) (c c' : C) :
+private lemma μᵣ_associativity_inv (d : D) (c c' : C) :
     μᵣ F d c ⊵ᵣ c' ≫ μᵣ F (d ⊙ᵣ c) c' ≫ F.map (αᵣ _ _ _).inv =
     (αᵣ (F.obj d) c c').inv ≫ μᵣ F d (c ⊗ c') := by
   simpa [-μᵣ_associativity, -μᵣ_associativity_assoc] using
@@ -247,7 +247,7 @@ lemma μᵣ_associativity_inv (d : D) (c c' : C) :
       F.map (αᵣ _ _ _).inv
 
 @[reassoc (attr := simp)]
-lemma μᵣ_unitality_inv (d : D) :
+private lemma μᵣ_unitality_inv (d : D) :
      (ρᵣ (F.obj d)).inv ≫ μᵣ F d (𝟙_ C) = F.map (ρᵣ d).inv := by
   simpa [-μᵣ_unitality] using
     (ρᵣ[C] (F.obj d)).inv ≫=
@@ -294,7 +294,7 @@ variable
   [F.OplaxRightLinear C]
 
 @[reassoc (attr := simp)]
-lemma δᵣ_associativity_inv (d : D) (c c' : C) :
+private lemma δᵣ_associativity_inv (d : D) (c c' : C) :
     δᵣ F (d ⊙ᵣ c) c' ≫
       δᵣ F d c ⊵ᵣ c' ≫ (αᵣ _ _ _).inv =
     F.map (αᵣ _ _ _).inv ≫ δᵣ F d (c ⊗ c' : C) := by
@@ -304,7 +304,7 @@ lemma δᵣ_associativity_inv (d : D) (c c' : C) :
       (αᵣ _ _ _).inv
 
 @[reassoc (attr := simp)]
-lemma δᵣ_unitality_hom (d : D) :
+private lemma δᵣ_unitality_hom (d : D) :
     δᵣ F d (𝟙_ C) ≫ (ρᵣ (F.obj d)).hom = F.map (ρᵣ d).hom := by
   simpa [-δᵣ_unitality_inv] using
     F.map (ρᵣ[C] d).hom ≫=

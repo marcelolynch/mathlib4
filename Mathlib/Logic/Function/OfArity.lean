@@ -40,6 +40,7 @@ theorem ofArity_succ (α β : Type u) (n : ℕ) :
 namespace OfArity
 
 /-- Constant `n`-ary function with value `b`. -/
+@[no_expose]
 def const (α : Type u) {β : Type u} (b : β) (n : ℕ) : OfArity α β n :=
   FromTypes.const (fun _ => α) b
 
@@ -52,7 +53,7 @@ theorem const_succ (α : Type u) {β : Type u} (b : β) (n : ℕ) :
     const α b n.succ = fun _ => const _ b n :=
   FromTypes.const_succ (fun _ => α) b
 
-theorem const_succ_apply (α : Type u) {β : Type u} (b : β) (n : ℕ) (x : α) :
+private theorem const_succ_apply (α : Type u) {β : Type u} (b : β) (n : ℕ) (x : α) :
     const α b n.succ x = const _ b n := FromTypes.const_succ_apply _ b x
 
 instance inhabited {α β n} [Inhabited β] : Inhabited (OfArity α β n) :=
@@ -62,11 +63,12 @@ end OfArity
 
 namespace FromTypes
 
-lemma fromTypes_fin_const (α β : Type u) (n : ℕ) :
+private lemma fromTypes_fin_const (α β : Type u) (n : ℕ) :
     FromTypes (fun (_ : Fin n) => α) β = OfArity α β n := rfl
 
 /-- The definitional equality between heterogeneous functions with constant
 domain and `n`-ary functions with that domain. -/
+@[no_expose]
 def fromTypes_fin_const_equiv (α β : Type u) (n : ℕ) :
     FromTypes (fun (_ : Fin n) => α) β ≃ OfArity α β n := .refl _
 

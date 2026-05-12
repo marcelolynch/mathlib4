@@ -35,7 +35,7 @@ instance EssSurj.ofUnivLE [UnivLE.{max u v, v}] :
   mem_essImage α :=
     ⟨Shrink α, ⟨Equiv.toIso (Equiv.ulift.trans (equivShrink α).symm)⟩⟩
 
-theorem UnivLE_iff_essSurj :
+private theorem UnivLE_iff_essSurj :
     UnivLE.{max u v, v} ↔ (uliftFunctor.{u, v} : Type v ⥤ Type max u v).EssSurj :=
   ⟨fun _ => inferInstance, fun w => UnivLE.ofEssSurj w⟩
 

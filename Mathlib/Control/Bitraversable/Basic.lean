@@ -53,6 +53,7 @@ class Bitraversable (t : Type u → Type u → Type u) extends Bifunctor t where
 export Bitraversable (bitraverse)
 
 /-- A bitraversable functor commutes with all applicative functors. -/
+@[no_expose]
 def bisequence {t m} [Bitraversable t] [Applicative m] {α β} : t (m α) (m β) → m (t α β) :=
   bitraverse id id
 

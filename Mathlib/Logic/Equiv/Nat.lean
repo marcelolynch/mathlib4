@@ -47,11 +47,13 @@ theorem natSumNatEquivNat_apply : ⇑natSumNatEquivNat = Sum.elim (2 * ·) (2 * 
 
 /-- An equivalence between `ℤ` and `ℕ`, through `ℤ ≃ ℕ ⊕ ℕ` and `ℕ ⊕ ℕ ≃ ℕ`.
 -/
+@[no_expose]
 def intEquivNat : ℤ ≃ ℕ :=
   intEquivNatSumNat.trans natSumNatEquivNat
 
 /-- An equivalence between `α × α` and `α`, given that there is an equivalence between `α` and `ℕ`.
 -/
+@[no_expose]
 def prodEquivOfEquivNat (e : α ≃ ℕ) : α × α ≃ α :=
   calc
     α × α ≃ ℕ × ℕ := prodCongr e e

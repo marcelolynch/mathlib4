@@ -28,6 +28,7 @@ instance Finset.encodable [Encodable α] : Encodable (Finset α) :=
 namespace Encodable
 
 /-- The elements of a `Fintype` as a sorted list. -/
+@[no_expose]
 def sortedUniv (α) [Fintype α] [Encodable α] : List α :=
   Finset.univ.sort (Encodable.encode' α ⁻¹'o (· ≤ ·))
 
@@ -49,6 +50,7 @@ theorem sortedUniv_toFinset (α) [Fintype α] [Encodable α] [DecidableEq α] :
   Finset.sort_toFinset _ _
 
 /-- An encodable `Fintype` is equivalent to the same size `Fin`. -/
+@[no_expose]
 def fintypeEquivFin {α} [Fintype α] [Encodable α] : α ≃ Fin (Fintype.card α) :=
   haveI : DecidableEq α := Encodable.decidableEqOfEncodable _
   ((sortedUniv_nodup α).getEquivOfForallMemList _ mem_sortedUniv).symm.trans <|
@@ -62,6 +64,7 @@ variable [Denumerable α]
 
 /-- Outputs the list of differences minus one of the input list, that is
 `lower' [a₁, a₂, a₃, ...] n = [a₁ - n, a₂ - a₁ - 1, a₃ - a₂ - 1, ...]`. -/
+@[no_expose]
 def lower' : List ℕ → ℕ → List ℕ
   | [], _ => []
   | m :: l, n => (m - n) :: lower' l (m + 1)
@@ -69,15 +72,16 @@ def lower' : List ℕ → ℕ → List ℕ
 /-- Outputs the list of partial sums plus one of the input list, that is
 `raise [a₁, a₂, a₃, ...] n = [n + a₁, n + a₁ + a₂ + 1, n + a₁ + a₂ + a₃ + 2, ...]`. Adding one each
 time ensures the elements are distinct. -/
+@[no_expose]
 def raise' : List ℕ → ℕ → List ℕ
   | [], _ => []
   | m :: l, n => (m + n) :: raise' l (m + n + 1)
 
-theorem lower_raise' : ∀ l n, lower' (raise' l n) n = l
+private theorem lower_raise' : ∀ l n, lower' (raise' l n) n = l
   | [], _ => rfl
   | m :: l, n => by simp [raise', lower', lower_raise']
 
-theorem raise_lower' : ∀ {l n}, (∀ m ∈ l, n ≤ m) → List.SortedLT l → raise' (lower' l n) n = l
+private theorem raise_lower' : ∀ {l n}, (∀ m ∈ l, n ≤ m) → List.SortedLT l → raise' (lower' l n) n = l
   | [], _, _, _ => rfl
   | m :: l, n, h₁, h₂ => by
     have : n ≤ m := h₁ _ List.mem_cons_self
@@ -85,22 +89,23 @@ theorem raise_lower' : ∀ {l n}, (∀ m ∈ l, n ≤ m) → List.SortedLT l →
       raise_lower' (fun _ => List.rel_of_pairwise_cons h₂.pairwise : ∀ a ∈ l, m < a)
       h₂.pairwise.of_cons.sortedLT]
 
-theorem isChain_raise' : ∀ (l) (n), List.IsChain (· < ·) (raise' l n)
+private theorem isChain_raise' : ∀ (l) (n), List.IsChain (· < ·) (raise' l n)
   | [], _ => .nil
   | [_], _ => .singleton _
   | _ :: _ :: _, _ => .cons_cons (by lia) (isChain_raise' (_ :: _) _)
 
-theorem isChain_cons_raise' (l m) : List.IsChain (· < ·) (m :: raise' l (m + 1)) :=
+private theorem isChain_cons_raise' (l m) : List.IsChain (· < ·) (m :: raise' l (m + 1)) :=
   isChain_raise' (m :: l) 0
 
-theorem isChain_cons_raise'_of_lt (l) {m n} (h : m < n) :
+private theorem isChain_cons_raise'_of_lt (l) {m n} (h : m < n) :
     List.IsChain (· < ·) (m :: raise' l n) := by
   unfold raise'; cases l with grind [isChain_cons_raise']
 
 /-- `raise' l n` is a strictly increasing sequence. -/
-theorem raise'_sorted (l n) : List.SortedLT (raise' l n) := (isChain_raise' _ _).sortedLT
+private theorem raise'_sorted (l n) : List.SortedLT (raise' l n) := (isChain_raise' _ _).sortedLT
 
 /-- Makes `raise' l n` into a finset. Elements are distinct thanks to `raise'_sorted`. -/
+@[no_expose]
 def raise'Finset (l : List ℕ) (n : ℕ) : Finset ℕ :=
   ⟨raise' l n, (raise'_sorted _ _).nodup⟩
 

@@ -41,11 +41,12 @@ variable [Zero M]
 of the sigma type `(Σ k, ι k) →₀ M`.
 
 This is `Finsupp.embDomain` specialized to `Function.Embedding.sigmaMk k`. -/
+@[no_expose]
 def embSigma {k : κ} (f : ι k →₀ M) : (Σ k, ι k) →₀ M :=
   embDomain (Embedding.sigmaMk k) f
 
 @[grind =]
-theorem embSigma_apply [DecidableEq κ] {k : κ} (f : ι k →₀ M) (i : Σ k, ι k) :
+private theorem embSigma_apply [DecidableEq κ] {k : κ} (f : ι k →₀ M) (i : Σ k, ι k) :
     embSigma f i = if h : i.1 = k then f (h ▸ i.2) else 0 := by
   rcases i with ⟨k, i⟩
   split_ifs with h
@@ -63,7 +64,7 @@ theorem embSigma_apply_self {k : κ} (f : ι k →₀ M) (i : ι k) :
   exact embDomain_apply_self (Embedding.sigmaMk k) f i
 
 /-- Values of `embSigma f` at indices outside the `k`-th summand are zero. -/
-theorem embSigma_apply_of_ne {k k' : κ} (f : ι k →₀ M) (hk : k' ≠ k) (i : ι k') :
+private theorem embSigma_apply_of_ne {k k' : κ} (f : ι k →₀ M) (hk : k' ≠ k) (i : ι k') :
     embSigma f ⟨k', i⟩ = 0 := by
   apply embDomain_notin_range
   grind
@@ -82,7 +83,7 @@ theorem embSigma_eq_zero {k : κ} {f : ι k →₀ M} :
     embSigma f = 0 ↔ f = 0 := by
   simp [embSigma]
 
-theorem embSigma_injective {k : κ} :
+private theorem embSigma_injective {k : κ} :
     Injective (embSigma : (ι k →₀ M) → (Σ k, ι k) →₀ M) := by
   intro f g h
   ext i
@@ -100,7 +101,7 @@ section EmbSigmaAdd
 
 variable [AddMonoid M]
 
-theorem embSigma_add {k : κ} (f g : ι k →₀ M) :
+private theorem embSigma_add {k : κ} (f g : ι k →₀ M) :
     embSigma (f + g) = embSigma f + embSigma g := by
   ext ⟨k', i⟩
   by_cases hk : k' = k
@@ -134,7 +135,7 @@ theorem split_embSigma_self {k : κ} (f : ι k →₀ M) :
   simp [split_apply]
 
 /-- `split` returns zero at indices different from where `embSigma` embeds. -/
-theorem split_embSigma_of_ne {k k' : κ} (f : ι k →₀ M) (hk : k' ≠ k) :
+private theorem split_embSigma_of_ne {k k' : κ} (f : ι k →₀ M) (hk : k' ≠ k) :
     split (embSigma f) k' = 0 := by
   ext i
   simp [split_apply, embSigma_apply_of_ne _ hk]

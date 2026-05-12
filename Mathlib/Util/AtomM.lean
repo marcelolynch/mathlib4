@@ -55,6 +55,7 @@ def AtomM.run {α : Type} (red : TransparencyMode) (m : AtomM α)
 
 TODO: don't catch any other errors
 -/
+@[no_expose]
 def isDefEqSafe (a b : Expr) : MetaM Bool :=
   try isDefEq a b catch _ => pure false
 

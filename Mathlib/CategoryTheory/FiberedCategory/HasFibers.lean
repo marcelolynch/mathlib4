@@ -100,7 +100,7 @@ def inducedFunctor : Fib p S ⥤ Fiber p S :=
 def inducedFunctor.natIso : ι S ≅ (inducedFunctor p S) ⋙ fiberInclusion :=
   Fiber.inducedFunctorCompIsoSelf (comp_const S)
 
-lemma inducedFunctor_comp : ι S = (inducedFunctor p S) ⋙ fiberInclusion :=
+private lemma inducedFunctor_comp : ι S = (inducedFunctor p S) ⋙ fiberInclusion :=
   Fiber.inducedFunctor_comp (comp_const S)
 
 instance : Functor.IsEquivalence (inducedFunctor p S) := equiv S
@@ -120,6 +120,7 @@ lemma proj_eq {S : 𝒮} (a : Fib p S) : p.obj ((ι S).obj a) = S := by
 
 /-- The morphism `R ⟶ S` in `𝒮` obtained by projecting a morphism
 `φ : (ι R).obj a ⟶ (ι S).obj b`. -/
+@[no_expose]
 def projMap {R S : 𝒮} {a : Fib p R} {b : Fib p S}
     (φ : (ι R).obj a ⟶ (ι S).obj b) : R ⟶ S :=
   eqToHom (proj_eq a).symm ≫ (p.map φ) ≫ eqToHom (proj_eq b)
@@ -174,10 +175,12 @@ variable [IsPreFibered p] {R S : 𝒮} {a : 𝒳} (f : R ⟶ S) (ha : p.obj a = 
 
 /-- The domain, taken in `Fib p R`, of some Cartesian morphism lifting a given
 `f : R ⟶ S` in `𝒮` -/
+@[no_expose]
 noncomputable def mkPullback : Fib p R :=
   Fib.mk (domain_eq p f (IsPreFibered.pullbackMap ha f))
 
 /-- A Cartesian morphism lifting `f : R ⟶ S` with domain in the image of `Fib p R` -/
+@[no_expose]
 noncomputable def pullbackMap : (ι R).obj (mkPullback f ha) ⟶ a :=
   (Fib.mkIsoSelf (domain_eq p f (IsPreFibered.pullbackMap ha f))).hom ≫
     (IsPreFibered.pullbackMap ha f)
@@ -203,11 +206,12 @@ v        v        v
 R ====== R --f--> S
 ```
 Then the induced map τ : b' ⟶ b can be lifted to the fiber over R -/
+@[no_expose]
 noncomputable def inducedMap : b ⟶ b' :=
   Fib.homMk (IsCartesian.map p f ψ φ)
 
 @[reassoc]
-lemma inducedMap_comp : (ι R).map (inducedMap f ψ φ) ≫ ψ = φ := by
+private lemma inducedMap_comp : (ι R).map (inducedMap f ψ φ) ≫ ψ = φ := by
   simp only [inducedMap, Fib.map_homMk, IsCartesian.fac]
 
 end
@@ -233,7 +237,7 @@ It can be factorized as
   R ====== R --f--> S
 ```
 with `ψ` Cartesian over `f` and `τ` a map in `Fib p R`. -/
-lemma fiber_factorization (ha : p.obj a = S) {b : Fib p R} (f : R ⟶ S) (φ : (ι R).obj b ⟶ a)
+private lemma fiber_factorization (ha : p.obj a = S) {b : Fib p R} (f : R ⟶ S) (φ : (ι R).obj b ⟶ a)
     [IsHomLift p f φ] : ∃ (b' : Fib p R) (τ : b ⟶ b') (ψ : (ι R).obj b' ⟶ a),
       IsStronglyCartesian p f ψ ∧ (((ι R).map τ) ≫ ψ = φ) :=
   let ψ := pullbackMap f ha

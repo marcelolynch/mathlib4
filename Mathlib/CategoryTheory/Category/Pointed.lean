@@ -42,7 +42,7 @@ instance : CoeSort Pointed Type* :=
 abbrev of {X : Type*} (point : X) : Pointed :=
   ⟨X, point⟩
 
-theorem coe_of {X : Type*} (point : X) : ↥(of point) = X :=
+private theorem coe_of {X : Type*} (point : X) : ↥(of point) = X :=
   rfl
 
 alias _root_.Prod.Pointed := of
@@ -113,6 +113,7 @@ def typeToPointed : Type u ⥤ Pointed.{u} where
   map_comp _ _ := Pointed.Hom.ext <| by simp; rfl
 
 /-- `typeToPointed` is the free functor. -/
+@[no_expose]
 def typeToPointedForgetAdjunction : typeToPointed ⊣ forget Pointed :=
   Adjunction.mkOfHomEquiv {
     homEquiv := fun X Y =>

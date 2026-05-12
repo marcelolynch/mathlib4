@@ -346,7 +346,7 @@ variable (e : α ≃ β)
 protected abbrev supSet [SupSet β] : SupSet α where
   sSup s := e.symm (⨆ a ∈ s, e a)
 
-lemma supSet_def [SupSet β] (s : Set α) :
+private lemma supSet_def [SupSet β] (s : Set α) :
     letI := e.supSet
     sSup s = e.symm (⨆ a ∈ s, e a) := rfl
 
@@ -354,7 +354,7 @@ lemma supSet_def [SupSet β] (s : Set α) :
 protected abbrev infSet [InfSet β] : InfSet α where
   sInf s := e.symm (⨅ a ∈ s, e a)
 
-lemma infSet_def [InfSet β] (s : Set α) :
+private lemma infSet_def [InfSet β] (s : Set α) :
     letI := e.infSet
     sInf s = e.symm (⨅ a ∈ s, e a) := rfl
 

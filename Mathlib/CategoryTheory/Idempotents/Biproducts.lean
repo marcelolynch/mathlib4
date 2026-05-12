@@ -72,7 +72,7 @@ def bicone [HasFiniteBiproducts C] {J : Type} [Finite J] (F : J → Karoubi C) :
 
 end Biproducts
 
-theorem karoubi_hasFiniteBiproducts [HasFiniteBiproducts C] : HasFiniteBiproducts (Karoubi C) :=
+private theorem karoubi_hasFiniteBiproducts [HasFiniteBiproducts C] : HasFiniteBiproducts (Karoubi C) :=
   { out := fun n =>
       { has_biproduct := fun F => by
           apply hasBiproduct_of_total (Biproducts.bicone F)
@@ -115,6 +115,7 @@ set_option backward.isDefEq.respectTransparency false in
 /-- A formal direct factor `P : Karoubi C` of an object `P.X : C` in a
 preadditive category is actually a direct factor of the image `(toKaroubi C).obj P.X`
 of `P.X` in the category `Karoubi C` -/
+@[no_expose]
 def decomposition (P : Karoubi C) : P ⊞ P.complement ≅ (toKaroubi _).obj P.X where
   hom := biprod.desc P.decompId_i P.complement.decompId_i
   inv := biprod.lift P.decompId_p P.complement.decompId_p

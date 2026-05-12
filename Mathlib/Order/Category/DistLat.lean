@@ -100,13 +100,13 @@ lemma ext {X Y : DistLat} {f g : X ⟶ Y} (w : ∀ x : X, f x = g x) : f = g :=
   ConcreteCategory.hom_ext _ _ w
 
 -- This is not `simp` to avoid rewriting in types of terms.
-theorem coe_of (X : Type u) [DistribLattice X] : (DistLat.of X : Type u) = X := rfl
+private theorem coe_of (X : Type u) [DistribLattice X] : (DistLat.of X : Type u) = X := rfl
 
 @[simp]
 lemma hom_id {X : DistLat} : (𝟙 X : X ⟶ X).hom = LatticeHom.id _ := rfl
 
 /- Provided for rewriting. -/
-lemma id_apply (X : DistLat) (x : X) :
+private lemma id_apply (X : DistLat) (x : X) :
     (𝟙 X : X ⟶ X) x = x := by simp
 
 @[simp]
@@ -114,7 +114,7 @@ lemma hom_comp {X Y Z : DistLat} (f : X ⟶ Y) (g : Y ⟶ Z) :
     (f ≫ g).hom = g.hom.comp f.hom := rfl
 
 /- Provided for rewriting. -/
-lemma comp_apply {X Y Z : DistLat} (f : X ⟶ Y) (g : Y ⟶ Z) (x : X) :
+private lemma comp_apply {X Y Z : DistLat} (f : X ⟶ Y) (g : Y ⟶ Z) (x : X) :
     (f ≫ g) x = g (f x) := by simp
 
 @[ext]
@@ -139,14 +139,14 @@ lemma ofHom_comp {X Y Z : Type u} [DistribLattice X] [DistribLattice Y] [Distrib
     ofHom (g.comp f) = ofHom f ≫ ofHom g :=
   rfl
 
-lemma ofHom_apply {X Y : Type u} [DistribLattice X] [DistribLattice Y]
+private lemma ofHom_apply {X Y : Type u} [DistribLattice X] [DistribLattice Y]
     (f : LatticeHom X Y) (x : X) :
     (ofHom f) x = f x := rfl
 
-lemma inv_hom_apply {X Y : DistLat} (e : X ≅ Y) (x : X) : e.inv (e.hom x) = x := by
+private lemma inv_hom_apply {X Y : DistLat} (e : X ≅ Y) (x : X) : e.inv (e.hom x) = x := by
   simp
 
-lemma hom_inv_apply {X Y : DistLat} (e : X ≅ Y) (s : Y) : e.hom (e.inv s) = s := by
+private lemma hom_inv_apply {X Y : DistLat} (e : X ≅ Y) (s : Y) : e.hom (e.inv s) = s := by
   simp
 
 instance hasForgetToLat : HasForget₂ DistLat Lat where
@@ -176,6 +176,6 @@ def dualEquiv : DistLat ≌ DistLat where
 
 end DistLat
 
-theorem distLat_dual_comp_forget_to_Lat :
+private theorem distLat_dual_comp_forget_to_Lat :
     DistLat.dual ⋙ forget₂ DistLat Lat = forget₂ DistLat Lat ⋙ Lat.dual :=
   rfl

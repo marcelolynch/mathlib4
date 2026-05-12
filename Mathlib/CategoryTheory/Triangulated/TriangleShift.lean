@@ -112,6 +112,7 @@ noncomputable def Triangle.shiftFunctorAdd' (a b n : ℤ) (h : a + b = n) :
 
 set_option backward.isDefEq.respectTransparency false in
 /-- Rotating triangles three times identifies with the shift by `1`. -/
+@[no_expose]
 noncomputable def rotateRotateRotateIso :
     rotate C ⋙ rotate C ⋙ rotate C ≅ Triangle.shiftFunctor C 1 :=
   NatIso.ofComponents
@@ -121,6 +122,7 @@ noncomputable def rotateRotateRotateIso :
 
 set_option backward.isDefEq.respectTransparency false in
 /-- Rotating triangles three times backwards identifies with the shift by `-1`. -/
+@[no_expose]
 noncomputable def invRotateInvRotateInvRotateIso :
     invRotate C ⋙ invRotate C ⋙ invRotate C ≅ Triangle.shiftFunctor C (-1) :=
   NatIso.ofComponents
@@ -134,6 +136,7 @@ noncomputable def invRotateInvRotateInvRotateIso :
 
 /-- The inverse of the rotation of triangles can be expressed using a double
 rotation and the shift by `-1`. -/
+@[no_expose]
 noncomputable def invRotateIsoRotateRotateShiftFunctorNegOne :
     invRotate C ≅ rotate C ⋙ rotate C ⋙ Triangle.shiftFunctor C (-1) :=
   calc

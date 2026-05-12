@@ -34,19 +34,21 @@ variable {A B C D : Type*} [Category* A] [Category* B] [Category* C] [Category* 
 
 variable (A) in
 /-- The structural isomorphism for composition of `pseudofunctorRight`. -/
+@[no_expose]
 def mapCompRight (F : B ⥤ C) (G : C ⥤ D) :
     mapPair (𝟭 A) (F ⋙ G) ≅ mapPair (𝟭 A) F ⋙ mapPair (𝟭 A) G :=
   mapIsoWhiskerRight (Functor.leftUnitor _).symm _ ≪≫ mapPairComp (𝟭 A) F (𝟭 A) G
 
 variable (D) in
 /-- The structural isomorphism for composition of `pseudofunctorLeft`. -/
+@[no_expose]
 def mapCompLeft (F : A ⥤ B) (G : B ⥤ C) :
     mapPair (F ⋙ G) (𝟭 D) ≅ mapPair F (𝟭 D) ⋙ mapPair G (𝟭 D) :=
   mapIsoWhiskerLeft _ (Functor.leftUnitor _).symm ≪≫ mapPairComp F (𝟭 D) G (𝟭 D)
 
 variable (A) in
 @[reassoc]
-lemma mapWhiskerLeft_whiskerLeft (F : B ⥤ C) {G H : C ⥤ D} (η : G ⟶ H) :
+private lemma mapWhiskerLeft_whiskerLeft (F : B ⥤ C) {G H : C ⥤ D} (η : G ⟶ H) :
     mapWhiskerLeft _ (whiskerLeft F η) =
     (mapCompRight A F G).hom ≫ whiskerLeft (mapPair (𝟭 A) F) (mapWhiskerLeft _ η) ≫
       (mapCompRight A F H).inv := by
@@ -54,7 +56,7 @@ lemma mapWhiskerLeft_whiskerLeft (F : B ⥤ C) {G H : C ⥤ D} (η : G ⟶ H) :
 
 variable (D) in
 @[reassoc]
-lemma mapWhiskerRight_whiskerLeft (F : A ⥤ B) {G H : B ⥤ C} (η : G ⟶ H) :
+private lemma mapWhiskerRight_whiskerLeft (F : A ⥤ B) {G H : B ⥤ C} (η : G ⟶ H) :
     mapWhiskerRight (whiskerLeft F η) (𝟭 D) =
     (mapCompLeft D F G).hom ≫ whiskerLeft (mapPair F (𝟭 D)) (mapWhiskerRight η _) ≫
       (mapCompLeft D F H).inv := by
@@ -63,7 +65,7 @@ lemma mapWhiskerRight_whiskerLeft (F : A ⥤ B) {G H : B ⥤ C} (η : G ⟶ H) :
 set_option backward.isDefEq.respectTransparency false in
 variable (A) in
 @[reassoc]
-lemma mapWhiskerLeft_whiskerRight {F G : B ⥤ C} (η : F ⟶ G) (H : C ⥤ D) :
+private lemma mapWhiskerLeft_whiskerRight {F G : B ⥤ C} (η : F ⟶ G) (H : C ⥤ D) :
     mapWhiskerLeft _ (whiskerRight η H) =
     (mapCompRight A F H).hom ≫ whiskerRight (mapWhiskerLeft _ η) (mapPair (𝟭 A) H) ≫
       (mapCompRight A G H).inv := by
@@ -72,7 +74,7 @@ lemma mapWhiskerLeft_whiskerRight {F G : B ⥤ C} (η : F ⟶ G) (H : C ⥤ D) :
 set_option backward.isDefEq.respectTransparency false in
 variable (D) in
 @[reassoc]
-lemma mapWhiskerRight_whiskerRight {F G : A ⥤ B} (η : F ⟶ G) (H : B ⥤ C) :
+private lemma mapWhiskerRight_whiskerRight {F G : A ⥤ B} (η : F ⟶ G) (H : B ⥤ C) :
     mapWhiskerRight (whiskerRight η H) _ =
     (mapCompLeft D F H).hom ≫ whiskerRight (mapWhiskerRight η _) (mapPair H (𝟭 D)) ≫
       (mapCompLeft D G H).inv := by
@@ -82,7 +84,7 @@ variable {E : Type*} [Category* E]
 
 variable (A) in
 @[reassoc]
-lemma mapWhiskerLeft_associator_hom (F : B ⥤ C) (G : C ⥤ D) (H : D ⥤ E) :
+private lemma mapWhiskerLeft_associator_hom (F : B ⥤ C) (G : C ⥤ D) (H : D ⥤ E) :
     mapWhiskerLeft _ (F.associator G H).hom =
       (mapCompRight A (F ⋙ G) H).hom ≫ whiskerRight (mapCompRight A F G).hom (mapPair (𝟭 A) H) ≫
       ((mapPair (𝟭 A) F).associator (mapPair (𝟭 A) G) (mapPair (𝟭 A) H)).hom ≫
@@ -90,7 +92,7 @@ lemma mapWhiskerLeft_associator_hom (F : B ⥤ C) (G : C ⥤ D) (H : D ⥤ E) :
   apply natTrans_ext <;> ext <;> simp [mapCompRight]
 
 variable (E) in
-lemma mapWhiskerRight_associator_hom (F : A ⥤ B) (G : B ⥤ C) (H : C ⥤ D) :
+private lemma mapWhiskerRight_associator_hom (F : A ⥤ B) (G : B ⥤ C) (H : C ⥤ D) :
     mapWhiskerRight (F.associator G H).hom _ =
     (mapCompLeft E (F ⋙ G) H).hom ≫ whiskerRight (mapCompLeft E F G).hom (mapPair H (𝟭 E)) ≫
       ((mapPair F (𝟭 E)).associator (mapPair G (𝟭 E)) (mapPair H (𝟭 E))).hom ≫
@@ -98,28 +100,28 @@ lemma mapWhiskerRight_associator_hom (F : A ⥤ B) (G : B ⥤ C) (H : C ⥤ D) :
   apply natTrans_ext <;> ext <;> simp [mapCompLeft]
 
 variable (A) in
-lemma mapWhiskerLeft_leftUnitor_hom (F : B ⥤ C) :
+private lemma mapWhiskerLeft_leftUnitor_hom (F : B ⥤ C) :
     mapWhiskerLeft _ F.leftUnitor.hom =
     (mapCompRight A (𝟭 _) F).hom ≫ whiskerRight mapPairId.hom (mapPair _ F) ≫
       (mapPair _ F).leftUnitor.hom := by
   apply natTrans_ext <;> ext <;> simp [mapCompRight]
 
 variable (C) in
-lemma mapWhiskerRight_leftUnitor_hom (F : A ⥤ B) :
+private lemma mapWhiskerRight_leftUnitor_hom (F : A ⥤ B) :
     mapWhiskerRight F.leftUnitor.hom (𝟭 C) =
     (mapCompLeft C (𝟭 A) F).hom ≫ whiskerRight mapPairId.hom (mapPair F (𝟭 C)) ≫
       (mapPair F (𝟭 C)).leftUnitor.hom := by
   apply natTrans_ext <;> ext <;> simp [mapCompLeft]
 
 variable (A) in
-lemma mapWhiskerLeft_rightUnitor_hom (F : B ⥤ C) :
+private lemma mapWhiskerLeft_rightUnitor_hom (F : B ⥤ C) :
     mapWhiskerLeft _ F.rightUnitor.hom =
     (mapCompRight A F (𝟭 C)).hom ≫ whiskerLeft (mapPair _ F) mapPairId.hom ≫
       (mapPair (𝟭 A) _).rightUnitor.hom := by
   apply natTrans_ext <;> ext <;> simp [mapCompRight]
 
 variable (C) in
-lemma mapWhiskerRight_rightUnitor_hom (F : A ⥤ B) :
+private lemma mapWhiskerRight_rightUnitor_hom (F : A ⥤ B) :
     mapWhiskerRight F.rightUnitor.hom _ =
     (mapCompLeft C F (𝟭 B)).hom ≫ whiskerLeft (mapPair F _) mapPairId.hom ≫
       (mapPair _ (𝟭 C)).rightUnitor.hom := by

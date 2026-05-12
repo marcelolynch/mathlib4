@@ -34,10 +34,12 @@ private local instance enle.isLinearOrder : IsLinearOrder α enle :=
 set_option backward.privateInPublic true in
 set_option backward.privateInPublic.warn false in
 /-- Explicit encoding function for `Multiset α` -/
+@[no_expose]
 def encodeMultiset (s : Multiset α) : ℕ :=
   encode (s.sort enle)
 
 /-- Explicit decoding function for `Multiset α` -/
+@[no_expose]
 def decodeMultiset (n : ℕ) : Option (Multiset α) :=
   ((↑) : List α → Multiset α) <$> decode (α := List α) n
 
@@ -56,36 +58,38 @@ section Multiset
 
 /-- Outputs the list of differences of the input list, that is
 `lower [a₁, a₂, ...] n = [a₁ - n, a₂ - a₁, ...]` -/
+@[no_expose]
 def lower : List ℕ → ℕ → List ℕ
   | [], _ => []
   | m :: l, n => (m - n) :: lower l m
 
 /-- Outputs the list of partial sums of the input list, that is
 `raise [a₁, a₂, ...] n = [n + a₁, n + a₁ + a₂, ...]` -/
+@[no_expose]
 def raise : List ℕ → ℕ → List ℕ
   | [], _ => []
   | m :: l, n => (m + n) :: raise l (m + n)
 
-theorem lower_raise : ∀ l n, lower (raise l n) n = l
+private theorem lower_raise : ∀ l n, lower (raise l n) n = l
   | [], _ => rfl
   | m :: l, n => by rw [raise, lower, Nat.add_sub_cancel_right, lower_raise l]
 
-theorem raise_lower : ∀ {l n}, List.SortedLE (n :: l) → raise (lower l n) n = l
+private theorem raise_lower : ∀ {l n}, List.SortedLE (n :: l) → raise (lower l n) n = l
   | [], _, _ => rfl
   | m :: l, n, h => by
     have : n ≤ m := List.rel_of_pairwise_cons h.pairwise List.mem_cons_self
     simp [raise, lower, Nat.sub_add_cancel this, raise_lower h.pairwise.of_cons.sortedLE]
 
-theorem isChain_raise : ∀ l n, List.IsChain (· ≤ ·) (raise l n)
+private theorem isChain_raise : ∀ l n, List.IsChain (· ≤ ·) (raise l n)
   | [], _ => .nil
   | [_], _ => .singleton _
   | _ :: _ :: _, _ => .cons_cons (Nat.le_add_left _ _) (isChain_raise (_ :: _) _)
 
-theorem isChain_cons_raise (l n) : List.IsChain (· ≤ ·) (n :: raise l n) :=
+private theorem isChain_cons_raise (l n) : List.IsChain (· ≤ ·) (n :: raise l n) :=
   isChain_raise (n :: l) 0
 
 /-- `raise l n` is a non-decreasing sequence. -/
-theorem raise_sorted (l n) : List.SortedLE (raise l n) := (isChain_raise _ _).sortedLE
+private theorem raise_sorted (l n) : List.SortedLE (raise l n) := (isChain_raise _ _).sortedLE
 
 /-- If `α` is denumerable, then so is `Multiset α`. Warning: this is *not* the same encoding as used
 in `Multiset.encodable`. -/

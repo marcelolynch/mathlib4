@@ -40,12 +40,12 @@ def permsOfList : List α → List (Perm α)
   | [] => [1]
   | a :: l => permsOfList l ++ l.flatMap fun b => (permsOfList l).map fun f => Equiv.swap a b * f
 
-theorem length_permsOfList : ∀ l : List α, length (permsOfList l) = l.length !
+private theorem length_permsOfList : ∀ l : List α, length (permsOfList l) = l.length !
   | [] => rfl
   | a :: l => by
     simp [Nat.factorial_succ, permsOfList, length_permsOfList, succ_mul, add_comm]
 
-theorem mem_permsOfList_of_mem {l : List α} {f : Perm α} (h : ∀ x, f x ≠ x → x ∈ l) :
+private theorem mem_permsOfList_of_mem {l : List α} {f : Perm α} (h : ∀ x, f x ≠ x → x ∈ l) :
     f ∈ permsOfList l := by
   induction l generalizing f with
   | nil =>
@@ -73,7 +73,7 @@ theorem mem_permsOfList_of_mem {l : List α} {f : Perm α} (h : ∀ x, f x ≠ x
   · exact mem_of_ne_of_mem hfa (h _ hfa')
   · rw [← mul_assoc, mul_def (swap a (f a)) (swap a (f a)), swap_swap, ← Perm.one_def, one_mul]
 
-theorem mem_of_mem_permsOfList :
+private theorem mem_of_mem_permsOfList :
     ∀ {l : List α} {f : Perm α}, f ∈ permsOfList l → {x : α} → f x ≠ x → x ∈ l
   | [], f, h, heq_iff_eq => by
     have : f = 1 := by simpa [permsOfList] using h
@@ -90,7 +90,7 @@ theorem mem_of_mem_permsOfList :
               rw [eq_inv_mul_iff_mul_eq.2 hg₂, mul_apply, swap_inv, swap_apply_def]
               split_ifs <;> [exact Ne.symm hxy; exact Ne.symm hxa; exact hx]
 
-theorem mem_permsOfList_iff {l : List α} {f : Perm α} :
+private theorem mem_permsOfList_iff {l : List α} {f : Perm α} :
     f ∈ permsOfList l ↔ ∀ {x}, f x ≠ x → x ∈ l :=
   ⟨mem_of_mem_permsOfList, mem_permsOfList_of_mem⟩
 
@@ -129,11 +129,11 @@ def permsOfFinset (s : Finset α) : Finset (Perm α) :=
         heq_of_eq <| Finset.ext <| by simp [mem_permsOfList_iff, hab.mem_iff])
     s.2
 
-theorem mem_perms_of_finset_iff :
+private theorem mem_perms_of_finset_iff :
     ∀ {s : Finset α} {f : Perm α}, f ∈ permsOfFinset s ↔ ∀ {x}, f x ≠ x → x ∈ s := by
   rintro ⟨⟨l⟩, hs⟩ f; exact mem_permsOfList_iff
 
-theorem card_perms_of_finset : ∀ s : Finset α, #(permsOfFinset s) = (#s)! := by
+private theorem card_perms_of_finset : ∀ s : Finset α, #(permsOfFinset s) = (#s)! := by
   rintro ⟨⟨l⟩, hs⟩; exact length_permsOfList l
 
 /-- The collection of permutations of a fintype is a fintype. -/

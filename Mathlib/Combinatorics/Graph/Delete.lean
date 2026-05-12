@@ -111,7 +111,7 @@ lemma restrict_edgeSet_diff_eq_deleteEdges (G : Graph α β) (F : Set β) :
 lemma deleteEdges_le : G.deleteEdges F ≤ G := by
   simp [← restrict_edgeSet_diff_eq_deleteEdges]
 
-lemma restrict_eq_deleteEdges (G : Graph α β) (F : Set β) :
+private lemma restrict_eq_deleteEdges (G : Graph α β) (F : Set β) :
     G.restrict F = G.deleteEdges (E(G) \ F) :=
   (Compatible.of_le_le restrict_le deleteEdges_le).ext rfl (by simp)
 
@@ -154,12 +154,12 @@ protected def induce (G : Graph α β) (X : Set α) : Graph α β where
   isLink_symm _ _ x := by simp +contextual [G.isLink_comm (x := x)]
   eq_or_eq_of_isLink_of_isLink _ _ _ _ _ h h' := h.1.left_eq_or_eq h'.1
 
-lemma induce_le (hX : X ⊆ V(G)) : G.induce X ≤ G := ⟨hX, fun _ _ _ h ↦ h.1⟩
+private lemma induce_le (hX : X ⊆ V(G)) : G.induce X ≤ G := ⟨hX, fun _ _ _ h ↦ h.1⟩
 
 @[simp, grind =]
 lemma induce_le_iff : G.induce X ≤ G ↔ X ⊆ V(G) := ⟨(·.vertexSet_mono), induce_le⟩
 
-lemma edgeSet_induce (G : Graph α β) (X : Set α) :
+private lemma edgeSet_induce (G : Graph α β) (X : Set α) :
     E(G.induce X) = {e | ∃ x y, G.IsLink e x y ∧ x ∈ X ∧ y ∈ X} := rfl
 
 @[simp, grind =]
@@ -170,6 +170,7 @@ lemma induce_vertexSet (G : Graph α β) : G.induce V(G) = G := by
   exact ⟨x, y, h, h.left_mem, h.right_mem⟩
 
 /-- The graph obtained from `G` by deleting a set of vertices. -/
+@[no_expose]
 def deleteVerts (G : Graph α β) (X : Set α) : Graph α β := G.induce (V(G) \ X)
 
 @[simp, grind =]

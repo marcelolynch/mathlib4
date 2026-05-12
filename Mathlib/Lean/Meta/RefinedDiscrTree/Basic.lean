@@ -72,6 +72,7 @@ protected def Key.hash : Key → UInt64
 instance : Hashable Key := ⟨Key.hash⟩
 
 /-- Format a `RefinedDiscrTree.Key`. -/
+@[no_expose]
 def Key.format : Key → Format
   | .star                   => f!"*"
   | .labelledStar id        => f!"*{id}"
@@ -165,6 +166,7 @@ structure ExprInfo where
   cfg : Config
 
 /-- Creates an `ExprInfo` using the current context. -/
+@[no_expose]
 def mkExprInfo (expr : Expr) (bvars : List FVarId) : MetaM ExprInfo :=
   return {
     expr, bvars,
@@ -181,6 +183,7 @@ inductive StackEntry where
   | expr (info : ExprInfo)
 
 /-- Format a `RefinedDiscrTree.StackEntry`. -/
+@[no_expose]
 def StackEntry.format : StackEntry → Format
   | .star => f!".star"
   | .expr info => f!".expr {info.expr}"
@@ -226,6 +229,7 @@ structure LazyEntry where
 deriving Inhabited
 
 /-- Creates a `LazyEntry` using the current metavariable context. -/
+@[no_expose]
 def mkInitLazyEntry (labelledStars : Bool) : MetaM LazyEntry :=
   return {
     mctx := ← getMCtx
@@ -233,6 +237,7 @@ def mkInitLazyEntry (labelledStars : Bool) : MetaM LazyEntry :=
   }
 
 /-- Format a `RefinedDiscrTree.LazyEntry`. -/
+@[no_expose]
 def LazyEntry.format (entry : LazyEntry) : Format := Id.run do
   let mut parts := #[f!"stack: {entry.stack}"]
   unless entry.computedKeys == [] do
@@ -325,6 +330,7 @@ Discrimination tree flowchart:
               entries: #[one_mul]
 ```
 -/
+@[no_expose]
 partial def format [ToFormat α] (tree : RefinedDiscrTree α) : Format :=
   let lines := tree.root.fold (init := #[]) fun lines key trie =>
     lines.push (Format.nest 2 f!"{key} =>{Format.line}{go trie}")

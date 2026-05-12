@@ -45,7 +45,7 @@ attribute [coe] carrier
 
 attribute [instance] booleanRing
 
-theorem coe_of (α : Type*) [BooleanRing α] : ↥(of α) = α :=
+private theorem coe_of (α : Type*) [BooleanRing α] : ↥(of α) = α :=
   rfl
 
 instance : Inhabited BoolRing :=

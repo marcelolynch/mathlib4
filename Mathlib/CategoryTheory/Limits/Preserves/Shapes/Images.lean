@@ -50,16 +50,16 @@ def iso {X Y : A} (f : X ⟶ Y) : image (L.map f) ≅ L.obj (image f) :=
   IsImage.isoExt (Image.isImage (L.map f)) aux1.toMonoIsImage
 
 @[reassoc]
-theorem factorThruImage_comp_hom {X Y : A} (f : X ⟶ Y) :
+private theorem factorThruImage_comp_hom {X Y : A} (f : X ⟶ Y) :
     factorThruImage (L.map f) ≫ (iso L f).hom = L.map (factorThruImage f) := by simp
 
 @[reassoc]
-theorem hom_comp_map_image_ι {X Y : A} (f : X ⟶ Y) :
+private theorem hom_comp_map_image_ι {X Y : A} (f : X ⟶ Y) :
     (iso L f).hom ≫ L.map (image.ι f) = image.ι (L.map f) := by rw [iso_hom, image.lift_fac]
 
 set_option backward.isDefEq.respectTransparency false in
 @[reassoc]
-theorem inv_comp_image_ι_map {X Y : A} (f : X ⟶ Y) :
+private theorem inv_comp_image_ι_map {X Y : A} (f : X ⟶ Y) :
     (iso L f).inv ≫ image.ι (L.map f) = L.map (image.ι f) := by simp
 
 end PreservesImage

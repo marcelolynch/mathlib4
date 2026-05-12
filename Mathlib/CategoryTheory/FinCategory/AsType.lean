@@ -34,6 +34,7 @@ instance {i j : ObjAsType α} : Fintype (i ⟶ j) :=
   Fintype.ofEquiv _ InducedCategory.homEquiv.symm
 
 /-- The constructed category is indeed equivalent to `α`. -/
+@[no_expose]
 noncomputable def objAsTypeEquiv : ObjAsType α ≌ α :=
   (inducedFunctor (Fintype.equivFin α).symm).asEquivalence
 
@@ -65,6 +66,7 @@ noncomputable def objAsTypeToAsType : ObjAsType α ⥤ AsType α where
 
 set_option backward.isDefEq.respectTransparency false in
 /-- The constructed category (`AsType α`) is equivalent to `ObjAsType α`. -/
+@[no_expose]
 noncomputable def asTypeEquivObjAsType : AsType α ≌ ObjAsType α where
   functor := asTypeToObjAsType α
   inverse := objAsTypeToAsType α
@@ -75,6 +77,7 @@ noncomputable instance asTypeFinCategory : FinCategory (AsType α) where
   fintypeHom := fun _ _ => show Fintype (Fin _) from inferInstance
 
 /-- The constructed category (`AsType α`) is indeed equivalent to `α`. -/
+@[no_expose]
 noncomputable def equivAsType : AsType α ≌ α :=
   (asTypeEquivObjAsType α).trans (objAsTypeEquiv α)
 

@@ -41,11 +41,13 @@ namespace HasShift
 namespace Induced
 
 /-- The `zero` field of the `ShiftMkCore` structure for the induced shift. -/
+@[no_expose]
 noncomputable def zero : s 0 ≅ 𝟭 D :=
   ((whiskeringLeft C D D).obj F).preimageIso ((i 0) ≪≫
     isoWhiskerRight (shiftFunctorZero C A) F ≪≫ F.leftUnitor ≪≫ F.rightUnitor.symm)
 
 /-- The `add` field of the `ShiftMkCore` structure for the induced shift. -/
+@[no_expose]
 noncomputable def add (a b : A) : s (a + b) ≅ s a ⋙ s b :=
   ((whiskeringLeft C D D).obj F).preimageIso
     (i (a + b) ≪≫ isoWhiskerRight (shiftFunctorAdd C a b) F ≪≫
@@ -162,7 +164,7 @@ noncomputable def induced : HasShift D A :=
 
 end HasShift
 
-lemma shiftFunctor_of_induced (a : A) :
+private lemma shiftFunctor_of_induced (a : A) :
     letI := HasShift.induced F A s i
     shiftFunctor D a = s a :=
   rfl

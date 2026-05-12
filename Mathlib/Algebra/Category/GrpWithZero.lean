@@ -62,9 +62,9 @@ lemma hom_id {X : GrpWithZero} : ConcreteCategory.hom (𝟙 X : X ⟶ X) = Monoi
 lemma hom_comp {X Y Z : GrpWithZero} {f : X ⟶ Y} {g : Y ⟶ Z} :
     ConcreteCategory.hom (f ≫ g) = g.comp f := rfl
 
-lemma coe_id {X : GrpWithZero} : (𝟙 X : X → X) = id := rfl
+private lemma coe_id {X : GrpWithZero} : (𝟙 X : X → X) = id := rfl
 
-lemma coe_comp {X Y Z : GrpWithZero} {f : X ⟶ Y} {g : Y ⟶ Z} : (f ≫ g : X → Z) = g ∘ f := rfl
+private lemma coe_comp {X Y Z : GrpWithZero} {f : X ⟶ Y} {g : Y ⟶ Z} : (f ≫ g : X → Z) = g ∘ f := rfl
 
 @[simp] lemma forget_map {X Y : GrpWithZero} (f : X ⟶ Y) :
     (forget GrpWithZero).map f = (f : _ → _) :=

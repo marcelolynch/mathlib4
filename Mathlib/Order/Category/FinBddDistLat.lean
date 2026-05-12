@@ -110,7 +110,7 @@ lemma ext {X Y : FinBddDistLat} {f g : X ⟶ Y} (w : ∀ x : X, f x = g x) : f =
 lemma hom_id {X : FinBddDistLat} : (𝟙 X : X ⟶ X).hom = BoundedLatticeHom.id _ := rfl
 
 /- Provided for rewriting. -/
-lemma id_apply (X : FinBddDistLat) (x : X) :
+private lemma id_apply (X : FinBddDistLat) (x : X) :
     (𝟙 X : X ⟶ X) x = x := by simp
 
 @[simp]
@@ -118,7 +118,7 @@ lemma hom_comp {X Y Z : FinBddDistLat} (f : X ⟶ Y) (g : Y ⟶ Z) :
     (f ≫ g).hom = g.hom.comp f.hom := rfl
 
 /- Provided for rewriting. -/
-lemma comp_apply {X Y Z : FinBddDistLat} (f : X ⟶ Y) (g : Y ⟶ Z) (x : X) :
+private lemma comp_apply {X Y Z : FinBddDistLat} (f : X ⟶ Y) (g : Y ⟶ Z) (x : X) :
     (f ≫ g) x = g (f x) := by simp
 
 @[ext]
@@ -144,15 +144,15 @@ lemma ofHom_comp {X Y Z : Type u} [DistribLattice X] [BoundedOrder X] [Fintype X
     ofHom (g.comp f) = ofHom f ≫ ofHom g :=
   rfl
 
-lemma ofHom_apply {X Y : Type u} [DistribLattice X] [BoundedOrder X] [Fintype X] [DistribLattice Y]
+private lemma ofHom_apply {X Y : Type u} [DistribLattice X] [BoundedOrder X] [Fintype X] [DistribLattice Y]
     [BoundedOrder Y] [Fintype Y]
     (f : BoundedLatticeHom X Y) (x : X) :
     (ofHom f) x = f x := rfl
 
-lemma inv_hom_apply {X Y : FinBddDistLat} (e : X ≅ Y) (x : X) : e.inv (e.hom x) = x := by
+private lemma inv_hom_apply {X Y : FinBddDistLat} (e : X ≅ Y) (x : X) : e.inv (e.hom x) = x := by
   simp
 
-lemma hom_inv_apply {X Y : FinBddDistLat} (e : X ≅ Y) (s : Y) : e.hom (e.inv s) = s := by
+private lemma hom_inv_apply {X Y : FinBddDistLat} (e : X ≅ Y) (s : Y) : e.hom (e.inv s) = s := by
   simp
 
 instance : Inhabited FinBddDistLat :=
@@ -191,7 +191,7 @@ def dualEquiv : FinBddDistLat ≌ FinBddDistLat where
 
 end FinBddDistLat
 
-theorem finBddDistLat_dual_comp_forget_to_bddDistLat :
+private theorem finBddDistLat_dual_comp_forget_to_bddDistLat :
     FinBddDistLat.dual ⋙ forget₂ FinBddDistLat BddDistLat =
       forget₂ FinBddDistLat BddDistLat ⋙ BddDistLat.dual :=
   rfl

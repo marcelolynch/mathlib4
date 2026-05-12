@@ -112,7 +112,7 @@ lemma IsIrreducible.exists_pos [Nontrivial n]
 For a matrix `A` with nonnegative entries, the `(i, j)`-entry of the `k`-th power `A ^ k`
 is strictly positive if and only if there exists a path of length `k` from `i` to `j` in the
 quiver associated to `A` via `toQuiver`. -/
-theorem pow_apply_pos_iff_nonempty_path
+private theorem pow_apply_pos_iff_nonempty_path
     [Fintype n] [IsOrderedRing R] [PosMulStrictMono R] [Nontrivial R] [DecidableEq n]
     (hA : ∀ i j, 0 ≤ A i j) (k : ℕ) (i j : n) :
     letI := toQuiver A
@@ -156,7 +156,7 @@ theorem pow_apply_pos_iff_nonempty_path
 /-- Irreducibility of a nonnegative matrix `A` is equivalent to entrywise positivity of some
 power: between any two indices `i, j` there exists a positive integer `k` such that the
 `(i, j)`-entry of `A ^ k` is strictly positive. -/
-theorem isIrreducible_iff_exists_pow_pos
+private theorem isIrreducible_iff_exists_pow_pos
     [Fintype n] [IsOrderedRing R] [PosMulStrictMono R] [Nontrivial R] [DecidableEq n]
     (hA : ∀ i j, 0 ≤ A i j) :
     IsIrreducible A ↔ ∀ i j, ∃ k > 0, 0 < (A ^ k) i j := by
@@ -189,6 +189,7 @@ theorem IsPrimitive.isIrreducible
 /-! ## Transposition -/
 
 /-- Reverse a path in `toQuiver A` to a path in `toQuiver Aᵀ`, swapping endpoints. -/
+@[no_expose]
 def transposePath {i j : n} (p : @Quiver.Path n A.toQuiver i j) :
     @Quiver.Path n Aᵀ.toQuiver j i := by
   letI : Quiver n := toQuiver A

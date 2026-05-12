@@ -53,7 +53,7 @@ instance [P.InheritedFromSource Q] [P'.InheritedFromSource Q] :
     (P ⊓ P').InheritedFromSource Q where
   of_hom_of_source f hf h := ⟨P.of_hom_of_source f hf h.1, P'.of_hom_of_source f hf h.2⟩
 
-lemma of_le (hQ : Q ≤ Q') [P.InheritedFromSource Q'] : P.InheritedFromSource Q where
+private lemma of_le (hQ : Q ≤ Q') [P.InheritedFromSource Q'] : P.InheritedFromSource Q where
   of_hom_of_source f hf h := P.of_hom_of_source f (hQ _ hf) h
 
 end InheritedFromSource
@@ -71,7 +71,7 @@ instance [P.InheritedFromTarget Q] [P'.InheritedFromTarget Q] :
     (P ⊓ P').InheritedFromTarget Q where
   of_hom_of_target f hf h := ⟨P.of_hom_of_target f hf h.1, P'.of_hom_of_target f hf h.2⟩
 
-lemma of_le (hQ : Q ≤ Q') [P.InheritedFromTarget Q'] : P.InheritedFromTarget Q where
+private lemma of_le (hQ : Q ≤ Q') [P.InheritedFromTarget Q'] : P.InheritedFromTarget Q where
   of_hom_of_target f hf h := P.of_hom_of_target f (hQ _ hf) h
 
 end InheritedFromTarget

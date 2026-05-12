@@ -52,7 +52,7 @@ def map (f : α → α') (G : Graph α β) : Graph α' β where
     rintro e - - ⟨x, y, h, rfl, rfl⟩
     exact Set.mem_image_of_mem _ h.left_mem
 
-protected lemma IsLink.map (f : α → α') (h : G.IsLink e u v) : (G.map f).IsLink e (f u) (f v) :=
+private protected lemma IsLink.map (f : α → α') (h : G.IsLink e u v) : (G.map f).IsLink e (f u) (f v) :=
   ⟨u, v, h, rfl, rfl⟩
 
 @[simp]
@@ -60,7 +60,7 @@ lemma map_inc (f : α → α') : (G.map f).Inc e x ↔ ∃ v, G.Inc e v ∧ x = 
   simp only [Inc, map_isLink, map_apply]
   tauto
 
-protected lemma Inc.map (f : α → α') (h : G.Inc e v) : (G.map f).Inc e (f v) := by
+private protected lemma Inc.map (f : α → α') (h : G.Inc e v) : (G.map f).Inc e (f v) := by
   obtain ⟨w, hw⟩ := h
   exact ⟨f w, hw.map f⟩
 
@@ -68,7 +68,7 @@ protected lemma Inc.map (f : α → α') (h : G.Inc e v) : (G.map f).Inc e (f v)
 lemma map_isLoopAt (f : α → α') :
     (G.map f).IsLoopAt e x ↔ ∃ u v, G.IsLink e u v ∧ f u = x ∧ f v = x := Iff.rfl
 
-protected lemma IsLoopAt.map (f : α → α') (h : G.IsLoopAt e v) : (G.map f).IsLoopAt e (f v) :=
+private protected lemma IsLoopAt.map (f : α → α') (h : G.IsLoopAt e v) : (G.map f).IsLoopAt e (f v) :=
   IsLink.map f h
 
 @[simp]
@@ -76,7 +76,7 @@ lemma map_adj (f : α → α') : (G.map f).Adj x y ↔ Relation.Map G.Adj f f x 
   simp only [Adj, map_isLink, map_apply]
   tauto
 
-protected lemma Adj.map (f : α → α') (h : G.Adj u v) : (G.map f).Adj (f u) (f v) := by
+private protected lemma Adj.map (f : α → α') (h : G.Adj u v) : (G.map f).Adj (f u) (f v) := by
   obtain ⟨e, h⟩ := h
   exact ⟨e, h.map f⟩
 

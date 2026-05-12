@@ -105,7 +105,7 @@ def LeftExtension.IsAbsKan.adjunction {f : a ⟶ b} (t : LeftExtension f (𝟙 a
     f ⊣ t.extension :=
   H.isKan.adjunction (H f)
 
-theorem isLeftAdjoint_TFAE (f : a ⟶ b) :
+private theorem isLeftAdjoint_TFAE (f : a ⟶ b) :
     List.TFAE [
       IsLeftAdjoint f,
       HasAbsLeftKanExtension f (𝟙 a),
@@ -185,7 +185,7 @@ def LeftLift.IsAbsKan.adjunction {u : b ⟶ a} (t : LeftLift u (𝟙 a)) (H : Is
     t.lift ⊣ u :=
   H.isKan.adjunction (H u)
 
-theorem isRightAdjoint_TFAE (u : b ⟶ a) :
+private theorem isRightAdjoint_TFAE (u : b ⟶ a) :
     List.TFAE [
       IsRightAdjoint u,
       HasAbsLeftKanLift u (𝟙 a),
@@ -204,6 +204,7 @@ namespace LeftExtension
 
 set_option backward.isDefEq.respectTransparency false in
 /-- A left adjoint commutes with a left Kan extension. -/
+@[no_expose]
 def isKanOfWhiskerLeftAdjoint
     {f : a ⟶ b} {g : a ⟶ c} {t : LeftExtension f g} (H : LeftExtension.IsKan t)
       {x : B} {h : c ⟶ x} {u : x ⟶ c} (adj : h ⊣ u) :

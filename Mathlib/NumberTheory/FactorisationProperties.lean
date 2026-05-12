@@ -57,62 +57,67 @@ namespace Nat
 variable {n m p : ℕ}
 
 /-- `n : ℕ` is _abundant_ if the sum of the proper divisors of `n` is greater than `n`. -/
+@[no_expose]
 def Abundant (n : ℕ) : Prop := n < ∑ i ∈ properDivisors n, i
 deriving Decidable
 
 /-- `n : ℕ` is _deficient_ if the sum of the proper divisors of `n` is less than `n`. -/
+@[no_expose]
 def Deficient (n : ℕ) : Prop := ∑ i ∈ properDivisors n, i < n
 deriving Decidable
 
 /-- A positive natural number `n` is _pseudoperfect_ if there exists a subset of the proper
   divisors of `n` such that the sum of that subset is equal to `n`. -/
+@[no_expose]
 def Pseudoperfect (n : ℕ) : Prop :=
   0 < n ∧ ∃ s ⊆ properDivisors n, ∑ i ∈ s, i = n
 deriving Decidable
 
 /-- `n : ℕ` is a _weird_ number if and only if it is abundant but not pseudoperfect. -/
+@[no_expose]
 def Weird (n : ℕ) : Prop := Abundant n ∧ ¬ Pseudoperfect n
 deriving Decidable
 
 /-- `abundancyIndex n` is the sum of the divisors of `n` divided by `n`. -/
+@[no_expose]
 def abundancyIndex (n : ℕ) : ℚ := (∑ i ∈ n.divisors, i) / (n : ℚ)
 
-theorem not_pseudoperfect_iff_forall :
+private theorem not_pseudoperfect_iff_forall :
     ¬ Pseudoperfect n ↔ n = 0 ∨ ∀ s ⊆ properDivisors n, ∑ i ∈ s, i ≠ n := by
   grind [Pseudoperfect]
 
-theorem deficient_one : Deficient 1 := by
+private theorem deficient_one : Deficient 1 := by
   decide
 
-theorem deficient_two : Deficient 2 := by
+private theorem deficient_two : Deficient 2 := by
   decide
 
-theorem deficient_three : Deficient 3 := by
+private theorem deficient_three : Deficient 3 := by
   decide
 
-theorem not_abundant_zero : ¬ Abundant 0 := by
+private theorem not_abundant_zero : ¬ Abundant 0 := by
   decide
 
-theorem abundant_twelve : Abundant 12 := by
+private theorem abundant_twelve : Abundant 12 := by
   decide
 
-theorem weird_seventy : Weird 70 := by
+private theorem weird_seventy : Weird 70 := by
   decide +kernel
 
-lemma deficient_iff_not_abundant_and_not_perfect (hn : n ≠ 0) :
+private lemma deficient_iff_not_abundant_and_not_perfect (hn : n ≠ 0) :
     Deficient n ↔ ¬ Abundant n ∧ ¬ Perfect n := by
   grind [Perfect, Abundant, Deficient]
 
-lemma perfect_iff_not_abundant_and_not_deficient (hn : 0 ≠ n) :
+private lemma perfect_iff_not_abundant_and_not_deficient (hn : 0 ≠ n) :
     Perfect n ↔ ¬ Abundant n ∧ ¬ Deficient n := by
   grind [Perfect, Abundant, Deficient]
 
-lemma abundant_iff_not_perfect_and_not_deficient (hn : 0 ≠ n) :
+private lemma abundant_iff_not_perfect_and_not_deficient (hn : 0 ≠ n) :
     Abundant n ↔ ¬ Perfect n ∧ ¬ Deficient n := by
   grind [Perfect, Abundant, Deficient]
 
 /-- A positive natural number is either deficient, perfect, or abundant -/
-theorem deficient_or_perfect_or_abundant (hn : 0 ≠ n) :
+private theorem deficient_or_perfect_or_abundant (hn : 0 ≠ n) :
     Deficient n ∨ Abundant n ∨ Perfect n := by
   grind [Perfect, Abundant, Deficient]
 
@@ -154,13 +159,13 @@ theorem Prime.deficient (h : Prime n) : Deficient n :=
   (pow_one n) ▸ h.deficient_pow
 
 /-- There exists infinitely many deficient numbers -/
-theorem infinite_deficient : {n : ℕ | n.Deficient}.Infinite := by
+private theorem infinite_deficient : {n : ℕ | n.Deficient}.Infinite := by
   rw [Set.infinite_iff_exists_gt]
   intro a
   obtain ⟨b, h1, h2⟩ := exists_infinite_primes a.succ
   exact ⟨b, h2.deficient, h1⟩
 
-theorem infinite_even_deficient : {n : ℕ | Even n ∧ n.Deficient}.Infinite := by
+private theorem infinite_even_deficient : {n : ℕ | Even n ∧ n.Deficient}.Infinite := by
   rw [Set.infinite_iff_exists_gt]
   intro n
   use 2 ^ (n + 1)
@@ -170,23 +175,23 @@ theorem infinite_even_deficient : {n : ℕ | Even n ∧ n.Deficient}.Infinite :=
       n ≤ 2 ^ n := Nat.le_of_lt n.lt_two_pow_self
       _ < 2 ^ (n + 1) := (Nat.pow_lt_pow_iff_right (Nat.one_lt_two)).mpr (lt_add_one n)
 
-theorem infinite_odd_deficient : {n : ℕ | Odd n ∧ n.Deficient}.Infinite := by
+private theorem infinite_odd_deficient : {n : ℕ | Odd n ∧ n.Deficient}.Infinite := by
   rw [Set.infinite_iff_exists_gt]
   intro n
   obtain ⟨p, ⟨_, h2⟩⟩ := exists_infinite_primes (max (n + 1) 3)
   exact ⟨p, Set.mem_setOf.mpr ⟨Prime.odd_of_ne_two h2 (Ne.symm (ne_of_lt (by grind))),
     Prime.deficient h2⟩, by grind⟩
 
-theorem abundant_iff_sum_divisors : Abundant n ↔ 2 * n < ∑ i ∈ n.divisors, i := by
+private theorem abundant_iff_sum_divisors : Abundant n ↔ 2 * n < ∑ i ∈ n.divisors, i := by
   grind [Abundant, sum_divisors_eq_sum_properDivisors_add_self]
 
-theorem abundant_iff_two_lt_abundancyIndex : Abundant n ↔ 2 < n.abundancyIndex := by
+private theorem abundant_iff_two_lt_abundancyIndex : Abundant n ↔ 2 < n.abundancyIndex := by
   by_cases h : n = 0
   · simp [h, Abundant, abundancyIndex]
   · rw [abundant_iff_sum_divisors, abundancyIndex, lt_div_iff₀ (by positivity)]
     norm_cast
 
-theorem abundancyIndex_le_of_dvd (hn : n ≠ 0) (hd : m ∣ n) :
+private theorem abundancyIndex_le_of_dvd (hn : n ≠ 0) (hd : m ∣ n) :
     m.abundancyIndex ≤ n.abundancyIndex := by
   obtain ⟨k, hk⟩ := hd
   have hk0 : k ≠ 0 := by grind
@@ -205,14 +210,14 @@ theorem Abundant.mul_left (h : Abundant n) (hm : m ≠ 0) : Abundant (m * n) := 
   have hmn : m * n ≠ 0 := mul_ne_zero hm hn
   exact Abundant.of_dvd h (Nat.dvd_mul_left n m) hmn
 
-theorem infinite_even_abundant : {n : ℕ | Even n ∧ n.Abundant}.Infinite := by
+private theorem infinite_even_abundant : {n : ℕ | Even n ∧ n.Abundant}.Infinite := by
   rw [Set.infinite_iff_exists_gt]
   intro a
   have ha : Abundant 12 := by decide
   use (2 * (a + 1)) * 12
   grind [Abundant.mul_left ha (show 2 * (a + 1) ≠ 0 by grind)]
 
-theorem infinite_odd_abundant : {n : ℕ | Odd n ∧ n.Abundant}.Infinite := by
+private theorem infinite_odd_abundant : {n : ℕ | Odd n ∧ n.Abundant}.Infinite := by
   rw [Set.infinite_iff_exists_gt]
   intro a
   have ha : Abundant 945 := by decide +kernel

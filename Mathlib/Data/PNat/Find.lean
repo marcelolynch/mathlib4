@@ -29,6 +29,7 @@ instance decidablePredExistsNat : DecidablePred fun n' : ℕ => ∃ (n : ℕ+) (
       simp_rw [mk_coe, @exists_comm (_ < _) (_ = _), exists_prop, exists_eq_left']
 
 /-- The `PNat` version of `Nat.findX` -/
+@[no_expose]
 protected def findX : { n // p n ∧ ∀ m : ℕ+, m < n → ¬p m } := by
   have : ∃ (n' : ℕ) (n : ℕ+) (_ : n' = n), p n := Exists.elim h fun n hn => ⟨n, n, rfl, hn⟩
   have n := Nat.findX this
@@ -51,21 +52,22 @@ The API for `PNat.find` is:
 * `PNat.find_min` is the proof that if `m < PNat.find hp` then `m` does not satisfy `p`.
 * `PNat.find_min'` is the proof that if `m` does satisfy `p` then `PNat.find hp ≤ m`.
 -/
+@[no_expose]
 protected def find : ℕ+ :=
   PNat.findX h
 
-protected theorem find_spec : p (PNat.find h) :=
+private protected theorem find_spec : p (PNat.find h) :=
   (PNat.findX h).prop.left
 
-protected theorem find_min : ∀ {m : ℕ+}, m < PNat.find h → ¬p m :=
+private protected theorem find_min : ∀ {m : ℕ+}, m < PNat.find h → ¬p m :=
   @(PNat.findX h).prop.right
 
-protected theorem find_min' {m : ℕ+} (hm : p m) : PNat.find h ≤ m :=
+private protected theorem find_min' {m : ℕ+} (hm : p m) : PNat.find h ≤ m :=
   le_of_not_gt fun l => PNat.find_min h l hm
 
 variable {n m : ℕ+}
 
-theorem find_eq_iff : PNat.find h = m ↔ p m ∧ ∀ n < m, ¬p n := by
+private theorem find_eq_iff : PNat.find h = m ↔ p m ∧ ∀ n < m, ¬p n := by
   constructor
   · rintro rfl
     exact ⟨PNat.find_spec h, fun _ => PNat.find_min h⟩
@@ -92,16 +94,16 @@ theorem lt_find_iff (n : ℕ+) : n < PNat.find h ↔ ∀ m ≤ n, ¬p m := by
 @[simp]
 theorem find_eq_one : PNat.find h = 1 ↔ p 1 := by simp [find_eq_iff]
 
-theorem one_le_find : 1 < PNat.find h ↔ ¬p 1 := by simp
+private theorem one_le_find : 1 < PNat.find h ↔ ¬p 1 := by simp
 
-theorem find_mono (h : ∀ n, q n → p n) {hp : ∃ n, p n} {hq : ∃ n, q n} :
+private theorem find_mono (h : ∀ n, q n → p n) {hp : ∃ n, p n} {hq : ∃ n, q n} :
     PNat.find hp ≤ PNat.find hq :=
   PNat.find_min' _ (h _ (PNat.find_spec hq))
 
-theorem find_le {h : ∃ n, p n} (hn : p n) : PNat.find h ≤ n :=
+private theorem find_le {h : ∃ n, p n} (hn : p n) : PNat.find h ≤ n :=
   (PNat.find_le_iff _ _).2 ⟨n, le_rfl, hn⟩
 
-theorem find_comp_succ (h : ∃ n, p n) (h₂ : ∃ n, p (n + 1)) (h1 : ¬p 1) :
+private theorem find_comp_succ (h : ∃ n, p n) (h₂ : ∃ n, p (n + 1)) (h1 : ¬p 1) :
     PNat.find h = PNat.find h₂ + 1 := by
   refine (find_eq_iff _).2 ⟨PNat.find_spec h₂, fun n ↦ ?_⟩
   induction n with

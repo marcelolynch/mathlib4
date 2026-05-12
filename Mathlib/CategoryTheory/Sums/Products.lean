@@ -133,7 +133,7 @@ def natIsoOfWhiskerLeftInlInr {F G : A ⊕ A' ⥤ B}
   hom := natTransOfWhiskerLeftInlInr η₁.hom η₂.hom
   inv := natTransOfWhiskerLeftInlInr η₁.inv η₂.inv
 
-lemma natIsoOfWhiskerLeftInlInr_eq {F G : A ⊕ A' ⥤ B}
+private lemma natIsoOfWhiskerLeftInlInr_eq {F G : A ⊕ A' ⥤ B}
     (η₁ : Sum.inl_ A A' ⋙ F ≅ Sum.inl_ A A' ⋙ G) (η₂ : Sum.inr_ A A' ⋙ F ≅ Sum.inr_ A A' ⋙ G) :
     natIsoOfWhiskerLeftInlInr η₁ η₂ =
     (Sum.functorEquiv A A' B).unitIso.app _ ≪≫

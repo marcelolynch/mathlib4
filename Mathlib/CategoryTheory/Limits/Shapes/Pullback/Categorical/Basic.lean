@@ -187,7 +187,7 @@ lemma inv_snd : (inv f).snd = inv f.snd := by
 
 end
 
-lemma isIso_iff {x y : F ⊡ G} (f : x ⟶ y) :
+private lemma isIso_iff {x y : F ⊡ G} (f : x ⟶ y) :
     IsIso f ↔ (IsIso f.fst ∧ IsIso f.snd) where
   mp h := ⟨inferInstance, inferInstance⟩
   mpr | ⟨h₁, h₂⟩ => ⟨⟨inv f.fst, inv f.snd, by cat_disch⟩, by cat_disch⟩
@@ -253,13 +253,13 @@ instance asSquare (S : CatCommSqOver F G X) : CatCommSq S.fst S.snd F G where
   iso := S.iso
 
 @[reassoc (attr := simp)]
-lemma iso_hom_naturality (S : CatCommSqOver F G X) {x x' : X} (f : x ⟶ x') :
+private lemma iso_hom_naturality (S : CatCommSqOver F G X) {x x' : X} (f : x ⟶ x') :
     F.map (S.fst.map f) ≫ S.iso.hom.app x' =
     S.iso.hom.app x ≫ G.map (S.snd.map f) :=
   S.iso.hom.naturality f
 
 @[reassoc (attr := simp)]
-lemma w_app {S S' : CatCommSqOver F G X} (φ : S ⟶ S') (x : X) :
+private lemma w_app {S S' : CatCommSqOver F G X} (φ : S ⟶ S') (x : X) :
     F.map (φ.fst.app x) ≫ S'.iso.hom.app x =
     S.iso.hom.app x ≫ G.map (φ.snd.app x) :=
   NatTrans.congr_app φ.w x
@@ -423,7 +423,7 @@ lemma toCatCommSqOver_mapIso_mkNatIso_eq_mkIso
 set_option backward.isDefEq.respectTransparency false in
 /-- Comparing mkNatIso with the corresponding construction one can deduce from
 `functorEquiv`. -/
-lemma mkNatIso_eq
+private lemma mkNatIso_eq
     (coh :
       whiskerRight e₁.hom F ≫ (associator _ _ _).hom ≫
         whiskerLeft K (CatCommSq.iso (π₁ F G) (π₂ F G) F G).hom ≫
@@ -530,7 +530,7 @@ def transformObjId (X : Type u₄) [Category.{v₄} X]
 
 open scoped CatCospanTransform
 
-lemma transform_map_whiskerLeft
+private lemma transform_map_whiskerLeft
     (X : Type u₇) [Category.{v₇} X]
     (ψ : CatCospanTransform F G F₁ G₁)
     {φ φ' : CatCospanTransform F₁ G₁ F₂ G₂} (α : φ ⟶ φ') :
@@ -540,7 +540,7 @@ lemma transform_map_whiskerLeft
       (transformObjComp X ψ φ').inv := by
   ext <;> simp
 
-lemma transform_map_whiskerRight
+private lemma transform_map_whiskerRight
     (X : Type u₇) [Category.{v₇} X]
     {ψ ψ' : CatCospanTransform F G F₁ G₁} (α : ψ ⟶ ψ')
     (φ : CatCospanTransform F₁ G₁ F₂ G₂) :
@@ -550,7 +550,7 @@ lemma transform_map_whiskerRight
       (transformObjComp X ψ' φ).inv := by
   ext <;> simp
 
-lemma transform_map_associator
+private lemma transform_map_associator
     {A₃ : Type u₁₀} {B₃ : Type u₁₁} {C₃ : Type u₁₂}
     [Category.{v₁₀} A₃] [Category.{v₁₁} B₃] [Category.{v₁₂} C₃]
     {F₃ : A₃ ⥤ B₃} {G₃ : C₃ ⥤ B₃}
@@ -566,7 +566,7 @@ lemma transform_map_associator
       (transformObjComp X ψ (φ.comp τ)).inv := by
   ext <;> simp
 
-lemma transform_map_leftUnitor (X : Type u₇) [Category.{v₇} X]
+private lemma transform_map_leftUnitor (X : Type u₇) [Category.{v₇} X]
     (ψ : CatCospanTransform F G F₁ G₁) :
     (transform X).map (λ_ ψ).hom =
     (transformObjComp X (.id F G) ψ).hom ≫
@@ -574,7 +574,7 @@ lemma transform_map_leftUnitor (X : Type u₇) [Category.{v₇} X]
       (transform X |>.obj ψ).leftUnitor.hom := by
   ext <;> simp
 
-lemma transform_map_rightUnitor (X : Type u₇) [Category.{v₇} X]
+private lemma transform_map_rightUnitor (X : Type u₇) [Category.{v₇} X]
     (ψ : CatCospanTransform F G F₁ G₁) :
     (transform X).map (ρ_ ψ).hom =
     (transformObjComp X ψ (.id F₁ G₁)).hom ≫
@@ -637,21 +637,21 @@ def precomposeObjComp (U : X ⥤ Y) (V : Y ⥤ Z) :
       (Functor.associator _ _ _)
       (Functor.associator _ _ _)
 
-lemma precompose_map_whiskerLeft (U : X ⥤ Y) {V W : Y ⥤ Z} (α : V ⟶ W) :
+private lemma precompose_map_whiskerLeft (U : X ⥤ Y) {V W : Y ⥤ Z} (α : V ⟶ W) :
     (precompose F G).map (whiskerLeft U α) =
     (precomposeObjComp F G U V).hom ≫
       whiskerRight (precompose F G |>.map α) (precompose F G |>.obj U) ≫
       (precomposeObjComp F G U W).inv := by
   ext <;> simp
 
-lemma precompose_map_whiskerRight {U V : X ⥤ Y} (α : U ⟶ V) (W : Y ⥤ Z) :
+private lemma precompose_map_whiskerRight {U V : X ⥤ Y} (α : U ⟶ V) (W : Y ⥤ Z) :
     (precompose F G).map (whiskerRight α W) =
     (precomposeObjComp F G U W).hom ≫
       whiskerLeft (precompose F G |>.obj W) (precompose F G |>.map α) ≫
       (precomposeObjComp F G V W).inv := by
   ext <;> simp
 
-lemma precompose_map_associator {T : Type u₇} [Category.{v₇} T]
+private lemma precompose_map_associator {T : Type u₇} [Category.{v₇} T]
     (U : X ⥤ Y) (V : Y ⥤ Z) (W : Z ⥤ T) :
     (precompose F G).map (U.associator V W).hom =
     (precomposeObjComp F G (U ⋙ V) W).hom ≫
@@ -661,14 +661,14 @@ lemma precompose_map_associator {T : Type u₇} [Category.{v₇} T]
       (precomposeObjComp F G _ _).inv := by
   ext <;> simp
 
-lemma precompose_map_leftUnitor (U : X ⥤ Y) :
+private lemma precompose_map_leftUnitor (U : X ⥤ Y) :
     (precompose F G).map U.leftUnitor.hom =
     (precomposeObjComp F G (𝟭 _) U).hom ≫
       whiskerLeft (precompose F G |>.obj U) (precomposeObjId F G X).hom ≫
       (Functor.rightUnitor _).hom := by
   ext <;> simp
 
-lemma precompose_map_rightUnitor (U : X ⥤ Y) :
+private lemma precompose_map_rightUnitor (U : X ⥤ Y) :
     (precompose F G).map U.rightUnitor.hom =
     (precomposeObjComp F G U (𝟭 _)).hom ≫
       whiskerRight (precomposeObjId F G Y).hom (precompose F G |>.obj U) ≫
@@ -707,7 +707,7 @@ instance precomposeObjTransformObjSquare
 -- of pseudofunctors
 
 /-- The square `precomposeObjTransformObjSquare` is itself natural. -/
-lemma precomposeObjTransformObjSquare_iso_hom_naturality₂
+private lemma precomposeObjTransformObjSquare_iso_hom_naturality₂
     {X : Type u₇} {Y : Type u₈} [Category.{v₇} X] [Category.{v₈} Y]
     (ψ : CatCospanTransform F G F₁ G₁)
     {U V : X ⥤ Y} (α : U ⟶ V) :
@@ -718,7 +718,7 @@ lemma precomposeObjTransformObjSquare_iso_hom_naturality₂
   ext <;> simp
 
 /-- The square `precomposeObjTransformOBjSquare` respects identities. -/
-lemma precomposeObjTransformObjSquare_iso_hom_id
+private lemma precomposeObjTransformObjSquare_iso_hom_id
     (ψ : CatCospanTransform F G F₁ G₁) (X : Type u₇) [Category.{v₇} X] :
     (CatCommSq.iso (precompose F G |>.obj <| 𝟭 X) (transform X |>.obj ψ)
       (transform X |>.obj ψ) (precompose F₁ G₁ |>.obj <| 𝟭 X)).hom ≫
@@ -728,7 +728,7 @@ lemma precomposeObjTransformObjSquare_iso_hom_id
   ext <;> simp
 
 /-- The square `precomposeTransformSquare` respects compositions. -/
-lemma precomposeObjTransformObjSquare_iso_hom_comp
+private lemma precomposeObjTransformObjSquare_iso_hom_comp
     {X : Type u₇} {Y : Type u₈} {Z : Type u₉}
     [Category.{v₇} X] [Category.{v₈} Y] [Category.{v₉} Z]
     (ψ : CatCospanTransform F G F₁ G₁)
@@ -769,7 +769,7 @@ instance transformObjPrecomposeObjSquare
 -- of pseudofunctors
 
 /-- The square `transformObjPrecomposeObjSquare` is itself natural. -/
-lemma transformObjPrecomposeObjSquare_iso_hom_naturality₂
+private lemma transformObjPrecomposeObjSquare_iso_hom_naturality₂
     {X : Type u₇} {Y : Type u₈} [Category.{v₇} X] [Category.{v₈} Y]
     (U : X ⥤ Y) {ψ ψ' : CatCospanTransform F G F₁ G₁} (η : ψ ⟶ ψ') :
     whiskerRight (transform Y |>.map η) (precompose F₁ G₁ |>.obj U) ≫
@@ -779,7 +779,7 @@ lemma transformObjPrecomposeObjSquare_iso_hom_naturality₂
   ext <;> simp
 
 /-- The square `transformObjPrecomposeObjSquare` respects identities. -/
-lemma transformObjPrecomposeObjSquare_iso_hom_id
+private lemma transformObjPrecomposeObjSquare_iso_hom_id
     {X : Type u₇} {Y : Type u₈} [Category.{v₇} X] [Category.{v₈} Y]
     (U : X ⥤ Y) (F : A ⥤ B) (G : C ⥤ B) :
     (CatCommSq.iso (transform Y |>.obj <| .id F G) (precompose F G |>.obj U)
@@ -791,7 +791,7 @@ lemma transformObjPrecomposeObjSquare_iso_hom_id
   ext <;> simp
 
 /-- The square `transformPrecomposeSquare` respects compositions. -/
-lemma transformPrecomposeObjSquare_iso_hom_comp
+private lemma transformPrecomposeObjSquare_iso_hom_comp
     {A₂ : Type u₇} {B₂ : Type u₈} {C₂ : Type u₉}
     [Category.{v₇} A₂] [Category.{v₈} B₂] [Category.{v₉} C₂]
     {F₂ : A₂ ⥤ B₂} {G₂ : C₂ ⥤ B₂}

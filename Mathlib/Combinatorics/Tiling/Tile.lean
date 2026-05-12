@@ -97,7 +97,7 @@ attribute [coe] carrier
 instance : Membership X (Prototile G X) where
   mem p x := x ∈ (p : Set X)
 
-lemma coe_mk (c s) : (⟨c, s⟩ : Prototile G X) = c := rfl
+private lemma coe_mk (c s) : (⟨c, s⟩ : Prototile G X) = c := rfl
 
 @[simp] lemma mem_coe {x : X} {p : Prototile G X} : x ∈ (p : Set X) ↔ x ∈ p := Iff.rfl
 
@@ -122,13 +122,13 @@ instance : CoeFun (Protoset G X ιₚ) (fun _ ↦ ιₚ → Prototile G X) where
 
 attribute [coe] tiles
 
-lemma coe_mk (t) : (⟨t⟩ : Protoset G X ιₚ) = t := rfl
+private lemma coe_mk (t) : (⟨t⟩ : Protoset G X ιₚ) = t := rfl
 
 @[simp, norm_cast] lemma coe_inj {ps₁ ps₂ : Protoset G X ιₚ} :
     (ps₁ : ιₚ → Prototile G X) = ps₂ ↔ ps₁ = ps₂ :=
   Protoset.ext_iff.symm
 
-lemma coe_injective : Injective (Protoset.tiles : Protoset G X ιₚ → ιₚ → Prototile G X) :=
+private lemma coe_injective : Injective (Protoset.tiles : Protoset G X ιₚ → ιₚ → Prototile G X) :=
   fun _ _ ↦ coe_inj.1
 
 end Protoset
@@ -151,7 +151,7 @@ instance [Nonempty ιₚ] : Nonempty (PlacedTile ps) := ⟨⟨Classical.arbitrar
 
 /-- An induction principle to deduce results for `PlacedTile` from those given an index and an
 element of `G`, used with `induction pt using PlacedTile.induction_on`. -/
-@[elab_as_elim] protected lemma induction_on {ppt : PlacedTile ps → Prop} (pt : PlacedTile ps)
+@[elab_as_elim] private protected lemma induction_on {ppt : PlacedTile ps → Prop} (pt : PlacedTile ps)
     (h : ∀ i : ιₚ, ∀ gx : G, ppt ⟨i, gx⟩) : ppt pt := by
   rcases pt with ⟨i, gx⟩
   induction gx using Quotient.inductionOn
@@ -159,7 +159,7 @@ element of `G`, used with `induction pt using PlacedTile.induction_on`. -/
 
 /-- An alternative extensionality principle for `PlacedTile` that avoids `HEq`, using existence of a
 common group element. -/
-lemma ext_iff_of_exists {pt₁ pt₂ : PlacedTile ps} :
+private lemma ext_iff_of_exists {pt₁ pt₂ : PlacedTile ps} :
     pt₁ = pt₂ ↔ pt₁.index = pt₂.index ∧ ∃ g, ⟦g⟧ = pt₁.groupElts ∧ ⟦g⟧ = pt₂.groupElts := by
   refine ⟨fun h ↦ ?_, fun ⟨h, g, hg₁, hg₂⟩ ↦ ?_⟩
   · subst h
@@ -176,7 +176,7 @@ lemma ext_iff_of_exists {pt₁ pt₂ : PlacedTile ps} :
 
 /-- An alternative extensionality principle for `PlacedTile` that avoids `HEq`, using equality of
 quotient preimages. -/
-lemma ext_iff_of_preimage {pt₁ pt₂ : PlacedTile ps} :
+private lemma ext_iff_of_preimage {pt₁ pt₂ : PlacedTile ps} :
     pt₁ = pt₂ ↔ pt₁.index = pt₂.index ∧
       (Quotient.mk _) ⁻¹' {pt₁.groupElts} = (Quotient.mk _) ⁻¹' {pt₂.groupElts} := by
   refine ⟨fun h ↦ ?_, fun ⟨hi, hq⟩ ↦ ?_⟩
@@ -209,11 +209,11 @@ instance : Membership X (PlacedTile ps) where
 
 @[simp] lemma mem_coe {x : X} {pt : PlacedTile ps} : x ∈ (pt : Set X) ↔ x ∈ pt := Iff.rfl
 
-lemma coe_mk_mk (i : ιₚ) (g : G) : (⟨i, ⟦g⟧⟩ : PlacedTile ps) = g • (ps i : Set X) := rfl
+private lemma coe_mk_mk (i : ιₚ) (g : G) : (⟨i, ⟦g⟧⟩ : PlacedTile ps) = g • (ps i : Set X) := rfl
 
-lemma coe_mk_coe (i : ιₚ) (g : G) : (⟨i, g⟩ : PlacedTile ps) = g • (ps i : Set X) := rfl
+private lemma coe_mk_coe (i : ιₚ) (g : G) : (⟨i, g⟩ : PlacedTile ps) = g • (ps i : Set X) := rfl
 
-lemma coe_nonempty_iff {pt : PlacedTile ps} :
+private lemma coe_nonempty_iff {pt : PlacedTile ps} :
     (pt : Set X).Nonempty ↔ (ps pt.index : Set X).Nonempty := by
   rcases pt with ⟨index, groupElts⟩
   simp only [coeSet]
@@ -224,7 +224,7 @@ lemma coe_nonempty_iff {pt : PlacedTile ps} :
     ((⟨i, g⟩ : PlacedTile ps) : Set X).Nonempty ↔ (ps i : Set X).Nonempty :=
   coe_nonempty_iff
 
-lemma coe_finite_iff {pt : PlacedTile ps} :
+private lemma coe_finite_iff {pt : PlacedTile ps} :
     (pt : Set X).Finite ↔ (ps pt.index : Set X).Finite := by
   rcases pt with ⟨index, groupElts⟩
   simp only [coeSet]
@@ -268,11 +268,11 @@ instance : MulAction G (PlacedTile ps) where
 @[simp] lemma smul_mem_smul_iff (g : G) {x : X} {pt : PlacedTile ps} : g • x ∈ g • pt ↔ x ∈ pt := by
   rw [← mem_coe, coe_smul, Set.smul_mem_smul_set_iff, mem_coe]
 
-lemma mem_smul_iff_smul_inv_mem {g : G} {x : X} {pt : PlacedTile ps} :
+private lemma mem_smul_iff_smul_inv_mem {g : G} {x : X} {pt : PlacedTile ps} :
     x ∈ g • pt ↔ g⁻¹ • x ∈ pt := by
   simp_rw [← mem_coe, coe_smul, Set.mem_smul_set_iff_inv_smul_mem]
 
-lemma mem_inv_smul_iff_smul_mem {g : G} {x : X} {pt : PlacedTile ps} :
+private lemma mem_inv_smul_iff_smul_mem {g : G} {x : X} {pt : PlacedTile ps} :
     x ∈ g⁻¹ • pt ↔ g • x ∈ pt := by
   simp_rw [← mem_coe, coe_smul, Set.mem_inv_smul_set_iff]
 

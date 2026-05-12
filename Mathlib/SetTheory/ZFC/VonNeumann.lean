@@ -35,6 +35,7 @@ namespace ZFSet
 - `vonNeumann_add_one`: `V_ (a + 1) = powerset (V_ a)`
 - `vonNeumann_of_isSuccPrelimit`: `IsSuccPrelimit a → V_ a = ⋃ b < a, V_ b`
 -/
+@[no_expose]
 noncomputable def vonNeumann (o : Ordinal.{u}) : ZFSet.{u} :=
   ⋃ a : Set.Iio o, powerset (vonNeumann a)
 termination_by o
@@ -45,9 +46,9 @@ scoped notation "V_ " => vonNeumann
 
 variable {a b o : Ordinal.{u}} {x : ZFSet.{u}}
 
-lemma mem_vonNeumann' : x ∈ V_ o ↔ ∃ a < o, x ⊆ V_ a := by rw [vonNeumann]; simp
+private lemma mem_vonNeumann' : x ∈ V_ o ↔ ∃ a < o, x ⊆ V_ a := by rw [vonNeumann]; simp
 
-theorem isTransitive_vonNeumann (o : Ordinal) : IsTransitive (V_ o) := by
+private theorem isTransitive_vonNeumann (o : Ordinal) : IsTransitive (V_ o) := by
   rw [vonNeumann]
   exact .iUnion fun ⟨a, _⟩ => (isTransitive_vonNeumann a).powerset
 termination_by o
@@ -58,7 +59,7 @@ termination_by o
 @[gcongr] theorem vonNeumann_subset_of_le (h : a ≤ b) : V_ a ⊆ V_ b :=
   h.eq_or_lt.rec (by simp_all) fun h ↦ isTransitive_vonNeumann _ _ <| vonNeumann_mem_of_lt h
 
-theorem subset_vonNeumann {o : Ordinal} {x : ZFSet} : x ⊆ V_ o ↔ rank x ≤ o := by
+private theorem subset_vonNeumann {o : Ordinal} {x : ZFSet} : x ⊆ V_ o ↔ rank x ≤ o := by
   rw [rank_le_iff]
   constructor <;> intro hx y hy
   · apply (rank_lt_of_mem (hx hy)).trans_le
@@ -70,18 +71,18 @@ theorem subset_vonNeumann {o : Ordinal} {x : ZFSet} : x ⊆ V_ o ↔ rank x ≤ 
     exact ⟨_, this, subset_vonNeumann.2 le_rfl⟩
 termination_by o
 
-theorem subset_vonNeumann_self (x : ZFSet) : x ⊆ V_ (rank x) := by
+private theorem subset_vonNeumann_self (x : ZFSet) : x ⊆ V_ (rank x) := by
   simp [subset_vonNeumann]
 
-theorem mem_vonNeumann : x ∈ V_ o ↔ rank x < o := by
+private theorem mem_vonNeumann : x ∈ V_ o ↔ rank x < o := by
   simp_rw [mem_vonNeumann', subset_vonNeumann]
   exact ⟨fun ⟨a, h₁, h₂⟩ ↦ h₂.trans_lt h₁, by aesop⟩
 
-theorem mem_vonNeumann_succ (x : ZFSet) : x ∈ V_ (succ (rank x)) := by
+private theorem mem_vonNeumann_succ (x : ZFSet) : x ∈ V_ (succ (rank x)) := by
   simp [mem_vonNeumann]
 
 /-- Every set is in some element of the von Neumann hierarchy. -/
-theorem exists_mem_vonNeumann (x : ZFSet) : ∃ o, x ∈ V_ o :=
+private theorem exists_mem_vonNeumann (x : ZFSet) : ∃ o, x ∈ V_ o :=
   ⟨_, mem_vonNeumann_succ x⟩
 
 @[simp]
@@ -98,14 +99,14 @@ theorem vonNeumann_mem_vonNeumann_iff : V_ a ∈ V_ b ↔ a < b := by
 theorem vonNeumann_subset_vonNeumann_iff : V_ a ⊆ V_ b ↔ a ≤ b := by
   simp [subset_vonNeumann]
 
-theorem mem_vonNeumann_of_subset {y : ZFSet} (h : x ⊆ y) (hy : y ∈ V_ o) : x ∈ V_ o := by
+private theorem mem_vonNeumann_of_subset {y : ZFSet} (h : x ⊆ y) (hy : y ∈ V_ o) : x ∈ V_ o := by
   rw [mem_vonNeumann] at *
   exact (rank_mono h).trans_lt hy
 
-theorem vonNeumann_strictMono : StrictMono vonNeumann :=
+private theorem vonNeumann_strictMono : StrictMono vonNeumann :=
   strictMono_of_le_iff_le (by simp)
 
-theorem vonNeumann_injective : Function.Injective vonNeumann :=
+private theorem vonNeumann_injective : Function.Injective vonNeumann :=
   vonNeumann_strictMono.injective
 
 @[simp]
@@ -121,14 +122,14 @@ theorem vonNeumann_add_one (o : Ordinal) : V_ (o + 1) = powerset (V_ o) :=
   ext fun z ↦ by rw [mem_vonNeumann, mem_powerset, subset_vonNeumann, lt_add_one_iff]
 
 -- TODO: deprecate
-theorem vonNeumann_succ (o : Ordinal) : V_ (succ o) = powerset (V_ o) :=
+private theorem vonNeumann_succ (o : Ordinal) : V_ (succ o) = powerset (V_ o) :=
   vonNeumann_add_one o
 
-theorem vonNeumann_of_isSuccPrelimit (h : IsSuccPrelimit o) :
+private theorem vonNeumann_of_isSuccPrelimit (h : IsSuccPrelimit o) :
     V_ o = ⋃ a : Set.Iio o, vonNeumann a :=
   ext fun z ↦ by simpa [mem_vonNeumann] using h.lt_iff_exists_lt
 
-theorem iUnion_vonNeumann : ⋃ o, (V_ o : Class) = Class.univ :=
+private theorem iUnion_vonNeumann : ⋃ o, (V_ o : Class) = Class.univ :=
   Class.eq_univ_of_forall fun x ↦ Set.mem_iUnion.2 <| exists_mem_vonNeumann x
 
 theorem _root_.Ordinal.toZFSet_subset_vonNeumann (o : Ordinal) : o.toZFSet ⊆ V_ o := by
@@ -138,7 +139,7 @@ lemma _root_.Ordinal.card_le_card_vonNeumann (o : Ordinal) : o.card ≤ card (V_
   simpa using card_mono o.toZFSet_subset_vonNeumann
 
 open Cardinal in
-theorem card_vonNeumann (o : Ordinal.{u}) : card (V_ o) = preBeth o := by
+private theorem card_vonNeumann (o : Ordinal.{u}) : card (V_ o) = preBeth o := by
   induction o using Ordinal.limitRecOn with
   | zero =>
     rw [vonNeumann_zero, card_empty, preBeth_zero]

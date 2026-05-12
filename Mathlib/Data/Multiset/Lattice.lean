@@ -81,7 +81,7 @@ theorem sup_union (s₁ s₂ : Multiset α) : (s₁ ∪ s₂).sup = s₁.sup ⊔
 theorem sup_ndinsert (a : α) (s : Multiset α) : (ndinsert a s).sup = a ⊔ s.sup := by
   rw [← sup_dedup, dedup_ext.2, sup_dedup, sup_cons]; simp
 
-theorem nodup_sup_iff {α : Type*} [DecidableEq α] {m : Multiset (Multiset α)} :
+private theorem nodup_sup_iff {α : Type*} [DecidableEq α] {m : Multiset (Multiset α)} :
     m.sup.Nodup ↔ ∀ a : Multiset α, a ∈ m → a.Nodup := by
   induction m using Multiset.induction_on with
   | empty => simp

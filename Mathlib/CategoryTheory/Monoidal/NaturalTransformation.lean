@@ -230,7 +230,7 @@ namespace Functor.Monoidal
 Transporting a monoidal structure along a natural isomorphism of functors makes the isomorphism
 a monoidal natural transformation.
 -/
-lemma natTransIsMonoidal_of_transport {F G : C ⥤ D} [F.Monoidal] (e : F ≅ G) :
+private lemma natTransIsMonoidal_of_transport {F G : C ⥤ D} [F.Monoidal] (e : F ≅ G) :
     letI : G.Monoidal := transport e
     e.hom.IsMonoidal := by
   letI : G.Monoidal := transport e

@@ -33,6 +33,7 @@ variable {V W : Type*} {G G' : SimpleGraph V} {H : SimpleGraph W}
 section IsVertexCover
 
 /-- `c` is a vertex cover of `G` if every edge in `G` is incident to at least one vertex in `c`. -/
+@[no_expose]
 def IsVertexCover (G : SimpleGraph V) (c : Set V) : Prop :=
   ∀ ⦃v w : V⦄, G.Adj v w → v ∈ c ∨ w ∈ c
 
@@ -90,10 +91,11 @@ end IsVertexCover
 section vertexCoverNum
 
 /-- The vertex cover number of `G` is the minimal number of vertices in a vertex cover of `G`. -/
+@[no_expose]
 noncomputable def vertexCoverNum (G : SimpleGraph V) : ℕ∞ :=
   ⨅ (s : Set V) (_ : IsVertexCover G s), s.encard
 
-theorem vertexCoverNum_le_iff {n : ℕ∞} :
+private theorem vertexCoverNum_le_iff {n : ℕ∞} :
     vertexCoverNum G ≤ n ↔ ∀ (m : ℕ∞), (∀ s, IsVertexCover G s → m ≤ s.encard) → m ≤ n := by
   simp [vertexCoverNum, iInf_le_iff]
 
@@ -101,13 +103,13 @@ theorem IsVertexCover.vertexCoverNum_le {c : Set V} (hc : IsVertexCover G c) :
     vertexCoverNum G ≤ c.encard :=
   vertexCoverNum_le_iff.mpr fun _ hm ↦ hm c hc
 
-theorem vertexCoverNum_exists (G) :
+private theorem vertexCoverNum_exists (G) :
     ∃ s : Set V, s.encard = vertexCoverNum G ∧ IsVertexCover G s := by
   have : Nonempty {s : Set V // IsVertexCover G s} := nonempty_subtype.mpr ⟨Set.univ, by simp⟩
   obtain ⟨s, hs⟩ := @ENat.exists_eq_iInf _ this (·.val.encard)
   exact ⟨s.val, hs ▸ iInf_subtype, s.property⟩
 
-theorem exists_of_le_vertexCoverNum (n : ℕ) (h₁ : vertexCoverNum G ≤ n)
+private theorem exists_of_le_vertexCoverNum (n : ℕ) (h₁ : vertexCoverNum G ≤ n)
     (h₂ : n ≤ ENat.card V) : ∃ s : Set V, s.encard = n ∧ IsVertexCover G s := by
   obtain ⟨s, hs₁, hs₂⟩ := vertexCoverNum_exists G
   obtain ⟨r, hr₁, _, hr₃⟩ :=
@@ -127,7 +129,7 @@ theorem vertexCoverNum_eq_zero : vertexCoverNum G = 0 ↔ G = ⊥ := by
   refine ⟨fun h ↦ ?_, by simp_all⟩
   simpa [h] using vertexCoverNum_exists G
 
-theorem vertexCoverNum_le_card_sub_one : vertexCoverNum G ≤ ENat.card V - 1 := by
+private theorem vertexCoverNum_le_card_sub_one : vertexCoverNum G ≤ ENat.card V - 1 := by
   nontriviality V
   obtain ⟨x⟩ := not_subsingleton_iff_nontrivial.mp (not_subsingleton V) |>.to_nonempty
   refine ENat.forall_natCast_le_iff_le.mp fun n hn ↦ ?_
@@ -139,13 +141,13 @@ theorem vertexCoverNum_le_card_sub_one : vertexCoverNum G ≤ ENat.card V - 1 :=
 theorem vertexCoverNum_ne_top_of_finite [Finite V] : vertexCoverNum G ≠ ⊤ :=
   ne_top_of_le_ne_top (by simpa) (@vertexCoverNum_le_card_sub_one V G)
 
-theorem vertexCoverNum_lt_card [Nonempty V] [Finite V] : vertexCoverNum G < ENat.card V := by
+private theorem vertexCoverNum_lt_card [Nonempty V] [Finite V] : vertexCoverNum G < ENat.card V := by
   refine (ENat.add_one_le_iff vertexCoverNum_ne_top_of_finite).mp ?_
   grw [vertexCoverNum_le_card_sub_one, ENat.card_eq_coe_natCard]
   enat_to_nat
   exact Nat.add_le_of_le_sub (Order.one_le_iff_pos.mpr Nat.card_pos) (le_refl _)
 
-theorem vertexCoverNum_le_encard_edgeSet : vertexCoverNum G ≤ G.edgeSet.encard := by
+private theorem vertexCoverNum_le_encard_edgeSet : vertexCoverNum G ≤ G.edgeSet.encard := by
   by_cases h' : G.edgeSet = ∅
   · simp [h', SimpleGraph.edgeSet_eq_empty.mp]
   refine ENat.forall_natCast_le_iff_le.mp fun n hn ↦ ?_
@@ -199,7 +201,7 @@ theorem vertexCoverNum_le_vertexCoverNum_of_injective (f : G →g H) (hf : Funct
 theorem vertexCoverNum_mono (h : G ≤ G') : vertexCoverNum G ≤ vertexCoverNum G' :=
   (IsContained.of_le h).vertexCoverNum_le_vertexCoverNum
 
-theorem vertexCoverNum_congr (f : G ≃g H) : vertexCoverNum G = vertexCoverNum H :=
+private theorem vertexCoverNum_congr (f : G ≃g H) : vertexCoverNum G = vertexCoverNum H :=
   le_antisymm f.isContained.vertexCoverNum_le_vertexCoverNum
     f.symm.isContained.vertexCoverNum_le_vertexCoverNum
 

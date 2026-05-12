@@ -178,6 +178,7 @@ def coconeOfCoconeCurry {D : DiagramOfCocones (curry.obj G)} (Q : ∀ j, IsColim
 set_option backward.isDefEq.respectTransparency false in
 /-- `coneOfConeUncurry Q c` is a limit cone when `c` is a limit cone.
 -/
+@[no_expose]
 def coneOfConeUncurryIsLimit {D : DiagramOfCones F} (Q : ∀ j, IsLimit (D.obj j))
     {c : Cone (uncurry.obj F)} (P : IsLimit c) : IsLimit (coneOfConeUncurry Q c) where
   lift s :=
@@ -252,6 +253,7 @@ def IsLimit.ofConeOfConeUncurry {D : DiagramOfCones F} (Q : ∀ j, IsLimit (D.ob
 set_option backward.isDefEq.respectTransparency false in
 /-- `coconeOfCoconeUncurry Q c` is a colimit cocone when `c` is a colimit cocone.
 -/
+@[no_expose]
 def coconeOfCoconeUncurryIsColimit {D : DiagramOfCocones F} (Q : ∀ j, IsColimit (D.obj j))
     {c : Cocone (uncurry.obj F)} (P : IsColimit c) : IsColimit (coconeOfCoconeUncurry Q c) where
   desc s :=
@@ -353,6 +355,7 @@ variable [HasLimit (curry.obj G ⋙ lim)]
 set_option backward.isDefEq.respectTransparency false in
 /-- Given a functor `G : J × K ⥤ C` such that `(curry.obj G ⋙ lim)` makes sense and has a limit,
 we can construct a cone over `G` with `limit (curry.obj G ⋙ lim)` as a cone point -/
+@[no_expose]
 noncomputable def coneOfHasLimitCurryCompLim : Cone G :=
   let Q : DiagramOfCones (curry.obj G) := .mkOfHasLimits _
   { pt := limit (curry.obj G ⋙ lim),
@@ -369,6 +372,7 @@ noncomputable def coneOfHasLimitCurryCompLim : Cone G :=
 set_option backward.isDefEq.respectTransparency false in
 /-- The cone `coneOfHasLimitCurryCompLim` is in fact a limit cone.
 -/
+@[no_expose]
 noncomputable def isLimitConeOfHasLimitCurryCompLim : IsLimit (coneOfHasLimitCurryCompLim G) :=
   let Q : DiagramOfCones (curry.obj G) := .mkOfHasLimits _
   let Q' : ∀ j, IsLimit (Q.obj j) := fun j => limit.isLimit _
@@ -394,6 +398,7 @@ variable [HasLimit (uncurry.obj F)] [HasLimit (F ⋙ lim)]
 showing that the limit of `uncurry.obj F` can be computed as
 the limit of the limits of the functors `F.obj j`.
 -/
+@[no_expose]
 noncomputable def limitUncurryIsoLimitCompLim : limit (uncurry.obj F) ≅ limit (F ⋙ lim) := by
   let c := limit.cone (uncurry.obj F)
   let P : IsLimit c := limit.isLimit _
@@ -450,6 +455,7 @@ variable [HasColimit (curry.obj G ⋙ colim)]
 set_option backward.isDefEq.respectTransparency false in
 /-- Given a functor `G : J × K ⥤ C` such that `(curry.obj G ⋙ colim)` makes sense and has a colimit,
 we can construct a cocone under `G` with `colimit (curry.obj G ⋙ colim)` as a cocone point -/
+@[no_expose]
 noncomputable def coconeOfHasColimitCurryCompColim : Cocone G :=
   let Q : DiagramOfCocones (curry.obj G) := .mkOfHasColimits _
   { pt := colimit (curry.obj G ⋙ colim),
@@ -468,6 +474,7 @@ noncomputable def coconeOfHasColimitCurryCompColim : Cocone G :=
 set_option backward.isDefEq.respectTransparency false in
 /-- The cocone `coconeOfHasColimitCurryCompColim` is in fact a limit cocone.
 -/
+@[no_expose]
 noncomputable def isColimitCoconeOfHasColimitCurryCompColim :
     IsColimit (coconeOfHasColimitCurryCompColim G) :=
   let Q : DiagramOfCocones (curry.obj G) := .mkOfHasColimits _
@@ -494,6 +501,7 @@ variable [HasColimit (uncurry.obj F)] [HasColimit (F ⋙ colim)]
 showing that the colimit of `uncurry.obj F` can be computed as
 the colimit of the colimits of the functors `F.obj j`.
 -/
+@[no_expose]
 noncomputable def colimitUncurryIsoColimitCompColim :
     colimit (uncurry.obj F) ≅ colimit (F ⋙ colim) := by
   let c := colimit.cocone (uncurry.obj F)
@@ -527,6 +535,7 @@ section
 variable (F) [HasLimitsOfShape J C] [HasLimitsOfShape K C]
 
 /-- The limit of `F.flip ⋙ lim` is isomorphic to the limit of `F ⋙ lim`. -/
+@[no_expose]
 noncomputable def limitFlipCompLimIsoLimitCompLim : limit (F.flip ⋙ lim) ≅ limit (F ⋙ lim) :=
   (limitUncurryIsoLimitCompLim _).symm ≪≫
     HasLimit.isoOfNatIso (uncurryObjFlip _) ≪≫
@@ -556,6 +565,7 @@ section
 variable (F) [HasColimitsOfShape J C] [HasColimitsOfShape K C]
 
 /-- The colimit of `F.flip ⋙ colim` is isomorphic to the colimit of `F ⋙ colim`. -/
+@[no_expose]
 noncomputable def colimitFlipCompColimIsoColimitCompColim :
     colimit (F.flip ⋙ colim) ≅ colimit (F ⋙ colim) :=
   (colimitUncurryIsoColimitCompColim _).symm ≪≫
@@ -594,6 +604,7 @@ variable [HasLimitsOfShape K C] [HasLimit (curry.obj G ⋙ lim)]
 showing that the limit of `G` can be computed as
 the limit of the limits of the functors `G.obj (j, _)`.
 -/
+@[no_expose]
 noncomputable def limitIsoLimitCurryCompLim : limit G ≅ limit (curry.obj G ⋙ lim) := by
   have i : G ≅ uncurry.obj ((@curry J _ K _ C _).obj G) := currying.symm.unitIso.app G
   haveI : Limits.HasLimit (uncurry.obj ((@curry J _ K _ C _).obj G)) := hasLimit_of_iso i
@@ -625,6 +636,7 @@ variable [HasColimitsOfShape K C] [HasColimit (curry.obj G ⋙ colim)]
 showing that the colimit of `G` can be computed as
 the colimit of the colimits of the functors `G.obj (j, _)`.
 -/
+@[no_expose]
 noncomputable def colimitIsoColimitCurryCompColim : colimit G ≅ colimit (curry.obj G ⋙ colim) := by
   have i : G ≅ uncurry.obj ((@curry J _ K _ C _).obj G) := currying.symm.unitIso.app G
   haveI : Limits.HasColimit (uncurry.obj ((@curry J _ K _ C _).obj G)) := hasColimit_of_iso i.symm
@@ -658,6 +670,7 @@ open CategoryTheory.prod
 /-- A variant of the Fubini theorem for a functor `G : J × K ⥤ C`,
 showing that $\lim_k \lim_j G(j,k) ≅ \lim_j \lim_k G(j,k)$.
 -/
+@[no_expose]
 noncomputable def limitCurrySwapCompLimIsoLimitCurryCompLim :
     limit (curry.obj (Prod.swap K J ⋙ G) ⋙ lim) ≅ limit (curry.obj G ⋙ lim) :=
   calc
@@ -696,6 +709,7 @@ open CategoryTheory.prod
 /-- A variant of the Fubini theorem for a functor `G : J × K ⥤ C`,
 showing that $\colim_k \colim_j G(j,k) ≅ \colim_j \colim_k G(j,k)$.
 -/
+@[no_expose]
 noncomputable def colimitCurrySwapCompColimIsoColimitCurryCompColim :
     colimit (curry.obj (Prod.swap K J ⋙ G) ⋙ colim) ≅ colimit (curry.obj G ⋙ colim) :=
   calc

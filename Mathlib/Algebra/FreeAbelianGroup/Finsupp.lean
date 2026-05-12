@@ -95,11 +95,13 @@ variable {X}
 
 /-- `coeff x` is the additive group homomorphism `FreeAbelianGroup X →+ ℤ`
 that sends `a` to the multiplicity of `x : X` in `a`. -/
+@[no_expose]
 def coeff (x : X) : FreeAbelianGroup X →+ ℤ :=
   (Finsupp.applyAddHom x).comp toFinsupp
 
 /-- `support a` for `a : FreeAbelianGroup X` is the finite set of `x : X`
 that occur in the formal sum `a`. -/
+@[no_expose]
 def support (a : FreeAbelianGroup X) : Finset X :=
   a.toFinsupp.support
 
@@ -108,7 +110,7 @@ theorem mem_support_iff (x : X) (a : FreeAbelianGroup X) : x ∈ a.support ↔ c
   rw [support, Finsupp.mem_support_iff]
   exact Iff.rfl
 
-theorem notMem_support_iff (x : X) (a : FreeAbelianGroup X) : x ∉ a.support ↔ coeff x a = 0 := by
+private theorem notMem_support_iff (x : X) (a : FreeAbelianGroup X) : x ∉ a.support ↔ coeff x a = 0 := by
   rw [support, Finsupp.notMem_support_iff]
   exact Iff.rfl
 
@@ -137,7 +139,7 @@ theorem support_nsmul (k : ℕ) (h : k ≠ 0) (a : FreeAbelianGroup X) :
   exact mod_cast h
 
 open scoped Classical in
-theorem support_add (a b : FreeAbelianGroup X) : support (a + b) ⊆ a.support ∪ b.support := by
+private theorem support_add (a b : FreeAbelianGroup X) : support (a + b) ⊆ a.support ∪ b.support := by
   simp only [support, map_add]
   apply Finsupp.support_add
 

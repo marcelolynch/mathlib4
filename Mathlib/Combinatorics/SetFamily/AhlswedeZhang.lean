@@ -124,29 +124,30 @@ variable [DecidableLE α] [OrderTop α]
 set_option backward.privateInPublic true in
 set_option backward.privateInPublic.warn false in
 /-- The supremum of the elements of `s` less than `a` if there are some, otherwise `⊤`. -/
+@[no_expose]
 def truncatedSup (s : Finset α) (a : α) : α :=
   if h : a ∈ lowerClosure s then {b ∈ s | a ≤ b}.sup' (sup_aux h) id else ⊤
 
 set_option backward.privateInPublic true in
 set_option backward.privateInPublic.warn false in
-lemma truncatedSup_of_mem (h : a ∈ lowerClosure s) :
+private lemma truncatedSup_of_mem (h : a ∈ lowerClosure s) :
     truncatedSup s a = {b ∈ s | a ≤ b}.sup' (sup_aux h) id := dif_pos h
 
-lemma truncatedSup_of_notMem (h : a ∉ lowerClosure s) : truncatedSup s a = ⊤ := dif_neg h
+private lemma truncatedSup_of_notMem (h : a ∉ lowerClosure s) : truncatedSup s a = ⊤ := dif_neg h
 
 @[simp] lemma truncatedSup_empty (a : α) : truncatedSup ∅ a = ⊤ := truncatedSup_of_notMem (by simp)
 
 @[simp] lemma truncatedSup_singleton (b a : α) : truncatedSup {b} a = if a ≤ b then b else ⊤ := by
   simp [truncatedSup]; split_ifs <;> simp [Finset.filter_true_of_mem, *]
 
-lemma le_truncatedSup : a ≤ truncatedSup s a := by
+private lemma le_truncatedSup : a ≤ truncatedSup s a := by
   rw [truncatedSup]
   split_ifs with h
   · obtain ⟨ℬ, hb, h⟩ := h
     exact h.trans <| le_sup' id <| mem_filter.2 ⟨hb, h⟩
   · exact le_top
 
-lemma map_truncatedSup [DecidableLE β] (e : α ≃o β) (s : Finset α) (a : α) :
+private lemma map_truncatedSup [DecidableLE β] (e : α ≃o β) (s : Finset α) (a : α) :
     e (truncatedSup s a) = truncatedSup (s.map e.toEquiv.toEmbedding) (e a) := by
   have : e a ∈ lowerClosure (s.map e.toEquiv.toEmbedding : Set β) ↔ a ∈ lowerClosure s := by simp
   simp_rw [truncatedSup, apply_dite e, map_finset_sup', map_top, this]
@@ -154,7 +155,7 @@ lemma map_truncatedSup [DecidableLE β] (e : α ≃o β) (s : Finset α) (a : α
   simp only [filter_map, Function.comp_def, Equiv.coe_toEmbedding, RelIso.coe_fn_toEquiv,
     OrderIso.le_iff_le, id, sup'_map]
 
-lemma truncatedSup_of_isAntichain (hs : IsAntichain (· ≤ ·) (s : Set α)) (ha : a ∈ s) :
+private lemma truncatedSup_of_isAntichain (hs : IsAntichain (· ≤ ·) (s : Set α)) (ha : a ∈ s) :
     truncatedSup s a = a := by
   refine le_antisymm ?_ le_truncatedSup
   simp_rw [truncatedSup_of_mem (subset_lowerClosure ha), sup'_le_iff, mem_filter]
@@ -163,21 +164,21 @@ lemma truncatedSup_of_isAntichain (hs : IsAntichain (· ≤ ·) (s : Set α)) (h
 
 variable [DecidableEq α]
 
-lemma truncatedSup_union (hs : a ∈ lowerClosure s) (ht : a ∈ lowerClosure t) :
+private lemma truncatedSup_union (hs : a ∈ lowerClosure s) (ht : a ∈ lowerClosure t) :
     truncatedSup (s ∪ t) a = truncatedSup s a ⊔ truncatedSup t a := by
   simpa only [truncatedSup_of_mem, hs, ht, lower_aux.2 (Or.inl hs), filter_union] using
     sup'_union _ _ _
 
-lemma truncatedSup_union_left (hs : a ∈ lowerClosure s) (ht : a ∉ lowerClosure t) :
+private lemma truncatedSup_union_left (hs : a ∈ lowerClosure s) (ht : a ∉ lowerClosure t) :
     truncatedSup (s ∪ t) a = truncatedSup s a := by
   simp only [mem_lowerClosure, mem_coe, not_exists, not_and] at ht
   simp only [truncatedSup_of_mem, hs, filter_union, filter_false_of_mem ht, union_empty,
     lower_aux.2 (Or.inl hs)]
 
-lemma truncatedSup_union_right (hs : a ∉ lowerClosure s) (ht : a ∈ lowerClosure t) :
+private lemma truncatedSup_union_right (hs : a ∉ lowerClosure s) (ht : a ∈ lowerClosure t) :
     truncatedSup (s ∪ t) a = truncatedSup t a := by rw [union_comm, truncatedSup_union_left ht hs]
 
-lemma truncatedSup_union_of_notMem (hs : a ∉ lowerClosure s) (ht : a ∉ lowerClosure t) :
+private lemma truncatedSup_union_of_notMem (hs : a ∉ lowerClosure s) (ht : a ∉ lowerClosure t) :
     truncatedSup (s ∪ t) a = ⊤ := truncatedSup_of_notMem fun h ↦ (lower_aux.1 h).elim hs ht
 
 end SemilatticeSup
@@ -199,17 +200,18 @@ variable [DecidableLE α] [BoundedOrder α]
 set_option backward.privateInPublic true in
 set_option backward.privateInPublic.warn false in
 /-- The infimum of the elements of `s` less than `a` if there are some, otherwise `⊥`. -/
+@[no_expose]
 def truncatedInf (s : Finset α) (a : α) : α :=
   if h : a ∈ upperClosure s then {b ∈ s | b ≤ a}.inf' (inf_aux h) id else ⊥
 
 set_option backward.privateInPublic true in
 set_option backward.privateInPublic.warn false in
-lemma truncatedInf_of_mem (h : a ∈ upperClosure s) :
+private lemma truncatedInf_of_mem (h : a ∈ upperClosure s) :
     truncatedInf s a = {b ∈ s | b ≤ a}.inf' (inf_aux h) id := dif_pos h
 
-lemma truncatedInf_of_notMem (h : a ∉ upperClosure s) : truncatedInf s a = ⊥ := dif_neg h
+private lemma truncatedInf_of_notMem (h : a ∉ upperClosure s) : truncatedInf s a = ⊥ := dif_neg h
 
-lemma truncatedInf_le : truncatedInf s a ≤ a := by
+private lemma truncatedInf_le : truncatedInf s a ≤ a := by
   unfold truncatedInf
   split_ifs with h
   · obtain ⟨b, hb, hba⟩ := h
@@ -223,7 +225,7 @@ lemma truncatedInf_le : truncatedInf s a ≤ a := by
     id_eq]
   split_ifs <;> simp [Finset.filter_true_of_mem, *]
 
-lemma map_truncatedInf (e : α ≃o β) (s : Finset α) (a : α) :
+private lemma map_truncatedInf (e : α ≃o β) (s : Finset α) (a : α) :
     e (truncatedInf s a) = truncatedInf (s.map e.toEquiv.toEmbedding) (e a) := by
   have : e a ∈ upperClosure (s.map e.toEquiv.toEmbedding) ↔ a ∈ upperClosure s := by simp
   simp_rw [truncatedInf, apply_dite e, map_finset_inf', map_bot, this]
@@ -231,7 +233,7 @@ lemma map_truncatedInf (e : α ≃o β) (s : Finset α) (a : α) :
   simp only [filter_map, Function.comp_def, Equiv.coe_toEmbedding, RelIso.coe_fn_toEquiv,
     OrderIso.le_iff_le, id, inf'_map]
 
-lemma truncatedInf_of_isAntichain (hs : IsAntichain (· ≤ ·) (s : Set α)) (ha : a ∈ s) :
+private lemma truncatedInf_of_isAntichain (hs : IsAntichain (· ≤ ·) (s : Set α)) (ha : a ∈ s) :
     truncatedInf s a = a := by
   refine le_antisymm truncatedInf_le ?_
   simp_rw [truncatedInf_of_mem (subset_upperClosure ha), le_inf'_iff, mem_filter]
@@ -240,22 +242,22 @@ lemma truncatedInf_of_isAntichain (hs : IsAntichain (· ≤ ·) (s : Set α)) (h
 
 variable [DecidableEq α]
 
-lemma truncatedInf_union (hs : a ∈ upperClosure s) (ht : a ∈ upperClosure t) :
+private lemma truncatedInf_union (hs : a ∈ upperClosure s) (ht : a ∈ upperClosure t) :
     truncatedInf (s ∪ t) a = truncatedInf s a ⊓ truncatedInf t a := by
   simpa only [truncatedInf_of_mem, hs, ht, upper_aux.2 (Or.inl hs), filter_union] using
     inf'_union _ _ _
 
-lemma truncatedInf_union_left (hs : a ∈ upperClosure s) (ht : a ∉ upperClosure t) :
+private lemma truncatedInf_union_left (hs : a ∈ upperClosure s) (ht : a ∉ upperClosure t) :
     truncatedInf (s ∪ t) a = truncatedInf s a := by
   simp only [mem_upperClosure, mem_coe, not_exists, not_and] at ht
   simp only [truncatedInf_of_mem, hs, filter_union, filter_false_of_mem ht, union_empty,
     upper_aux.2 (Or.inl hs)]
 
-lemma truncatedInf_union_right (hs : a ∉ upperClosure s) (ht : a ∈ upperClosure t) :
+private lemma truncatedInf_union_right (hs : a ∉ upperClosure s) (ht : a ∈ upperClosure t) :
     truncatedInf (s ∪ t) a = truncatedInf t a := by
   rw [union_comm, truncatedInf_union_left ht hs]
 
-lemma truncatedInf_union_of_notMem (hs : a ∉ upperClosure s) (ht : a ∉ upperClosure t) :
+private lemma truncatedInf_union_of_notMem (hs : a ∉ upperClosure s) (ht : a ∉ upperClosure t) :
     truncatedInf (s ∪ t) a = ⊥ :=
   truncatedInf_of_notMem <| by rw [coe_union, upperClosure_union]; exact fun h ↦ h.elim hs ht
 
@@ -272,25 +274,25 @@ private lemma sups_aux : a ∈ upperClosure ↑(s ⊻ t) ↔ a ∈ upperClosure 
 
 variable [DecidableLE α] [BoundedOrder α]
 
-lemma truncatedSup_infs (hs : a ∈ lowerClosure s) (ht : a ∈ lowerClosure t) :
+private lemma truncatedSup_infs (hs : a ∈ lowerClosure s) (ht : a ∈ lowerClosure t) :
     truncatedSup (s ⊼ t) a = truncatedSup s a ⊓ truncatedSup t a := by
   simp only [truncatedSup_of_mem, hs, ht, infs_aux.2 ⟨hs, ht⟩, sup'_inf_sup', filter_infs_le]
   simp_rw [← image_inf_product]
   rw [sup'_image]
   simp [Function.uncurry_def]
 
-lemma truncatedInf_sups (hs : a ∈ upperClosure s) (ht : a ∈ upperClosure t) :
+private lemma truncatedInf_sups (hs : a ∈ upperClosure s) (ht : a ∈ upperClosure t) :
     truncatedInf (s ⊻ t) a = truncatedInf s a ⊔ truncatedInf t a := by
   simp only [truncatedInf_of_mem, hs, ht, sups_aux.2 ⟨hs, ht⟩, inf'_sup_inf', filter_sups_le]
   simp_rw [← image_sup_product]
   rw [inf'_image]
   simp [Function.uncurry_def]
 
-lemma truncatedSup_infs_of_notMem (ha : a ∉ lowerClosure s ⊓ lowerClosure t) :
+private lemma truncatedSup_infs_of_notMem (ha : a ∉ lowerClosure s ⊓ lowerClosure t) :
     truncatedSup (s ⊼ t) a = ⊤ :=
   truncatedSup_of_notMem <| by rwa [coe_infs, lowerClosure_infs]
 
-lemma truncatedInf_sups_of_notMem (ha : a ∉ upperClosure s ⊔ upperClosure t) :
+private lemma truncatedInf_sups_of_notMem (ha : a ∉ upperClosure s ⊔ upperClosure t) :
     truncatedInf (s ⊻ t) a = ⊥ :=
   truncatedInf_of_notMem <| by rwa [coe_sups, upperClosure_sups]
 
@@ -309,7 +311,7 @@ end BooleanAlgebra
 
 variable [DecidableEq α] [Fintype α]
 
-lemma card_truncatedSup_union_add_card_truncatedSup_infs (𝒜 ℬ : Finset (Finset α)) (s : Finset α) :
+private lemma card_truncatedSup_union_add_card_truncatedSup_infs (𝒜 ℬ : Finset (Finset α)) (s : Finset α) :
     #(truncatedSup (𝒜 ∪ ℬ) s) + #(truncatedSup (𝒜 ⊼ ℬ) s) =
       #(truncatedSup 𝒜 s) + #(truncatedSup ℬ s) := by
   by_cases h𝒜 : s ∈ lowerClosure (𝒜 : Set <| Finset α) <;>
@@ -323,7 +325,7 @@ lemma card_truncatedSup_union_add_card_truncatedSup_infs (𝒜 ℬ : Finset (Fin
   · rw [truncatedSup_of_notMem h𝒜, truncatedSup_of_notMem hℬ,
       truncatedSup_union_of_notMem h𝒜 hℬ, truncatedSup_infs_of_notMem fun h ↦ h𝒜 h.1]
 
-lemma card_truncatedInf_union_add_card_truncatedInf_sups (𝒜 ℬ : Finset (Finset α)) (s : Finset α) :
+private lemma card_truncatedInf_union_add_card_truncatedInf_sups (𝒜 ℬ : Finset (Finset α)) (s : Finset α) :
     #(truncatedInf (𝒜 ∪ ℬ) s) + #(truncatedInf (𝒜 ⊻ ℬ) s) =
       #(truncatedInf 𝒜 s) + #(truncatedInf ℬ s) := by
   by_cases h𝒜 : s ∈ upperClosure (𝒜 : Set <| Finset α) <;>
@@ -347,22 +349,24 @@ variable {α : Type*} [Fintype α] [DecidableEq α] {𝒜 : Finset (Finset α)} 
 
 /-- Weighted sum of the size of the truncated infima of a set family. Relevant to the
 Ahlswede-Zhang identity. -/
+@[no_expose]
 def infSum (𝒜 : Finset (Finset α)) : ℚ :=
   ∑ s, #(truncatedInf 𝒜 s) / (#s * (card α).choose #s)
 
 /-- Weighted sum of the size of the truncated suprema of a set family. Relevant to the
 Ahlswede-Zhang identity. -/
+@[no_expose]
 def supSum (𝒜 : Finset (Finset α)) : ℚ :=
   ∑ s, #(truncatedSup 𝒜 s) / ((card α - #s) * (card α).choose #s)
 
-lemma supSum_union_add_supSum_infs (𝒜 ℬ : Finset (Finset α)) :
+private lemma supSum_union_add_supSum_infs (𝒜 ℬ : Finset (Finset α)) :
     supSum (𝒜 ∪ ℬ) + supSum (𝒜 ⊼ ℬ) = supSum 𝒜 + supSum ℬ := by
   unfold supSum
   rw [← sum_add_distrib, ← sum_add_distrib, Finset.sum_congr rfl fun s _ ↦ _]
   simp_rw [← add_div, ← Nat.cast_add, card_truncatedSup_union_add_card_truncatedSup_infs]
   simp
 
-lemma infSum_union_add_infSum_sups (𝒜 ℬ : Finset (Finset α)) :
+private lemma infSum_union_add_infSum_sups (𝒜 ℬ : Finset (Finset α)) :
     infSum (𝒜 ∪ ℬ) + infSum (𝒜 ⊻ ℬ) = infSum 𝒜 + infSum ℬ := by
   unfold infSum
   rw [← sum_add_distrib, ← sum_add_distrib, Finset.sum_congr rfl fun s _ ↦ _]
@@ -398,7 +402,7 @@ variable [Nonempty α]
   exact sum_powersetCard n s fun m ↦ (card α - #s : ℚ) / ((card α - m) * (card α).choose m)
 
 /-- The **Ahlswede-Zhang Identity**. -/
-lemma infSum_compls_add_supSum (𝒜 : Finset (Finset α)) :
+private lemma infSum_compls_add_supSum (𝒜 : Finset (Finset α)) :
     infSum 𝒜ᶜˢ + supSum 𝒜 = card α * ∑ k ∈ range (card α), (k : ℚ)⁻¹ + 1 := by
   unfold infSum supSum
   rw [← @map_univ_of_surjective (Finset α) _ _ _ ⟨compl, compl_injective⟩ compl_surjective, sum_map]
@@ -406,7 +410,7 @@ lemma infSum_compls_add_supSum (𝒜 : Finset (Finset α)) :
     ← sum_add_distrib, card_compl, cast_sub (card_le_univ _), choose_symm (card_le_univ _),
     ← add_div, sub_add_cancel, Fintype.sum_div_mul_card_choose_card]
 
-lemma supSum_of_univ_notMem (h𝒜₁ : 𝒜.Nonempty) (h𝒜₂ : univ ∉ 𝒜) :
+private lemma supSum_of_univ_notMem (h𝒜₁ : 𝒜.Nonempty) (h𝒜₂ : univ ∉ 𝒜) :
     supSum 𝒜 = card α * ∑ k ∈ range (card α), (k : ℚ)⁻¹ := by
   set m := 𝒜.card with hm
   clear_value m
@@ -429,7 +433,7 @@ lemma supSum_of_univ_notMem (h𝒜₁ : 𝒜.Nonempty) (h𝒜₂ : univ ∉ 𝒜
   · exact fun h ↦ h𝒜₂ (mem_insert_of_mem h)
 
 /-- The **Ahlswede-Zhang Identity**. -/
-lemma infSum_eq_one (h𝒜₁ : 𝒜.Nonempty) (h𝒜₀ : ∅ ∉ 𝒜) : infSum 𝒜 = 1 := by
+private lemma infSum_eq_one (h𝒜₁ : 𝒜.Nonempty) (h𝒜₀ : ∅ ∉ 𝒜) : infSum 𝒜 = 1 := by
   rw [← compls_compls 𝒜, eq_sub_of_add_eq (infSum_compls_add_supSum _),
     supSum_of_univ_notMem h𝒜₁.compls, add_sub_cancel_left]
   simpa

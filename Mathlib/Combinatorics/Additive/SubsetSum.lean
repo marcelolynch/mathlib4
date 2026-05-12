@@ -34,16 +34,17 @@ variable {M : Type*} [DecidableEq M] [AddCommMonoid M] {A : Finset M} {a : M}
 
 /-- The subset-sum of a finite set `A` in a commutative monoid is the set of all sums
 of subsets of `A`. -/
+@[no_expose]
 def subsetSum (A : Finset M) : Finset M := A.powerset.image fun B ↦ B.sum id
 
-lemma mem_subsetSum_iff : a ∈ A.subsetSum ↔ ∃ B ⊆ A, ∑ b ∈ B, b = a := by simp [subsetSum]
+private lemma mem_subsetSum_iff : a ∈ A.subsetSum ↔ ∃ B ⊆ A, ∑ b ∈ B, b = a := by simp [subsetSum]
 
 @[simp]
 lemma zero_mem_subsetSum : 0 ∈ A.subsetSum := mem_subsetSum_iff.mpr ⟨∅, empty_subset _, sum_empty⟩
 
 @[simp] lemma subsetSum_nonempty : A.subsetSum.Nonempty := ⟨0, by simp⟩
 
-lemma subset_subsetSum : A ⊆ A.subsetSum :=
+private lemma subset_subsetSum : A ⊆ A.subsetSum :=
   fun a ha => mem_subsetSum_iff.mpr ⟨{a}, by simp [ha]⟩
 
 @[gcongr]
@@ -56,7 +57,7 @@ lemma subsetSum_mono {B : Finset M} (hAB : A ⊆ B) : A.subsetSum ⊆ B.subsetSu
   refine mem_subsetSum_iff.mpr ⟨B.erase 0, ?_, sum_erase _ (by simp)⟩
   exact fun i hi => mem_erase.mpr ⟨(mem_erase.mp hi).1, hB (mem_of_mem_erase hi)⟩
 
-lemma vadd_finset_subsetSum_subset_subsetSum_insert (a_notin_A : a ∉ A) :
+private lemma vadd_finset_subsetSum_subset_subsetSum_insert (a_notin_A : a ∉ A) :
     a +ᵥ A.subsetSum ⊆ (insert a A).subsetSum := by
   simp_rw [subset_iff, mem_vadd_finset, mem_subsetSum_iff]
   rintro _ ⟨_, ⟨B, hB, rfl⟩, rfl⟩
@@ -64,10 +65,10 @@ lemma vadd_finset_subsetSum_subset_subsetSum_insert (a_notin_A : a ∉ A) :
 
 variable [LinearOrder M] [IsOrderedCancelAddMonoid M]
 
-lemma nonneg_of_mem_subsetSum (A_nonneg : ∀ x ∈ A, 0 ≤ x) : ∀ x ∈ A.subsetSum, 0 ≤ x := by
+private lemma nonneg_of_mem_subsetSum (A_nonneg : ∀ x ∈ A, 0 ≤ x) : ∀ x ∈ A.subsetSum, 0 ≤ x := by
   simpa [mem_subsetSum_iff] using fun B hB ↦ Finset.sum_nonneg fun x hx ↦ A_nonneg _ <| hB hx
 
-lemma card_add_card_subsetSum_lt_card_subsetSum_insert_max (hA : ∀ x ∈ A, 0 < x)
+private lemma card_add_card_subsetSum_lt_card_subsetSum_insert_max (hA : ∀ x ∈ A, 0 < x)
     (hAa : ∀ x ∈ A, x < a) (ha : 0 < a) :
     #A + #A.subsetSum < #(insert a A).subsetSum := by
   -- We show that `insert 0 A` and `a +ᵥ A.subsetSum` are disjoint subsets of
@@ -92,7 +93,7 @@ lemma card_add_card_subsetSum_lt_card_subsetSum_insert_max (hA : ∀ x ∈ A, 0 
     _ ≤ #(insert a A).subsetSum := by grw [union_subset insert_subset vadd_subset]
 
 -- The proof follows Theorem 3 in [Nathanson1995].
-theorem card_succ_choose_two_lt_card_subsetSum_of_pos (A_pos : ∀ x ∈ A, 0 < x) :
+private theorem card_succ_choose_two_lt_card_subsetSum_of_pos (A_pos : ∀ x ∈ A, 0 < x) :
     (#A + 1).choose 2 < #A.subsetSum := by
   induction A using induction_on_max with
   | empty => simp
@@ -103,7 +104,7 @@ theorem card_succ_choose_two_lt_card_subsetSum_of_pos (A_pos : ∀ x ∈ A, 0 < 
     exact card_add_card_subsetSum_lt_card_subsetSum_insert_max A_pos' A_lt_a <| A_pos a <|
       mem_insert_self a A
 
-theorem card_choose_two_lt_card_subsetSum_of_nonneg (A_pos : ∀ x ∈ A, 0 ≤ x) :
+private theorem card_choose_two_lt_card_subsetSum_of_nonneg (A_pos : ∀ x ∈ A, 0 ≤ x) :
     (#A).choose 2 < #A.subsetSum := by
   calc (#A).choose 2
     _ ≤ (#(A.erase 0) + 1).choose 2 := by grw [tsub_le_iff_right.1 <| pred_card_le_card_erase]

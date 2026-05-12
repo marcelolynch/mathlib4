@@ -52,6 +52,7 @@ namespace qNF
 number), build an `Expr` representing an object of type `NF M` (i.e. `List (ℤ × M)`) in the
 in the obvious way: by forgetting the natural numbers and gluing together the integers and `Expr`s.
 -/
+@[no_expose]
 def toNF (l : qNF q($M)) : Q(NF $M) := l.foldr (fun ((a, x), _) l ↦ q(($a, $x) ::ᵣ $l)) q([])
 
 /-- Given `l` of type `qNF M`, i.e. a list of `(ℤ × Q($M)) × ℕ`s (two `Expr`s and a natural
@@ -93,6 +94,7 @@ def tryClearZero
 /-- Given `l : qNF M`, obtain `l' : qNF M` by removing all `l`'s exponent-zero entries where the
 corresponding atom can be proved nonzero, and construct a proof that their associated expressions
 are equal. -/
+@[no_expose]
 def removeZeros
     (disch : ∀ {u : Level} (type : Q(Sort u)), MetaM Q($type)) (iM : Q(CommGroupWithZero $M))
     (l : qNF M) :
@@ -109,6 +111,7 @@ def removeZeros
 
 /-- Given a product of powers, split as a quotient: the positive powers divided by (the negations
 of) the negative powers. -/
+@[no_expose]
 def split (iM : Q(CommGroupWithZero $M)) (l : qNF M) :
     MetaM (Σ l_n l_d : qNF M, Q(NF.eval $(l.toNF)
       = NF.eval $(l_n.toNF) / NF.eval $(l_d.toNF))) := do
@@ -139,6 +142,7 @@ private def evalPrettyAux (iM : Q(CommGroupWithZero $M)) (l : qNF M) :
     return ⟨q($t' * $e), q(Eq.trans $pf'' (congr_arg₂ HMul.hMul $pf $pf_e))⟩
 
 /-- Build a transparent expression for the product of powers represented by `l : qNF M`. -/
+@[no_expose]
 def evalPretty (iM : Q(CommGroupWithZero $M)) (l : qNF M) :
     MetaM (Σ e : Q($M), Q(NF.eval $(l.toNF) = $e)) := do
   let ⟨l_n, l_d, pf⟩ ← split iM l
@@ -165,6 +169,7 @@ the same `ℕ`-component `k`, then the expressions `x₁` and `x₂` are equal.
 The construction is as follows: merge the two lists, except that if pairs `(a₁, x₁)` and `(a₂, x₂)`
 appear in `l₁`, `l₂` respectively with the same `ℕ`-component `k`, then contribute a term
 `(a₁ + a₂, x₁)` to the output list with `ℕ`-component `k`. -/
+@[no_expose]
 def mul : qNF q($M) → qNF q($M) → qNF q($M)
   | [], l => l
   | l, [] => l
@@ -211,6 +216,7 @@ The construction is as follows: merge the first list and the negation of the sec
 that if pairs `(a₁, x₁)` and `(a₂, x₂)` appear in `l₁`, `l₂` respectively with the same
 `ℕ`-component `k`, then contribute a term `(a₁ - a₂, x₁)` to the output list with `ℕ`-component `k`.
 -/
+@[no_expose]
 def div : qNF M → qNF M → qNF M
   | [], l => l.onExponent Neg.neg
   | l, [] => l
@@ -529,6 +535,7 @@ partial def normalize (disch : ∀ {u : Level} (type : Q(Sort u)), MetaM Q($type
 
 /-- Given `x` in a commutative group-with-zero, construct a new expression in the standard form
 *** / *** (all denominators at the end) which is equal to `x`. -/
+@[no_expose]
 def reduceExprQ (disch : ∀ {u : Level} (type : Q(Sort u)), MetaM Q($type))
     (iM : Q(CommGroupWithZero $M)) (x : Q($M)) : AtomM (Σ x' : Q($M), Q($x = $x')) := do
   let ⟨y, ⟨g, pf_sgn⟩, l, pf⟩ ← normalize disch iM x
@@ -539,6 +546,7 @@ def reduceExprQ (disch : ∀ {u : Level} (type : Q(Sort u)), MetaM Q($type))
 
 /-- Given `e₁` and `e₂`, cancel nonzero factors to construct a new equality which is logically
 equivalent to `e₁ = e₂`. -/
+@[no_expose]
 def reduceEqQ (disch : ∀ {u : Level} (type : Q(Sort u)), MetaM Q($type))
     (iM : Q(CommGroupWithZero $M)) (e₁ e₂ : Q($M)) :
     AtomM (Σ f₁ f₂ : Q($M), Q(($e₁ = $e₂) = ($f₁ = $f₂))) := do
@@ -554,6 +562,7 @@ def reduceEqQ (disch : ∀ {u : Level} (type : Q(Sort u)), MetaM Q($type))
 
 /-- Given `e₁` and `e₂`, cancel positive factors to construct a new inequality which is logically
 equivalent to `e₁ ≤ e₂`. -/
+@[no_expose]
 def reduceLeQ (disch : ∀ {u : Level} (type : Q(Sort u)), MetaM Q($type))
     (iM : Q(CommGroupWithZero $M)) (iM' : Q(PartialOrder $M))
     (iM'' : Q(PosMulStrictMono $M)) (iM''' : Q(PosMulReflectLE $M)) (iM'''' : Q(ZeroLEOneClass $M))
@@ -572,6 +581,7 @@ def reduceLeQ (disch : ∀ {u : Level} (type : Q(Sort u)), MetaM Q($type))
 
 /-- Given `e₁` and `e₂`, cancel positive factors to construct a new inequality which is logically
 equivalent to `e₁ < e₂`. -/
+@[no_expose]
 def reduceLtQ (disch : ∀ {u : Level} (type : Q(Sort u)), MetaM Q($type))
     (iM : Q(CommGroupWithZero $M)) (iM' : Q(PartialOrder $M))
     (iM'' : Q(PosMulStrictMono $M)) (iM''' : Q(PosMulReflectLT $M)) (iM'''' : Q(ZeroLEOneClass $M))
@@ -610,6 +620,7 @@ def reduceExpr (disch : ∀ {u : Level} (type : Q(Sort u)), MetaM Q($type)) (x :
 /-- Given an (in)equality `a = b` (respectively, `a ≤ b`, `a < b`), cancel nonzero (resp. positive)
 factors to construct a new (in)equality which is logically equivalent to `a = b` (respectively,
 `a ≤ b`, `a < b`). -/
+@[no_expose]
 def reduceProp (disch : ∀ {u : Level} (type : Q(Sort u)), MetaM Q($type)) (t : Expr) :
     AtomM Simp.Result := do
   let ⟨i, _, a, b⟩ ← t.ineq?
@@ -648,6 +659,7 @@ open Elab Tactic Lean.Parser.Tactic
 /-- If the user provided a discharger, elaborate it. If not, we will use the `field_simp_discharge`
 default discharger, which (among other things) includes a simp-run for the specified argument list,
 so we elaborate those arguments. -/
+@[no_expose]
 def parseDischarger (d : Option (TSyntax ``discharger)) (args : Option (TSyntax ``simpArgs)) :
     TacticM (∀ {u : Level} (type : Q(Sort u)), MetaM Q($type)) := do
   match d with
@@ -777,6 +789,7 @@ example {K : Type*} [Field K] {x : K} (hx0 : x ≠ 0) :
   -- new goal: `⊢ (x ^ 2 + 1) * (x ^ 2 + 1 + x) = x ^ 2`
 ```
 -/
+@[no_expose]
 def proc : Simp.Simproc := fun (t : Expr) ↦ do
   let ctx ← Simp.getContext
   let disch e : MetaM Expr := Prod.fst <$> (FieldSimp.discharge e).run ctx >>= Option.getM

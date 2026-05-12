@@ -51,7 +51,7 @@ namespace Pith
 
 variable (B : Type u₁)
 
-theorem mk_as (b : Pith B) : mk b.as = b := rfl
+private theorem mk_as (b : Pith B) : mk b.as = b := rfl
 
 instance [Inhabited B] : Inhabited (Pith B) := ⟨⟨default⟩⟩
 
@@ -136,6 +136,7 @@ variable {B} {B' : Type u₂} [Bicategory.{w₂, v₂} B'] [IsLocallyGroupoid B'
 set_option backward.isDefEq.respectTransparency false in
 /-- The hom direction of the (strong) natural isomorphism of pseudofunctors
 between `(pseudofunctorToPith F).comp (inclusion B)` and `F`. -/
+@[no_expose]
 noncomputable def pseudofunctorToPithCompInclusionStrongIsoHom :
     ((pseudofunctorToPith F).comp (inclusion B)).StrongTrans F where
   app b' := 𝟙 _
@@ -144,6 +145,7 @@ noncomputable def pseudofunctorToPithCompInclusionStrongIsoHom :
 set_option backward.isDefEq.respectTransparency false in
 /-- The inv direction of the (strong) natural isomorphism of pseudofunctors
 between `(pseudofunctorToPith F).comp (inclusion B)` and `F`. -/
+@[no_expose]
 noncomputable def pseudofunctorToPithCompInclusionStrongIsoInv :
     F.StrongTrans ((pseudofunctorToPith F).comp (inclusion B)) where
   app b' := 𝟙 _

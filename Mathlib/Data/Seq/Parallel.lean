@@ -52,6 +52,7 @@ set_option backward.privateInPublic true in
 set_option backward.privateInPublic.warn false in
 /-- Parallel computation of an infinite stream of computations,
   taking the first result -/
+@[no_expose]
 def parallel (S : WSeq (Computation α)) : Computation α :=
   corec parallel.aux1 ([], S)
 
@@ -117,7 +118,7 @@ theorem terminates_parallel.aux :
       rcases Seq.destruct S with (_ | ⟨_ | c, S'⟩) <;> apply IH <;> simp [this]
 
 set_option backward.isDefEq.respectTransparency false in
-theorem terminates_parallel {S : WSeq (Computation α)} {c} (h : c ∈ S) [T : Terminates c] :
+private theorem terminates_parallel {S : WSeq (Computation α)} {c} (h : c ∈ S) [T : Terminates c] :
     Terminates (parallel S) := by
   suffices
     ∀ (n) (l : List (Computation α)) (S c),
@@ -174,7 +175,7 @@ theorem terminates_parallel {S : WSeq (Computation α)} {c} (h : c ∈ S) [T : T
         rw [D]
         cases o <;> simp [TT]
 
-theorem exists_of_mem_parallel {S : WSeq (Computation α)} {a} (h : a ∈ parallel S) :
+private theorem exists_of_mem_parallel {S : WSeq (Computation α)} {a} (h : a ∈ parallel S) :
     ∃ c ∈ S, a ∈ c := by
   suffices
     ∀ C, a ∈ C → ∀ (l : List (Computation α)) (S),
@@ -251,7 +252,7 @@ theorem exists_of_mem_parallel {S : WSeq (Computation α)} {a} (h : a ∈ parall
         rw [Seq.destruct_eq_cons e]
         exact Seq.mem_cons_of_mem _ dS'
 
-theorem map_parallel (f : α → β) (S) : map f (parallel S) = parallel (S.map (map f)) := by
+private theorem map_parallel (f : α → β) (S) : map f (parallel S) = parallel (S.map (map f)) := by
   refine
     eq_of_bisim
       (fun c1 c2 =>
@@ -281,7 +282,7 @@ theorem map_parallel (f : α → β) (S) : map f (parallel S) = parallel (S.map 
       simp only [lmap, rmap]
       induction S using WSeq.recOn <;> simpa using ⟨_, _, rfl, rfl⟩
 
-theorem parallel_empty (S : WSeq (Computation α)) (h : S.head ~> none) : parallel S = empty _ :=
+private theorem parallel_empty (S : WSeq (Computation α)) (h : S.head ~> none) : parallel S = empty _ :=
   eq_empty_of_not_terminates fun ⟨⟨a, m⟩⟩ => by
     let ⟨c, cs, _⟩ := exists_of_mem_parallel m
     let ⟨n, nm⟩ := WSeq.exists_get?_of_mem cs
@@ -290,6 +291,7 @@ theorem parallel_empty (S : WSeq (Computation α)) (h : S.head ~> none) : parall
 
 /-- Induction principle for parallel computations.
 The reason this isn't trivial from `exists_of_mem_parallel` is because it eliminates to `Sort`. -/
+@[no_expose]
 def parallelRec {S : WSeq (Computation α)} (C : α → Sort v) (H : ∀ s ∈ S, ∀ a ∈ s, C a) {a}
     (h : a ∈ parallel S) : C a := by
   let T : WSeq (Computation (α × Computation α)) := S.map fun c => c.map fun a => (a, c)
@@ -323,18 +325,18 @@ def parallelRec {S : WSeq (Computation α)} (C : α → Sort v) (H : ∀ s ∈ S
   obtain ⟨ac, cs⟩ := this
   apply H _ cs _ ac
 
-theorem parallel_promises {S : WSeq (Computation α)} {a} (H : ∀ s ∈ S, s ~> a) : parallel S ~> a :=
+private theorem parallel_promises {S : WSeq (Computation α)} {a} (H : ∀ s ∈ S, s ~> a) : parallel S ~> a :=
   fun _ ma' =>
   let ⟨_, cs, ac⟩ := exists_of_mem_parallel ma'
   H _ cs ac
 
-theorem mem_parallel {S : WSeq (Computation α)} {a} (H : ∀ s ∈ S, s ~> a) {c} (cs : c ∈ S)
+private theorem mem_parallel {S : WSeq (Computation α)} {a} (H : ∀ s ∈ S, s ~> a) {c} (cs : c ∈ S)
     (ac : a ∈ c) : a ∈ parallel S := by
   haveI := terminates_of_mem ac
   haveI := terminates_parallel cs
   exact mem_of_promises _ (parallel_promises H)
 
-theorem parallel_congr_lem {S T : WSeq (Computation α)} {a} (H : S.LiftRel Equiv T) :
+private theorem parallel_congr_lem {S T : WSeq (Computation α)} {a} (H : S.LiftRel Equiv T) :
     (∀ s ∈ S, s ~> a) ↔ ∀ t ∈ T, t ~> a :=
   ⟨fun h1 _ tT =>
     let ⟨_, sS, se⟩ := WSeq.exists_of_liftRel_right H tT
@@ -344,7 +346,7 @@ theorem parallel_congr_lem {S T : WSeq (Computation α)} {a} (H : S.LiftRel Equi
     (promises_congr se _).2 (h2 _ tT)⟩
 
 -- The parallel operation is only deterministic when all computation paths lead to the same value
-theorem parallel_congr_left {S T : WSeq (Computation α)} {a} (h1 : ∀ s ∈ S, s ~> a)
+private theorem parallel_congr_left {S T : WSeq (Computation α)} {a} (h1 : ∀ s ∈ S, s ~> a)
     (H : S.LiftRel Equiv T) : parallel S ~ parallel T :=
   let h2 := (parallel_congr_lem H).1 h1
   fun a' =>
@@ -367,7 +369,7 @@ theorem parallel_congr_left {S T : WSeq (Computation α)} {a} (h1 : ∀ s ∈ S,
       let aT := (st _).2 as
       mem_parallel h1 tT aT⟩
 
-theorem parallel_congr_right {S T : WSeq (Computation α)} {a} (h2 : ∀ t ∈ T, t ~> a)
+private theorem parallel_congr_right {S T : WSeq (Computation α)} {a} (h2 : ∀ t ∈ T, t ~> a)
     (H : S.LiftRel Equiv T) : parallel S ~ parallel T :=
   parallel_congr_left ((parallel_congr_lem H).2 h2) H
 

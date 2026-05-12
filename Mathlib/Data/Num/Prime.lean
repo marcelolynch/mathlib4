@@ -37,12 +37,13 @@ number of iterations. It is initialized to the number `n` we are determining pri
 though this is exponential in the input (since it is a `Nat`, not a `Num`), it will get lazily
 evaluated during kernel reduction, so we will only require about `sqrt n` unfoldings, for the
 `sqrt n` iterations of the loop. -/
+@[no_expose]
 def minFacAux (n : PosNum) : ℕ → PosNum → PosNum
   | 0, _ => n
   | fuel + 1, k =>
     if n < k.bit1 * k.bit1 then n else if k.bit1 ∣ n then k.bit1 else minFacAux n fuel k.succ
 
-theorem minFacAux_to_nat {fuel : ℕ} {n k : PosNum} (h : Nat.sqrt n < fuel + k.bit1) :
+private theorem minFacAux_to_nat {fuel : ℕ} {n k : PosNum} (h : Nat.sqrt n < fuel + k.bit1) :
     (minFacAux n fuel k : ℕ) = Nat.minFacAux n k.bit1 := by
   induction fuel generalizing k <;> rw [minFacAux, Nat.minFacAux]
   case zero =>
@@ -57,6 +58,7 @@ theorem minFacAux_to_nat {fuel : ℕ} {n k : PosNum} (h : Nat.sqrt n < fuel + k.
         add_left_comm, ← one_add_one_eq_two]
 
 /-- Returns the smallest prime factor of `n ≠ 1`. -/
+@[no_expose]
 def minFac : PosNum → PosNum
   | 1 => 1
   | bit0 _ => 2
@@ -108,6 +110,7 @@ end PosNum
 namespace Num
 
 /-- Returns the smallest prime factor of `n ≠ 1`. -/
+@[no_expose]
 def minFac : Num → PosNum
   | 0 => 2
   | pos n => n.minFac

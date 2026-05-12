@@ -111,6 +111,7 @@ partial def collect (c : Name) : StateT State MetaM Unit := do
 Prints all uses of `sorry` inside a list of declarations.
 Displayed sorries are hoverable and support "go to definition".
 -/
+@[no_expose]
 def collectSorries (constNames : Array Name) : MetaM (Array MessageData) := do
   let (_, s) ← (constNames.forM collect).run {}
   pure s.sorryMsgs
@@ -127,6 +128,7 @@ syntax (name := printSorriesStx) "#print " &"sorries" (ppSpace ident)* : command
 /--
 Collects sorries in the given constants and logs a message.
 -/
+@[no_expose]
 def evalCollectSorries (names : Array Name) : CommandElabM Unit := do
   let msgs ← liftTermElabM <| collectSorries names
   if msgs.isEmpty then

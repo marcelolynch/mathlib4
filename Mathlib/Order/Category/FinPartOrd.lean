@@ -74,7 +74,7 @@ lemma hom_hom_id {X : FinPartOrd} : (𝟙 X : X ⟶ X).hom.hom = OrderHom.id := 
 @[deprecated (since := "2025-12-18")] alias hom_id := hom_hom_id
 
 /- Provided for rewriting. -/
-lemma id_apply (X : FinPartOrd) (x : X) :
+private lemma id_apply (X : FinPartOrd) (x : X) :
     (𝟙 X : X ⟶ X) x = x := by simp
 
 @[simp]
@@ -84,7 +84,7 @@ lemma hom_hom_comp {X Y Z : FinPartOrd} (f : X ⟶ Y) (g : Y ⟶ Z) :
 @[deprecated (since := "2025-12-18")] alias hom_comp := hom_hom_comp
 
 /- Provided for rewriting. -/
-lemma comp_apply {X Y Z : FinPartOrd} (f : X ⟶ Y) (g : Y ⟶ Z) (x : X) :
+private lemma comp_apply {X Y Z : FinPartOrd} (f : X ⟶ Y) (g : Y ⟶ Z) (x : X) :
     (f ≫ g) x = g (f x) := by simp
 
 @[ext]
@@ -126,6 +126,6 @@ def dualEquiv : FinPartOrd ≌ FinPartOrd where
 
 end FinPartOrd
 
-theorem FinPartOrd_dual_comp_forget_to_partOrd :
+private theorem FinPartOrd_dual_comp_forget_to_partOrd :
     FinPartOrd.dual ⋙ forget₂ FinPartOrd PartOrd =
       forget₂ FinPartOrd PartOrd ⋙ PartOrd.dual := rfl

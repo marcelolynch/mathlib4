@@ -87,7 +87,7 @@ theorem seqRight_def (s : Finset α) (t : Finset β) : s *> t = if s = ∅ then 
 
 /-- `Finset.image₂` in terms of monadic operations. Note that this can't be taken as the definition
 because of the lack of universe polymorphism. -/
-theorem image₂_def {α β γ : Type u} (f : α → β → γ) (s : Finset α) (t : Finset β) :
+private theorem image₂_def {α β γ : Type u} (f : α → β → γ) (s : Finset α) (t : Finset β) :
     image₂ f s t = f <$> s <*> t := by
   ext
   simp [mem_sup]
@@ -195,6 +195,7 @@ variable {α β γ : Type u} {F G : Type u → Type u} [Applicative F] [Applicat
   [CommApplicative F] [CommApplicative G]
 
 /-- Traverse function for `Finset`. -/
+@[no_expose]
 def traverse [DecidableEq β] (f : α → F β) (s : Finset α) : F (Finset β) :=
   Multiset.toFinset <$> Multiset.traverse f s.1
 
@@ -216,7 +217,7 @@ theorem map_comp_coe_apply (h : α → β) (s : Multiset α) :
   congrFun (map_comp_coe h) s
 
 open scoped Classical in
-theorem map_traverse (g : α → G β) (h : β → γ) (s : Finset α) :
+private theorem map_traverse (g : α → G β) (h : β → γ) (s : Finset α) :
     Functor.map h <$> traverse g s = traverse (Functor.map h ∘ g) s := by
   unfold traverse
   simp only [Functor.map_map, fmap_def, map_comp_coe_apply, Multiset.fmap_def, ←

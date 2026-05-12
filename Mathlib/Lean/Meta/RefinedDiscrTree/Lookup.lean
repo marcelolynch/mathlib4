@@ -333,6 +333,7 @@ Find values that match `e` in `d`.
 * If `matchRootStar == true` then we allow metavariables at the root to unify.
   Set this to `false` to avoid getting excessively many results.
 -/
+@[no_expose]
 def getMatch (d : RefinedDiscrTree α) (e : Expr) (unify matchRootStar : Bool) :
     MetaM (MatchResult α × RefinedDiscrTree α) := do
   withReducible do runTreeM d do

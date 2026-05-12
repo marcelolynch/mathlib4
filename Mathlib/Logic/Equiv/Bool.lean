@@ -24,14 +24,14 @@ namespace Bool
 
 open Function
 
-theorem not_bijective : Bijective not := Equiv.boolNot.bijective
-theorem not_injective : Injective not := Equiv.boolNot.injective
-theorem not_surjective : Surjective not := Equiv.boolNot.surjective
+private theorem not_bijective : Bijective not := Equiv.boolNot.bijective
+private theorem not_injective : Injective not := Equiv.boolNot.injective
+private theorem not_surjective : Surjective not := Equiv.boolNot.surjective
 
-theorem not_leftInverse : LeftInverse not not := not_not
-theorem not_rightInverse : RightInverse not not := not_not
+private theorem not_leftInverse : LeftInverse not not := not_not
+private theorem not_rightInverse : RightInverse not not := not_not
 
-theorem not_hasLeftInverse : HasLeftInverse not := ⟨not, not_leftInverse⟩
-theorem not_hasRightInverse : HasRightInverse not := ⟨not, not_rightInverse⟩
+private theorem not_hasLeftInverse : HasLeftInverse not := ⟨not, not_leftInverse⟩
+private theorem not_hasRightInverse : HasRightInverse not := ⟨not, not_rightInverse⟩
 
 end Bool

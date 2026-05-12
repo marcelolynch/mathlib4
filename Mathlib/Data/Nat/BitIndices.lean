@@ -36,6 +36,7 @@ variable {a n : ℕ}
 
 /-- The function which maps each natural number `∑ i ∈ s, 2 ^ i` to the list of
 elements of `s` in increasing order. -/
+@[no_expose]
 def bitIndices (n : ℕ) : List ℕ :=
   @binaryRec (fun _ ↦ List ℕ) [] (fun b _ s ↦ b.casesOn (s.map (· + 1)) (0 :: s.map (· + 1))) n
 
@@ -43,11 +44,11 @@ def bitIndices (n : ℕ) : List ℕ :=
 
 @[simp] theorem bitIndices_one : bitIndices 1 = [0] := by simp [bitIndices]
 
-theorem bitIndices_bit_true (n : ℕ) :
+private theorem bitIndices_bit_true (n : ℕ) :
     bitIndices (bit true n) = 0 :: ((bitIndices n).map (· + 1)) :=
   binaryRec_eq _ _ (.inl rfl)
 
-theorem bitIndices_bit_false (n : ℕ) :
+private theorem bitIndices_bit_false (n : ℕ) :
     bitIndices (bit false n) = (bitIndices n).map (· + 1) :=
   binaryRec_eq _ _ (.inl rfl)
 
@@ -92,7 +93,7 @@ theorem bitIndices_bit_false (n : ℕ) :
 
 /-- Together with `Nat.twoPowSum_bitIndices`, this implies a bijection between `ℕ` and `Finset ℕ`.
 See `Finset.equivBitIndices` for this bijection. -/
-theorem bitIndices_twoPowsum {L : List ℕ} (hL : List.SortedLT L) :
+private theorem bitIndices_twoPowsum {L : List ℕ} (hL : List.SortedLT L) :
     (L.map (fun i ↦ 2 ^ i)).sum.bitIndices = L := by
   cases L with | nil => simp | cons a L =>
   obtain ⟨haL, hL⟩ := pairwise_cons.1 hL.pairwise
@@ -116,11 +117,11 @@ theorem bitIndices_twoPowsum {L : List ℕ} (hL : List.SortedLT L) :
   simp [add_comm (a := 1), add_assoc]
 termination_by L.length
 
-theorem two_pow_le_of_mem_bitIndices (ha : a ∈ n.bitIndices) : 2 ^ a ≤ n := by
+private theorem two_pow_le_of_mem_bitIndices (ha : a ∈ n.bitIndices) : 2 ^ a ≤ n := by
   rw [← twoPowSum_bitIndices n]
   exact List.single_le_sum (by simp) _ <| mem_map_of_mem ha
 
-theorem notMem_bitIndices_self (n : ℕ) : n ∉ n.bitIndices :=
+private theorem notMem_bitIndices_self (n : ℕ) : n ∉ n.bitIndices :=
   fun h ↦ (n.lt_two_pow_self).not_ge <| two_pow_le_of_mem_bitIndices h
 
 end Nat

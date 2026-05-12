@@ -229,7 +229,7 @@ def monadToFunctor : Monad C ⥤ C ⥤ C where
 
 instance : (monadToFunctor C).Faithful where
 
-theorem monadToFunctor_mapIso_monad_iso_mk {M N : Monad C} (f : (M : C ⥤ C) ≅ N) (f_η f_μ) :
+private theorem monadToFunctor_mapIso_monad_iso_mk {M N : Monad C} (f : (M : C ⥤ C) ≅ N) (f_η f_μ) :
     (monadToFunctor _).mapIso (MonadIso.mk f f_η f_μ) = f := by
   ext
   rfl
@@ -247,7 +247,7 @@ def comonadToFunctor : Comonad C ⥤ C ⥤ C where
 
 instance : (comonadToFunctor C).Faithful where
 
-theorem comonadToFunctor_mapIso_comonad_iso_mk {M N : Comonad C} (f : (M : C ⥤ C) ≅ N) (f_ε f_δ) :
+private theorem comonadToFunctor_mapIso_comonad_iso_mk {M N : Comonad C} (f : (M : C ⥤ C) ≅ N) (f_ε f_δ) :
     (comonadToFunctor _).mapIso (ComonadIso.mk f f_ε f_δ) = f := by
   ext
   rfl
@@ -367,7 +367,7 @@ end Comonad
 namespace Monad
 
 set_option backward.isDefEq.respectTransparency false in
-lemma map_unit_app (T : Monad C) (X : C) [IsIso T.μ] :
+private lemma map_unit_app (T : Monad C) (X : C) [IsIso T.μ] :
     T.map (T.η.app X) = T.η.app (T.obj X) := by
   simp [← cancel_mono (T.μ.app _)]
 
@@ -383,12 +383,12 @@ end Monad
 namespace Comonad
 
 set_option backward.isDefEq.respectTransparency false in
-lemma map_counit_app (T : Comonad C) (X : C) [IsIso T.δ] :
+private lemma map_counit_app (T : Comonad C) (X : C) [IsIso T.δ] :
     T.map (T.ε.app X) = T.ε.app (T.obj X) := by
   simp [← cancel_epi (T.δ.app _)]
 
 set_option backward.isDefEq.respectTransparency false in
-lemma isSplitEpi_iff_isIso_counit (T : Comonad C) (X : C) [IsIso T.δ] :
+private lemma isSplitEpi_iff_isIso_counit (T : Comonad C) (X : C) [IsIso T.δ] :
     IsSplitEpi (T.ε.app X) ↔ IsIso (T.ε.app X) := by
   refine ⟨fun _ ↦ ⟨section_ (T.ε.app X), ?_, by simp⟩, fun _ ↦ inferInstance⟩
   rw [← map_id, ← show section_ (T.ε.app X) ≫ T.ε.app X = 𝟙 X from IsSplitEpi.id (T.ε.app X),

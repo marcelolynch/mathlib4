@@ -67,18 +67,21 @@ section Definitions
 
 /-- The external covering number of a set `A` in `X` for radius `ε` is the minimal cardinality
 (in `ℕ∞`) of an `ε`-cover by points in `X` (not necessarily in `A`). -/
+@[no_expose]
 noncomputable
 def externalCoveringNumber (ε : ℝ≥0) (A : Set X) : ℕ∞ :=
   ⨅ (C : Set X) (_ : IsCover ε A C), C.encard
 
 /-- The covering number (or internal covering number) of a set `A` for radius `ε` is
 the minimal cardinality (in `ℕ∞`) of an `ε`-cover contained in `A`. -/
+@[no_expose]
 noncomputable
 def coveringNumber (ε : ℝ≥0) (A : Set X) : ℕ∞ :=
   ⨅ (C : Set X) (_ : C ⊆ A) (_ : IsCover ε A C), C.encard
 
 /-- The packing number of a set `A` for radius `ε` is the maximal cardinality (in `ℕ∞`)
 of an `ε`-separated set in `A`. -/
+@[no_expose]
 noncomputable
 def packingNumber (ε : ℝ≥0) (A : Set X) : ℕ∞ :=
   ⨆ (C : Set X) (_ : C ⊆ A) (_ : IsSeparated ε C), C.encard
@@ -125,7 +128,7 @@ lemma packingNumber_pos_iff : 0 < packingNumber ε A ↔ A.Nonempty := by
   rw [← not_iff_not]
   simp [not_nonempty_iff_eq_empty]
 
-lemma externalCoveringNumber_le_coveringNumber (ε : ℝ≥0) (A : Set X) :
+private lemma externalCoveringNumber_le_coveringNumber (ε : ℝ≥0) (A : Set X) :
     externalCoveringNumber ε A ≤ coveringNumber ε A := by
   simp only [externalCoveringNumber, coveringNumber, le_iInf_iff]
   exact fun C _ hC_cover ↦ iInf₂_le C hC_cover
@@ -139,28 +142,28 @@ lemma IsCover.coveringNumber_le_encard (h_subset : C ⊆ A) (hC : IsCover ε A C
 lemma IsSeparated.encard_le_packingNumber (h_subset : C ⊆ A) (hC : IsSeparated ε C) :
     C.encard ≤ packingNumber ε A := le_iSup₂_of_le C h_subset (le_iSup_of_le hC le_rfl)
 
-lemma externalCoveringNumber_le_encard_self (A : Set X) : externalCoveringNumber ε A ≤ A.encard :=
+private lemma externalCoveringNumber_le_encard_self (A : Set X) : externalCoveringNumber ε A ≤ A.encard :=
   IsCover.externalCoveringNumber_le_encard (by simp)
 
-lemma coveringNumber_le_encard_self (A : Set X) : coveringNumber ε A ≤ A.encard :=
+private lemma coveringNumber_le_encard_self (A : Set X) : coveringNumber ε A ≤ A.encard :=
   IsCover.coveringNumber_le_encard (by simp) (by simp)
 
-lemma packingNumber_le_encard_self (A : Set X) : packingNumber ε A ≤ A.encard := by
+private lemma packingNumber_le_encard_self (A : Set X) : packingNumber ε A ≤ A.encard := by
   simp only [packingNumber, iSup_le_iff]
   exact fun _ hC _ ↦ encard_le_encard hC
 
-lemma externalCoveringNumber_anti (h : ε ≤ δ) :
+private lemma externalCoveringNumber_anti (h : ε ≤ δ) :
     externalCoveringNumber δ A ≤ externalCoveringNumber ε A := by
   simp_rw [externalCoveringNumber]
   gcongr
   exact iInf_const_mono (fun h_cover ↦ h_cover.mono_radius h)
 
-lemma coveringNumber_anti (h : ε ≤ δ) : coveringNumber δ A ≤ coveringNumber ε A := by
+private lemma coveringNumber_anti (h : ε ≤ δ) : coveringNumber δ A ≤ coveringNumber ε A := by
   simp_rw [coveringNumber]
   gcongr
   exact iInf_const_mono (fun h_cover ↦ h_cover.mono_radius h)
 
-lemma externalCoveringNumber_mono_set (h : A ⊆ B) :
+private lemma externalCoveringNumber_mono_set (h : A ⊆ B) :
     externalCoveringNumber ε A ≤ externalCoveringNumber ε B := by
   simp only [externalCoveringNumber, le_iInf_iff]
   exact fun C hC ↦ iInf_le_of_le C <| iInf_le_of_le (hC.anti h) le_rfl
@@ -185,7 +188,7 @@ lemma packingNumber_zero {E : Type*} [EMetricSpace E] (A : Set E) :
     packingNumber 0 A = A.encard :=
   le_antisymm (packingNumber_le_encard_self A) (le_iSup_of_le A (by simp))
 
-lemma coveringNumber_eq_one_of_ediam_le (h_nonempty : A.Nonempty) (hA : ediam A ≤ ε) :
+private lemma coveringNumber_eq_one_of_ediam_le (h_nonempty : A.Nonempty) (hA : ediam A ≤ ε) :
     coveringNumber ε A = 1 := by
   refine le_antisymm ?_ ?_
   · have ⟨a, ha⟩ := h_nonempty
@@ -195,7 +198,7 @@ lemma coveringNumber_eq_one_of_ediam_le (h_nonempty : A.Nonempty) (hA : ediam A 
       _ ≤ 1 := by simp
   · simpa [Order.one_le_iff_pos]
 
-lemma externalCoveringNumber_eq_one_of_ediam_le (h_nonempty : A.Nonempty)
+private lemma externalCoveringNumber_eq_one_of_ediam_le (h_nonempty : A.Nonempty)
     (hA : ediam A ≤ ε) :
     externalCoveringNumber ε A = 1 := by
   refine le_antisymm ?_ ?_
@@ -203,14 +206,14 @@ lemma externalCoveringNumber_eq_one_of_ediam_le (h_nonempty : A.Nonempty)
       (coveringNumber_eq_one_of_ediam_le h_nonempty hA)
   · simpa [Order.one_le_iff_pos]
 
-lemma externalCoveringNumber_le_one_of_ediam_le (hA : ediam A ≤ ε) :
+private lemma externalCoveringNumber_le_one_of_ediam_le (hA : ediam A ≤ ε) :
     externalCoveringNumber ε A ≤ 1 := by
   rcases eq_empty_or_nonempty A with h_eq_empty | h_nonempty
   · rw [← externalCoveringNumber_eq_zero (ε := ε)] at h_eq_empty
     simp [h_eq_empty]
   · exact (externalCoveringNumber_eq_one_of_ediam_le h_nonempty hA).le
 
-lemma coveringNumber_le_one_of_ediam_le (hA : ediam A ≤ ε) : coveringNumber ε A ≤ 1 := by
+private lemma coveringNumber_le_one_of_ediam_le (hA : ediam A ≤ ε) : coveringNumber ε A ≤ 1 := by
   rcases eq_empty_or_nonempty A with h_eq_empty | h_nonempty
   · rw [← coveringNumber_eq_zero (ε := ε)] at h_eq_empty
     simp [h_eq_empty]
@@ -231,7 +234,7 @@ lemma packingNumber_singleton (ε : ℝ≥0) (x : X) : packingNumber ε {x} = 1 
 
 section MinimalCover
 
-lemma exists_set_encard_eq_coveringNumber (h : coveringNumber ε A ≠ ⊤) :
+private lemma exists_set_encard_eq_coveringNumber (h : coveringNumber ε A ≠ ⊤) :
     ∃ C, C ⊆ A ∧ C.Finite ∧ IsCover ε A C ∧ C.encard = coveringNumber ε A := by
   simp only [coveringNumber, ne_eq, iInf_eq_top, encard_eq_top_iff, not_forall, not_infinite] at h
   obtain ⟨C', hC'_subset, hC'_cover, hC'_fin⟩ := h
@@ -249,26 +252,27 @@ lemma exists_set_encard_eq_coveringNumber (h : coveringNumber ε A ≠ ⊤) :
 open Classical in
 /-- A finite internal `ε`-cover of a set `A` by closed balls with minimal cardinality.
 It is defined as the empty set if no such finite cover exists. -/
+@[no_expose]
 noncomputable
 def minimalCover (ε : ℝ≥0) (A : Set X) : Set X :=
   if h : coveringNumber ε A ≠ ⊤ then (exists_set_encard_eq_coveringNumber h).choose else ∅
 
-lemma minimalCover_subset : minimalCover ε A ⊆ A := by grind [minimalCover]
+private lemma minimalCover_subset : minimalCover ε A ⊆ A := by grind [minimalCover]
 
-lemma finite_minimalCover :
+private lemma finite_minimalCover :
     (minimalCover ε A).Finite := by grind [minimalCover]
 
-lemma isCover_minimalCover (h : coveringNumber ε A ≠ ⊤) :
+private lemma isCover_minimalCover (h : coveringNumber ε A ≠ ⊤) :
     IsCover ε A (minimalCover ε A) := by grind [minimalCover]
 
-lemma encard_minimalCover (h : coveringNumber ε A ≠ ⊤) :
+private lemma encard_minimalCover (h : coveringNumber ε A ≠ ⊤) :
     (minimalCover ε A).encard = coveringNumber ε A := by grind [minimalCover]
 
 end MinimalCover
 
 section MaximalSeparatedSet
 
-lemma exists_set_encard_eq_packingNumber (h : packingNumber ε A ≠ ⊤) :
+private lemma exists_set_encard_eq_packingNumber (h : packingNumber ε A ≠ ⊤) :
     ∃ C, C ⊆ A ∧ C.Finite ∧ IsSeparated ε C ∧ C.encard = packingNumber ε A := by
   rcases Set.eq_empty_or_nonempty A with hA | hA
   · simp [hA, packingNumber]
@@ -288,26 +292,27 @@ lemma exists_set_encard_eq_packingNumber (h : packingNumber ε A ≠ ⊤) :
 
 /-- A finite `ε`-separated subset of a set `A` with maximal cardinality.
 It is defined as the empty set if no such finite subset exists. -/
+@[no_expose]
 noncomputable
 def maximalSeparatedSet (ε : ℝ≥0) (A : Set X) : Set X :=
   if h : packingNumber ε A ≠ ⊤ then (exists_set_encard_eq_packingNumber h).choose else ∅
 
-lemma maximalSeparatedSet_subset : maximalSeparatedSet ε A ⊆ A := by grind [maximalSeparatedSet]
+private lemma maximalSeparatedSet_subset : maximalSeparatedSet ε A ⊆ A := by grind [maximalSeparatedSet]
 
-lemma isSeparated_maximalSeparatedSet :
+private lemma isSeparated_maximalSeparatedSet :
     IsSeparated ε (maximalSeparatedSet ε A : Set X) := by grind [maximalSeparatedSet]
 
-lemma encard_maximalSeparatedSet (h : packingNumber ε A ≠ ⊤) :
+private lemma encard_maximalSeparatedSet (h : packingNumber ε A ≠ ⊤) :
     (maximalSeparatedSet ε A).encard = packingNumber ε A := by grind [maximalSeparatedSet]
 
-lemma encard_le_of_isSeparated (h_subset : C ⊆ A)
+private lemma encard_le_of_isSeparated (h_subset : C ⊆ A)
     (h_sep : IsSeparated ε C) (h : packingNumber ε A ≠ ⊤) :
     C.encard ≤ (maximalSeparatedSet ε A).encard := by
   rw [encard_maximalSeparatedSet h]
   exact le_iSup_of_le C <| le_iSup_of_le h_subset <| le_iSup_of_le h_sep (by simp)
 
 /-- The maximal separated set is a cover. -/
-lemma isCover_maximalSeparatedSet (h : packingNumber ε A ≠ ⊤) :
+private lemma isCover_maximalSeparatedSet (h : packingNumber ε A ≠ ⊤) :
     IsCover ε A (maximalSeparatedSet ε A) := by
   intro x hxA
   by_contra! h_dist
@@ -328,7 +333,7 @@ section Comparisons
 
 /-- The packing number of a set `A` for radius `2 * ε` is at most the external covering number
 of `A` for radius `ε`. -/
-theorem packingNumber_two_mul_le_externalCoveringNumber (ε : ℝ≥0) (A : Set X) :
+private theorem packingNumber_two_mul_le_externalCoveringNumber (ε : ℝ≥0) (A : Set X) :
     packingNumber (2 * ε) A ≤ externalCoveringNumber ε A := by
   simp only [packingNumber, ENNReal.coe_mul, ENNReal.coe_ofNat, externalCoveringNumber, le_iInf_iff,
     iSup_le_iff]
@@ -352,21 +357,21 @@ theorem packingNumber_two_mul_le_externalCoveringNumber (ε : ℝ≥0) (A : Set 
       · exact hf' x
       · simpa [edist_comm, hxy] using hf' y
 
-theorem coveringNumber_le_packingNumber (ε : ℝ≥0) (A : Set X) :
+private theorem coveringNumber_le_packingNumber (ε : ℝ≥0) (A : Set X) :
     coveringNumber ε A ≤ packingNumber ε A := by
   by_cases! h_top : packingNumber ε A ≠ ⊤
   · rw [← encard_maximalSeparatedSet h_top]
     exact isCover_maximalSeparatedSet h_top |>.coveringNumber_le_encard maximalSeparatedSet_subset
   · simp [h_top]
 
-theorem coveringNumber_two_mul_le_externalCoveringNumber (ε : ℝ≥0) (A : Set X) :
+private theorem coveringNumber_two_mul_le_externalCoveringNumber (ε : ℝ≥0) (A : Set X) :
     coveringNumber (2 * ε) A ≤ externalCoveringNumber ε A := by
   rcases Set.eq_empty_or_nonempty A with rfl | h_nonempty
   · simp
   refine (coveringNumber_le_packingNumber _ A).trans ?_
   exact packingNumber_two_mul_le_externalCoveringNumber ε A
 
-lemma coveringNumber_subset_le (h : A ⊆ B) :
+private lemma coveringNumber_subset_le (h : A ⊆ B) :
     coveringNumber ε A ≤ coveringNumber (ε / 2) B := calc
   coveringNumber ε A
   _ ≤ packingNumber ε A := coveringNumber_le_packingNumber ε A
