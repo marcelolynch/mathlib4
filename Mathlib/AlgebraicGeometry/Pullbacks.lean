@@ -49,6 +49,7 @@ def v (i j : 𝒰.I₀) : Scheme :=
 
 /-- The canonical transition map `(Uᵢ ×[Z] Y) ×[X] Uⱼ ⟶ (Uⱼ ×[Z] Y) ×[X] Uᵢ` given by the fact
 that pullbacks are associative and symmetric. -/
+@[no_expose]
 def t (i j : 𝒰.I₀) : v 𝒰 f g i j ⟶ v 𝒰 f g j i := by
   have : HasPullback (pullback.snd _ _ ≫ 𝒰.f i ≫ f) g :=
     hasPullback_assoc_symm (𝒰.f j) (𝒰.f i) (𝒰.f i ≫ f) g
@@ -93,6 +94,7 @@ abbrev fV (i j : 𝒰.I₀) : v 𝒰 f g i j ⟶ pullback (𝒰.f i ≫ f) g :=
 
 /-- The map `((Xᵢ ×[Z] Y) ×[X] Xⱼ) ×[Xᵢ ×[Z] Y] ((Xᵢ ×[Z] Y) ×[X] Xₖ)` ⟶
 `((Xⱼ ×[Z] Y) ×[X] Xₖ) ×[Xⱼ ×[Z] Y] ((Xⱼ ×[Z] Y) ×[X] Xᵢ)` needed for gluing -/
+@[no_expose]
 def t' (i j k : 𝒰.I₀) :
     pullback (fV 𝒰 f g i j) (fV 𝒰 f g i k) ⟶ pullback (fV 𝒰 f g j k) (fV 𝒰 f g j i) := by
   refine (pullbackRightPullbackFstIso ..).hom ≫ ?_
@@ -241,6 +243,7 @@ set_option backward.isDefEq.respectTransparency false in
 The canonical map `(s.X ×[X] Uᵢ) ×[s.X] (s.X ×[X] Uⱼ) ⟶ (Uᵢ ×[Z] Y) ×[X] Uⱼ`
 
 This is used in `gluedLift`. -/
+@[no_expose]
 def gluedLiftPullbackMap (i j : 𝒰.I₀) :
     pullback ((𝒰.pullback₁ s.fst).f i) ((𝒰.pullback₁ s.fst).f j) ⟶
       (gluing 𝒰 f g).V ⟨i, j⟩ := by
@@ -317,6 +320,7 @@ The canonical map `(W ×[X] Uᵢ) ×[W] (Uⱼ ×[Z] Y) ⟶ (Uⱼ ×[Z] Y) ×[X] 
 the glued fibred product.
 
 This is used in `lift_comp_ι`. -/
+@[no_expose]
 def pullbackFstιToV (i j : 𝒰.I₀) :
     pullback (pullback.fst (p1 𝒰 f g) (𝒰.f i)) ((gluing 𝒰 f g).ι j) ⟶
       v 𝒰 f g j i :=
