@@ -221,7 +221,7 @@ def descFunLift (s : Cocone F) : Prequotient F → s.pt
   | mul x y => descFunLift s x * descFunLift s y
 
 /-- The function from the colimit ring to the cone point of any other cocone. -/
-def descFun (s : Cocone F) : ColimitType F → s.pt := by
+private def descFun (s : Cocone F) : ColimitType F → s.pt := by
   fapply Quot.lift
   · exact descFunLift F s
   · intro x y r
@@ -255,7 +255,7 @@ def descFun (s : Cocone F) : ColimitType F → s.pt := by
 
 /-- The ring homomorphism from the colimit ring to the cone point of any other
 cocone. -/
-def descMorphism (s : Cocone F) : colimit F ⟶ s.pt := ofHom
+private def descMorphism (s : Cocone F) : colimit F ⟶ s.pt := ofHom
   { toFun := descFun F s
     map_one' := rfl
     map_zero' := rfl
@@ -268,7 +268,7 @@ def descMorphism (s : Cocone F) : colimit F ⟶ s.pt := ofHom
 
 set_option backward.isDefEq.respectTransparency false in
 /-- Evidence that the proposed colimit is the colimit. -/
-def colimitIsColimit : IsColimit (colimitCocone F) where
+private def colimitIsColimit : IsColimit (colimitCocone F) where
   desc s := descMorphism F s
   uniq s m w := hom_ext <| RingHom.ext fun x => by
     refine Quot.inductionOn x ?_
@@ -519,7 +519,7 @@ def descFunLift (s : Cocone F) : Prequotient F → s.pt
   | mul x y => descFunLift s x * descFunLift s y
 
 /-- The function from the colimit commutative ring to the cone point of any other cocone. -/
-def descFun (s : Cocone F) : ColimitType F → s.pt := by
+private def descFun (s : Cocone F) : ColimitType F → s.pt := by
   fapply Quot.lift
   · exact descFunLift F s
   · intro x y r
@@ -554,7 +554,7 @@ def descFun (s : Cocone F) : ColimitType F → s.pt := by
 
 /-- The ring homomorphism from the colimit commutative ring to the cone point of any other
 cocone. -/
-def descMorphism (s : Cocone F) : colimit F ⟶ s.pt := ofHom
+private def descMorphism (s : Cocone F) : colimit F ⟶ s.pt := ofHom
   { toFun := descFun F s
     map_one' := rfl
     map_zero' := rfl
@@ -567,7 +567,7 @@ def descMorphism (s : Cocone F) : colimit F ⟶ s.pt := ofHom
 
 set_option backward.isDefEq.respectTransparency false in
 /-- Evidence that the proposed colimit is the colimit. -/
-def colimitIsColimit : IsColimit (colimitCocone F) where
+private def colimitIsColimit : IsColimit (colimitCocone F) where
   desc := fun s ↦ descMorphism F s
   uniq := fun s m w ↦ hom_ext <| RingHom.ext fun x => by
     refine Quot.inductionOn x ?_
