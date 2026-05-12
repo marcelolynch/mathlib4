@@ -236,6 +236,7 @@ lemma exists_sum_eq_σ_jacobian_mul_σ_jacobian_inv_sub_one
   rwa [← P.span_range_relation_eq_ker, Ideal.mem_span_range_iff_exists_fun] at H
 
 /-- An arbitrarily chosen relation exhibiting the fact that `P.jacobian` is invertible. -/
+@[no_expose]
 noncomputable
 def jacobianRelations (s : σ) : MvPolynomial ι R :=
   letI := Fintype.ofFinite σ
@@ -319,6 +320,7 @@ lemma aeval_invJacobianOfHasCoeffs :
 
 /-- An arbitrarily chosen relation exhibiting the fact that `P.jacobian` is invertible,
 provided `P.HasCoeffs R₀`. -/
+@[no_expose]
 noncomputable
 def jacobianRelationsOfHasCoeffs (i : σ) : MvPolynomial ι R₀ :=
   (MvPolynomial.mem_range_map_iff_coeffs_subset.mpr
