@@ -236,6 +236,7 @@ private lemma glueDataT_fst (U V : X.affineOpens) :
     Category.comp_id]
 
 /-- (Implementation) `t'` in the glue data for `𝒪ₓ/I`. -/
+@[no_expose]
 noncomputable
 def glueDataT'Aux (U V W U₀ : X.affineOpens) (hU₀ : U.1 ⊓ W ≤ U₀) :
     pullback
@@ -666,6 +667,7 @@ lemma ideal_ker_le_ker_ΓSpecIso_inv_comp :
 
 set_option backward.isDefEq.respectTransparency false in
 /-- (Implementation): Use `Hom.toImage` instead which has better def-eqs. -/
+@[no_expose]
 noncomputable
 def Hom.toImageAux : X ⟶ f.image :=
   Cover.glueMorphisms ((Y.openCoverOfIsOpenCover _ (iSup_affineOpens_eq_top Y)).pullback₁ f)
