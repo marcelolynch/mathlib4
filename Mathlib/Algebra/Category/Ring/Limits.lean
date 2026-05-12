@@ -127,7 +127,7 @@ instance hasLimits : HasLimits SemiRingCat.{u} :=
 /--
 Auxiliary lemma to prove the cone induced by `limitCone` is a limit cone.
 -/
-def forget₂AddCommMonPreservesLimitsAux :
+private def forget₂AddCommMonPreservesLimitsAux :
     IsLimit ((forget₂ SemiRingCat AddCommMonCat).mapCone (limitCone F)) := by
   let _ : Small.{u} (Functor.sections ((F ⋙ forget₂ _ AddCommMonCat) ⋙ forget _)) :=
     inferInstanceAs <| Small.{u} (Functor.sections (F ⋙ forget SemiRingCat))
@@ -148,7 +148,7 @@ instance forget₂AddCommMon_preservesLimits :
 
 /-- An auxiliary declaration to speed up typechecking.
 -/
-def forget₂MonPreservesLimitsAux :
+private def forget₂MonPreservesLimitsAux :
     IsLimit ((forget₂ SemiRingCat MonCat).mapCone (limitCone F)) := by
   let _ : Small.{u} (Functor.sections ((F ⋙ forget₂ _ MonCat) ⋙ forget MonCat)) :=
     inferInstanceAs <| Small.{u} (Functor.sections (F ⋙ forget SemiRingCat))
@@ -370,7 +370,7 @@ instance forget₂SemiRing_preservesLimits : PreservesLimits (forget₂ RingCat 
 
 /-- An auxiliary declaration to speed up typechecking.
 -/
-def forget₂AddCommGroupPreservesLimitsAux :
+private def forget₂AddCommGroupPreservesLimitsAux :
     IsLimit ((forget₂ RingCat.{u} AddCommGrpCat).mapCone (limitCone.{v, u} F)) := by
   let _ : Small.{u} (Functor.sections ((F ⋙ forget₂ RingCat.{u} AddCommGrpCat.{u}) ⋙ forget _)) :=
     inferInstanceAs <| Small.{u} (Functor.sections (F ⋙ forget _))
@@ -500,7 +500,7 @@ instance forget₂Ring_preservesLimits : PreservesLimits (forget₂ CommRingCat 
 
 /-- An auxiliary declaration to speed up typechecking.
 -/
-def forget₂CommSemiRingPreservesLimitsAux :
+private def forget₂CommSemiRingPreservesLimitsAux :
     IsLimit ((forget₂ CommRingCat CommSemiRingCat).mapCone (limitCone F)) := by
   let _ : Small.{u} ((F ⋙ forget₂ _ CommSemiRingCat) ⋙ forget _).sections :=
     inferInstanceAs <| Small.{u} (F ⋙ forget _).sections
