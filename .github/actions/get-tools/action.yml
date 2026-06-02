@@ -1,0 +1,129 @@
+# Populates `tools-branch/` with the trusted CI tooling (`cache` binary + the
+# `lake-build-*` helper scripts) that `build_template.yml` invokes by path.
+#
+# Fast path: download the `tools-bin` artifact published by `publish_tools.yml`
+# from its latest successful `master` `push` run, unpack it, and install the
+# matching toolchain. Fallback: check out `tools_source_ref` and build from source
+# (the original behaviour). The fallback also triggers automatically if anything
+# about the download/verification fails, so this action can never make CI worse
+# than building from source.
+#
+# Requires (fast path only): `actions: read` permission, and `jq` on PATH (the
+# caller sets this up before invoking this action).
+name: Get CI tools
+description: Download prebuilt CI tools from master, or build them from source.
+inputs:
+  use_artifact:
+    description: Whether to attempt the prebuilt-artifact fast path ('true'/'false').
+    required: true
+  tools_source_ref:
+    description: Git ref to check out and build from when not using the artifact.
+    required: true
+  github_token:
+    description: "Token with `actions: read` on artifact_repo (fast path only)."
+    required: false
+    default: ''
+  artifact_repo:
+    description: Repository that publishes the tools artifact.
+    required: false
+    default: leanprover-community/mathlib4
+  artifact_workflow:
+    description: Workflow file that publishes the tools artifact.
+    required: false
+    default: publish_tools.yml
+  path:
+    description: Destination directory for the tools.
+    required: false
+    default: tools-branch
+runs:
+  using: composite
+  steps:
+    # Resolve the run-id of the latest successful master push of the publisher.
+    # Pure lookup: on any failure (or when the fast path is disabled) we emit an
+    # empty run_id, which skips the download and lands us on the source-build path.
+    - name: Resolve tools artifact run
+      id: resolve
+      shell: bash
+      run: |
+        set -uo pipefail
+        run_id=""
+        if [[ "${{ inputs.use_artifact }}" == "true" && -n "${{ inputs.github_token }}" ]]; then
+          api="https://api.github.com/repos/${{ inputs.artifact_repo }}/actions/workflows/${{ inputs.artifact_workflow }}/runs?branch=master&status=success&event=push&per_page=1"
+          run_id=$(curl -fsSL \
+            -H "Authorization: Bearer ${{ inputs.github_token }}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "$api" 2>/dev/null | jq -r '.workflow_runs[0].id // empty' || true)
+        fi
+        echo "Resolved publisher run_id: '${run_id}'"
+        echo "run_id=${run_id}" >> "$GITHUB_OUTPUT"
+
+    - name: Download tools artifact
+      if: ${{ steps.resolve.outputs.run_id != '' }}
+      continue-on-error: true
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      with:
+        name: tools-bin
+        path: tools-artifact
+        repository: ${{ inputs.artifact_repo }}
+        run-id: ${{ steps.resolve.outputs.run_id }}
+        github-token: ${{ inputs.github_token }}
+
+    # Unpack and verify. If the tarball is missing, the binary's shared-library
+    # dependencies don't resolve (toolchain/ABI mismatch), or anything else looks
+    # off, wipe any partial state and signal a source build.
+    - name: Unpack and verify tools
+      id: finalize
+      shell: bash
+      run: |
+        set -uo pipefail
+        result=build
+        tarball="tools-artifact/tools-bin.tar.gz"
+        if [[ -f "$tarball" ]]; then
+          echo "Found downloaded tools artifact; unpacking..."
+          rm -rf "${{ inputs.path }}"
+          mkdir -p "${{ inputs.path }}"
+          if tar -xzf "$tarball" -C "${{ inputs.path }}" \
+            && [[ -x "${{ inputs.path }}/.lake/build/bin/cache" ]]; then
+            toolchain="$(cat "${{ inputs.path }}/lean-toolchain")"
+            echo "Installing tools toolchain: ${toolchain}"
+            if elan toolchain install "$toolchain"; then
+              # Verify the binary's dynamic dependencies actually resolve on this
+              # runner before we commit to using it.
+              if ldd "${{ inputs.path }}/.lake/build/bin/cache" 2>/dev/null | grep -q "not found"; then
+                echo "WARNING: cache binary has unresolved shared libraries; falling back to source build."
+                ldd "${{ inputs.path }}/.lake/build/bin/cache" || true
+              else
+                result=artifact
+              fi
+            else
+              echo "WARNING: failed to install tools toolchain; falling back to source build."
+            fi
+          else
+            echo "WARNING: tools artifact unpack/validation failed; falling back to source build."
+          fi
+        else
+          echo "No tools artifact available; will build from source."
+        fi
+        if [[ "$result" != "artifact" ]]; then
+          rm -rf "${{ inputs.path }}"
+        fi
+        echo "Tools source: ${result}"
+        echo "result=${result}" >> "$GITHUB_OUTPUT"
+
+    - name: Checkout tools branch (source build)
+      if: ${{ steps.finalize.outputs.result == 'build' }}
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        ref: ${{ inputs.tools_source_ref }}
+        path: ${{ inputs.path }}
+
+    - name: Build tools from source
+      if: ${{ steps.finalize.outputs.result == 'build' }}
+      shell: bash # We're only building a trusted branch with the tools, so no need to run inside landrun.
+      run: |
+        cd "${{ inputs.path }}"
+        lake build cache check-yaml graph
+        ls .lake/build/bin/cache
+        ls .lake/build/bin/check-yaml
+        ls .lake/packages/importGraph/.lake/build/bin/graph
