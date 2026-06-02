@@ -39,15 +39,6 @@ jobs:
     # runners) so the produced binary is ABI/toolchain/path compatible.
     runs-on: pr
     steps:
-      - name: cleanup
-        shell: bash
-        run: |
-          if ! find . -mindepth 1 -exec rm -rf -- {} +; then
-            echo "ERROR: Initial cleanup failed, waiting 5 seconds and retrying..."
-            sleep 5
-            find . -mindepth 1 -exec rm -rf -- {} +
-          fi
-
       # Build in `tools-branch/` so the on-disk layout (and absolute paths baked
       # into any rpaths) matches exactly what `build_template.yml` reconstructs.
       - name: Checkout master
