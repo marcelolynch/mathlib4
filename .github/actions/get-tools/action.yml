@@ -71,10 +71,11 @@ runs:
         run-id: ${{ steps.resolve.outputs.run_id }}
         github-token: ${{ inputs.github_token }}
 
-    # Unpack and verify. If the tarball is missing, the binary's shared-library
-    # dependencies don't resolve (toolchain/ABI mismatch), or anything else looks
-    # off, wipe any partial state and signal a source build.
-    - name: Unpack and verify tools
+    # Unpack the tools and install the toolchain the `cache` binary was linked
+    # against (the one guarantee the old `lake build` of the tools gave us for
+    # free). If the tarball is missing, the unpack fails, or the toolchain won't
+    # install, wipe any partial state and signal a source build.
+    - name: Unpack tools
       id: finalize
       shell: bash
       run: |
@@ -90,14 +91,7 @@ runs:
             toolchain="$(cat "${{ inputs.path }}/lean-toolchain")"
             echo "Installing tools toolchain: ${toolchain}"
             if elan toolchain install "$toolchain"; then
-              # Verify the binary's dynamic dependencies actually resolve on this
-              # runner before we commit to using it.
-              if ldd "${{ inputs.path }}/.lake/build/bin/cache" 2>/dev/null | grep -q "not found"; then
-                echo "WARNING: cache binary has unresolved shared libraries; falling back to source build."
-                ldd "${{ inputs.path }}/.lake/build/bin/cache" || true
-              else
-                result=artifact
-              fi
+              result=artifact
             else
               echo "WARNING: failed to install tools toolchain; falling back to source build."
             fi
