@@ -545,8 +545,7 @@ def monitorCurl (args : Array String) (size : Nat)
     (treatForbiddenAsMiss : Bool := false)
     (treatExistsAsSkip : Bool := false) : IO (TransferState × Std.HashSet UInt64) := do
   let useAnsi := (← IO.getEnv "TERM").isSome
-  -- Hashes of the files this pass fetched, used to decide what the next
-  -- container in the chain still needs to retry.
+  -- Hashes fetched this pass; the caller retries the rest against later containers.
   let servedRef ← IO.mkRef (∅ : Std.HashSet UInt64)
   let mkStatus (s : TransferState) : String := Id.run do
     let speedStr :=
@@ -794,12 +793,10 @@ def downloadFiles
     IO.println s!"Attempting to download {remaining.size} file(s) from {repo} cache at {url}{scopeNote}"
     let before := remaining.size
     let (s, served) ← downloadFilesFromContainer container? repo url remaining parallel decompConfig roundScope?
-    -- Keep the latest round's pipeline state and transfer-failure count for the
-    -- finalization and exit-code logic below. Drop the files this round served so
-    -- the next container only retries genuine misses, regardless of what is
-    -- already on disk.
     finalState := s
     downloadFailed := s.failed
+    -- Drop the files this round served (by hash, not by on-disk `.ltar`) so the
+    -- next container retries only genuine misses, even under a forced re-download.
     remaining := remaining.filter fun _ hash => !served.contains hash
     if unsafeMode then
       if let some sha := roundScope? then
