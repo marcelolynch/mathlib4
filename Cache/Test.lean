@@ -21,6 +21,9 @@ These tests cover the pure logic of the cache system, including:
 - CLI flag parsing (`--cache-from`, `--scope`, `--unsafe`, `--repo`, etc.)
 - `--unsafe` download-round expansion (`expandDownloadRounds`) and the
   non-default-scope security warning it triggers
+- `--unsafe-trust-fork` pointer resolution: URL shape (`pointerURL`), body
+  validation (`parsePointerContent`), and per-scope grouping
+  (`groupPointersByScope`)
 - Decompression-pipeline carry across download rounds (`DecompState`,
   `finalizeDecomp`, `monitorCurl`)
 - Utility functions (URL extraction, filename hashing, etc.)
@@ -48,6 +51,12 @@ archive; neither makes a network request.
    pipeline state is carried from each container round into the next and
    drained after the last one, so a fork-PR `get` leaves no downloaded file
    compressed on disk.
+7. Pointer bodies are validated before use: a pointer read contributes at most
+   one well-formed commit SHA to a download URL, so a missing pointer (an
+   Azure error body captured in its place) or a corrupt blob degrades to a
+   cache miss instead of a malformed request.
+8. Pointer resolution never widens the container set: `--unsafe-trust-fork`
+   consults the index only when the resolved chain already includes `forks`.
 
 ## Running the tests
 
@@ -497,6 +506,96 @@ def test_markerURL : IO Unit := do
 
 end Marker
 
+section FlatPointers
+
+/-- URL shape for the per-file pointer blob at `/m/{repo}/f/{fileName}`.
+The `f/` segment distinguishes pointers from markers, which end in a 40-hex SHA. -/
+def test_pointerURL : IO Unit := do
+  IO.println "pointerURL:"
+  assertEq "forks pointer URL"
+    "https://lakecache.blob.core.windows.net/mathlib4-forks/m/alice/mathlib4/f/0123456789abcdef.ltar"
+    (pointerURL .forks "alice/mathlib4" "0123456789abcdef.ltar")
+  -- Repo segment is lowercased so upload and resolution meet at one path.
+  assertEq "pointer repo is lowercased in the path"
+    "https://lakecache.blob.core.windows.net/mathlib4-forks/m/alice/mathlib4/f/0123456789abcdef.ltar"
+    (pointerURL .forks "Alice/Mathlib4" "0123456789abcdef.ltar")
+  -- Markers end in SHA (no `/`); pointers always have `f/`, so the paths are disjoint.
+  assert "marker and pointer paths are disjoint for well-formed SHAs"
+    (markerURL .forks "alice/mathlib4" "0123456789abcdef0123456789abcdef01234567"
+      != pointerURL .forks "alice/mathlib4" "0123456789abcdef.ltar")
+
+/-- Validate pointer bodies as bare 40-hex SHAs before splicing into URLs.
+Reads without `--fail`, so Azure error bodies land as content to reject. -/
+def test_isValidScopeSHA : IO Unit := do
+  IO.println "isValidScopeSHA:"
+  assert "a 40-hex lowercase SHA is accepted"
+    (isValidScopeSHA "0123456789abcdef0123456789abcdef01234567")
+  -- Scope paths preserve the uploader's casing and Azure paths are
+  -- case-sensitive, so an uppercase body must round-trip verbatim.
+  assert "uppercase hex is accepted"
+    (isValidScopeSHA "0123456789ABCDEF0123456789ABCDEF01234567")
+  assert "39 chars are rejected" (!isValidScopeSHA "0123456789abcdef0123456789abcdef0123456")
+  assert "41 chars are rejected" (!isValidScopeSHA "0123456789abcdef0123456789abcdef012345678")
+  assert "non-hex letters are rejected"
+    (!isValidScopeSHA "0123456789ghijkl0123456789ghijkl01234567")
+  assert "the empty string is rejected" (!isValidScopeSHA "")
+  assert "an Azure error body is rejected"
+    (!isValidScopeSHA "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error>...</Error>")
+  -- 40 chars with a path separator: URL-injection shape.
+  assert "a 40-char string containing a slash is rejected"
+    (!isValidScopeSHA "0123456789abcdef/123456789abcdef01234567")
+
+/-- Parse pointer body as a commit SHA (whitespace tolerated) or return none. -/
+def test_parsePointerContent : IO Unit := do
+  IO.println "parsePointerContent:"
+  assert "a bare SHA parses"
+    (parsePointerContent "0123456789abcdef0123456789abcdef01234567" ==
+      some "0123456789abcdef0123456789abcdef01234567")
+  assert "a newline-terminated SHA parses"
+    (parsePointerContent "0123456789abcdef0123456789abcdef01234567\n" ==
+      some "0123456789abcdef0123456789abcdef01234567")
+  assert "an Azure error body yields none"
+    (parsePointerContent "<?xml version=\"1.0\"?><Error><Code>BlobNotFound</Code></Error>"
+      == none)
+  assert "the empty body yields none" (parsePointerContent "" == none)
+
+/-- Group pointer resolutions by scope SHA. Partitions the input:
+every hash lands in exactly the group of its pointer's SHA. -/
+def test_groupPointersByScope : IO Unit := do
+  IO.println "groupPointersByScope:"
+  let shaA := "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  let shaB := "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  let pointers : Std.HashMap UInt64 String :=
+    (∅ : Std.HashMap UInt64 String) |>.insert 1 shaA |>.insert 2 shaB |>.insert 3 shaA
+  let groups := groupPointersByScope pointers
+  assert "two SHAs yield two groups" (groups.size == 2)
+  assert "hashes 1 and 3 land in shaA's group"
+    ((groups.getD shaA ∅).contains 1 && (groups.getD shaA ∅).contains 3
+      && (groups.getD shaA ∅).size == 2)
+  assert "hash 2 lands in shaB's group"
+    ((groups.getD shaB ∅).contains 2 && (groups.getD shaB ∅).size == 1)
+  assert "the empty map yields no groups" ((groupPointersByScope ∅).size == 0)
+
+/-- `--unsafe-trust-fork` consults the pointer index only when the resolved
+chain already reads the `forks` container: the flag widens which fork commits
+may serve files, never which containers are read. -/
+def test_chainIncludesForks : IO Unit := do
+  IO.println "chainIncludesForks:"
+  let entry := fun (c : Container) => (some c, c.azureURL)
+  let ofChain := fun (cs : List Container) => cs.map entry
+  assert "the default fork chain includes forks"
+    (chainIncludesForks (ofChain (defaultContainersForRepo "alice/mathlib4")))
+  assert "the nightly-testing chain includes forks"
+    (chainIncludesForks (ofChain (defaultContainersForRepo NIGHTLY_TESTING_REPO)))
+  assert "the canonical mathlib4 chain does not"
+    (!chainIncludesForks (ofChain (defaultContainersForRepo MATHLIBREPO)))
+  assert "a master-only --cache-from does not"
+    (!chainIncludesForks [entry .master])
+  assert "a MATHLIB_CACHE_GET_URL override does not"
+    (!chainIncludesForks [(none, "https://custom.example/cache")])
+
+end FlatPointers
+
 section ScopeResolution
 
 /-- `getRepoScope` answers "is the user reading from a SHA-scoped namespace?".
@@ -604,6 +703,11 @@ def test_shouldWarnNonDefaultScope : IO Unit := do
     assert "no --unsafe (none window) does not warn on its own"
       (!(← withSuppressedOutput
           (shouldWarnNonDefaultScope none none none MATHLIBREPO (unsafeWindow? := none))))
+
+    -- `--unsafe-trust-fork` always warns; it reads across the fork's entire history.
+    assert "--unsafe-trust-fork warns regardless of other inputs"
+      (← withSuppressedOutput
+          (shouldWarnNonDefaultScope none none none MATHLIBREPO (unsafeTrustFork := true)))
   finally
     scopeOverride.set saved
 
@@ -667,6 +771,17 @@ def test_getNonDefaultScopeReason : IO Unit := do
     assert "unsafe reason names the window and outranks scope/cache-from/repo"
       (reason == "--unsafe (automatic walk over up to 7 fork commit(s); trusting whoever built them)")
     scopeOverride.set none
+
+    -- `--unsafe-trust-fork` reasons: alone, and combined with `--unsafe`.
+    let reason ← withSuppressedOutput
+      (getNonDefaultScopeReason none none none MATHLIBREPO (unsafeTrustFork := true))
+    assert "unsafe-trust-fork reason names the flag"
+      (reason.startsWith "--unsafe-trust-fork (per-file pointer resolution")
+    let reason ← withSuppressedOutput
+      (getNonDefaultScopeReason none none none MATHLIBREPO (unsafeWindow? := some 3)
+        (unsafeTrustFork := true))
+    assert "combined unsafe + unsafe-trust-fork reason names both flags"
+      (reason.startsWith "--unsafe with --unsafe-trust-fork (")
   finally
     scopeOverride.set saved
 
@@ -796,6 +911,9 @@ def test_isKnownOpt : IO Unit := do
   -- Flags use the bare `--name` form, no `=`.
   assert "--help (no =) is known" (isKnownOpt "--help")
   assert "--unsafe (no =) is known" (isKnownOpt "--unsafe")
+  assert "--unsafe-trust-fork (no =) is known" (isKnownOpt "--unsafe-trust-fork")
+  assert "--unsafe-trust-fork=1 (flag with value) is NOT known"
+    (!isKnownOpt "--unsafe-trust-fork=1")
 
   -- `--unsafe` is a flag, not a named option: the `=value` form is a user error.
   assert "--unsafe=5 is NOT known (flags don't take values)"
@@ -1079,6 +1197,11 @@ def runAll : IO Unit := do
   test_isCacheMissStatus
   test_isAlreadyPresentStatus
   test_expandDownloadRounds
+  test_pointerURL
+  test_isValidScopeSHA
+  test_parsePointerContent
+  test_groupPointersByScope
+  test_chainIncludesForks
   test_finalizeDecomp
   test_monitorCurl_carries_decomp_state
 

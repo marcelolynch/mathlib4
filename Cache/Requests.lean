@@ -364,6 +364,52 @@ def mkFileURL (container : Option Container) (repo containerURL fileName : Strin
       | none => s!"{repo}/"
   s!"{containerURL}/f/{pre}{fileName}"
 
+/-!
+## Per-file pointer index
+
+A pointer is a tiny blob at `m/{repo}/f/{fileName}` whose body is the commit
+SHA of the most recent SHA-scoped upload that included `fileName`. Together
+the pointers form a fork-wide index over every `.ltar` the fork's CI ever
+uploaded, resolving a file to its scope without walking git history — the
+recovery path behind `cache get --unsafe-trust-fork`. Uploads write pointers
+next to the artifacts (`uploadPointers`); reads consult them only as a final
+phase after all container rounds, and only when the chain includes `forks`
+(`resolvePointers` and `chainIncludesForks`, used in `downloadFiles`).
+
+Blobs in the forks container are evicted on age, pointers included: an
+evicted pointer is an absent pointer, and a pointer whose scope has been
+evicted degrades to a plain miss.
+-/
+
+/--
+URL for a pointer blob: `{container}/m/{repo}/f/{fileName}`, with `repo`
+lowercased via `normalizeRepo`. Shares the `m/` prefix with markers at
+`m/{repo}/{sha}`; the `f/` segment distinguishes the two (markers end in a
+40-hex SHA, never `f`).
+-/
+def pointerURL (container : Container) (repo fileName : String) : String :=
+  s!"{container.azureURL}/m/{normalizeRepo repo}/f/{fileName}"
+
+/--
+Whether a pointer blob's body is a well-formed 40-hex commit SHA. Either
+letter case is accepted: scope paths preserve the casing the uploader used,
+and Azure paths are case-sensitive, so the body must round-trip verbatim.
+Readers splice pointer bodies into download URLs, so invalid content (an Azure
+error body, truncated read, or corrupt blob) must be rejected to degrade to
+a cache miss instead of a malformed request.
+-/
+def isValidScopeSHA (s : String) : Bool :=
+  s.length == 40 && s.all (·.hexDigitToNat?.isSome)
+
+/--
+Parse a pointer blob body into the scope SHA it names, or `none` if invalid.
+Pointer downloads run without `--fail`, so a missing pointer arrives as an
+Azure error body; the parse fails and treats it as an absent pointer.
+-/
+def parsePointerContent (content : String) : Option String :=
+  let sha := content.trimAscii.toString
+  if isValidScopeSHA sha then some sha else none
+
 /--
 Process-wide override for the per-SHA scope, set by the `--scope=` CLI flag.
 When set, it wins over `MATHLIB_CACHE_REPO_SCOPE`.
@@ -773,6 +819,57 @@ def expandDownloadRounds (containerURLs : List (Option Container × String))
       else
         [(c, url, none)]
 
+/--
+Resolve hashes through the per-file pointer index. Returns hash → scope SHA
+for every hash whose pointer exists and parses as a commit SHA. Misses are
+detected by content, not HTTP status (batch runs without `--fail`). Never
+throws; invalid or missing pointers degrade to cache misses.
+-/
+def resolvePointers (repo : String) (hashes : Array UInt64) (parallel : Bool) :
+    IO (Std.HashMap UInt64 String) := do
+  if hashes.isEmpty then return ∅
+  let dir := IO.CACHEDIR / "pointers"
+  IO.FS.createDirAll dir
+  let cfgPath := dir / "curl.cfg"
+  let config := hashes.foldl (init := "") fun acc hash =>
+    let fileName := hash.asLTar
+    acc ++ s!"url = {pointerURL Container.forks repo fileName}\n\
+      -o {(dir / (fileName ++ ".ptr")).toString.quote}\n"
+  IO.FS.writeFile cfgPath config
+  let args := (if parallel then #["--parallel"] else #[]) ++
+    #["--silent", "--retry", "5", "--config", cfgPath.toString]
+  discard <| IO.runCurl args (throwFailure := false)
+  IO.FS.removeFile cfgPath
+  let mut resolved : Std.HashMap UInt64 String := ∅
+  for hash in hashes do
+    let path := dir / (hash.asLTar ++ ".ptr")
+    if ← path.pathExists then
+      let content ← IO.FS.readFile path
+      IO.FS.removeFile path
+      if let some sha := parsePointerContent content then
+        resolved := resolved.insert hash sha
+  return resolved
+
+/--
+Group pointer resolutions by scope SHA. Partitions resolved hashes: each
+appears in exactly the group of its pointer's SHA.
+-/
+def groupPointersByScope (pointers : Std.HashMap UInt64 String) :
+    Std.HashMap String (Std.HashSet UInt64) :=
+  pointers.fold (init := ∅) fun acc hash sha =>
+    acc.insert sha ((acc.getD sha ∅).insert hash)
+
+/--
+Whether the resolved container chain includes `forks`, the only container
+holding a pointer index. `--unsafe-trust-fork` consults pointers only when it
+does: the flag widens which fork commits may serve files, never which
+containers are read. A chain that excludes `forks` — the canonical repos'
+defaults, a `--cache-from` without it, or a `MATHLIB_CACHE_GET_URL` override —
+also excludes the pointer index.
+-/
+def chainIncludesForks (containerURLs : List (Option Container × String)) : Bool :=
+  containerURLs.any fun (c, _) => c == some Container.forks
+
 /-- Call `curl` to download files from the server to `CACHEDIR` (`.cache`).
 Return the number of files which failed to download.
 If `decompress` is true, decompresses files as they're downloaded (pipelined).
@@ -782,13 +879,18 @@ For each repo, the tool tries the trust-ordered container list returned by
 fetched are filtered out so the next container only retries genuine misses.
 
 `unsafeScopes` is the list of SHA scopes discovered by `cache get --unsafe`
-(empty for a normal read); see `expandDownloadRounds`. -/
+(empty for a normal read); see `expandDownloadRounds`.
+
+With `unsafeTrustFork` (`cache get --unsafe-trust-fork`), files still missing
+after all rounds are resolved through the per-file pointer index and fetched
+from the scope each pointer names. The index lives in the `forks` container,
+and is consulted only when the resolved chain includes it. -/
 def downloadFiles
     (repo : String) (hashMap : IO.ModuleHashMap)
     (forceDownload : Bool) (parallel : Bool) (warnOnMissing : Bool)
     (decompress : Bool := false) (forceUnpack : Bool := false)
     (isMathlibRoot : Bool := false) (mathlibDepPath : FilePath := ".")
-    (unsafeScopes : List String := []) : IO Nat := do
+    (unsafeScopes : List String := []) (unsafeTrustFork : Bool := false) : IO Nat := do
   let hashMap ← if forceDownload then pure hashMap else hashMap.filterExists false
   if hashMap.isEmpty then IO.println "No files to download"; return 0
   IO.FS.createDirAll IO.CACHEDIR
@@ -850,6 +952,29 @@ def downloadFiles
       if let some sha := roundScope? then
         scopeServed := scopeServed.push (sha, before - remaining.size)
 
+  -- `--unsafe-trust-fork`: resolve files still missing through the pointer index.
+  -- Each pointer names one scope; fetch that group with a scoped forks round.
+  -- A pointer whose scope has been evicted is a plain miss. Consulted only
+  -- when the chain already reads `forks` (see `chainIncludesForks`).
+  let forksInChain := chainIncludesForks containerURLs
+  let mut pointerServed : Array (String × Nat) := #[]
+  if unsafeTrustFork && forksInChain && !remaining.isEmpty then
+    let hashes := remaining.fold (init := #[]) fun acc _ hash => acc.push hash
+    IO.println s!"--unsafe-trust-fork: resolving {hashes.size} missing file(s) through \
+      the pointer index for {repo}"
+    let pointers ← resolvePointers repo hashes parallel
+    for (sha, hashSet) in groupPointersByScope pointers do
+      let group := remaining.filter fun _ hash => hashSet.contains hash
+      let before := remaining.size
+      IO.println s!"Attempting to download {group.size} file(s) from {repo} cache at \
+        {Container.forks.azureURL} (scope {sha}, via pointers)"
+      let (s, served) ← downloadFilesFromContainer (some Container.forks) repo
+        Container.forks.azureURL group parallel decompConfig (some sha) decompState
+      decompState := s.decomp
+      downloadFailed := downloadFailed + s.failed
+      remaining := remaining.filter fun _ hash => !served.contains hash
+      pointerServed := pointerServed.push (sha, before - remaining.size)
+
   -- `--unsafe`: report which fork commits actually contributed files, so the
   -- user knows whose artifacts they ended up trusting.
   if unsafeMode then
@@ -862,6 +987,21 @@ def downloadFiles
         IO.eprintln s!"  {sha} → {n} file(s)"
       if remaining.size > 0 then
         IO.eprintln s!"  {remaining.size} file(s) still missing after all scopes."
+
+  -- Report pointer-resolved scopes so the user knows whose artifacts were served.
+  if unsafeTrustFork then
+    if !forksInChain then
+      IO.eprintln s!"--unsafe-trust-fork: the read chain for {repo} does not include the \
+        forks container; the pointer index was not consulted."
+    else if pointerServed.isEmpty then
+      IO.eprintln "--unsafe-trust-fork: the pointer index was not needed or resolved no files."
+    else
+      IO.eprintln s!"--unsafe-trust-fork: cache served from {pointerServed.size} fork commit scope(s) \
+        resolved through the pointer index:"
+      for (sha, n) in pointerServed do
+        IO.eprintln s!"  {sha} → {n} file(s)"
+      if remaining.size > 0 then
+        IO.eprintln s!"  {remaining.size} file(s) still missing after pointer resolution."
 
   if warnOnMissing && !remaining.isEmpty then
     IO.eprintln "Warning: some files were not found in the cache."
@@ -969,7 +1109,7 @@ chain (the highest-trust source, holding the bulk of any fork's deps). -/
 def getFiles
     (repo : String) (hashMap : IO.ModuleHashMap)
     (forceDownload forceUnpack parallel decompress : Bool)
-    (unsafeScopes : List String := [])
+    (unsafeScopes : List String := []) (unsafeTrustFork : Bool := false)
     : IO.CacheM Unit := do
   let isMathlibRoot ← IO.isMathlibRoot
   unless isMathlibRoot do
@@ -997,7 +1137,7 @@ def getFiles
   let failed ← downloadFiles repo hashMap forceDownload parallel
     (warnOnMissing := true)
     (decompress := decompress) (forceUnpack := forceUnpack)
-    isMathlibRoot mathlibDepPath (unsafeScopes := unsafeScopes)
+    isMathlibRoot mathlibDepPath (unsafeScopes := unsafeScopes) (unsafeTrustFork := unsafeTrustFork)
   if failed > 0 then
     IO.println s!"Downloading {failed} files failed"
     IO.Process.exit 1
@@ -1130,6 +1270,51 @@ def putFiles
   -- TODO: reimplement using HEAD requests?
   let files : Array FilePath := fileNames.map (fun (f : String) => (IO.CACHEDIR / f))
   putFilesAbsolute repo container files IO.CURLCFG overwrite auth
+
+/--
+Upload one pointer blob per artifact to `m/{repo}/f/{fileName}`, each
+containing the scope SHA. Writes use an overwrite PUT so each pointer names
+the most recent scope containing that file, the one that time-based eviction
+reclaims last; concurrent uploads are safe in either order, since any scope
+a pointer ever named contains the file. Runs
+after the artifact upload and before the per-SHA marker, so a pointer never
+names a scope without its artifacts and the marker keeps its meaning as the
+completion signal. Failures are logged but not fatal.
+-/
+def uploadPointers (container : Container) (repo sha : String) (fileNames : Array String)
+    (auth : UploadAuth) : IO Unit := do
+  if fileNames.isEmpty then return
+  IO.FS.createDirAll IO.CACHEDIR
+  -- Every pointer has the same body, so a single local file serves all `-T`s.
+  let contentPath := IO.CACHEDIR / s!"pointer-{sha}"
+  IO.FS.writeFile contentPath s!"{sha}\n"
+  let cfgPath := IO.CACHEDIR / s!"pointer-{sha}.curl.cfg"
+  let token := match auth with
+    | .azureSas token => s!"?{token}"
+    | .azureBearer _ => ""
+  let config := "\n".intercalate <| fileNames.toList.map fun fn =>
+    s!"-T {contentPath.toString.quote}\nurl = {pointerURL container repo fn}{token}"
+  IO.FS.writeFile cfgPath config
+  let azureDateHeader ← getAzureDateHeader
+  let authArgs := match auth with
+    | .azureSas _ => #["-H", "x-ms-blob-type: BlockBlob"]
+    | .azureBearer token => #["-H", "x-ms-blob-type: BlockBlob", "-H",
+        azureBearerApiVersionHeader, "-H", azureDateHeader, "--oauth2-bearer", token]
+  let args := authArgs ++ #[
+    "-X", "PUT", "--parallel",
+    "--retry", "5",
+    "--write-out", "%{json}\n", "--config", cfgPath.toString]
+  IO.println s!"Attempting to upload {fileNames.size} pointer(s) to {repo} cache \
+    (container: {container.name})"
+  try
+    let (s, _) ← monitorCurl args fileNames.size "Uploaded" "speed_upload"
+    if s.failed > 0 then
+      IO.eprintln s!"warning: {s.failed} pointer upload(s) failed; \
+        `cache get --unsafe-trust-fork` may not resolve the affected file(s)"
+  catch e =>
+    IO.eprintln s!"warning: pointer upload failed: {e}"
+  IO.FS.removeFile cfgPath
+  IO.FS.removeFile contentPath
 end Put
 
 section Stage

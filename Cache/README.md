@@ -69,6 +69,7 @@ When arguments are provided, only the specified files and their transitive impor
 | `--scope=REF`       | For `get`/`get!`/`get-`: read from the SHA-scoped namespace for the given git ref (anything `git rev-parse` accepts: `HEAD`, branch, tag, SHA). Use the SHA reported by `cache query`. Triggers the non-default-scope security notice. |
 | `--unsafe`          | For `get`/`get!`/`get-`: instead of pinning one `--scope`, automatically walk this branch's history and read the `forks` container at the most recent cached fork commit (newest first if `--unsafe-window` allows more than one), until the cache is satisfied (see [Unsafe automatic scope walk](#unsafe-automatic-scope-walk)). Mutually exclusive with `--scope`; always triggers the security notice. |
 | `--unsafe-window=N` | Number of cached fork commits `--unsafe` will try (default `1`). Implies `--unsafe`. |
+| `--unsafe-trust-fork` | For `get`/`get!`/`get-`: after the normal lookup, resolve files still missing through a fork-wide blob index, which maps each file to the last fork commit whose CI upload included it (see [Trusting the whole fork](#unsafe-trusting-the-whole-forks-history)). Mutually exclusive with `--scope`; always triggers the security notice. |
 | `--container=NAME`  | For `put`/`put!`/`put-unpacked`/`put-staged`/`commit`/`commit!`: target container for upload. |
 
 Container names (known to both flags): `master`, `forks`, `nightly-testing`, `pr-toolchain-tests`, `legacy`.
@@ -224,6 +225,28 @@ into one round per discovered SHA. If no cached fork commit is found in range,
 the [non-default-scope security notice](#security-warning-non-default-scope). It
 is mutually exclusive with `--scope=` (which pins exactly one commit).
 
+### Unsafe: trusting the whole fork's history
+
+`cache get --unsafe-trust-fork` resolves files the normal lookup missed
+through a fork-wide blob index. Each pointer names the most recent fork
+scope containing that file, so recovery works across rebases, force-pushes,
+and sibling branches: any commit the fork's CI ever built can serve files.
+
+```bash
+lake exe cache get --unsafe-trust-fork   # resolve across all fork commits
+```
+
+The flag trusts everything ever built on this fork, not just the ancestors of
+your checkout; on a shared fork that includes every past collaborator push.
+It is mutually exclusive with `--scope=`, combines with `--unsafe`, and always
+prints a security notice; the download summary lists which commit scopes
+served files. The pointer index lives in the `forks` container, and is
+consulted only when the read chain already includes it — the flag widens
+which fork commits may serve files, never which containers are read. Files
+whose upload predates the pointer index have no pointers and resolve only via
+`--unsafe`/`--scope=`. Fork blobs are evicted on age, pointers included; a
+missing pointer or an evicted scope degrades to an ordinary cache miss.
+
 ### Heads-up note from `cache get`
 
 When you run `cache get` on a fork-trust repo and HEAD has not been built and
@@ -239,7 +262,9 @@ When you read cache artifacts at a non-default scope, the cache tool prints a
 security warning to stderr. This happens when:
 
 1. **`--unsafe` is passed** — you are letting the tool walk history and trust the
-   artifacts of whichever recent fork commit(s) it finds cached.
+   artifacts of whichever recent fork commit(s) it finds cached. With
+   **`--unsafe-trust-fork`** you are trusting any commit this fork's CI ever
+   built.
 2. **`--scope=` is passed** — you are reading from a specific commit's
    namespace instead of the repo's default trust chain.
 3. **`--cache-from` widens the read chain** — you are explicitly telling the tool

@@ -40,8 +40,9 @@ def scopeIsHead : IO Bool := do
 Condition to determine if a non-default scope warning should be printed.
 
 Returns `true` if any of these hold:
-0. `--unsafe` was passed (`unsafeWindow?` is `some _`): the read walks several
-   fork commits and trusts whoever built each of them
+0. `--unsafe` was passed (`unsafeWindow?` is `some _`) or `--unsafe-trust-fork`
+   was passed (`unsafeTrustFork`): both read fork commits beyond the
+   checked-out HEAD
 1. `MATHLIB_CACHE_REPO_SCOPE` is set in the environment (any non-empty value)
    and differs from the checked-out HEAD (see `scopeIsHead`)
 2. `--cache-from` was passed and widens the lookup chain beyond `defaultContainersForRepo` for the resolved repo
@@ -54,10 +55,10 @@ Otherwise returns `false` (default lookup chain, no warning needed).
 -/
 def shouldWarnNonDefaultScope (repoExplicit? detectedRepo? : Option String)
     (cliCacheFromOverride? : Option (List Container)) (resolvedRepo : String)
-    (unsafeWindow? : Option Nat := none) :
+    (unsafeWindow? : Option Nat := none) (unsafeTrustFork : Bool := false) :
     IO Bool := do
-  -- Condition 0: `--unsafe` (with its SHA window) — the most permissive read.
-  if unsafeWindow?.isSome then return true
+  -- Condition 0: `--unsafe` (with its SHA window) or `--unsafe-trust-fork`.
+  if unsafeWindow?.isSome || unsafeTrustFork then return true
 
   -- Condition 1: `--scope=` flag or `MATHLIB_CACHE_REPO_SCOPE` env var supplied.
   -- A HEAD scope is exempt: trust-equivalent to no scope (see `scopeIsHead`).
@@ -115,14 +116,21 @@ Returns a human-readable string describing which condition triggered the warning
 -/
 def getNonDefaultScopeReason (repoExplicit? detectedRepo? : Option String)
     (cliCacheFromOverride? : Option (List Container)) (resolvedRepo : String)
-    (unsafeWindow? : Option Nat := none) :
+    (unsafeWindow? : Option Nat := none) (unsafeTrustFork : Bool := false) :
     IO String := do
   -- Check conditions in order; return the first that matches.
 
-  -- Condition 0: `--unsafe` walks up to `window` fork commits, trusting each.
+  -- Condition 0: `--unsafe` walks up to `window` fork commits;
+  -- `--unsafe-trust-fork` reads any commit the fork's CI ever built.
   if let some window := unsafeWindow? then
+    if unsafeTrustFork then
+      return s!"--unsafe with --unsafe-trust-fork (automatic walk over up to {window} \
+        fork commit(s), then per-file pointer resolution)"
     return s!"--unsafe (automatic walk over up to {window} fork commit(s); \
       trusting whoever built them)"
+  if unsafeTrustFork then
+    return s!"--unsafe-trust-fork (per-file pointer resolution: any commit this fork's CI \
+      ever built can serve files)"
 
   -- Condition 1: `--scope=` flag (preferred form) or `MATHLIB_CACHE_REPO_SCOPE`
   -- env var (CI form). Reported with the source that set it. A HEAD scope is
@@ -160,13 +168,13 @@ never prompts, so it stays safe to run in CI.
 -/
 def warnIfNonDefaultScope (repoExplicit? detectedRepo? : Option String)
     (cliCacheFromOverride? : Option (List Container)) (resolvedRepo : String)
-    (unsafeWindow? : Option Nat := none) :
+    (unsafeWindow? : Option Nat := none) (unsafeTrustFork : Bool := false) :
     IO Unit := do
   if (← shouldWarnNonDefaultScope repoExplicit? detectedRepo? cliCacheFromOverride? resolvedRepo
-        unsafeWindow?)
+        unsafeWindow? unsafeTrustFork)
     then
     let reason ← getNonDefaultScopeReason repoExplicit? detectedRepo? cliCacheFromOverride?
-      resolvedRepo unsafeWindow?
+      resolvedRepo unsafeWindow? unsafeTrustFork
     printNonDefaultScopeWarning resolvedRepo reason
 
 /--
@@ -217,9 +225,12 @@ def informIfHeadNotBuilt (repo : String) : IO Unit := do
     "then re-run with:",
     "    lake exe cache get --scope=<that-sha>",
     "",
-    "Important: using another commit's scope means trusting the artifacts",
-    "produced at that commit. `cache get` will print a security notice",
-    "when you do.",
+    "or let the cache resolve each missing file across all of this fork's",
+    "cached commits with:",
+    "    lake exe cache get --unsafe-trust-fork",
+    "",
+    "Important: using other commits' artifacts means trusting whoever",
+    "built them. `cache get` will print a security notice when you do.",
     "",
   ]
   for line in lines do

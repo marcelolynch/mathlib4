@@ -64,6 +64,15 @@ Options:
                      exclusive with --scope; always prints a security notice.
   --unsafe-window=N  Number of cached fork commits --unsafe will try (default
                      1). Implies --unsafe.
+  --unsafe-trust-fork (get only) After the normal lookup, resolve files still
+                     missing through a fork-wide blob index, which maps each
+                     file to the last fork commit whose CI upload included it.
+                     The flag trusts everything ever built on this fork, not
+                     just the ancestors of your checkout; on a shared fork
+                     that includes every past collaborator push. Applies only
+                     when the forks container is in the read chain. Mutually
+                     exclusive with --scope; combines with --unsafe. Always
+                     prints a security notice.
   --container=NAME   Target container for upload commands (put/put!/put-unpacked/
                      put-staged/commit/commit!). Known containers: master, forks,
                      nightly-testing, pr-toolchain-tests, legacy. Pass this
@@ -133,6 +142,7 @@ def main (args : List String) : IO Unit := do
   let containerStr? ← parseNamedOpt "container" options
   let scopeStr? ← parseNamedOpt "scope" options
   let unsafeFlag := parseFlagOpt "unsafe" options
+  let unsafeTrustForkFlag := parseFlagOpt "unsafe-trust-fork" options
   let unsafeWindowStr? ← parseNamedOpt "unsafe-window" options
 
   -- Resolve `--unsafe` / `--unsafe-window=N` into an optional SHA window.
@@ -155,6 +165,13 @@ def main (args : List String) : IO Unit := do
   if unsafeWindow?.isSome && scopeStr?.isSome then
     IO.eprintln "--unsafe and --scope are mutually exclusive: --unsafe walks several commit \
       scopes automatically, while --scope pins exactly one."
+    Process.exit 1
+
+  -- `--unsafe-trust-fork` and `--scope` are mutually exclusive: the pointer
+  -- index resolves a commit scope per file, while `--scope` pins exactly one.
+  if unsafeTrustForkFlag && scopeStr?.isSome then
+    IO.eprintln "--unsafe-trust-fork and --scope are mutually exclusive: --unsafe-trust-fork resolves a \
+      commit scope per file through the pointer index, while --scope pins exactly one."
     Process.exit 1
 
   -- Apply `--scope=` to the process-wide override read by `getRepoScope`.
@@ -221,10 +238,13 @@ def main (args : List String) : IO Unit := do
     -- read path, the non-default-scope warning, and the HEAD hint below.
     let cliOverride? ← cacheFromOverride.get
     let (detectedRepo?, resolvedRepo) ← resolveRepo repo? (← read).mathlibDepPath
-    -- Warn before reading if the scope is non-default (`--unsafe` always is).
+    -- Warn before reading if the scope is non-default (`--unsafe` and
+    -- `--unsafe-trust-fork` always are).
     warnIfNonDefaultScope repo? detectedRepo? cliOverride? resolvedRepo unsafeWindow?
+      unsafeTrustForkFlag
     -- In `--unsafe` mode, walk history for recent cached fork commits to try as
-    -- scopes; otherwise point an uncached fork HEAD at the per-commit workflow.
+    -- scopes; otherwise point an uncached fork HEAD at the per-commit workflow
+    -- (unless `--unsafe-trust-fork` is already recovering across commits).
     let unsafeScopes ← match unsafeWindow? with
       | some window =>
         let scopes ← discoverUnsafeScopes resolvedRepo window
@@ -237,17 +257,22 @@ def main (args : List String) : IO Unit := do
           for s in scopes do IO.eprintln s!"  {s}"
         pure scopes
       | none =>
-        informIfHeadNotBuilt resolvedRepo
+        unless unsafeTrustForkFlag do informIfHeadNotBuilt resolvedRepo
         pure []
     getFiles resolvedRepo hashMap force force goodCurl decompress (unsafeScopes := unsafeScopes)
+      (unsafeTrustFork := unsafeTrustForkFlag)
   let pack (overwrite verbose unpackedOnly := false) := do
     packCache hashMap overwrite verbose unpackedOnly (← getGitCommitHash)
   let put (overwrite unpackedOnly := false) := do
     let repo := repo?.getD MATHLIBREPO
     let auth ← getUploadAuth
-    putFiles repo container? (← pack overwrite (verbose := true) unpackedOnly) overwrite auth
+    let fileNames ← pack overwrite (verbose := true) unpackedOnly
+    putFiles repo container? fileNames overwrite auth
+    -- After artifacts land: per-file pointers for `--unsafe-trust-fork` resolution,
+    -- then the per-SHA marker as the "upload complete" signal.
     if let some sha ← getRepoScope then
       if let some c := container? then
+        uploadPointers c repo sha fileNames auth
         uploadMarker c repo sha auth
   let stage outDir (unpackedOnly := true) := do
     stageFiles outDir (← pack (verbose := true) (unpackedOnly := unpackedOnly))
@@ -262,11 +287,13 @@ def main (args : List String) : IO Unit := do
       let auth ← getUploadAuth
       putFilesAbsolute repo container? fileSet (tempConfigFilePath := stagingDir / "curl.config")
         (overwrite := false) auth
-      -- After artifacts upload, write the per-SHA marker if the upload is
-      -- SHA-scoped. The marker lets `cache query` discover cached commits
+      -- After artifacts upload, write the per-file pointers (for
+      -- `--unsafe-trust-fork` resolution) and then the per-SHA marker if the upload
+      -- is SHA-scoped. The marker lets `cache query` discover cached commits
       -- with a cheap HEAD probe.
       if let some sha ← getRepoScope then
         if let some c := container? then
+          uploadPointers c repo sha (fileSet.map (·.fileName.get!)) auth
           uploadMarker c repo sha auth
 
   match args with

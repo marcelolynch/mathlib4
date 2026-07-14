@@ -123,6 +123,28 @@ the trust decision itself — so both forms print the non-default-scope security
 notice before reading. Neither runs in CI; CI routing (above) is loaded from
 the trusted branch.
 
+### Per-file pointer index (`--unsafe-trust-fork`)
+
+Alongside each SHA-scoped upload, the trusted uploader writes one pointer blob
+per artifact at `m/{repo}/f/{fileName}`, containing the scope SHA (last write
+wins). `cache get --unsafe-trust-fork` resolves files the normal lookup missed
+through this index.
+
+For files it resolves, this reopens the replay window the per-commit namespace
+closes: artifacts from any commit the fork's CI ever built become servable,
+including commits no longer reachable from any branch. On a shared fork that
+means trusting every past collaborator push. Time-based eviction of the forks
+container bounds the window in age: artifacts older than the retention period
+are gone, pointer or no pointer. The exposure is bounded to the
+one fork's namespace: pointers are written only by the trusted uploader under
+the same container token as the artifacts, and readers validate each body as
+a bare 40-hex commit SHA before splicing it into a URL, so invalid or missing
+pointers degrade to cache misses. The index is consulted only under this
+explicit opt-in flag, which always prints the security notice, and only when
+the repo's read chain already includes the `forks` container — the flag
+widens which fork commits may serve files, never which containers are read.
+The flag never runs in CI.
+
 ## Explicitly out of scope
 
 The trust model does not attempt to defend against:
