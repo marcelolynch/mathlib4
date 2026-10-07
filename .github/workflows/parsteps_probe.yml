@@ -1,6 +1,8 @@
 name: parallel steps semantics probe
 on:
   workflow_dispatch:
+  push:
+    branches: ['probe/**']
 permissions:
   contents: read
 jobs:
