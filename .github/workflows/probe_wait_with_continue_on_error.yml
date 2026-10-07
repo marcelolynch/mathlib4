@@ -1,0 +1,21 @@
+name: probe wait_with_continue_on_error
+on:
+  workflow_dispatch:
+  push:
+    branches: ['probe/**']
+permissions:
+  contents: read
+jobs:
+  wait_with_continue_on_error:
+    runs-on: ubuntu-latest
+    steps:
+      - name: bg fails
+        id: bg
+        background: true
+        run: sleep 2; exit 1
+      - name: wait with continue-on-error
+        continue-on-error: true
+        wait: bg
+      - name: after
+        run: echo "continued; bg outcome=${{ steps.bg.outcome }}"
+

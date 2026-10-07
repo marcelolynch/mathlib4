@@ -1,0 +1,23 @@
+name: probe wait_on_never_started
+on:
+  workflow_dispatch:
+  push:
+    branches: ['probe/**']
+permissions:
+  contents: read
+jobs:
+  wait_on_never_started:
+    runs-on: ubuntu-latest
+    steps:
+      - name: fail first
+        run: exit 1
+      - name: background that is skipped by the failure
+        id: bg
+        background: true
+        run: sleep 5
+      - name: wait on it
+        wait: bg
+      - name: after
+        if: always()
+        run: echo "reached; bg outcome=${{ steps.bg.outcome }} conclusion=${{ steps.bg.conclusion }}"
+

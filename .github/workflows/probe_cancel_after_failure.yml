@@ -1,0 +1,22 @@
+name: probe cancel_after_failure
+on:
+  workflow_dispatch:
+  push:
+    branches: ['probe/**']
+permissions:
+  contents: read
+jobs:
+  cancel_after_failure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: sampler
+        id: sampler
+        background: true
+        run: timeout 300 bash -c 'while true; do date; sleep 2; done'
+      - name: fail
+        run: exit 1
+      - name: cancel sampler
+        cancel: sampler
+      - name: after
+        if: always()
+        run: echo "sampler outcome=${{ steps.sampler.outcome }}"

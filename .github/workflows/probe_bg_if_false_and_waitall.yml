@@ -1,0 +1,21 @@
+name: probe bg_if_false_and_waitall
+on:
+  workflow_dispatch:
+  push:
+    branches: ['probe/**']
+permissions:
+  contents: read
+jobs:
+  bg_if_false_and_waitall:
+    runs-on: ubuntu-latest
+    steps:
+      - name: background uses with if false
+        id: co
+        if: ${{ false }}
+        background: true
+        uses: actions/checkout@v4
+      - name: wait-all with nothing active
+        wait-all:
+      - name: after
+        run: echo "co outcome=${{ steps.co.outcome }}"
+

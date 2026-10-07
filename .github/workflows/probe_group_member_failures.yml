@@ -1,0 +1,33 @@
+name: probe group_member_failures
+on:
+  workflow_dispatch:
+  push:
+    branches: ['probe/**']
+permissions:
+  contents: read
+jobs:
+  group_member_failures:
+    runs-on: ubuntu-latest
+    steps:
+      - parallel:
+          - name: a fails
+            id: a
+            run: sleep 2; exit 1
+          - name: b ok
+            id: b
+            run: sleep 3; echo ok
+          - name: c fails with continue-on-error
+            id: c
+            continue-on-error: true
+            run: sleep 1; exit 1
+          - name: d skipped
+            id: d
+            if: ${{ false }}
+            run: echo never
+      - name: normal step after a failed group
+        run: echo "should be skipped"
+      - name: report
+        if: always()
+        run: |
+          echo "a=${{ steps.a.outcome }}/${{ steps.a.conclusion }} b=${{ steps.b.outcome }}/${{ steps.b.conclusion }} c=${{ steps.c.outcome }}/${{ steps.c.conclusion }} d=${{ steps.d.outcome }}/${{ steps.d.conclusion }}"
+

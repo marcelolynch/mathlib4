@@ -1,0 +1,25 @@
+name: probe outputs_env_after_group
+on:
+  workflow_dispatch:
+  push:
+    branches: ['probe/**']
+permissions:
+  contents: read
+jobs:
+  outputs_env_after_group:
+    runs-on: ubuntu-latest
+    steps:
+      - parallel:
+          - name: m sets output and env
+            id: m
+            run: |
+              echo "x=42" >> "$GITHUB_OUTPUT"
+              echo "FOO=bar" >> "$GITHUB_ENV"
+              echo "/tmp/probe-bin" >> "$GITHUB_PATH"
+          - name: n
+            run: echo n
+      - name: read
+        run: |
+          echo "x=${{ steps.m.outputs.x }} FOO=$FOO"
+          echo "$PATH" | tr ':' '\n' | grep -c probe-bin
+
