@@ -1,0 +1,27 @@
+name: probe always_member_after_failure
+on:
+  workflow_dispatch:
+  push:
+    branches: ['probe/**']
+permissions:
+  contents: read
+jobs:
+  always_member_after_failure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: build fails
+        id: build
+        run: exit 1
+      - parallel:
+          - name: archive no if
+            id: archive
+            continue-on-error: true
+            run: echo "archive ran"; exit 1
+          - name: stage mathlib always
+            id: stage
+            if: ${{ always() && (steps.build.outcome == 'success' || steps.build.outcome == 'failure' || steps.build.outcome == 'cancelled') }}
+            run: echo "stage ran"; echo "staged=true" >> "$GITHUB_OUTPUT"
+      - name: check
+        id: check
+        if: ${{ always() && (steps.build.outcome == 'success' || steps.build.outcome == 'failure' || steps.build.outcome == 'cancelled') }}
+        run: echo "build=${{ steps.build.outcome }} archive=[${{ steps.archive.outcome }}] stage=[${{ steps.stage.outcome }}] staged=[${{ steps.stage.outputs.staged }}]"
