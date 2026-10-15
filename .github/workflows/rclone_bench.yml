@@ -66,6 +66,15 @@ jobs:
           # curl at its default `--parallel-max` of 50: production today.
           - variant: curl-50
             tool: curl
+          # The same, with curl's verbose output traced to a file through
+          # `$CURL_HOME/.curlrc`: rounds 1 and 3 dropped the last of 9038
+          # transfers with exit 23 and an empty stderr.
+          - variant: curl-50-verbose-a
+            tool: curl
+            curl_verbose: "true"
+          - variant: curl-50-verbose-b
+            tool: curl
+            curl_verbose: "true"
           - variant: curl-150
             tool: curl
             parallel_max: 150
@@ -182,6 +191,7 @@ jobs:
           PARALLEL_MAX: ${{ matrix.parallel_max }}
           TRANSFERS: ${{ matrix.transfers }}
           CHECKERS: ${{ matrix.checkers }}
+          CURL_VERBOSE: ${{ matrix.curl_verbose }}
           VARIANT: ${{ matrix.variant }}
         run: |
           # The knobs are exported only when set: the tool treats an empty
@@ -194,6 +204,18 @@ jobs:
           put_url="${BENCH_URL}/${VARIANT}"
           remote="${BENCH_REMOTE}/${VARIANT}/f"
           mkdir -p logs
+          # The tool lists the staging directory in directory order, so the
+          # last entries here are the last transfers in curl's config.
+          # shellcheck disable=SC2012
+          echo "last staged entries (directory order): $(ls -U staging | tail -n 3 | tr '\n' ' ')"
+          if [ "$CURL_VERBOSE" = true ]; then
+            # curl reads $CURL_HOME/.curlrc. The verbose output goes to its
+            # own file, away from the stdout the tool parses; each pass moves
+            # the file aside, since --stderr truncates it.
+            export CURL_HOME="$RUNNER_TEMP/curl-home"
+            mkdir -p "$CURL_HOME"
+            printf 'verbose\nstderr = "%s"\n' "$RUNNER_TEMP/curl-stderr.txt" > "$CURL_HOME/.curlrc"
+          fi
 
           # Prints "<milliseconds> <exit code>" of one put-staged run.
           bench_put() {
@@ -214,6 +236,18 @@ jobs:
           tail -n 30 logs/put.log
           echo "::endgroup::"
           echo "put: ${put_ms} ms, exit ${put_exit}"
+          if [ -f "$RUNNER_TEMP/curl-stderr.txt" ]; then
+            mv "$RUNNER_TEMP/curl-stderr.txt" logs/curl-verbose-put.txt
+            unreported=$(grep -E '^files without a curl report:' logs/put.log | sed 's/^files without a curl report: //' || true)
+            for f in $unreported; do
+              echo "::group::verbose lines around $f"
+              grep -n -B 2 -A 25 "PUT .*/$f" logs/curl-verbose-put.txt | head -80
+              echo "::endgroup::"
+            done
+            echo "::group::verbose tail"
+            tail -n 40 logs/curl-verbose-put.txt
+            echo "::endgroup::"
+          fi
 
           # The pass a bors retry hits: every object exists already.
           echo "::group::put (skip pass)"
@@ -221,6 +255,9 @@ jobs:
           tail -n 15 logs/skip.log
           echo "::endgroup::"
           echo "skip pass: ${skip_ms} ms, exit ${skip_exit}"
+          if [ -f "$RUNNER_TEMP/curl-stderr.txt" ]; then
+            mv "$RUNNER_TEMP/curl-stderr.txt" logs/curl-verbose-skip.txt
+          fi
 
           # Every staged file must be in the prefix with a matching MD5 (R2's
           # ETag of a single-part object).
