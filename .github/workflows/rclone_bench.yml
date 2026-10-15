@@ -7,7 +7,8 @@
 # lifecycle rule on the `bench/` prefix is the backstop.
 #
 # Fork secrets: BENCH_S3_ACCESS_KEY_ID, BENCH_S3_SECRET_ACCESS_KEY (Object
-# Read & Write on the test bucket only) and BENCH_S3_BASE
+# Read & Write on the test bucket only), BENCH_S3_SESSION_TOKEN (set for a
+# temporary credential, empty for a static key) and BENCH_S3_BASE
 # (`https://<account>.r2.cloudflarestorage.com/<bucket>/bench`).
 name: rclone upload bench
 
@@ -32,12 +33,14 @@ env:
   RCLONE_S3_ENV_AUTH: "false"
   RCLONE_S3_ACCESS_KEY_ID: ${{ secrets.BENCH_S3_ACCESS_KEY_ID }}
   RCLONE_S3_SECRET_ACCESS_KEY: ${{ secrets.BENCH_S3_SECRET_ACCESS_KEY }}
+  RCLONE_S3_SESSION_TOKEN: ${{ secrets.BENCH_S3_SESSION_TOKEN }}
   RCLONE_S3_PROVIDER: Other
   RCLONE_S3_REGION: auto
   RCLONE_S3_NO_CHECK_BUCKET: "true"
   # Credentials for the cache tool. R2 signs every request in the region `auto`.
   MATHLIB_CACHE_S3_ACCESS_KEY_ID: ${{ secrets.BENCH_S3_ACCESS_KEY_ID }}
   MATHLIB_CACHE_S3_SECRET_ACCESS_KEY: ${{ secrets.BENCH_S3_SECRET_ACCESS_KEY }}
+  MATHLIB_CACHE_S3_SESSION_TOKEN: ${{ secrets.BENCH_S3_SESSION_TOKEN }}
   MATHLIB_CACHE_S3_REGION: auto
   BENCH_S3_BASE: ${{ secrets.BENCH_S3_BASE }}
   MATHLIB_CACHE_DIR: ${{ github.workspace }}/.bench-cache
