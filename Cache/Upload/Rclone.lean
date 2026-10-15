@@ -52,6 +52,43 @@ def rcloneAvailable : IO Bool := do
 skips the bucket-creation probe a scoped credential cannot pass. -/
 def rcloneCommonFlags : Array String := #["--s3-no-check-bucket", "--retries", "5"]
 
+/-- The concurrency of a files copy: `transfers` bounds the uploads in flight
+(`--transfers`) and `checkers` bounds the existence checks in flight
+(`--checkers`). -/
+structure RcloneConcurrency where
+  transfers : Nat := 16
+  checkers : Nat := 16
+  deriving Repr, BEq, Inhabited
+
+/--
+The files copy concurrency, from the raw `MATHLIB_CACHE_RCLONE_TRANSFERS` and
+`MATHLIB_CACHE_RCLONE_CHECKERS` values (`transfers?`, `checkers?`). An unset
+variable keeps its default. A value that is not a positive number is an
+error, like the other s3 settings.
+
+Pure so the policy is testable; `getRcloneConcurrency` wires the environment in.
+-/
+def rcloneConcurrencyFrom (transfers? checkers? : Option String) :
+    Except String RcloneConcurrency := do
+  let parse (name : String) (value? : Option String) (default : Nat) : Except String Nat :=
+    match value? with
+    | none => .ok default
+    | some value =>
+      match value.toNat? with
+      | some n => if n > 0 then .ok n else .error s!"{name}={value} is not a positive number"
+      | none => .error s!"{name}={value} is not a positive number"
+  let defaults : RcloneConcurrency := {}
+  return {
+    transfers := ← parse "MATHLIB_CACHE_RCLONE_TRANSFERS" transfers? defaults.transfers
+    checkers := ← parse "MATHLIB_CACHE_RCLONE_CHECKERS" checkers? defaults.checkers }
+
+/-- Retrieves the files copy concurrency from the environment via
+`rcloneConcurrencyFrom`. -/
+def getRcloneConcurrency : IO RcloneConcurrency := do
+  IO.ofExcept <| rcloneConcurrencyFrom
+    (← getEnvNonEmpty "MATHLIB_CACHE_RCLONE_TRANSFERS")
+    (← getEnvNonEmpty "MATHLIB_CACHE_RCLONE_CHECKERS")
+
 /--
 The rclone invocation for the `.ltar` files: a copy from `srcDir` into the
 files prefix, restricted to the `--files-from` list, so only the files the
@@ -60,12 +97,20 @@ A non-overwrite put passes
 `--ignore-existing`, which skips objects the destination already holds; this
 matches the curl tool's `If-None-Match: *`. Artifact names are content
 hashes, so a skipped re-put loses nothing.
+
+The copy does not list the destination (`--no-traverse`): the master prefix
+holds millions of objects, and a listing of it costs thousands of sequential
+pages per upload. The existence check is one HEAD per listed file instead,
+`concurrency.checkers` at a time.
 -/
 def rcloneFilesArgs (dest : Location) (srcDir filesFrom : FilePath)
-    (overwrite : Bool) : Except String (Array String) := do
+    (overwrite : Bool) (concurrency : RcloneConcurrency := {}) :
+    Except String (Array String) := do
   let (_, bucketPath) ← s3EndpointSplit dest.root
   return #["copy", srcDir.toString, s!":s3:{bucketPath}/{dest.filesDir}",
-    "--files-from", filesFrom.toString, "--transfers", "16"] ++
+    "--files-from", filesFrom.toString, "--no-traverse",
+    "--transfers", toString concurrency.transfers,
+    "--checkers", toString concurrency.checkers] ++
     (if overwrite then #[] else #["--ignore-existing"]) ++ rcloneCommonFlags
 
 /--
@@ -86,14 +131,15 @@ from `rcloneEnv`, so no credential appears on a command line. The remote
 paths come from `dest`. An invalid root fails before any transfer.
 `srcDir` holds the files and `fileNames` lists the ones to upload; the list is passed as a
 `--files-from` file, so only the named files are uploaded. The files are
-uploaded first, then the marker derived by `Location.marker?`, if present.
+uploaded first, `concurrency` at a time, then the marker derived by
+`Location.marker?`, if present.
 A files failure exits 1; a marker failure only warns (see `uploadMarker`).
 The `rclone` parameter names the binary and exists for the tests; production
 callers use the default.
 -/
 def putStagedViaRclone (dest : Location) (env : Array (String × Option String))
     (srcDir : FilePath) (fileNames : Array String) (overwrite : Bool)
-    (rclone : String := "rclone") : IO Unit := do
+    (concurrency : RcloneConcurrency := {}) (rclone : String := "rclone") : IO Unit := do
   discard <| IO.ofExcept (s3EndpointSplit dest.root)
   let run (args : Array String) : IO UInt32 := do
     let child ← IO.Process.spawn { cmd := rclone, args, env }
@@ -107,7 +153,7 @@ def putStagedViaRclone (dest : Location) (env : Array (String × Option String))
     let code ← try
       let filesFrom := dir / "files-from.txt"
       IO.FS.writeFile filesFrom ("\n".intercalate fileNames.toList ++ "\n")
-      run (← IO.ofExcept (rcloneFilesArgs dest srcDir filesFrom overwrite))
+      run (← IO.ofExcept (rcloneFilesArgs dest srcDir filesFrom overwrite concurrency))
     finally
       IO.FS.removeDirAll dir
     if code != 0 then

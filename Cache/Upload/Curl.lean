@@ -45,7 +45,8 @@ def mkPutConfigContent (dest : Location) (files : Array FilePath) : String :=
   "\n".intercalate l
 
 /-- Calls `curl` to send a set of files to `dest`, the resolved upload location
-(`uploadLocation`), signed per request with `signArgs`. Exits with
+(`uploadLocation`), signed per request with `signArgs`,
+`MATHLIB_CACHE_PARALLEL_MAX` at a time (`curlParallelMaxArgs`). Exits with
 code 1 when any file fails to upload. -/
 def putFilesViaCurl
     (dest : Location) (files : Array FilePath) (tempConfigFilePath : FilePath)
@@ -62,6 +63,7 @@ def putFilesViaCurl
     -- an overwrite retry re-sends the same bytes.
     let args := uploadPutArgs signArgs overwrite ++
       #["-X", "PUT", "--parallel", "--silent", "--show-error"] ++
+      (← curlParallelMaxArgs) ++
       curlRetryArgs (supportLegacyCurl := false) ++
       -- `%{json}` prints a JSON report for each finished transfer. The
       -- leading newline keeps each report on its own line even if something

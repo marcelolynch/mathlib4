@@ -1569,6 +1569,16 @@ def test_rcloneArgs : IO Unit := do
       ((files.toList.zip files.toList.tail).contains ("--files-from", "tmp/files-from.txt"))
     assertTrue "a non-overwrite copy skips existing objects"
       (files.contains "--ignore-existing")
+    assertTrue "files copy does not list the destination prefix"
+      (files.contains "--no-traverse")
+    let pairs := files.toList.zip files.toList.tail
+    assertTrue "files copy runs at the default concurrency"
+      (pairs.contains ("--transfers", "16") && pairs.contains ("--checkers", "16"))
+    let tuned ← IO.ofExcept <| rcloneFilesArgs dest "staging" "tmp/files-from.txt"
+      (overwrite := false) { transfers := 64, checkers := 32 }
+    let tunedPairs := tuned.toList.zip tuned.toList.tail
+    assertTrue "files copy carries the caller's concurrency"
+      (tunedPairs.contains ("--transfers", "64") && tunedPairs.contains ("--checkers", "32"))
     let overwriteFiles ← IO.ofExcept <| rcloneFilesArgs dest "staging" "tmp/files-from.txt"
       (overwrite := true)
     assertTrue "an overwrite copy replaces existing objects"
@@ -1605,6 +1615,22 @@ def test_rcloneArgs : IO Unit := do
       (rcloneMarkerArgs invalidMarker "tmp/abc1" matches .error _)
   else
     assertTrue "rclone destination resolves" false
+
+/-- The files copy concurrency: unset variables keep the defaults, each
+variable sets its own bound, and a value that is not a positive number is an
+error. -/
+def test_rcloneConcurrencyFrom : IO Unit := do
+  IO.println "rcloneConcurrencyFrom:"
+  assertTrue "unset variables keep the defaults"
+    (rcloneConcurrencyFrom none none matches .ok ⟨16, 16⟩)
+  assertTrue "each variable sets its own bound"
+    (rcloneConcurrencyFrom (some "64") (some "8") matches .ok ⟨64, 8⟩)
+  assertTrue "one variable leaves the other at its default"
+    (rcloneConcurrencyFrom none (some "32") matches .ok ⟨16, 32⟩)
+  assertTrue "a non-number is an error"
+    (rcloneConcurrencyFrom (some "many") none matches .error _)
+  assertTrue "zero is an error"
+    (rcloneConcurrencyFrom none (some "0") matches .error _)
 
 /-- The child environment the rclone tool runs under: credentials and
 endpoint set, a stale session token cleared when the credential has none,
@@ -2001,6 +2027,7 @@ def runAll : IO Unit := do
   test_s3UploadToolFrom
   test_s3EndpointSplit
   test_rcloneArgs
+  test_rcloneConcurrencyFrom
   test_rcloneEnv
   test_putStagedViaRclone
   test_readLocationsFrom

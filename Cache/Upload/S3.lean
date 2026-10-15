@@ -168,7 +168,8 @@ The staged put on the s3 backend: split the base (`s3EndpointSplit`), resolve
 the transfer tool (`s3UploadToolFrom`), and transfer, each request signed with
 `creds` in `region`. Only this resolution reads the
 `MATHLIB_CACHE_PUT_FORCE_CURL` flag, and the availability probe runs only when
-the flag does not already force curl.
+the flag does not already force curl. The rclone tool runs at the concurrency
+`getRcloneConcurrency` resolves; the curl tool reads `MATHLIB_CACHE_PARALLEL_MAX`.
 -/
 def s3PutStaged (dest : Location) (creds : S3Credentials) (region : String)
     (srcDir : FilePath) (fileNames : Array String) (overwrite : Bool) : IO Unit := do
@@ -181,6 +182,6 @@ def s3PutStaged (dest : Location) (creds : S3Credentials) (region : String)
   | .rclone =>
     let provider := (← getEnvNonEmpty "RCLONE_S3_PROVIDER").getD "Other"
     putStagedViaRclone dest (rcloneEnv creds endpoint provider region)
-      srcDir fileNames overwrite
+      srcDir fileNames overwrite (← getRcloneConcurrency)
 
 end Cache.Requests

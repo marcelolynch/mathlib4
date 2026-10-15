@@ -310,7 +310,7 @@ def curlRetryArgs (supportLegacyCurl : Bool) : Array String :=
   #["--retry", "5"] ++ (if supportLegacyCurl then #[] else #["--retry-all-errors"])
 
 /-- `curl` flag that sets the number of simultaneous transfers in a parallel
-download from `MATHLIB_CACHE_PARALLEL_MAX`. -/
+download or upload from `MATHLIB_CACHE_PARALLEL_MAX`. -/
 def curlParallelMaxArgs : IO (Array String) := do
   let some value ← getEnvNonEmpty "MATHLIB_CACHE_PARALLEL_MAX" | return #[]
   let some n := value.toNat? | do
