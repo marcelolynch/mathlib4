@@ -350,7 +350,8 @@ jobs:
           }
 
           read -r list_ms list_exit < <(timed logs/lsf.log rclone lsf "$remote" --files-only)
-          objects=$(wc -l < logs/lsf.log)
+          # The log holds rclone's INFO lines too: count only object names.
+          objects=$(grep -cE '^[0-9a-f]{16}\.ltar$' logs/lsf.log || true)
           echo "lsf: ${objects} objects in ${list_ms} ms (exit ${list_exit})"
           if [ "$objects" -lt 1000 ]; then
             echo "::error::the rclone-16 prefix holds only ${objects} objects; the variant did not fill it"
