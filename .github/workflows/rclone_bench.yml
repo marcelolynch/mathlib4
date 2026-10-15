@@ -573,7 +573,7 @@ jobs:
     needs: [bench, traverse, failures]
     if: always()
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
     steps:
       - *check_secrets
       - *resolve_bench_prefix
@@ -581,7 +581,11 @@ jobs:
       - name: Delete the run's prefix
         run: |
           # A run whose jobs all stopped before their upload has no prefix.
-          rclone purge "$BENCH_REMOTE" || echo "purge: nothing under the run prefix"
+          # R2 deletes one object per request here (round 1: purge managed
+          # 41/s at the default concurrency and timed out), so the delete
+          # runs 128 wide.
+          rclone delete "$BENCH_REMOTE" --rmdirs --transfers 128 --checkers 128 \
+            || echo "delete: nothing under the run prefix"
           left=$(rclone lsf "$BENCH_REMOTE" -R --files-only 2> /dev/null | wc -l)
           echo "objects left under the run prefix: $left"
           test "$left" -eq 0
