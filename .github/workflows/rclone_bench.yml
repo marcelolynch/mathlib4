@@ -85,17 +85,9 @@ jobs:
             tool: rclone
             transfers: 128
             checkers: 128
-          # `RCLONE_S3_NO_HEAD` drops the post-upload HEAD per file.
-          - variant: rclone-16-nohead
-            tool: rclone
-            transfers: 16
-            checkers: 16
-            no_head: "true"
-          - variant: rclone-64-nohead
-            tool: rclone
-            transfers: 64
-            checkers: 64
-            no_head: "true"
+          # Round 1 measured `RCLONE_S3_NO_HEAD` (no post-upload HEAD) at 16
+          # and 64: 220.0 s against 211.4 s, and 57.4 s against 57.8 s. The
+          # HEAD costs nothing measurable, so the variants were dropped.
     steps:
       - &check_secrets
         name: Check the bench secrets
@@ -190,16 +182,14 @@ jobs:
           PARALLEL_MAX: ${{ matrix.parallel_max }}
           TRANSFERS: ${{ matrix.transfers }}
           CHECKERS: ${{ matrix.checkers }}
-          NO_HEAD: ${{ matrix.no_head }}
           VARIANT: ${{ matrix.variant }}
         run: |
           # The knobs are exported only when set: the tool treats an empty
-          # value as unset, but rclone rejects an empty boolean.
+          # value as unset.
           if [ "$TOOL" = curl ]; then export MATHLIB_CACHE_PUT_FORCE_CURL=1; fi
           if [ -n "$PARALLEL_MAX" ]; then export MATHLIB_CACHE_PARALLEL_MAX="$PARALLEL_MAX"; fi
           if [ -n "$TRANSFERS" ]; then export MATHLIB_CACHE_RCLONE_TRANSFERS="$TRANSFERS"; fi
           if [ -n "$CHECKERS" ]; then export MATHLIB_CACHE_RCLONE_CHECKERS="$CHECKERS"; fi
-          if [ "$NO_HEAD" = true ]; then export RCLONE_S3_NO_HEAD=true; fi
 
           put_url="${BENCH_URL}/${VARIANT}"
           remote="${BENCH_REMOTE}/${VARIANT}/f"
@@ -261,7 +251,7 @@ jobs:
             --arg variant "$VARIANT" --arg tool "$TOOL" \
             --arg parallel_max "${PARALLEL_MAX:-50}" \
             --arg transfers "$TRANSFERS" --arg checkers "$CHECKERS" \
-            --arg no_head "${NO_HEAD:-false}" \
+            --arg no_head "false" \
             --argjson files "$BENCH_FILES" --argjson bytes "$BENCH_BYTES" \
             --argjson put_ms "$put_ms" --argjson put_exit "$put_exit" \
             --argjson skip_ms "$skip_ms" --argjson skip_exit "$skip_exit" \
