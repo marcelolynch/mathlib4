@@ -575,6 +575,9 @@ structure TransferState where
   speed : Nat := 0
   /-- Decompression pipeline state; used only when a `DecompConfig` is set. -/
   decomp : DecompState := {}
+  /-- The query-stripped `url_effective` of every transfer curl reported, so a
+  caller can name the transfers that got no report. -/
+  reported : Std.HashSet String := {}
 
 /-- Harvest the result of a completed decompression task, updating counters.
     Returns `(successful, failed, error?)`. -/
@@ -669,6 +672,8 @@ def monitorCurl {dir : TransferDirection} (args : Array String) (size : Nat)
   -- Hashes of the files this pass fetched, used to decide what the next
   -- location still needs to retry.
   let servedRef ← IO.mkRef (∅ : Std.HashSet UInt64)
+  -- The URL of every report, for `TransferState.reported`.
+  let reportedRef ← IO.mkRef (∅ : Std.HashSet String)
   let mkStatus (s : TransferState) : String := Id.run do
     let speedStr :=
       if s.speed != 0 then
@@ -683,7 +688,7 @@ def monitorCurl {dir : TransferDirection} (args : Array String) (size : Nat)
     return msg
   let init : TransferState := { last := (← IO.monoMsNow), decomp := decompState }
   let (s, exitCode, stderr) ← IO.runCurlStreaming args init fun a line => do
-    let mut {last, success, failed, done, speed, decomp} := a
+    let mut {last, success, failed, done, speed, decomp, reported} := a
     let mut {pending, currentTask, lastBatchSize, decompressed, decompFailed} := decomp
     -- Classify each finished transfer: rename a delivered part file, report a
     -- failure, and remove the part file on any non-delivery.
@@ -699,6 +704,10 @@ def monitorCurl {dir : TransferDirection} (args : Array String) (size : Nat)
         -- The per-transfer JSON report carries `exitcode` from curl 7.75 on;
         -- an absent field reads as 0.
         let exitCode := (result.getObjValAs? Nat "exitcode").toOption.getD 0
+        -- The URL is query-stripped, so a credential in the query string is
+        -- neither kept nor printed.
+        if let .ok url := result.getObjValAs? String "url_effective" then
+          reportedRef.modify (·.insert ((url.splitOn "?").headD url))
         let verdict := classify code?.toOption exitCode
         if verdict matches .delivered then
           if let .ok fn := fn? then
@@ -786,7 +795,7 @@ def monitorCurl {dir : TransferDirection} (args : Array String) (size : Nat)
         IO.println s!"Non-JSON output from curl:\n  {line}\n{e}"
     let decompNow : DecompState :=
       {pending, currentTask, lastBatchSize, decompressed, decompFailed}
-    pure {last, success, failed, done, speed, decomp := decompNow}
+    pure {last, success, failed, done, speed, decomp := decompNow, reported}
   -- curl reports each transfer it finishes. A transfer without a report did
   -- not finish, so it counts as failed.
   let s ← if s.done < size then do
@@ -797,7 +806,7 @@ def monitorCurl {dir : TransferDirection} (args : Array String) (size : Nat)
   if s.done > 0 then
     -- to avoid confusingly moving on without finishing the count
     IO.eprintln (mkStatus s)
-  return (s, ← servedRef.get)
+  return ({ s with reported := ← reportedRef.get }, ← servedRef.get)
 
 /-- Run one location's download pass for the given hash map. Returns the
 `TransferState` from `monitorCurl` (synthesized in serial mode, where it

@@ -1897,6 +1897,30 @@ def test_monitorCurl_counts_unreported_transfers : IO Unit := do
       (classifyUpload · · true)
   assertTrue "no transfer reported" (s.done == 0 && s.success == 0)
   assertTrue "the unreported transfers count as failed" (s.failed == 3)
+  assertTrue "no report, no reported URL" s.reported.isEmpty
+
+/-- Every report's URL lands in `TransferState.reported`, query-stripped, so
+the upload path can name the files without a report. A `file://` fetch of a
+temp file is a real curl transfer with no network. -/
+def test_monitorCurl_records_reported_urls : IO Unit := do
+  IO.println "monitorCurl records the URL of each report:"
+  if System.Platform.isWindows then
+    IO.println "  (skipped on Windows)"
+    return
+  let dir ← IO.FS.createTempDir
+  try
+    let file := dir / "aa.ltar"
+    IO.FS.writeFile file "x"
+    let url := s!"file://{file}"
+    let (s, _) ← withSuppressedOutput <|
+      monitorCurl #["--silent", "--write-out", "\n%{json}\n", "-o", IO.nullDevice,
+        s!"{url}?token=secret"] 1 "Uploaded" "speed_upload"
+        (classifyUpload · · true)
+    assertTrue "the transfer was reported" (s.done == 1)
+    assertTrue "the report's URL is recorded without its query"
+      (s.reported.contains url && s.reported.size == 1)
+  finally
+    IO.FS.removeDirAll dir
 
 end DecompPipeline
 
@@ -2034,6 +2058,7 @@ def runAll : IO Unit := do
   test_finalizeDecomp
   test_monitorCurl_carries_decomp_state
   test_monitorCurl_counts_unreported_transfers
+  test_monitorCurl_records_reported_urls
   test_splitWriteOut
   test_curlGetWriteOut_real_curl
   test_transferDiagnostics
