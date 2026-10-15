@@ -1,0 +1,580 @@
+# One-off bench: rclone against curl for the R2 cache upload. This workflow
+# lives on the ci-dev bench branch only and is never merged.
+#
+# Every job uploads the pinned master hash set (~9k .ltar files) from
+# cache.mathlib.org into a fresh prefix of a test bucket, with the cache tool
+# built from this commit. The cleanup job removes the run's prefix; a 1-day
+# lifecycle rule on the `bench/` prefix is the backstop.
+#
+# Fork secrets: BENCH_S3_ACCESS_KEY_ID, BENCH_S3_SECRET_ACCESS_KEY (Object
+# Read & Write on the test bucket only) and BENCH_S3_BASE
+# (`https://<account>.r2.cloudflarestorage.com/<bucket>/bench`).
+name: rclone upload bench
+
+on:
+  push:
+    branches:
+      - ci-dev/rclone-bench
+
+permissions:
+  contents: read
+
+# Rounds queue behind each other: two uploads in flight at once would skew
+# each other's timings.
+concurrency:
+  group: rclone-upload-bench
+
+env:
+  RCLONE_VERSION: v1.75.0
+  RCLONE_SHA256: aa2804e08f48250e71009c727124b6341cd0288465804a9a09d14663cabafbaa
+  # The rclone S3 backend for the direct rclone calls (check, list, purge).
+  # The cache tool sets the same values for its own rclone child.
+  RCLONE_S3_ENV_AUTH: "false"
+  RCLONE_S3_ACCESS_KEY_ID: ${{ secrets.BENCH_S3_ACCESS_KEY_ID }}
+  RCLONE_S3_SECRET_ACCESS_KEY: ${{ secrets.BENCH_S3_SECRET_ACCESS_KEY }}
+  RCLONE_S3_PROVIDER: Other
+  RCLONE_S3_REGION: auto
+  RCLONE_S3_NO_CHECK_BUCKET: "true"
+  # Credentials for the cache tool. R2 signs every request in the region `auto`.
+  MATHLIB_CACHE_S3_ACCESS_KEY_ID: ${{ secrets.BENCH_S3_ACCESS_KEY_ID }}
+  MATHLIB_CACHE_S3_SECRET_ACCESS_KEY: ${{ secrets.BENCH_S3_SECRET_ACCESS_KEY }}
+  MATHLIB_CACHE_S3_REGION: auto
+  BENCH_S3_BASE: ${{ secrets.BENCH_S3_BASE }}
+  MATHLIB_CACHE_DIR: ${{ github.workspace }}/.bench-cache
+  # rclone logs one line per transferred file and its retry attempts. DEBUG
+  # would echo the environment, credentials included: never raise it here.
+  RCLONE_LOG_LEVEL: INFO
+  RCLONE_STATS: 15s
+
+jobs:
+  bench:
+    name: ${{ matrix.variant }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      # One variant at a time: parallel variants would share the upload path.
+      max-parallel: 1
+      matrix:
+        include:
+          # curl at its default `--parallel-max` of 50: production today.
+          - variant: curl-50
+            tool: curl
+          - variant: curl-150
+            tool: curl
+            parallel_max: 150
+          - variant: rclone-16
+            tool: rclone
+            transfers: 16
+            checkers: 16
+          - variant: rclone-32
+            tool: rclone
+            transfers: 32
+            checkers: 32
+          - variant: rclone-64
+            tool: rclone
+            transfers: 64
+            checkers: 64
+          - variant: rclone-128
+            tool: rclone
+            transfers: 128
+            checkers: 128
+          # `RCLONE_S3_NO_HEAD` drops the post-upload HEAD per file.
+          - variant: rclone-16-nohead
+            tool: rclone
+            transfers: 16
+            checkers: 16
+            no_head: "true"
+          - variant: rclone-64-nohead
+            tool: rclone
+            transfers: 64
+            checkers: 64
+            no_head: "true"
+    steps:
+      - &check_secrets
+        name: Check the bench secrets
+        run: |
+          for v in BENCH_S3_BASE MATHLIB_CACHE_S3_ACCESS_KEY_ID MATHLIB_CACHE_S3_SECRET_ACCESS_KEY; do
+            if [ -z "${!v}" ]; then
+              echo "::error::the fork secret behind $v is unset"
+              exit 1
+            fi
+          done
+
+      # The bench prefix of this run: `bench/<run id>-<attempt>`. Each job
+      # writes its own directory under it.
+      - &resolve_bench_prefix
+        name: Resolve the bench prefix
+        run: |
+          base="${BENCH_S3_BASE%/}"
+          rest="${base#https://}"
+          host="${rest%%/*}"
+          path="${rest#*/}"
+          run="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          {
+            echo "RCLONE_S3_ENDPOINT=https://${host}"
+            echo "BENCH_URL=${base}/${run}"
+            echo "BENCH_REMOTE=:s3:${path}/${run}"
+          } >> "$GITHUB_ENV"
+
+      - &checkout
+        name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - &configure_lean
+        name: Configure Lean
+        uses: leanprover/lean-action@f061402b660e0c34644504b324e830f2991d4865 # v1.6.1
+        with:
+          auto-config: false
+          use-github-cache: false
+          use-mathlib-cache: false
+          reinstall-transient-toolchain: true
+
+      - &build_cache_executable
+        name: Build the cache executable
+        run: |
+          lake build cache
+          CACHE_BIN="$(pwd)/.lake/build/bin/cache"
+          test -x "$CACHE_BIN"
+          echo "CACHE_BIN=$CACHE_BIN" >> "$GITHUB_ENV"
+
+      - &install_rclone
+        name: Install rclone (pinned)
+        run: |
+          dir="$RUNNER_TEMP/rclone-dl"
+          mkdir -p "$dir"
+          cd "$dir"
+          curl -fsSL --retry 5 -o rclone.zip \
+            "https://github.com/rclone/rclone/releases/download/${RCLONE_VERSION}/rclone-${RCLONE_VERSION}-linux-amd64.zip"
+          echo "${RCLONE_SHA256}  rclone.zip" | sha256sum -c -
+          unzip -q rclone.zip
+          sudo install -m 0755 "rclone-${RCLONE_VERSION}-linux-amd64/rclone" /usr/local/bin/rclone
+          rclone version
+          curl --version | head -1
+
+      # The pinned master hash set, downloaded without decompression, then
+      # copied into a staging directory. `put-staged` uploads any directory of
+      # .ltar files. The cache directory starts empty on a hosted runner, so it
+      # holds exactly the downloaded set.
+      - &stage_hash_set
+        name: Download and stage the hash set
+        run: |
+          lake exe cache get- 2>&1 | tail -n 5
+          mkdir -p staging
+          find "$MATHLIB_CACHE_DIR" -maxdepth 1 -name '*.ltar' -exec cp -t staging {} +
+          files=$(find staging -name '*.ltar' | wc -l)
+          bytes=$(du -sb staging | cut -f1)
+          echo "staged $files files, $bytes bytes"
+          if [ "$files" -lt 1000 ]; then
+            echo "::error::the download staged only $files files"
+            exit 1
+          fi
+          find staging -name '*.ltar' -printf '%f\n' | sort > files.txt
+          {
+            echo "BENCH_FILES=$files"
+            echo "BENCH_BYTES=$bytes"
+          } >> "$GITHUB_ENV"
+
+      - name: Upload with ${{ matrix.variant }}
+        env:
+          TOOL: ${{ matrix.tool }}
+          PARALLEL_MAX: ${{ matrix.parallel_max }}
+          TRANSFERS: ${{ matrix.transfers }}
+          CHECKERS: ${{ matrix.checkers }}
+          NO_HEAD: ${{ matrix.no_head }}
+          VARIANT: ${{ matrix.variant }}
+        run: |
+          # The knobs are exported only when set: the tool treats an empty
+          # value as unset, but rclone rejects an empty boolean.
+          if [ "$TOOL" = curl ]; then export MATHLIB_CACHE_PUT_FORCE_CURL=1; fi
+          if [ -n "$PARALLEL_MAX" ]; then export MATHLIB_CACHE_PARALLEL_MAX="$PARALLEL_MAX"; fi
+          if [ -n "$TRANSFERS" ]; then export MATHLIB_CACHE_RCLONE_TRANSFERS="$TRANSFERS"; fi
+          if [ -n "$CHECKERS" ]; then export MATHLIB_CACHE_RCLONE_CHECKERS="$CHECKERS"; fi
+          if [ "$NO_HEAD" = true ]; then export RCLONE_S3_NO_HEAD=true; fi
+
+          put_url="${BENCH_URL}/${VARIANT}"
+          remote="${BENCH_REMOTE}/${VARIANT}/f"
+          mkdir -p logs
+
+          # Prints "<milliseconds> <exit code>" of one put-staged run.
+          bench_put() {
+            local log=$1 start end code
+            start=$(date +%s%N)
+            set +e
+            MATHLIB_CACHE_PUT_URL="$put_url" lake env "$CACHE_BIN" put-staged --backend=s3 \
+              --staging-dir=staging > "$log" 2>&1
+            code=$?
+            set -e
+            end=$(date +%s%N)
+            echo "$(( (end - start) / 1000000 )) $code"
+          }
+
+          started_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          echo "::group::put (fresh prefix)"
+          read -r put_ms put_exit < <(bench_put logs/put.log)
+          tail -n 30 logs/put.log
+          echo "::endgroup::"
+          echo "put: ${put_ms} ms, exit ${put_exit}"
+
+          # The pass a bors retry hits: every object exists already.
+          echo "::group::put (skip pass)"
+          read -r skip_ms skip_exit < <(bench_put logs/skip.log)
+          tail -n 15 logs/skip.log
+          echo "::endgroup::"
+          echo "skip pass: ${skip_ms} ms, exit ${skip_exit}"
+
+          # Every staged file must be in the prefix with a matching MD5 (R2's
+          # ETag of a single-part object).
+          echo "::group::rclone check"
+          set +e
+          rclone check staging "$remote" --one-way --files-from files.txt \
+            --missing-on-dst logs/missing.txt --differ logs/differ.txt --error logs/error.txt \
+            > logs/check.log 2>&1
+          check_exit=$?
+          set -e
+          tail -n 5 logs/check.log
+          echo "::endgroup::"
+          missing=$(wc -l < logs/missing.txt)
+          differ=$(wc -l < logs/differ.txt)
+          check_errors=$(wc -l < logs/error.txt)
+          matching=$(grep -oE '[0-9]+ matching files' logs/check.log | grep -oE '^[0-9]+' || echo 0)
+
+          failed_attempts=$(grep -cE 'Attempt [0-9]+/[0-9]+ failed' logs/put.log || true)
+          log_errors=$(grep -c ' ERROR ' logs/put.log || true)
+          uploaded_line=$(grep -E '^Uploaded:' logs/put.log | tail -n 1 || true)
+          curl_exit_line=$(grep -E 'curl exited with code' logs/put.log | tail -n 1 || true)
+
+          mkdir -p result
+          jq -n \
+            --arg run "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --arg started_at "$started_at" \
+            --arg variant "$VARIANT" --arg tool "$TOOL" \
+            --arg parallel_max "${PARALLEL_MAX:-50}" \
+            --arg transfers "$TRANSFERS" --arg checkers "$CHECKERS" \
+            --arg no_head "${NO_HEAD:-false}" \
+            --argjson files "$BENCH_FILES" --argjson bytes "$BENCH_BYTES" \
+            --argjson put_ms "$put_ms" --argjson put_exit "$put_exit" \
+            --argjson skip_ms "$skip_ms" --argjson skip_exit "$skip_exit" \
+            --argjson check_exit "$check_exit" --argjson matching "$matching" \
+            --argjson missing "$missing" --argjson differ "$differ" \
+            --argjson check_errors "$check_errors" \
+            --argjson failed_attempts "$failed_attempts" --argjson log_errors "$log_errors" \
+            --arg uploaded_line "$uploaded_line" --arg curl_exit_line "$curl_exit_line" \
+            '{
+              kind: "variant", run: $run, started_at: $started_at,
+              variant: $variant, tool: $tool,
+              parallel_max: (if $tool == "curl" then ($parallel_max | tonumber) else null end),
+              transfers: (if $transfers == "" then null else ($transfers | tonumber) end),
+              checkers: (if $checkers == "" then null else ($checkers | tonumber) end),
+              no_head: ($no_head == "true"),
+              files: $files, bytes: $bytes,
+              put_s: ($put_ms / 1000), put_exit: $put_exit,
+              put_files_per_s: ($files / ($put_ms / 1000)),
+              put_mb_per_s: ($bytes / 1000000 / ($put_ms / 1000)),
+              skip_s: ($skip_ms / 1000), skip_exit: $skip_exit,
+              check_exit: $check_exit, check_matching: $matching,
+              check_missing: $missing, check_differ: $differ, check_errors: $check_errors,
+              rclone_failed_attempts: $failed_attempts, log_errors: $log_errors,
+              uploaded_line: $uploaded_line, curl_exit_line: $curl_exit_line
+            }' > "result/${VARIANT}.json"
+          cat "result/${VARIANT}.json"
+
+          {
+            echo "### ${VARIANT}"
+            echo
+            echo "| files | MB | put s | files/s | MB/s | put exit | skip s | skip exit | check exit | matching | missing | differ | failed attempts | log errors |"
+            echo "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"
+            jq -r '"| \(.files) | \(.bytes / 1000000 | floor) | \(.put_s) | \(.put_files_per_s | floor) | \(.put_mb_per_s * 10 | floor / 10) | \(.put_exit) | \(.skip_s) | \(.skip_exit) | \(.check_exit) | \(.check_matching) | \(.check_missing) | \(.check_differ) | \(.rclone_failed_attempts) | \(.log_errors) |"' \
+              "result/${VARIANT}.json"
+            echo
+            echo '```'
+            echo "$uploaded_line"
+            echo "$curl_exit_line"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$put_exit" -ne 0 ] || [ "$check_exit" -ne 0 ]; then
+            echo "::error::${VARIANT}: put exit ${put_exit}, check exit ${check_exit}"
+            exit 1
+          fi
+
+      - name: Upload the result
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: bench-${{ matrix.variant }}
+          path: |
+            result/
+            logs/
+          if-no-files-found: warn
+          retention-days: 14
+
+  # The listing cost of the tool's previous rclone arguments, which traverse
+  # the destination prefix. The job reuses the prefix the rclone-16 variant
+  # filled and skips every file, so the timings isolate the existence checks:
+  # one LIST of the prefix against one HEAD per file.
+  traverse:
+    name: traverse
+    needs: [bench]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - *check_secrets
+      - *resolve_bench_prefix
+      - *checkout
+      - *configure_lean
+      - *build_cache_executable
+      - *install_rclone
+      - *stage_hash_set
+
+      - name: Time the listing against the existence checks
+        run: |
+          remote="${BENCH_REMOTE}/rclone-16/f"
+          mkdir -p logs result
+
+          timed() {
+            # Prints "<milliseconds> <exit code>" of a command with its output in $1.
+            local log=$1 start end code
+            shift
+            start=$(date +%s%N)
+            set +e
+            "$@" > "$log" 2>&1
+            code=$?
+            set -e
+            end=$(date +%s%N)
+            echo "$(( (end - start) / 1000000 )) $code"
+          }
+
+          read -r list_ms list_exit < <(timed logs/lsf.log rclone lsf "$remote" --files-only)
+          objects=$(wc -l < logs/lsf.log)
+          echo "lsf: ${objects} objects in ${list_ms} ms (exit ${list_exit})"
+          if [ "$objects" -lt 1000 ]; then
+            echo "::error::the rclone-16 prefix holds only ${objects} objects; the variant did not fill it"
+            exit 1
+          fi
+
+          # The tool's previous arguments: no --no-traverse, 16 transfers.
+          read -r traverse_ms traverse_exit < <(timed logs/traverse.log rclone copy staging "$remote" \
+            --files-from files.txt --transfers 16 --ignore-existing --s3-no-check-bucket --retries 5)
+          echo "traverse skip pass: ${traverse_ms} ms (exit ${traverse_exit})"
+          tail -n 5 logs/traverse.log
+
+          read -r notraverse16_ms notraverse16_exit < <(timed logs/notraverse16.log rclone copy staging "$remote" \
+            --files-from files.txt --no-traverse --transfers 16 --checkers 16 --ignore-existing --s3-no-check-bucket --retries 5)
+          echo "no-traverse skip pass, 16 checkers: ${notraverse16_ms} ms (exit ${notraverse16_exit})"
+
+          read -r notraverse64_ms notraverse64_exit < <(timed logs/notraverse64.log rclone copy staging "$remote" \
+            --files-from files.txt --no-traverse --transfers 64 --checkers 64 --ignore-existing --s3-no-check-bucket --retries 5)
+          echo "no-traverse skip pass, 64 checkers: ${notraverse64_ms} ms (exit ${notraverse64_exit})"
+
+          jq -n \
+            --arg run "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --argjson files "$BENCH_FILES" --argjson objects "$objects" \
+            --argjson list_ms "$list_ms" --argjson list_exit "$list_exit" \
+            --argjson traverse_ms "$traverse_ms" --argjson traverse_exit "$traverse_exit" \
+            --argjson nt16_ms "$notraverse16_ms" --argjson nt16_exit "$notraverse16_exit" \
+            --argjson nt64_ms "$notraverse64_ms" --argjson nt64_exit "$notraverse64_exit" \
+            '{
+              kind: "traverse", run: $run, files: $files, objects: $objects,
+              pages: (($objects + 999) / 1000 | floor),
+              list_s: ($list_ms / 1000), list_exit: $list_exit,
+              list_ms_per_page: ($list_ms / (($objects + 999) / 1000 | floor)),
+              traverse_skip_s: ($traverse_ms / 1000), traverse_exit: $traverse_exit,
+              notraverse16_skip_s: ($nt16_ms / 1000), notraverse16_exit: $nt16_exit,
+              notraverse64_skip_s: ($nt64_ms / 1000), notraverse64_exit: $nt64_exit
+            }' > result/traverse.json
+          cat result/traverse.json
+          {
+            echo "### traverse (skip pass against the filled rclone-16 prefix)"
+            echo
+            echo "| objects | pages | lsf s | ms/page | traverse skip s | no-traverse skip s (16) | no-traverse skip s (64) |"
+            echo "|---|---|---|---|---|---|---|"
+            jq -r '"| \(.objects) | \(.pages) | \(.list_s) | \(.list_ms_per_page | floor) | \(.traverse_skip_s) | \(.notraverse16_skip_s) | \(.notraverse64_skip_s) |"' result/traverse.json
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the result
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: bench-traverse
+          path: |
+            result/
+            logs/
+          if-no-files-found: warn
+          retention-days: 14
+
+  # Each case must make put-staged exit 1.
+  failures:
+    name: ${{ matrix.case }}
+    needs: [bench]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        include:
+          - case: bad-secret-curl
+            tool: curl
+            mode: bad-secret
+          - case: bad-secret-rclone
+            tool: rclone
+            mode: bad-secret
+          - case: kill-curl
+            tool: curl
+            mode: kill
+          - case: kill-rclone
+            tool: rclone
+            mode: kill
+    steps:
+      - *check_secrets
+      - *resolve_bench_prefix
+      - *checkout
+      - *configure_lean
+      - *build_cache_executable
+      - *install_rclone
+      - *stage_hash_set
+
+      - name: Run ${{ matrix.case }}
+        env:
+          TOOL: ${{ matrix.tool }}
+          MODE: ${{ matrix.mode }}
+          CASE: ${{ matrix.case }}
+        run: |
+          if [ "$TOOL" = curl ]; then export MATHLIB_CACHE_PUT_FORCE_CURL=1; fi
+          put_url="${BENCH_URL}/${CASE}"
+          remote="${BENCH_REMOTE}/${CASE}/f"
+          mkdir -p logs result
+
+          case "$MODE" in
+            bad-secret)
+              # A small set: every PUT is refused, and both tools retry.
+              mkdir -p staging-subset
+              head -n 100 files.txt | while read -r f; do cp "staging/$f" staging-subset/; done
+              set +e
+              MATHLIB_CACHE_S3_SECRET_ACCESS_KEY=not-the-secret \
+              MATHLIB_CACHE_PUT_URL="$put_url" lake env "$CACHE_BIN" put-staged --backend=s3 \
+                --staging-dir=staging-subset > logs/put.log 2>&1
+              code=$?
+              set -e
+              detail="100-file subset"
+              ;;
+            kill)
+              # The transfer tool dies partway through the upload.
+              set +e
+              MATHLIB_CACHE_PUT_URL="$put_url" lake env "$CACHE_BIN" put-staged --backend=s3 \
+                --staging-dir=staging > logs/put.log 2>&1 &
+              tool_pid=$!
+              for _ in $(seq 1 120); do
+                if pgrep -x "$TOOL" > /dev/null; then break; fi
+                sleep 0.5
+              done
+              sleep 8
+              pkill -9 -x "$TOOL"
+              killed=$?
+              wait "$tool_pid"
+              code=$?
+              set -e
+              landed=$(rclone lsf "$remote" --files-only | wc -l)
+              detail="pkill exit ${killed}; ${landed} of ${BENCH_FILES} objects landed"
+              ;;
+          esac
+          echo "::group::put log"
+          tail -n 40 logs/put.log
+          echo "::endgroup::"
+          echo "${CASE}: put-staged exit ${code} (${detail})"
+
+          if [ "$code" -eq 0 ]; then pass=false; else pass=true; fi
+          jq -n --arg run "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --arg case "$CASE" --arg tool "$TOOL" --arg mode "$MODE" \
+            --argjson exit "$code" --argjson pass "$pass" --arg detail "$detail" \
+            '{kind: "failure", run: $run, case: $case, tool: $tool, mode: $mode,
+              exit: $exit, pass: $pass, detail: $detail}' > "result/${CASE}.json"
+          cat "result/${CASE}.json"
+          {
+            echo "### ${CASE}"
+            echo
+            echo "put-staged exit ${code}; ${detail}; pass: ${pass}"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$pass" != true ]; then
+            echo "::error::${CASE}: put-staged exited 0"
+            exit 1
+          fi
+
+      - name: Upload the result
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: failure-${{ matrix.case }}
+          path: |
+            result/
+            logs/
+          if-no-files-found: warn
+          retention-days: 14
+
+  report:
+    name: report
+    needs: [bench, traverse, failures]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Download every result
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: '*'
+          path: results
+
+      - name: Combine the results
+        run: |
+          find results -path '*/result/*.json' | sort
+          find results -path '*/result/*.json' -print0 | sort -z | xargs -0 jq -s '.' > bench-all.json
+          {
+            echo "## Variants, run ${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+            echo
+            echo "| variant | files | MB | put s | files/s | MB/s | put exit | skip s | check exit | matching | missing | differ | failed attempts | log errors |"
+            echo "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"
+            jq -r '.[] | select(.kind == "variant") |
+              "| \(.variant) | \(.files) | \(.bytes / 1000000 | floor) | \(.put_s) | \(.put_files_per_s | floor) | \(.put_mb_per_s * 10 | floor / 10) | \(.put_exit) | \(.skip_s) | \(.check_exit) | \(.check_matching) | \(.check_missing) | \(.check_differ) | \(.rclone_failed_attempts) | \(.log_errors) |"' \
+              bench-all.json
+            echo
+            echo "## Traverse"
+            echo
+            jq -r '.[] | select(.kind == "traverse") |
+              "objects \(.objects), pages \(.pages), lsf \(.list_s) s (\(.list_ms_per_page | floor) ms/page), traverse skip \(.traverse_skip_s) s, no-traverse skip \(.notraverse16_skip_s) s (16) / \(.notraverse64_skip_s) s (64)"' \
+              bench-all.json
+            echo
+            echo "## Failure cases"
+            echo
+            jq -r '.[] | select(.kind == "failure") | "- \(.case): exit \(.exit), pass \(.pass) (\(.detail))"' bench-all.json
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the combined result
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: bench-all
+          path: bench-all.json
+          retention-days: 14
+
+  cleanup:
+    name: cleanup
+    needs: [bench, traverse, failures]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - *check_secrets
+      - *resolve_bench_prefix
+      - *install_rclone
+      - name: Delete the run's prefix
+        run: |
+          # A run whose jobs all stopped before their upload has no prefix.
+          rclone purge "$BENCH_REMOTE" || echo "purge: nothing under the run prefix"
+          left=$(rclone lsf "$BENCH_REMOTE" -R --files-only 2> /dev/null | wc -l)
+          echo "objects left under the run prefix: $left"
+          test "$left" -eq 0
