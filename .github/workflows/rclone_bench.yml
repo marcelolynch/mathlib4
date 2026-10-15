@@ -252,6 +252,7 @@ jobs:
           log_errors=$(grep -c ' ERROR ' logs/put.log || true)
           uploaded_line=$(grep -E '^Uploaded:' logs/put.log | tail -n 1 || true)
           curl_exit_line=$(grep -E 'curl exited with code' logs/put.log | tail -n 1 || true)
+          unreported_line=$(grep -E '^files without a curl report:' logs/put.log | tail -n 1 || true)
 
           mkdir -p result
           jq -n \
@@ -269,6 +270,7 @@ jobs:
             --argjson check_errors "$check_errors" \
             --argjson failed_attempts "$failed_attempts" --argjson log_errors "$log_errors" \
             --arg uploaded_line "$uploaded_line" --arg curl_exit_line "$curl_exit_line" \
+            --arg unreported_line "$unreported_line" \
             '{
               kind: "variant", run: $run, started_at: $started_at,
               variant: $variant, tool: $tool,
@@ -284,7 +286,8 @@ jobs:
               check_exit: $check_exit, check_matching: $matching,
               check_missing: $missing, check_differ: $differ, check_errors: $check_errors,
               rclone_failed_attempts: $failed_attempts, log_errors: $log_errors,
-              uploaded_line: $uploaded_line, curl_exit_line: $curl_exit_line
+              uploaded_line: $uploaded_line, curl_exit_line: $curl_exit_line,
+              unreported_line: $unreported_line
             }' > "result/${VARIANT}.json"
           cat "result/${VARIANT}.json"
 
@@ -299,6 +302,7 @@ jobs:
             echo '```'
             echo "$uploaded_line"
             echo "$curl_exit_line"
+            echo "$unreported_line"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -325,7 +329,7 @@ jobs:
   traverse:
     name: traverse
     needs: [bench]
-    if: always()
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -417,7 +421,7 @@ jobs:
   failures:
     name: ${{ matrix.case }}
     needs: [bench]
-    if: always()
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
@@ -547,6 +551,12 @@ jobs:
             echo "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"
             jq -r '.[] | select(.kind == "variant") |
               "| \(.variant) | \(.files) | \(.bytes / 1000000 | floor) | \(.put_s) | \(.put_files_per_s | floor) | \(.put_mb_per_s * 10 | floor / 10) | \(.put_exit) | \(.skip_s) | \(.check_exit) | \(.check_matching) | \(.check_missing) | \(.check_differ) | \(.rclone_failed_attempts) | \(.log_errors) |"' \
+              bench-all.json
+            echo
+            echo "## Shortfalls"
+            echo
+            jq -r '.[] | select(.kind == "variant" and (.curl_exit_line != "" or .rclone_failed_attempts > 0)) |
+              "- \(.variant): \(.curl_exit_line) \(.unreported_line) (rclone failed attempts \(.rclone_failed_attempts))"' \
               bench-all.json
             echo
             echo "## Traverse"
