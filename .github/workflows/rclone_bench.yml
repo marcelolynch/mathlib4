@@ -63,40 +63,32 @@ jobs:
       max-parallel: 1
       matrix:
         include:
-          # curl at its default `--parallel-max` of 50: production today.
-          - variant: curl-50
-            tool: curl
-          # The same, with curl's verbose output traced to a file through
-          # `$CURL_HOME/.curlrc`: rounds 1 and 3 dropped the last of 9038
-          # transfers with exit 23 and an empty stderr.
+          # Diagnostic round: four verbose curl-50 attempts. Rounds 1-4 dropped
+          # the last transfer in 3 of 7 full-set uploads at parallel 50.
           - variant: curl-50-verbose-a
             tool: curl
+            parallel_max: 50
+            transfers: ""
+            checkers: ""
             curl_verbose: "true"
           - variant: curl-50-verbose-b
             tool: curl
+            parallel_max: 50
+            transfers: ""
+            checkers: ""
             curl_verbose: "true"
-          - variant: curl-150
+          - variant: curl-50-verbose-c
             tool: curl
-            parallel_max: 150
-          - variant: rclone-16
-            tool: rclone
-            transfers: 16
-            checkers: 16
-          - variant: rclone-32
-            tool: rclone
-            transfers: 32
-            checkers: 32
-          - variant: rclone-64
-            tool: rclone
-            transfers: 64
-            checkers: 64
-          - variant: rclone-128
-            tool: rclone
-            transfers: 128
-            checkers: 128
-          # Round 1 measured `RCLONE_S3_NO_HEAD` (no post-upload HEAD) at 16
-          # and 64: 220.0 s against 211.4 s, and 57.4 s against 57.8 s. The
-          # HEAD costs nothing measurable, so the variants were dropped.
+            parallel_max: 50
+            transfers: ""
+            checkers: ""
+            curl_verbose: "true"
+          - variant: curl-50-verbose-d
+            tool: curl
+            parallel_max: 50
+            transfers: ""
+            checkers: ""
+            curl_verbose: "true"
     steps:
       - &check_secrets
         name: Check the bench secrets
@@ -356,7 +348,7 @@ jobs:
   traverse:
     name: traverse
     needs: [bench]
-    if: ${{ !cancelled() }}
+    if: false  # diagnostic round
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -449,7 +441,7 @@ jobs:
   failures:
     name: ${{ matrix.case }}
     needs: [bench]
-    if: ${{ !cancelled() }}
+    if: false  # diagnostic round
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
