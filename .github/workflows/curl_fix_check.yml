@@ -1,0 +1,191 @@
+# One-off check of the curl upload fix on both runner images. This workflow
+# lives on a ci-dev branch of the fork only and is never merged.
+#
+# On ubuntu-26.04 the system curl is 8.18.0, which the tool now replaces with
+# the static curl it downloads; on ubuntu-24.04 the system curl (8.5.0) stays.
+# Each job downloads the master hash set, uploads it to the bench bucket with
+# curl at the default parallelism, uploads it again (skip pass), and checks
+# every object's MD5. The cleanup job removes the run's prefix.
+name: curl fix check
+
+on:
+  push:
+    branches:
+      - ci-dev/curl-fix-check
+
+permissions:
+  contents: read
+
+concurrency:
+  group: curl-fix-check
+  cancel-in-progress: true
+
+env:
+  BENCH_RCLONE_VERSION: v1.75.0
+  BENCH_RCLONE_SHA256: aa2804e08f48250e71009c727124b6341cd0288465804a9a09d14663cabafbaa
+  RCLONE_S3_ENV_AUTH: "false"
+  RCLONE_S3_ACCESS_KEY_ID: ${{ secrets.BENCH_S3_ACCESS_KEY_ID }}
+  RCLONE_S3_SECRET_ACCESS_KEY: ${{ secrets.BENCH_S3_SECRET_ACCESS_KEY }}
+  RCLONE_S3_PROVIDER: Other
+  RCLONE_S3_REGION: auto
+  RCLONE_S3_NO_CHECK_BUCKET: "true"
+  MATHLIB_CACHE_S3_ACCESS_KEY_ID: ${{ secrets.BENCH_S3_ACCESS_KEY_ID }}
+  MATHLIB_CACHE_S3_SECRET_ACCESS_KEY: ${{ secrets.BENCH_S3_SECRET_ACCESS_KEY }}
+  MATHLIB_CACHE_S3_REGION: auto
+  BENCH_S3_BASE: ${{ secrets.BENCH_S3_BASE }}
+  MATHLIB_CACHE_DIR: ${{ github.workspace }}/.bench-cache
+  # The tool must pick curl, not rclone.
+  MATHLIB_CACHE_PUT_FORCE_CURL: "1"
+
+jobs:
+  check:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-26.04]
+    steps:
+      - &resolve_bench_prefix
+        name: Resolve the bench prefix
+        run: |
+          for v in BENCH_S3_BASE MATHLIB_CACHE_S3_ACCESS_KEY_ID MATHLIB_CACHE_S3_SECRET_ACCESS_KEY; do
+            if [ -z "${!v}" ]; then
+              echo "::error::the fork secret behind $v is unset"
+              exit 1
+            fi
+          done
+          base="${BENCH_S3_BASE%/}"
+          rest="${base#https://}"
+          host="${rest%%/*}"
+          path="${rest#*/}"
+          run="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          {
+            echo "RCLONE_S3_ENDPOINT=https://${host}"
+            echo "BENCH_URL=${base}/${run}"
+            echo "BENCH_REMOTE=:s3:${path}/${run}"
+          } >> "$GITHUB_ENV"
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Configure Lean
+        uses: leanprover/lean-action@f061402b660e0c34644504b324e830f2991d4865 # v1.6.1
+        with:
+          auto-config: false
+          use-github-cache: false
+          use-mathlib-cache: false
+          reinstall-transient-toolchain: true
+
+      - name: Build the cache executable
+        run: |
+          lake build cache
+          CACHE_BIN="$(pwd)/.lake/build/bin/cache"
+          test -x "$CACHE_BIN"
+          echo "CACHE_BIN=$CACHE_BIN" >> "$GITHUB_ENV"
+          echo "system curl: $(curl --version | head -n 1)"
+
+      - &install_rclone
+        name: Install rclone (pinned, for the MD5 check)
+        run: |
+          dir="$RUNNER_TEMP/rclone-dl"
+          mkdir -p "$dir"
+          cd "$dir"
+          curl -fsSL --retry 5 -o rclone.zip \
+            "https://github.com/rclone/rclone/releases/download/${BENCH_RCLONE_VERSION}/rclone-${BENCH_RCLONE_VERSION}-linux-amd64.zip"
+          echo "${BENCH_RCLONE_SHA256}  rclone.zip" | sha256sum -c -
+          unzip -q rclone.zip
+          sudo install -m 0755 "rclone-${BENCH_RCLONE_VERSION}-linux-amd64/rclone" /usr/local/bin/rclone
+
+      # The download path: on ubuntu-26.04 the tool must announce the static
+      # curl and leave it in the cache directory.
+      - name: Download and stage the hash set
+        env:
+          OS: ${{ matrix.os }}
+        run: |
+          lake exe cache get- 2>&1 | grep -vE '^Downloaded: ' | tail -n 8
+          mkdir -p staging
+          find "$MATHLIB_CACHE_DIR" -maxdepth 1 -name '*.ltar' -exec cp -t staging {} +
+          files=$(find staging -name '*.ltar' | wc -l)
+          echo "staged $files files"
+          test "$files" -gt 1000
+          find staging -name '*.ltar' -printf '%f\n' | sort > files.txt
+          echo "BENCH_FILES=$files" >> "$GITHUB_ENV"
+          static=$(find "$MATHLIB_CACHE_DIR" -maxdepth 1 -name 'curl-*' -type f -perm -u+x | head -n 1)
+          echo "static curl: ${static:-none}"
+          case "$OS" in
+            ubuntu-26.04) test -n "$static" || { echo "::error::the tool kept curl 8.18"; exit 1; }; "$static" --version | head -n 1 ;;
+            *) test -z "$static" || { echo "::error::the tool replaced a usable curl"; exit 1; } ;;
+          esac
+
+      - name: Upload with curl, twice, and check
+        env:
+          OS: ${{ matrix.os }}
+        run: |
+          put_url="${BENCH_URL}/${OS}"
+          remote="${BENCH_REMOTE}/${OS}/f"
+          mkdir -p logs
+          bench_put() {
+            local log=$1 start end code
+            start=$(date +%s%N)
+            set +e
+            MATHLIB_CACHE_PUT_URL="$put_url" lake env "$CACHE_BIN" put-staged --backend=s3 \
+              --staging-dir=staging > "$log" 2>&1
+            code=$?
+            set -e
+            end=$(date +%s%N)
+            echo "$(( (end - start) / 1000000 )) $code"
+          }
+          read -r put_ms put_exit < <(bench_put logs/put.log)
+          tail -n 6 logs/put.log
+          echo "put: ${put_ms} ms, exit ${put_exit}"
+          read -r skip_ms skip_exit < <(bench_put logs/skip.log)
+          tail -n 4 logs/skip.log
+          echo "skip pass: ${skip_ms} ms, exit ${skip_exit}"
+          set +e
+          rclone check staging "$remote" --one-way --files-from files.txt > logs/check.log 2>&1
+          check_exit=$?
+          set -e
+          tail -n 3 logs/check.log
+          # The upload must not leave a body sink behind.
+          leftovers=$(find staging -name 'curl-*' | wc -l)
+          echo "curl config or body files left in staging: $leftovers"
+          {
+            echo "### ${OS}"
+            echo
+            echo "put ${put_ms} ms exit ${put_exit}; skip ${skip_ms} ms exit ${skip_exit}; check exit ${check_exit}; files ${BENCH_FILES}; leftovers ${leftovers}"
+            echo
+            echo '```'
+            grep -E '^Uploaded:|curl exited|downloading curl|hangs' logs/put.log | tail -n 3
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          test "$put_exit" -eq 0 && test "$skip_exit" -eq 0 && test "$check_exit" -eq 0 && test "$leftovers" -eq 0
+
+      - name: Upload the logs
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: logs-${{ matrix.os }}
+          path: logs/
+          retention-days: 14
+
+  cleanup:
+    name: cleanup
+    needs: [check]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - *resolve_bench_prefix
+      - *install_rclone
+      - name: Delete the run's prefix
+        run: |
+          rclone delete "$BENCH_REMOTE" --rmdirs --transfers 128 --checkers 128 \
+            || echo "delete: nothing under the run prefix"
+          left=$(rclone lsf "$BENCH_REMOTE" -R --files-only 2> /dev/null | wc -l)
+          echo "objects left under the run prefix: $left"
+          test "$left" -eq 0
